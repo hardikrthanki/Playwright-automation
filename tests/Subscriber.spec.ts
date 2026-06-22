@@ -1,11 +1,14 @@
-// @ts-nocheck
 /* =============================================================================
-TEST SUITE: OOLTool Subscriber Regression
+TEST SUITE: OOLTool Subscriber Billing Validation
 
 ## PURPOSE
 
-Validates functionality available to an existing paid subscriber
-after successful onboarding and subscription purchase.
+Validates subscriber functionality after successful onboarding
+and subscription purchase.
+
+Ensures that an active subscriber can access billing information,
+subscription details, invoices, receipts, transaction history,
+and logout functionality.
 
 ## EXECUTION COMMANDS
 
@@ -30,67 +33,60 @@ Browser     : Chromium
 
 ## FLOW COVERED
 
-Step 1  - Subscriber Login
+Step 1  - User Login
 Step 2  - Dashboard Validation
 Step 3  - Billing Overview Validation
-Step 4  - Subscription Plans Validation
+Step 4  - Subscription Plan Validation
 Step 5  - Transaction History Validation
-Step 6  - Invoice Page Validation
+Step 6  - Invoice Validation
 Step 7  - Invoice Download Validation
 Step 8  - Receipt Download Validation
-Step 9  - PDF Link Validation
+Step 9  - PDF Validation
 Step 10 - Logout Validation
 
 ## VALIDATIONS
 
-✓ Existing subscriber login successful
-✓ Dashboard accessible after login
-✓ Current subscription details displayed
-✓ Income Builder plan displayed correctly
-✓ Billing cycle displayed correctly
-✓ Active subscription status displayed
-✓ Next billing date displayed
-✓ Upgrade plans displayed
-✓ Upgrade option available
+✓ Subscriber login successful
+✓ Dashboard accessible
+✓ Billing page accessible
+✓ Current subscription visible
+✓ Billing cycle visible
+✓ Active subscription status verified
 ✓ Transaction history available
-✓ Paid transaction displayed
 ✓ Invoice link available
-✓ PDF link available
 ✓ Invoice download successful
 ✓ Receipt download successful
-✓ PDF link accessible
-✓ User logout successful
+✓ PDF link available
+✓ Logout successful
 
 ## TEST DATA
 
-• Uses an existing active subscriber account
-• Account must have an active Income Builder subscription
-• Account must contain transaction history
+Subscriber Email : [imhardikthanki+09@gmail.com](mailto:imhardikthanki+09@gmail.com)
+Subscription Plan : Income Builder
+Environment       : PUAT
 
 ## DEPENDENCIES
 
-• Subscriber account must exist
-• Subscriber account must be active
-• Billing history data must be available
-• Invoice and receipt records must be available
+• Active subscriber account required
+• Valid subscription required
+• Billing data available
+• Stripe invoice records available
 
-## EXCLUSIONS
+## PAGE OBJECTS USED
 
-The following validations are covered separately in
-onboarding.spec.ts:
+• LoginPage.ts
+• DashboardPage.ts
+• BillingPage.ts
 
-• User Registration
-• Email Verification
-• Risk Profile Completion
-• Compliance Completion
-• Plan Selection
-• Stripe Payment Processing
+## HELPERS USED
+
+• safeClick.ts
 
 ## EXPECTED RESULT
 
-Existing subscriber can successfully access billing,
-transaction history, invoices, receipts, PDF documents,
-and logout without errors.
+Subscriber successfully logs in, accesses billing
+information, validates invoices and transactions,
+and logs out successfully.
 
 ## AUTHOR
 
