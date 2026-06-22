@@ -7,6 +7,9 @@ import {
   Page,
   Locator,
 } from '@playwright/test';
+import { safeClick } from './helpers/safeClick';
+import { networkIdle } from './helpers/networkIdle';
+
 
 /* =============================================================================
 TEST SUITE: OOLTool End-to-End Onboarding Flow
@@ -109,35 +112,10 @@ const PASSWORD = 'Test@123456';
 function generateEmail(): string {
   return `imhardikthanki+${Date.now()}@gmail.com`;
 }
-async function networkIdle(
-  page: Page,
-  timeout = 15000
-) {
-  await page
-    .waitForLoadState('networkidle', { timeout })
-    .catch(() => {});
-}
-async function safeClick(
-  locator: Locator,
-  label: string
-) {
-  console.log(`👉 ${label}`);
-
-  await locator.waitFor({
-    state: 'visible',
-    timeout: 15000,
-  });
-
-  await locator.scrollIntoViewIfNeeded();
-
-  await locator.click({
-    force: true,
-  });
-}
 
 /* ============================================================================
-   REGISTRATION PAGE
-============================================================================ */
+    REGISTRATION PAGE
+    ============================================================================ */
 class RegistrationPage {
   readonly page: Page;
 
@@ -185,19 +163,23 @@ class RegistrationPage {
   /**
    * Open application and registration form.
    */  async open() {
-    console.log('🌐 Opening application');
+  console.log('🌐 Opening application');
 
-    await this.page.goto(BASE_URL);
+  await this.page.goto(BASE_URL);
 
-    await networkIdle(this.page);
+  await this.page.waitForLoadState(
+    'networkidle'
+  );
 
-    await safeClick(
-      this.createAccountLink,
-      'Open Create Account'
-    );
+  await safeClick(
+    this.createAccountLink,
+    'Open Create Account'
+  );
 
-    await networkIdle(this.page);
-  }
+  await this.page.waitForLoadState(
+    'networkidle'
+  );
+}
   async register(email: string) {
     console.log(`📝 Registering: ${email}`);
 
@@ -281,6 +263,7 @@ async login(email: string) {
 
   await this.emailInput.waitFor({
     state: 'visible',
+    
     timeout: 10000,
   });
 
