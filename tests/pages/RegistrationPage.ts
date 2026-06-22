@@ -6,6 +6,12 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
+  import {
+  BASE_URL,
+  PASSWORD,
+  FIRST_NAME,
+  LAST_NAME
+} from '../config/testData';
 
 /* =============================================================================
 PAGE OBJECT: RegistrationPage
@@ -30,12 +36,6 @@ USED BY
 onboarding.spec.ts
 
 ============================================================================= */
-
-const BASE_URL =
-  'https://puat.ooltool.com';
-
-const PASSWORD =
-  'Test@123456';
 
 export class RegistrationPage {
 
@@ -122,13 +122,13 @@ export class RegistrationPage {
       `📝 Registering: ${email}`
     );
 
-    await this.firstNameInput.fill(
-      'Hardik'
-    );
+  await this.firstNameInput.fill(
+  FIRST_NAME
+);
 
-    await this.lastNameInput.fill(
-      'Thanki'
-    );
+await this.lastNameInput.fill(
+  LAST_NAME
+);
 
     await this.emailInput.fill(
       email

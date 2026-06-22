@@ -1,0 +1,206 @@
+import {
+  Page,
+  expect
+} from '@playwright/test';
+
+import { safeClick }
+  from '../helpers/safeClick';
+  import {
+  STRIPE_CARD,
+  STRIPE_EXPIRY,
+  STRIPE_CVC,
+  COUNTRY
+} from '../config/testData';
+
+/* =============================================================================
+PAGE OBJECT: StripePaymentPage
+
+PURPOSE
+-------
+Handles Stripe subscription payment process.
+
+FEATURES COVERED
+----------------
+1. Stripe Checkout Validation
+2. Card Details Entry
+3. Subscription Purchase
+4. Payment Success Validation
+5. Dashboard Redirect Validation
+
+METHODS
+-------
+completePayment()
+
+USED BY
+-------
+onboarding.spec.ts
+
+============================================================================= */
+
+export class StripePaymentPage {
+
+  readonly page: Page;
+
+  constructor(page: Page) {
+    this.page = page;
+  }
+
+  async completePayment() {
+
+    console.log(
+      '💳 Completing Stripe Payment'
+    );
+
+    await this.page.waitForSelector(
+      '#cardNumber',
+      { timeout: 60000 }
+    );
+
+    console.log(
+      '✅ Stripe Checkout Loaded'
+    );
+
+    const emailInput =
+      this.page.locator(
+        'input[type="email"]'
+      );
+
+    if (
+      await emailInput.count() > 0
+    ) {
+
+      const email =
+        await emailInput.inputValue();
+
+      if (!email) {
+
+        console.log(
+          'ℹ️ Stripe email already populated'
+        );
+      }
+    }
+
+await this.page.fill(
+  '#cardNumber',
+  STRIPE_CARD
+);
+
+    console.log(
+      '✅ Card Number Entered'
+      
+    );
+    
+await this.page.fill(
+  '#cardExpiry',
+  STRIPE_EXPIRY
+);
+
+  await this.page.fill(
+  '#cardCvc',
+  STRIPE_CVC
+);
+
+    console.log(
+      '✅ Expiry and CVC Entered'
+    );
+
+    await this.page.fill(
+      '#billingName',
+      'Hardik'
+    );
+
+    console.log(
+      '✅ Cardholder Name Entered'
+    );
+
+   await this.page.selectOption(
+  '#billingCountry',
+   COUNTRY
+);
+
+    console.log(
+      '✅ Country Selected: India'
+    );
+
+    await this.page.waitForTimeout(
+      2000
+    );
+
+    const subscribeButton =
+      this.page.getByRole(
+        'button',
+        {
+          name: /subscribe/i,
+        }
+      );
+
+    await expect(
+      subscribeButton
+    ).toBeEnabled({
+      timeout: 30000,
+    });
+
+    await safeClick(
+      subscribeButton,
+      'Subscribe'
+    );
+
+    console.log(
+      '✅ Subscribe Clicked'
+    );
+
+    console.log(
+      '⏳ Waiting for payment processing...'
+    );
+
+    await this.page.waitForTimeout(
+      10000
+    );
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /dashboard/,
+      {
+        timeout: 120000,
+      }
+    );
+
+    console.log(
+      '✅ User redirected to Dashboard after successful payment'
+    );
+
+    console.log(
+      '🌐 Final URL:',
+      this.page.url()
+    );
+
+    try {
+
+      const successToast =
+        this.page.getByText(
+          /payment successful/i
+        );
+
+      await expect(
+        successToast
+      ).toBeVisible({
+        timeout: 10000,
+      });
+
+      console.log(
+        '✅ Success Toast Displayed'
+      );
+
+    } catch {
+
+      console.log(
+        'ℹ️ Success Toast Not Visible'
+      );
+    }
+
+    console.log(
+      '🎉 Payment Completed'
+    );
+  }
+}
