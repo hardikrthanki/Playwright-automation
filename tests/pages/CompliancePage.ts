@@ -8,6 +8,8 @@ import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
   from './BasePage';
+  import { Logger }
+  from '../utils/logger';
   /* =============================================================================
 PAGE OBJECT: CompliancePage
 
@@ -39,7 +41,9 @@ constructor(page: Page) {
   super(page);
   }
   async fill() {
-    console.log('📋 Filling Compliance Profile');
+   Logger.info(
+  'Filling Compliance Profile'
+);
     await this.page.waitForTimeout(3000);
    console.log('• State of Residence');
 const dropdowns =
@@ -96,7 +100,9 @@ console.log(
   selectedValue
 );
 
-console.log('✅ State Selected');
+Logger.success(
+  'State Selected'
+);
   
     const disclosureButtons =
       this.page.getByRole('button', {
@@ -115,9 +121,9 @@ console.log('✅ State Selected');
       i < disclosureCount;
       i++
     ) {
-      console.log(
-        `📖 Processing Disclosure ${i + 1} of ${disclosureCount}`
-      );
+    Logger.info(
+  `Processing Disclosure ${i + 1} of ${disclosureCount}`
+);
       await disclosureButtons
         .nth(i)
         .scrollIntoViewIfNeeded();
@@ -190,9 +196,9 @@ await this.page.waitForTimeout(
         `Accept Disclosure ${i + 1}`
       );
 
-      console.log(
-        `✅ Disclosure ${i + 1} Accepted`
-      );
+    Logger.success(
+  `Disclosure ${i + 1} Accepted`
+);
       await this.page.waitForTimeout(
         1500
       );
@@ -205,8 +211,7 @@ await this.page.waitForTimeout(
       'Save Compliance Profile'
     );
 
- console.log(
-  '🌐 Current URL:',
+Logger.url(
   this.page.url()
 );
 

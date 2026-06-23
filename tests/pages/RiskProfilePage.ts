@@ -8,6 +8,8 @@ import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
   from './BasePage';
+   import { Logger }
+  from '../utils/logger';
 /* =============================================================================
 PAGE OBJECT: RiskProfilePage
 
@@ -44,11 +46,13 @@ export class RiskProfilePage
   }
 
   async fill() {
-    console.log('📊 Filling Risk Profile');
+    Logger.info(
+  'Filling Risk Profile'
+);
 
-    console.log(
-      '• Years Investing Experience → 3-5 years'
-    );
+  Logger.step(
+  'Open Experience Dropdown'
+);
 
     const experienceDropdown =
       this.page.locator('[role="combobox"]').nth(0);
@@ -206,8 +210,8 @@ await expect(
   timeout: 15000,
 });
 
-console.log(
-  '✅ Risk Profile completed'
+Logger.success(
+  'Risk Profile completed'
 );
 const dropdowns = this.page.locator('button[role="combobox"]');
 

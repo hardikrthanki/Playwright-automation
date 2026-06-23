@@ -4,6 +4,8 @@ import {
 
 import { BasePage }
   from './BasePage';
+  import { Logger }
+  from '../utils/logger';
 
 /* ============================================================================
    DASHBOARD PAGE
@@ -12,10 +14,9 @@ export class DashboardPage
   extends BasePage {
   async validate() {
 
-    console.log(
-      '📊 Validating Dashboard'
-    );
-
+Logger.info(
+  'Validating Dashboard'
+);
     await expect(this.page)
       .toHaveURL(
         /dashboard/,
@@ -24,13 +25,12 @@ export class DashboardPage
         }
       );
 
-    console.log(
-      '✅ Dashboard Loaded'
-    );
-
-    console.log(
-      '🔄 Refreshing Dashboard'
-    );
+  Logger.success(
+  'Dashboard Loaded'
+);
+    Logger.step(
+  'Refreshing Dashboard'
+);
 
   await this.refresh();
 
@@ -42,8 +42,8 @@ export class DashboardPage
         }
       );
 
-    console.log(
-      '✅ Dashboard persists after refresh'
-    );
+   Logger.success(
+  'Dashboard persists after refresh'
+);
   }
 }

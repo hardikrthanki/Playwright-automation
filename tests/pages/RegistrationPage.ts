@@ -12,6 +12,8 @@ import { safeClick }
 } from '../config/testData';
 import { BasePage }
   from './BasePage';
+  import { Logger }
+  from '../utils/logger';
 
 /* =============================================================================
 PAGE OBJECT: RegistrationPage
@@ -90,9 +92,9 @@ export class RegistrationPage
 
   async open() {
 
-    console.log(
-      '🌐 Opening application'
-    );
+ Logger.info(
+  'Opening application'
+);
 
     await this.page.goto(
       BASE_URL
@@ -116,9 +118,9 @@ export class RegistrationPage
     email: string
   ) {
 
-    console.log(
-      `📝 Registering: ${email}`
-    );
+    Logger.step(
+  `Registering: ${email}`
+);
 
 await this.firstNameInput.fill(
   TEST_USERS.onboarding.firstName
@@ -167,8 +169,8 @@ console.log(
       timeout: 15000,
     });
 
-    console.log(
-      '✅ Registration successful. Verification email sent.'
-    );
+Logger.success(
+  'Registration successful. Verification email sent.'
+);
   }
 }

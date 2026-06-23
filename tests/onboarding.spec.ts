@@ -19,6 +19,9 @@ import { RegistrationPage }
   import {
   TEST_USERS
 } from './config/testData';
+import {
+  generateEmail
+} from './utils/emailGenerator';
 
 /* =============================================================================
 TEST FILE: onboarding.spec.ts
@@ -108,9 +111,6 @@ Shared Reusable Utilities
 const BASE_URL = 'https://puat.ooltool.com';
 const PASSWORD = 'Test@123456';
 
-function generateEmail(): string {
-  return `imhardikthanki+${Date.now()}@gmail.com`;
-}
 
 /* ============================================================================
    MAIN TEST

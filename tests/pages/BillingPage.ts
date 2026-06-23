@@ -7,6 +7,8 @@ import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
   from './BasePage';
+    import { Logger }
+  from '../utils/logger';
 
 /* ============================================================================
    BILLING PAGE
@@ -21,9 +23,9 @@ constructor(page: Page) {
 }
   async validateOverview() {
 
-  console.log(
-    '💳 Validating Billing Overview'
-  );
+Logger.info(
+  'Validating Billing Overview'
+);
 
   await safeClick(
     this.page.getByText(
@@ -48,15 +50,15 @@ constructor(page: Page) {
       }
     );
 
-  console.log(
-    '✅ Billing Page Opened'
-  );
+Logger.success(
+  'Billing Page Opened'
+);
 }
 async validatePlans() {
 
-  console.log(
-    '📦 Validating Plans Tab'
-  );
+ Logger.info(
+  'Validating Plans Tab'
+);
 
   await safeClick(
     this.page.getByRole(
@@ -84,9 +86,9 @@ async validatePlans() {
 }
 async validateTransactions() {
 
-  console.log(
-    '💰 Validating Transactions'
-  );
+ Logger.info(
+  'Validating Transactions'
+);
 
   await safeClick(
     this.page.getByRole(
@@ -121,9 +123,9 @@ async validateTransactions() {
 }
 async validateInvoicePage() {
 
-  console.log(
-    '🧾 Validating Invoice Page'
-  );
+Logger.info(
+  'Validating Invoice Page'
+);
 
   const [invoicePage] =
     await Promise.all([
@@ -154,16 +156,15 @@ async validateInvoicePage() {
 
   await invoicePage.close();
 
-  console.log(
-    '🎉 Invoice Validation Completed'
-  );
+ Logger.celebration(
+  'Invoice Validation Completed'
+);
 }
 async validatePdfDownload() {
 
-  console.log(
-    '📄 Validating PDF Link'
-  );
-
+  Logger.info(
+  'Validating PDF Link'
+);
   const pdfLink =
     this.page.getByRole(
       'link',

@@ -7,6 +7,8 @@ import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
   from './BasePage';
+    import { Logger }
+  from '../utils/logger';
 
 /* =============================================================================
 PAGE OBJECT: PlanSelectionPage
@@ -40,10 +42,9 @@ export class PlanSelectionPage
   }
 
   async selectIncomeBuilderPlan() {
-
-    console.log(
-      '💳 Selecting Subscription Plan'
-    );
+Logger.info(
+  'Selecting Subscription Plan'
+);
 
     await this.page.waitForTimeout(
       3000
@@ -73,10 +74,9 @@ export class PlanSelectionPage
         monthlyTab,
         'Select Monthly Tab'
       );
-
-      console.log(
-        '✅ Monthly Tab Selected'
-      );
+Logger.step(
+  'Select Monthly Tab'
+);
     }
 
     console.log(
@@ -103,10 +103,9 @@ export class PlanSelectionPage
       2000
     );
 
-    console.log(
-      '✅ Income Builder Plan Selected'
-    );
-
+Logger.success(
+  'Monthly Tab Selected'
+);
     await safeClick(
       this.page.getByRole(
         'button',
@@ -118,8 +117,8 @@ export class PlanSelectionPage
       'Continue to Payment'
     );
 
-    console.log(
-      '✅ Continue to Payment Clicked'
-    );
+   Logger.success(
+  'Continue to Payment Clicked'
+);
   }
 }

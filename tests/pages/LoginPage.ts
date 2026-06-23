@@ -8,6 +8,8 @@ import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
   from './BasePage';
+  import { Logger }
+  from '../utils/logger';
 
 /* =============================================================================
 PAGE OBJECT: LoginPage
@@ -78,11 +80,9 @@ export class LoginPage
   email: string,
   password: string
 ) {
-
-    console.log(
-      '🔐 Logging in'
-    );
-
+Logger.info(
+  'Logging in'
+);
     if (
       !this.page.url().includes(
         '/login'
@@ -141,9 +141,9 @@ await this.passwordInput.fill(
           }
         );
 
-        console.log(
-          '✅ Logged in successfully'
-        );
+      Logger.success(
+  'Logged in successfully'
+);
 
         console.log(
           '🌐 Current URL:',
@@ -154,10 +154,9 @@ await this.passwordInput.fill(
 
       } catch {
 
-        console.log(
-          `⚠️ Login Attempt ${attempt} failed`
-        );
-
+      Logger.success(
+  'Logged in successfully'
+);
         console.log(
           '⚠️ Current URL:',
           this.page.url()

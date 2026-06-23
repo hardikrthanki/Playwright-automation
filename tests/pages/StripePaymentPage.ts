@@ -13,6 +13,8 @@ import { safeClick }
 } from '../config/testData';
 import { BasePage }
   from './BasePage';
+  import { Logger }
+  from '../utils/logger';
 
 /* =============================================================================
 PAGE OBJECT: StripePaymentPage
@@ -47,19 +49,18 @@ constructor(page: Page) {
   }
 
   async completePayment() {
-
-    console.log(
-      '💳 Completing Stripe Payment'
-    );
+Logger.info(
+  'Completing Stripe Payment'
+);
 
     await this.page.waitForSelector(
       '#cardNumber',
       { timeout: 60000 }
     );
 
-    console.log(
-      '✅ Stripe Checkout Loaded'
-    );
+ Logger.success(
+  'Stripe Checkout Loaded'
+);
 
     const emailInput =
       this.page.locator(
@@ -86,11 +87,9 @@ await this.page.fill(
   STRIPE_CARD
 );
 
-    console.log(
-      '✅ Card Number Entered'
-      
-    );
-    
+  Logger.success(
+  'Card Number Entered'
+);
 await this.page.fill(
   '#cardExpiry',
   STRIPE_EXPIRY
@@ -101,28 +100,24 @@ await this.page.fill(
   '#cardCvc',
   STRIPE_CVC
 );
-
-    console.log(
-      '✅ Expiry and CVC Entered'
-    );
-
+Logger.success(
+  'Expiry and CVC Entered'
+);
     await this.page.fill(
       '#billingName',
       'Hardik'
     );
-
-    console.log(
-      '✅ Cardholder Name Entered'
-    );
-
+Logger.success(
+  'Cardholder Name Entered'
+);
    await this.page.selectOption(
   '#billingCountry',
    COUNTRY
 );
 
-    console.log(
-      '✅ Country Selected: India'
-    );
+  Logger.success(
+  'Country Selected: India'
+);
 
     await this.page.waitForTimeout(
       2000
@@ -146,14 +141,13 @@ await this.page.fill(
       subscribeButton,
       'Subscribe'
     );
+Logger.success(
+  'Subscribe Clicked'
+);
 
-    console.log(
-      '✅ Subscribe Clicked'
-    );
-
-    console.log(
-      '⏳ Waiting for payment processing...'
-    );
+   Logger.info(
+  'Waiting for payment processing...'
+);
 
     await this.page.waitForTimeout(
       10000
@@ -168,15 +162,12 @@ await this.page.fill(
       }
     );
 
-    console.log(
-      '✅ User redirected to Dashboard after successful payment'
-    );
-
-    console.log(
-      '🌐 Final URL:',
-      this.page.url()
-    );
-
+ Logger.success(
+  'User redirected to Dashboard after successful payment'
+);
+Logger.url(
+  this.page.url()
+);
     try {
 
       const successToast =
@@ -190,9 +181,9 @@ await this.page.fill(
         timeout: 10000,
       });
 
-      console.log(
-        '✅ Success Toast Displayed'
-      );
+   Logger.success(
+  'Success Toast Displayed'
+);
 
     } catch {
 
@@ -201,8 +192,8 @@ await this.page.fill(
       );
     }
 
-    console.log(
-      '🎉 Payment Completed'
-    );
+Logger.celebration(
+  'Payment Completed'
+);
   }
 }
