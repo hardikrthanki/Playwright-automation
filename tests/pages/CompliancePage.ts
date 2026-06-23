@@ -10,6 +10,10 @@ import { safeClick }
   from './BasePage';
   import { Logger }
   from '../utils/logger';
+  import {
+  TIMEOUTS,
+  WAITS
+} from '../config/constants';
   /* =============================================================================
 PAGE OBJECT: CompliancePage
 
@@ -44,7 +48,9 @@ constructor(page: Page) {
    Logger.info(
   'Filling Compliance Profile'
 );
-    await this.page.waitForTimeout(3000);
+   await this.page.waitForTimeout(
+  WAITS.NORMAL
+);
    console.log('• State of Residence');
 const dropdowns =
   this.page.locator(
@@ -216,7 +222,7 @@ Logger.url(
 );
 
 await this.page.waitForTimeout(
-  5000
+  WAITS.LARGE
 );
   }
 }

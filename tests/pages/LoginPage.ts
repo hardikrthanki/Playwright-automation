@@ -10,6 +10,13 @@ import { safeClick }
   from './BasePage';
   import { Logger }
   from '../utils/logger';
+  import {
+  URLS
+} from '../config/constants';
+import {
+  TIMEOUTS,
+  WAITS
+} from '../config/constants';
 
 /* =============================================================================
 PAGE OBJECT: LoginPage
@@ -85,7 +92,7 @@ Logger.info(
 );
     if (
       !this.page.url().includes(
-        '/login'
+        URLS.LOGIN
       )
     ) {
 
@@ -227,10 +234,9 @@ await this.passwordInput.fill(
     ),
     'Open Profile Menu'
   );
-
-  await this.page.waitForTimeout(
-    2000
-  );
+await this.page.waitForTimeout(
+  WAITS.NORMAL
+);
 
   await safeClick(
     this.page.getByText(
