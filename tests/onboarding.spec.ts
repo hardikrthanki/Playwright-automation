@@ -16,6 +16,9 @@ import { RegistrationPage }
   from './pages/RiskProfilePage';
   import { CompliancePage }
   from './pages/CompliancePage';
+  import {
+  TEST_USERS
+} from './config/testData';
 
 /* =============================================================================
 TEST FILE: onboarding.spec.ts
@@ -128,6 +131,10 @@ const context = await browser.newContext();
 const page = await context.newPage();
       const email =
         generateEmail();
+        console.log(
+  'Generated Email:',
+  email
+);
 
       console.log(
         '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
@@ -179,9 +186,10 @@ await test.step(
                 loginPage!
               );
 
-            await login.login(
-              email
-            );
+           await login.login(
+  email,
+  TEST_USERS.onboarding.password
+);   
           }
         );
         await test.step(

@@ -5,6 +5,8 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
+  import { BasePage }
+  from './BasePage';
 
 /* =============================================================================
 PAGE OBJECT: PlanSelectionPage
@@ -30,12 +32,11 @@ onboarding.spec.ts
 
 ============================================================================= */
 
-export class PlanSelectionPage {
+export class PlanSelectionPage
+  extends BasePage {
 
-  readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
+ constructor(page: Page) {
+  super(page);
   }
 
   async selectIncomeBuilderPlan() {

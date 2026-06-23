@@ -6,6 +6,8 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
+  import { BasePage }
+  from './BasePage';
   /* =============================================================================
 PAGE OBJECT: CompliancePage
 
@@ -30,12 +32,11 @@ USED BY
 onboarding.spec.ts
 
 ============================================================================= */
+export class CompliancePage
+  extends BasePage {
 
-export class CompliancePage {
-  readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
+constructor(page: Page) {
+  super(page);
   }
   async fill() {
     console.log('📋 Filling Compliance Profile');

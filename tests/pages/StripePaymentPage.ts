@@ -11,6 +11,8 @@ import { safeClick }
   STRIPE_CVC,
   COUNTRY
 } from '../config/testData';
+import { BasePage }
+  from './BasePage';
 
 /* =============================================================================
 PAGE OBJECT: StripePaymentPage
@@ -37,12 +39,11 @@ onboarding.spec.ts
 
 ============================================================================= */
 
-export class StripePaymentPage {
+export class StripePaymentPage
+  extends BasePage {
 
-  readonly page: Page;
-
-  constructor(page: Page) {
-    this.page = page;
+constructor(page: Page) {
+  super(page);
   }
 
   async completePayment() {
@@ -94,6 +95,7 @@ await this.page.fill(
   '#cardExpiry',
   STRIPE_EXPIRY
 );
+
 
   await this.page.fill(
   '#cardCvc',

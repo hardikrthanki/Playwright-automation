@@ -6,12 +6,12 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
-  import {
+ import {
   BASE_URL,
-  PASSWORD,
-  FIRST_NAME,
-  LAST_NAME
+  TEST_USERS
 } from '../config/testData';
+import { BasePage }
+  from './BasePage';
 
 /* =============================================================================
 PAGE OBJECT: RegistrationPage
@@ -37,10 +37,8 @@ onboarding.spec.ts
 
 ============================================================================= */
 
-export class RegistrationPage {
-
-  readonly page: Page;
-
+export class RegistrationPage
+  extends BasePage {
   readonly createAccountLink: Locator;
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
@@ -49,9 +47,9 @@ export class RegistrationPage {
   readonly confirmPasswordInput: Locator;
   readonly submitButton: Locator;
 
-  constructor(page: Page) {
+ constructor(page: Page) {
 
-    this.page = page;
+  super(page);
 
     this.createAccountLink =
       page.getByRole('link', {
@@ -122,25 +120,29 @@ export class RegistrationPage {
       `📝 Registering: ${email}`
     );
 
-  await this.firstNameInput.fill(
-  FIRST_NAME
+await this.firstNameInput.fill(
+  TEST_USERS.onboarding.firstName
 );
 
 await this.lastNameInput.fill(
-  LAST_NAME
+  TEST_USERS.onboarding.lastName
 );
 
+console.log(
+  'Registration Email:',
+  email
+);
     await this.emailInput.fill(
       email
     );
 
     await this.passwordInput.fill(
-      PASSWORD
-    );
+  TEST_USERS.onboarding.password
+);
 
-    await this.confirmPasswordInput.fill(
-      PASSWORD
-    );
+  await this.confirmPasswordInput.fill(
+  TEST_USERS.onboarding.password
+);
 
     await safeClick(
       this.submitButton,

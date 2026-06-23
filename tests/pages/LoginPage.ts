@@ -6,6 +6,8 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
+  import { BasePage }
+  from './BasePage';
 
 /* =============================================================================
 PAGE OBJECT: LoginPage
@@ -31,22 +33,21 @@ onboarding.spec.ts
 ============================================================================= */
 import {
   BASE_URL,
-  PASSWORD
+  TEST_USERS
 } from '../config/testData';
 
-export class LoginPage {
-
-  readonly page: Page;
+export class LoginPage
+  extends BasePage {
 
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
 
-  constructor(page: Page) {
+ constructor(page: Page) {
 
-    this.page = page;
+  super(page);
 
-    this.emailInput = page
+  this.emailInput = page
       .getByLabel(/^email$/i)
       .or(
         page
@@ -74,8 +75,9 @@ export class LoginPage {
   }
 
   async login(
-    email: string
-  ) {
+  email: string,
+  password: string
+) {
 
     console.log(
       '🔐 Logging in'
@@ -119,10 +121,9 @@ export class LoginPage {
       await this.emailInput.fill(
         email
       );
-
-      await this.passwordInput.fill(
-        PASSWORD
-      );
+await this.passwordInput.fill(
+  password
+);
 
       await safeClick(
         this.submitButton,
@@ -212,4 +213,57 @@ export class LoginPage {
       }
     }
   }
+  async logout() {
+
+  console.log(
+    '🚪 Logging Out'
+  );
+
+  await safeClick(
+    this.page.getByText(
+      'HT',
+      {
+        exact: true
+      }
+    ),
+    'Open Profile Menu'
+  );
+
+  await this.page.waitForTimeout(
+    2000
+  );
+
+  await safeClick(
+    this.page.getByText(
+      /sign out/i
+    ),
+    'Click Sign Out'
+  );
+
+  await expect(this.page)
+    .toHaveURL(
+      /login/,
+      {
+        timeout: 30000,
+      }
+    );
+
+  console.log(
+    '✅ Redirected To Login'
+  );
+
+  await expect(
+    this.page.locator(
+      'input[type="email"]'
+    )
+  ).toBeVisible();
+
+  console.log(
+    '✅ Login Page Visible'
+  );
+
+  console.log(
+    '🎉 Logout Validation Completed'
+  );
+}
 }

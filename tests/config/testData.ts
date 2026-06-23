@@ -10,14 +10,32 @@ Stores reusable test data used across Playwright tests.
 export const BASE_URL =
   'https://puat.ooltool.com';
 
-export const PASSWORD =
-  'Test@123456';
+/* ============================================================================
+   TEST USERS
+============================================================================ */
 
-export const FIRST_NAME =
-  'Hardik';
+export const TEST_USERS = {
 
-export const LAST_NAME =
-  'Thanki';
+  onboarding: {
+
+    firstName: 'Hardik',
+
+    lastName: 'Thanki',
+
+    password: 'Test@123456'
+  },
+
+  subscriber: {
+
+    email: 'imhardikthanki+09@gmail.com',
+
+    password: 'H@rdik9944'
+  }
+};
+
+/* ============================================================================
+   STRIPE TEST DATA
+============================================================================ */
 
 export const STRIPE_CARD =
   '4242424242424242';

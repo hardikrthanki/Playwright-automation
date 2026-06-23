@@ -6,6 +6,8 @@ import {
 
 import { safeClick }
   from '../helpers/safeClick';
+  import { BasePage }
+  from './BasePage';
 /* =============================================================================
 PAGE OBJECT: RiskProfilePage
 
@@ -33,11 +35,12 @@ onboarding.spec.ts
 
 ============================================================================= */
 
-export class RiskProfilePage {
-  readonly page: Page;
+export class RiskProfilePage
+  extends BasePage {
 
-  constructor(page: Page) {
-    this.page = page;
+ constructor(page: Page) {
+
+  super(page);
   }
 
   async fill() {

@@ -105,11 +105,9 @@ import { safeClick } from './helpers/safeClick';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BillingPage } from './pages/BillingPage';
-
-const BASE_URL = 'https://puat.ooltool.com';
-const TEST_EMAIL = 'imhardikthanki+09@gmail.com';
-const PASSWORD = 'H@rdik9944';
-
+import {
+  TEST_USERS
+} from './config/testData';
 test.setTimeout(90000);
 test(
   'Subscriber Login',
@@ -117,7 +115,10 @@ test(
 
     const login = new LoginPage(page);
 
-    await login.login(TEST_EMAIL);
+    await login.login(
+  TEST_USERS.subscriber.email,
+  TEST_USERS.subscriber.password
+);
 
     const dashboard =
       new DashboardPage(page);
