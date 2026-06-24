@@ -1,14 +1,12 @@
 import {
   Page,
+  Locator,
   expect
 } from '@playwright/test';
 
-import { safeClick }
-  from '../helpers/safeClick';
-  import { BasePage }
-  from './BasePage';
-    import { Logger }
-  from '../utils/logger';
+import { BasePage } from './BasePage';
+import { safeClick } from '../helpers/safeClick';
+import { Logger } from '../utils/logger';
 
 /* =============================================================================
 PAGE OBJECT: PlanSelectionPage
@@ -34,91 +32,118 @@ onboarding.spec.ts
 
 ============================================================================= */
 
-export class PlanSelectionPage
-  extends BasePage {
+export class PlanSelectionPage extends BasePage {
 
- constructor(page: Page) {
-  super(page);
-  }
 
-  async selectIncomeBuilderPlan() {
-Logger.info(
-  'Selecting Subscription Plan'
-);
+  readonly incomeBuilderPlan: Locator;
 
-    await this.page.waitForTimeout(
-      3000
-    );
+  readonly completeSetupButton: Locator;
 
-    await expect(
-      this.page.getByText(
-        /choose your plan/i
-      )
-    ).toBeVisible({
-      timeout: 15000,
-    });
 
-    const monthlyTab =
-      this.page.getByRole(
-        'button',
-        {
-          name: /^monthly$/i,
-        }
-      );
+  constructor(page: Page) {
 
-    if (
-      await monthlyTab.isVisible()
-    ) {
+    super(page);
 
-      await safeClick(
-        monthlyTab,
-        'Select Monthly Tab'
-      );
-Logger.step(
-  'Select Monthly Tab'
-);
-    }
 
-    console.log(
-      '• Selecting Income Builder Plan'
-    );
-
-    const incomeBuilderPlan =
-      this.page.getByText(
+    this.incomeBuilderPlan =
+      page.getByText(
         'Income Builder',
         {
-          exact: true,
+          exact:true
         }
       );
 
-    await incomeBuilderPlan
-      .scrollIntoViewIfNeeded();
 
-    await safeClick(
-      incomeBuilderPlan,
-      'Select Income Builder Plan'
-    );
+  this.completeSetupButton =
+  page.locator(
+'button'
+).filter({
+hasText:/complete setup|continue to payment/i
+});
 
-    await this.page.waitForTimeout(
-      2000
-    );
-
-Logger.success(
-  'Monthly Tab Selected'
-);
-    await safeClick(
-      this.page.getByRole(
-        'button',
-        {
-          name:
-            /continue to payment/i,
-        }
-      ),
-      'Continue to Payment'
-    );
-
-   Logger.success(
-  'Continue to Payment Clicked'
-);
   }
+
+
+
+  async selectIncomeBuilderPlan() {
+
+  Logger.info(
+    'Selecting Income Builder Plan'
+  );
+
+
+  await expect(
+    this.page.getByText(
+      /choose your plan/i
+    )
+  ).toBeVisible({
+    timeout:30000
+  });
+
+
+  Logger.step(
+    'Select Income Builder Plan'
+  );
+
+
+  await safeClick(
+    this.incomeBuilderPlan,
+    'Income Builder Plan'
+  );
+
+
+  Logger.success(
+    'Income Builder Selected'
+  );
+  console.log(
+  "Current URL:",
+  this.page.url()
+);
+
+
+console.log(
+  "All Buttons:",
+  await this.page.locator('button').allTextContents()
+);
+
+
+console.log(
+  "All Text:",
+  await this.page.locator('body').innerText()
+);
+
+
+  await this.page.waitForTimeout(
+    3000
+  );
+
+
+  await expect(
+    this.completeSetupButton
+  ).toBeVisible({
+    timeout:30000
+  });
+
+
+  await safeClick(
+    this.completeSetupButton,
+    'Complete Setup'
+  );
+
+
+  Logger.success(
+    'Complete Setup Clicked'
+  );
+
+
+  await this.page.waitForTimeout(
+    5000
+  );
+
+
+  Logger.url(
+    this.page.url()
+  );
+
+}
 }

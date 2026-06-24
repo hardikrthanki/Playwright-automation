@@ -3,197 +3,298 @@ import {
   expect
 } from '@playwright/test';
 
-import { safeClick }
-  from '../helpers/safeClick';
-  import {
+import { safeClick } from '../helpers/safeClick';
+
+import {
   STRIPE_CARD,
   STRIPE_EXPIRY,
-  STRIPE_CVC,
-  COUNTRY
+  STRIPE_CVC
 } from '../config/testData';
-import { BasePage }
-  from './BasePage';
-  import { Logger }
-  from '../utils/logger';
 
-/* =============================================================================
+import { BasePage } from './BasePage';
+import { Logger } from '../utils/logger';
+
+
+/* ============================================================================
 PAGE OBJECT: StripePaymentPage
 
-PURPOSE
--------
-Handles Stripe subscription payment process.
+Handles Stripe Checkout payment
 
-FEATURES COVERED
-----------------
-1. Stripe Checkout Validation
-2. Card Details Entry
-3. Subscription Purchase
-4. Payment Success Validation
-5. Dashboard Redirect Validation
-
-METHODS
--------
+Methods:
 completePayment()
 
-USED BY
--------
-onboarding.spec.ts
+============================================================================ */
 
-============================================================================= */
 
-export class StripePaymentPage
-  extends BasePage {
+export class StripePaymentPage extends BasePage {
+
 
 constructor(page: Page) {
   super(page);
-  }
+}
 
-  async completePayment() {
+
+
+async completePayment() {
+
+
 Logger.info(
   'Completing Stripe Payment'
 );
 
-    await this.page.waitForSelector(
-      '#cardNumber',
-      { timeout: 60000 }
-    );
 
- Logger.success(
+
+//
+// Wait Stripe Checkout
+//
+
+await this.page.waitForURL(
+  /checkout.stripe.com/,
+  {
+    timeout:60000
+  }
+);
+
+
+Logger.success(
   'Stripe Checkout Loaded'
 );
 
-    const emailInput =
-      this.page.locator(
-        'input[type="email"]'
-      );
 
-    if (
-      await emailInput.count() > 0
-    ) {
 
-      const email =
-        await emailInput.inputValue();
+//
+// Wait card field
+//
 
-      if (!email) {
+await this.page.locator(
+  '#cardNumber'
+)
+.waitFor(
+{
+  state:'visible',
+  timeout:60000
+}
+);
 
-        console.log(
-          'ℹ️ Stripe email already populated'
-        );
-      }
-    }
 
-await this.page.fill(
-  '#cardNumber',
+
+Logger.success(
+  'Stripe Card Fields Visible'
+);
+
+
+
+
+
+//
+// Card Number
+//
+
+await this.page.locator(
+  '#cardNumber'
+)
+.fill(
   STRIPE_CARD
 );
 
-  Logger.success(
+
+Logger.success(
   'Card Number Entered'
 );
-await this.page.fill(
-  '#cardExpiry',
+
+
+
+
+
+//
+// Expiry
+//
+
+await this.page.locator(
+  '#cardExpiry'
+)
+.fill(
   STRIPE_EXPIRY
 );
 
 
-  await this.page.fill(
-  '#cardCvc',
+Logger.success(
+  'Expiry Entered'
+);
+
+
+
+
+
+//
+// CVC
+//
+
+await this.page.locator(
+  '#cardCvc'
+)
+.fill(
   STRIPE_CVC
 );
+
+
 Logger.success(
-  'Expiry and CVC Entered'
+  'CVC Entered'
 );
-    await this.page.fill(
-      '#billingName',
-      'Hardik'
-    );
+
+
+
+
+
+//
+// Name
+//
+
+const name =
+this.page.locator(
+ '#billingName'
+);
+
+
+if(
+ await name.count()
+){
+
+await name.fill(
+ 'Hardik Thanki'
+);
+
+
 Logger.success(
-  'Cardholder Name Entered'
+ 'Billing Name Entered'
 );
-   await this.page.selectOption(
-  '#billingCountry',
-   COUNTRY
+
+}
+
+
+
+
+//
+// Country
+//
+
+const country =
+this.page.locator(
+ '#billingCountry'
 );
+
+
+if(
+ await country.count()
+){
+
+
+await country.selectOption(
+ 'IN'
+);
+
+
+Logger.success(
+ 'Country Selected India'
+);
+
+}
+
+
+
+
+//
+// Click subscribe/pay
+//
+
+const payButton =
+this.page.getByRole(
+ 'button',
+ {
+   name:/subscribe|pay|complete|start/i
+ }
+);
+
+
+
+await expect(
+ payButton
+)
+.toBeEnabled(
+{
+ timeout:30000
+}
+);
+
+
+
+await safeClick(
+ payButton,
+ 'Complete Payment'
+);
+
+
+
+Logger.success(
+ 'Payment Submitted'
+);
+
+
+
+
+
+//
+// Wait result
+//
+
+await this.page.waitForTimeout(
+10000
+);
+
+
+
+Logger.url(
+ this.page.url()
+);
+
+
+
+
+
+//
+// Optional success message
+//
+
+const successToast =
+this.page.getByText(
+/payment successful/i
+);
+
+if(await successToast.count()) {
+
+  await expect(successToast)
+  .toBeVisible({
+    timeout:10000
+  });
 
   Logger.success(
-  'Country Selected: India'
-);
+    'Payment Success Message Displayed'
+  );
 
-    await this.page.waitForTimeout(
-      2000
-    );
+}
 
-    const subscribeButton =
-      this.page.getByRole(
-        'button',
-        {
-          name: /subscribe/i,
-        }
-      );
 
-    await expect(
-      subscribeButton
-    ).toBeEnabled({
-      timeout: 30000,
-    });
 
-    await safeClick(
-      subscribeButton,
-      'Subscribe'
-    );
-Logger.success(
-  'Subscribe Clicked'
-);
 
-   Logger.info(
-  'Waiting for payment processing...'
-);
-
-    await this.page.waitForTimeout(
-      10000
-    );
-
-    await expect(
-      this.page
-    ).toHaveURL(
-      /dashboard/,
-      {
-        timeout: 120000,
-      }
-    );
-
- Logger.success(
-  'User redirected to Dashboard after successful payment'
-);
-Logger.url(
-  this.page.url()
-);
-    try {
-
-      const successToast =
-        this.page.getByText(
-          /payment successful/i
-        );
-
-      await expect(
-        successToast
-      ).toBeVisible({
-        timeout: 10000,
-      });
-
-   Logger.success(
-  'Success Toast Displayed'
-);
-
-    } catch {
-
-      console.log(
-        'ℹ️ Success Toast Not Visible'
-      );
-    }
 
 Logger.celebration(
-  'Payment Completed'
+ 'Payment Completed'
 );
-  }
+
+
+
+}
+
+
+
 }

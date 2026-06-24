@@ -3,20 +3,23 @@
 import {
   test,
   chromium,
+  Page,
 } from '@playwright/test';
 import { RegistrationPage }
   from './pages/RegistrationPage';
-  import { LoginPage }
+import { LoginPage }
   from './pages/LoginPage';
-  import { PlanSelectionPage }
+import { PlanSelectionPage }
   from './pages/PlanSelectionPage';
-  import { StripePaymentPage }
+import { StripePaymentPage }
   from './pages/StripePaymentPage';
-  import { RiskProfilePage }
+import { RiskProfilePage }
   from './pages/RiskProfilePage';
-  import { CompliancePage }
+import { CompliancePage }
   from './pages/CompliancePage';
-  import {
+import { DashboardPage }
+  from './pages/DashboardPage';
+import {
   TEST_USERS
 } from './config/testData';
 import {
@@ -122,19 +125,19 @@ test.describe('OOLTool Onboarding Flow', () => {
     async () => {
       test.setTimeout(20 * 60 * 1000); // 20 minutes
 
-const browser = await chromium.launch({
-  headless: false,
-});
+      const browser = await chromium.launch({
+        headless: false,
+      });
 
-const context = await browser.newContext();
+      const context = await browser.newContext();
 
-const page = await context.newPage();
+      const page = await context.newPage();
       const email =
         generateEmail();
-        console.log(
-  'Generated Email:',
-  email
-);
+      console.log(
+        'Generated Email:',
+        email
+      );
 
       console.log(
         '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
@@ -164,32 +167,28 @@ const page = await context.newPage();
             );
           }
         );
-let loginPage: Page = page;
-
-await test.step(
-  'Step 2 - Verify Email',
-  async () => {
-    console.log('\n📧 MANUAL EMAIL VERIFICATION REQUIRED');
-    console.log(`📧 Verify email sent to: ${email}`);
-    console.log('📧 Open Gmail and click the verification link.');
-    console.log('▶️ After verification, resume Playwright.');
-    await page.pause();
-
-    loginPage = page;
-  }
-);
+        await test.step(
+          'Step 2 - Verify Email',
+          async () => {
+            console.log('\n📧 MANUAL EMAIL VERIFICATION REQUIRED');
+            console.log(`📧 Verify email sent to: ${email}`);
+            console.log('📧 Open Gmail and click the verification link.');
+            console.log('▶️ After verification, resume Playwright.');
+            await page.pause();
+          }
+        );
         await test.step(
           'Step 3 - Login',
           async () => {
             const login =
               new LoginPage(
-                loginPage!
+                page
               );
 
-           await login.login(
-  email,
-  TEST_USERS.onboarding.password
-);   
+            await login.login(
+              email,
+              TEST_USERS.onboarding.password
+            );
           }
         );
         await test.step(
@@ -197,7 +196,7 @@ await test.step(
           async () => {
             const risk =
               new RiskProfilePage(
-                loginPage!
+                page
               );
 
             await risk.fill();
@@ -208,7 +207,7 @@ await test.step(
           async () => {
             const compliance =
               new CompliancePage(
-                loginPage!
+                page
               );
 
             await compliance.fill();
@@ -216,44 +215,53 @@ await test.step(
         );
 
         await test.step(
-  'Step 6 - Plan Selection',
-  async () => {
+          'Step 6 - Plan Selection',
+          async () => {
 
-    const planPage =
-      new PlanSelectionPage(page);
+            const planPage =
+              new PlanSelectionPage(page);
 
-    await planPage.selectIncomeBuilderPlan();
-  }
-  
-);
-await test.step(
-  'Step 7 - Stripe Payment',
-  async () => {
+            await planPage.selectIncomeBuilderPlan();
+          }
 
-    const stripe =
-      new StripePaymentPage(
-        page
-      );
+        );
+        await test.step(
+          'Step 7 - Stripe Payment',
+          async () => {
 
-    await stripe.completePayment();
-  }
-);
-console.log(
-  '🎉 OOLTOOL ONBOARDING FLOW COMPLETED SUCCESSFULLY'
-);
+            const stripe =
+              new StripePaymentPage(
+                page
+              );
 
-console.log(
-  '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
-);
+            await stripe.completePayment();
+          }
+        );
+        await test.step(
+          'Step 8 - Dashboard Validation',
+          async () => {
+            const dashboard =
+              new DashboardPage(page);
 
-} finally {
+            await dashboard.validate();
+          }
+        );
+        console.log(
+          '🎉 OOLTOOL ONBOARDING FLOW COMPLETED SUCCESSFULLY'
+        );
 
-  await browser.close();
+        console.log(
+          '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+        );
 
-  console.log(
-    '✅ Browser Closed'
-  );
-}
+      } finally {
+
+        await browser.close();
+
+        console.log(
+          '✅ Browser Closed'
+        );
+      }
     }
   );
 });
