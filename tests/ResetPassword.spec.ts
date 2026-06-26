@@ -17,7 +17,9 @@ npx playwright test tests/ResetPassword.spec.ts --headed
 
 NOTE
 ----
-Use a valid reset-password URL.
+Set RESET_URL before running this file:
+$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+npx playwright test tests/ResetPassword.spec.ts --headed
 
 ============================================================================= */
 
@@ -25,7 +27,15 @@ test(
   'Reset Password',
   async ({ page }) => {
 const RESET_URL =
-  'PASTE_RESET_URL_HERE';
+  process.env.RESET_URL ??
+  '';
+
+if (!RESET_URL) {
+  test.skip(
+    true,
+    'RESET_URL is required for this standalone reset-password test.'
+  );
+}
 
 await page.goto(
   RESET_URL

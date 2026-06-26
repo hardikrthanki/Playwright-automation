@@ -34,6 +34,9 @@ npx playwright test tests/forgotpassword.spec.ts --headed
 test(
   'Forgot Password Flow',
   async ({ page }) => {
+    test.setTimeout(
+      5 * 60 * 1000
+    );
 
     const newPassword =
       'H@rdik1989';

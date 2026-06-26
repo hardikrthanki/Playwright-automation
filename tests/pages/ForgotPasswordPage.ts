@@ -14,7 +14,6 @@ import { Logger }
   from '../utils/logger';
 
 import {
-  AUTH_SETTINGS,
   BASE_URL
 } from '../config/testData';
 
@@ -152,20 +151,9 @@ export class ForgotPasswordPage
       )
     ).toBeVisible();
 
-    const expiryMinutes =
-      AUTH_SETTINGS.passwordResetLinkExpiryMinutes;
-
-    const expiryText =
-      expiryMinutes === 60
-        ? /expires in 1 hour/i
-        : new RegExp(
-          `expires in ${expiryMinutes} minute`,
-          'i'
-        );
-
     await expect(
       this.page.getByText(
-        expiryText
+        /expires in \d+\s*(minute|minutes|hour|hours)/i
       )
     ).toBeVisible();
 

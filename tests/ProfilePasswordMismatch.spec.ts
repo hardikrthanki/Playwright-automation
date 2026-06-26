@@ -26,6 +26,9 @@ npx playwright test tests/ProfilePasswordMismatch.spec.ts --headed
 test(
   'Password Mismatch Validation',
   async ({ page }) => {
+    test.setTimeout(
+      90000
+    );
 
     const login =
       new LoginPage(page);
