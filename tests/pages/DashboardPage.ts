@@ -8,7 +8,11 @@ import { BasePage }
   from '../utils/logger';
 
 /* ============================================================================
-   DASHBOARD PAGE
+PAGE OBJECT: DashboardPage
+
+PURPOSE
+-------
+Validates that the user reaches the dashboard and remains there after refresh.
 ============================================================================ */
 export class DashboardPage
   extends BasePage {

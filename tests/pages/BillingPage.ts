@@ -11,7 +11,12 @@ import { safeClick }
   from '../utils/logger';
 
 /* ============================================================================
-   BILLING PAGE
+PAGE OBJECT: BillingPage
+
+PURPOSE
+-------
+Validates subscriber billing sections, plan details, transactions, invoices,
+and PDF links.
 ============================================================================ */
 
 export class BillingPage

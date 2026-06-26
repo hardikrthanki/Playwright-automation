@@ -1,5 +1,9 @@
 /* =============================================================================
 CONSTANTS
+
+PURPOSE
+-------
+Stores shared timeout, wait, and route constants used by Playwright tests.
 ============================================================================= */
 
 export const TIMEOUTS = {

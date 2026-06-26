@@ -18,7 +18,9 @@ TEST SUITE: Profile
 PURPOSE
 -------
 Validate Profile functionality.
-/ npx playwright test tests/Profile.spec.ts --headed
+
+Run:
+npx playwright test tests/Profile.spec.ts --headed
 ============================================================================= */
 
 test(

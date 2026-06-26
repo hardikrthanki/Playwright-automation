@@ -18,7 +18,9 @@ TEST SUITE: Profile Password Mismatch
 PURPOSE
 -------
 Validate password mismatch error message.
-/npx playwright test tests/ProfilePasswordMismatch.spec.ts --headed
+
+Run:
+npx playwright test tests/ProfilePasswordMismatch.spec.ts --headed
 ============================================================================= */
 
 test(

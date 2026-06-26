@@ -8,8 +8,10 @@ import { safeClick }
 from '../helpers/safeClick';
 
 import {
+  AUTH_SETTINGS,
   BASE_URL,
-  TEST_USERS
+  TEST_USERS,
+  validatePasswordPolicy
 }
 from '../config/testData';
 
@@ -200,12 +202,18 @@ extends BasePage {
 
 
   async register(
-    email: string
+    email: string,
+    mobileNumber =
+      TEST_USERS.onboarding.mobile
   ) {
 
 
     Logger.step(
       `Registering: ${email}`
+    );
+
+    validatePasswordPolicy(
+      TEST_USERS.onboarding.password
     );
 
 
@@ -231,48 +239,56 @@ extends BasePage {
 
 
     await this.mobileInput.fill(
-      '2015550123'
+      mobileNumber
     );
 
 
-    await expect(
-      this.sendCodeButton
-    )
-    .toBeEnabled({
-      timeout:10000
-    });
+    if (
+      AUTH_SETTINGS.registrationMobileOtpEnabled
+    ) {
+      await expect(
+        this.sendCodeButton
+      )
+      .toBeEnabled({
+        timeout:10000
+      });
 
 
-    await safeClick(
-      this.sendCodeButton,
-      'Send Code via SMS'
-    );
+      await safeClick(
+        this.sendCodeButton,
+        'Send Code via SMS'
+      );
 
 
-    Logger.info(
-      'Entering OTP'
-    );
+      Logger.info(
+        'Entering OTP'
+      );
 
 
-    await this.otpInput.fill(
-  '111111'
-);
+      await this.otpInput.fill(
+        AUTH_SETTINGS.otpCode
+      );
 
 
-await safeClick(
-  this.verifyOtpButton,
-  'Verify OTP'
-);
+      await safeClick(
+        this.verifyOtpButton,
+        'Verify OTP'
+      );
 
 
-Logger.success(
-  'OTP Verify Clicked'
-);
+      Logger.success(
+        'OTP Verify Clicked'
+      );
 
 
-await this.page.waitForTimeout(
-  2000
-);
+      await this.page.waitForTimeout(
+        2000
+      );
+    } else {
+      Logger.info(
+        'Registration mobile OTP is disabled in auth settings'
+      );
+    }
 
 
 

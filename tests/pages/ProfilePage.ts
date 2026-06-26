@@ -201,6 +201,20 @@ async validatePasswordMismatch() {
     'Password Mismatch Message Verified'
   );
 }
+async validateWrongCurrentPassword() {
+
+  await expect(
+    this.page.getByText(
+      /current password is incorrect|incorrect current password|wrong current password|invalid current password/i
+    )
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  Logger.success(
+    'Wrong Current Password Message Verified'
+  );
+}
 async changePasswordMismatch(
   currentPassword: string,
   newPassword: string,

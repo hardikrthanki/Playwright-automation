@@ -14,6 +14,7 @@ import { Logger }
   from '../utils/logger';
 
 import {
+  AUTH_SETTINGS,
   BASE_URL
 } from '../config/testData';
 
@@ -26,10 +27,12 @@ Handles Forgot Password functionality.
 
 FEATURES COVERED
 ----------------
-1. Open Forgot Password Page
-2. Submit Email
-3. Validate Reset Link Message
-4. Navigate Back To Login
+1. Open Login Page
+2. Click Forgot Password
+3. Validate Forgot Password Redirect
+4. Submit Email
+5. Validate Reset Link Message
+6. Navigate Back To Login
 
 ============================================================================= */
 
@@ -46,8 +49,12 @@ export class ForgotPasswordPage
     super(page);
 
     this.forgotPasswordLink =
-      page.locator(
-        'a[href="/forgot-password"]'
+      page.getByText(
+        /forgot password/i
+      ).or(
+        page.locator(
+          'a[href="/forgot-password"]'
+        )
       );
 
     this.emailInput =
@@ -76,7 +83,24 @@ export class ForgotPasswordPage
     );
 
     await this.page.goto(
-      `${BASE_URL}/forgot-password`
+      `${BASE_URL}/login`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    await safeClick(
+      this.forgotPasswordLink,
+      'Open Forgot Password'
+    );
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /forgot-password/,
+      {
+        timeout: 10000
+      }
     );
 
     await expect(
@@ -125,6 +149,23 @@ export class ForgotPasswordPage
     await expect(
       this.page.getByText(
         email
+      )
+    ).toBeVisible();
+
+    const expiryMinutes =
+      AUTH_SETTINGS.passwordResetLinkExpiryMinutes;
+
+    const expiryText =
+      expiryMinutes === 60
+        ? /expires in 1 hour/i
+        : new RegExp(
+          `expires in ${expiryMinutes} minute`,
+          'i'
+        );
+
+    await expect(
+      this.page.getByText(
+        expiryText
       )
     ).toBeVisible();
 

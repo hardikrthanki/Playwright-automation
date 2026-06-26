@@ -9,6 +9,8 @@ import { RegistrationPage }
   from './pages/RegistrationPage';
 import { LoginPage }
   from './pages/LoginPage';
+import { MobileVerificationPage }
+  from './pages/MobileVerificationPage';
 import { PlanSelectionPage }
   from './pages/PlanSelectionPage';
 import { StripePaymentPage }
@@ -20,10 +22,12 @@ import { CompliancePage }
 import { DashboardPage }
   from './pages/DashboardPage';
 import {
+  AUTH_SETTINGS,
   TEST_USERS
 } from './config/testData';
 import {
-  generateEmail
+  generateEmail,
+  generateMobileNumber
 } from './utils/emailGenerator';
 
 /* =============================================================================
@@ -134,9 +138,15 @@ test.describe('OOLTool Onboarding Flow', () => {
       const page = await context.newPage();
       const email =
         generateEmail();
+      const mobileNumber =
+        generateMobileNumber();
       console.log(
         'Generated Email:',
         email
+      );
+      console.log(
+        'Generated Mobile:',
+        mobileNumber
       );
 
       console.log(
@@ -163,18 +173,27 @@ test.describe('OOLTool Onboarding Flow', () => {
             await registration.open();
 
             await registration.register(
-              email
+              email,
+              mobileNumber
             );
           }
         );
         await test.step(
           'Step 2 - Verify Email',
           async () => {
+            if (
+              AUTH_SETTINGS.emailVerificationRequired
+            ) {
             console.log('\n📧 MANUAL EMAIL VERIFICATION REQUIRED');
             console.log(`📧 Verify email sent to: ${email}`);
             console.log('📧 Open Gmail and click the verification link.');
             console.log('▶️ After verification, resume Playwright.');
             await page.pause();
+            } else {
+              console.log(
+                'Email verification is disabled in auth settings'
+              );
+            }
           }
         );
         await test.step(
@@ -192,7 +211,20 @@ test.describe('OOLTool Onboarding Flow', () => {
           }
         );
         await test.step(
-          'Step 4 - Risk Profile',
+          'Step 4 - Mobile Verification',
+          async () => {
+            const mobileVerification =
+              new MobileVerificationPage(
+                page
+              );
+
+            await mobileVerification.completeIfVisible(
+              mobileNumber
+            );
+          }
+        );
+        await test.step(
+          'Step 5 - Risk Profile',
           async () => {
             const risk =
               new RiskProfilePage(
@@ -203,7 +235,7 @@ test.describe('OOLTool Onboarding Flow', () => {
           }
         );
         await test.step(
-          'Step 5 - Compliance',
+          'Step 6 - Compliance',
           async () => {
             const compliance =
               new CompliancePage(
@@ -215,7 +247,7 @@ test.describe('OOLTool Onboarding Flow', () => {
         );
 
         await test.step(
-          'Step 6 - Plan Selection',
+          'Step 7 - Plan Selection',
           async () => {
 
             const planPage =
@@ -226,7 +258,7 @@ test.describe('OOLTool Onboarding Flow', () => {
 
         );
         await test.step(
-          'Step 7 - Stripe Payment',
+          'Step 8 - Stripe Payment',
           async () => {
 
             const stripe =
@@ -238,7 +270,7 @@ test.describe('OOLTool Onboarding Flow', () => {
           }
         );
         await test.step(
-          'Step 8 - Dashboard Validation',
+          'Step 9 - Dashboard Validation',
           async () => {
             const dashboard =
               new DashboardPage(page);

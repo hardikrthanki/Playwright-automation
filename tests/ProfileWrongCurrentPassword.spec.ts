@@ -19,6 +19,9 @@ PURPOSE
 -------
 Validate error message when user enters incorrect current password.
 
+Run:
+npx playwright test tests/ProfileWrongCurrentPassword.spec.ts --headed
+
 ============================================================================= */
 
 test(

@@ -13,6 +13,10 @@ import { safeClick }
 import { Logger }
   from '../utils/logger';
 
+import {
+  validatePasswordPolicy
+} from '../config/testData';
+
 /* =============================================================================
 PAGE OBJECT: ResetPasswordPage
 
@@ -36,6 +40,8 @@ export class ResetPasswordPage
 
   readonly confirmPasswordInput: Locator;
 
+  readonly setNewPasswordHeading: Locator;
+
   readonly updatePasswordButton: Locator;
 
   readonly backToLoginLink: Locator;
@@ -44,15 +50,31 @@ export class ResetPasswordPage
 
     super(page);
 
+    this.setNewPasswordHeading =
+      page.getByRole(
+        'heading',
+        {
+          name: /set new password/i
+        }
+      );
+
     this.newPasswordInput =
-      page.locator(
-        'input[type="password"]'
-      ).nth(0);
+      page.getByLabel(
+        /^new password$/i
+      ).or(
+        page.locator(
+          'form input[type="password"]'
+        ).nth(0)
+      );
 
     this.confirmPasswordInput =
-      page.locator(
-        'input[type="password"]'
-      ).nth(1);
+      page.getByLabel(
+        /^confirm password$/i
+      ).or(
+        page.locator(
+          'form input[type="password"]'
+        ).nth(1)
+      );
 
     this.updatePasswordButton =
       page.getByRole(
@@ -68,9 +90,38 @@ export class ResetPasswordPage
       );
   }
 
+  async waitForFormReady() {
+
+    await this.page.waitForLoadState(
+      'domcontentloaded'
+    );
+
+    await expect(
+      this.setNewPasswordHeading
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    await expect(
+      this.newPasswordInput
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    await expect(
+      this.confirmPasswordInput
+    ).toBeVisible({
+      timeout: 30000
+    });
+  }
+
   async fillPassword(
     password: string
   ) {
+
+    validatePasswordPolicy(
+      password
+    );
 
     Logger.info(
       'Updating Password'
@@ -79,6 +130,8 @@ export class ResetPasswordPage
   'Current URL:',
   this.page.url()
 );
+
+    await this.waitForFormReady();
 
     await this.newPasswordInput.fill(
       password

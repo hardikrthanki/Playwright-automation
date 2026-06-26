@@ -12,6 +12,9 @@ PURPOSE
 -------
 Validate password reset functionality.
 
+Run:
+npx playwright test tests/ResetPassword.spec.ts --headed
+
 NOTE
 ----
 Use a valid reset-password URL.
