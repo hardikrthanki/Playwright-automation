@@ -38,12 +38,10 @@ test(
       5 * 60 * 1000
     );
 
+    // Keep the shared subscriber account on the configured password so
+    // profile and subscriber specs can run after this reset flow.
     const newPassword =
-      'H@rdik1989';
-
-    await page.goto(
-      'https://puat.ooltool.com/login'
-    );
+      TEST_USERS.subscriber.password;
 
     const forgotPassword =
       new ForgotPasswordPage(
@@ -61,47 +59,62 @@ test(
     );
 
     console.log(
-      '\n📧 RESET EMAIL SENT'
+      '\nRESET EMAIL SENT'
     );
 
     console.log(
-      '📧 Open Gmail'
+      'Open Gmail'
     );
 
     console.log(
-      '📧 Copy reset password link'
+      'Copy reset password link'
     );
 
     console.log(
-      '📧 Paste reset link in SAME Playwright browser'
+      'Paste reset link in SAME Playwright browser'
     );
 
     console.log(
-      '▶️ Resume Playwright After Reset Page Opens'
+      'Resume Playwright after reset page opens'
     );
 
-    const findResetPage =
+    const waitForResetPage =
       async (): Promise<Page | undefined> => {
-        for (const browserPage of page.context().pages()) {
-          const url =
-            browserPage.url();
+        const deadline =
+          Date.now() + 30000;
 
-          if (
-            /reset|new-password/i.test(url) &&
-            !/forgot-password/i.test(url)
-          ) {
-            return browserPage;
-          }
+        while (Date.now() < deadline) {
+          for (const browserPage of page.context().pages()) {
+            const url =
+              browserPage.url();
 
-          if (
-            await browserPage
-              .locator(
+            const passwordInputs =
+              browserPage.locator(
                 'form input[type="password"]'
-              )
-              .count() >= 2
-          ) {
-            return browserPage;
+              );
+
+            if (
+              await passwordInputs.count() >= 2 &&
+              await passwordInputs.nth(0).isVisible() &&
+              await passwordInputs.nth(1).isVisible()
+            ) {
+              return browserPage;
+            }
+
+            if (
+              /reset|new-password/i.test(url) &&
+              !/forgot-password/i.test(url)
+            ) {
+              console.log(
+                'Reset URL opened; waiting for password form:',
+                url
+              );
+            }
           }
+
+          await page.waitForTimeout(
+            1000
+          );
         }
 
         return undefined;
@@ -118,7 +131,7 @@ test(
       await page.pause();
 
       resetPage =
-        await findResetPage();
+        await waitForResetPage();
 
       if (resetPage) {
         break;

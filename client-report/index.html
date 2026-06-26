@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OOLTool PUAT Automation Client Report</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #5d6b82;
+      --line: #dfe5ef;
+      --green: #11845b;
+      --red: #b42318;
+      --amber: #946200;
+      --blue: #2457c5;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 40px 28px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      margin-top: 18px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-top: 1px solid var(--line);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .badge {
+      border-radius: 999px;
+      color: #fff;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 9px;
+      text-transform: uppercase;
+    }
+
+    .passed { background: var(--green); }
+    .failed { background: var(--red); }
+    .skipped { background: var(--amber); }
+
+    .notes {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .notes + .notes {
+      margin-top: 8px;
+    }
+
+    .validation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .validation-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    @media (max-width: 800px) {
+      .summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .validation-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>OOLTool PUAT Automation Client Report</h1>
+      <p class="subtitle">Generated 6/26/2026, 5:06:04 PM from Playwright automated test results.</p>
+    </header>
+
+    <div class="summary">
+      <div class="card"><div class="label">Total Tests</div><div class="value">46</div></div>
+      <div class="card"><div class="label">Passed</div><div class="value">46</div></div>
+      <div class="card"><div class="label">Failed</div><div class="value">0</div></div>
+      <div class="card"><div class="label">Skipped</div><div class="value">0</div></div>
+      <div class="card"><div class="label">Duration</div><div class="value">7m 39s</div></div>
+    </div>
+
+    <section>
+      <h2>Execution Summary</h2>
+      <p class="notes">Environment: PUAT. Browser: Chromium. This report covers the clean client regression suite for onboarding, profile, password validation, billing, invoice, PDF access, and logout.</p>
+      <p class="notes">Evidence artifacts are available in the Playwright HTML report generated with this run, including screenshots, videos, and traces when RECORD_ALL_ARTIFACTS is enabled.</p>
+      
+    </section>
+
+    <section>
+      <h2>Business Flow Status</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Flow</th>
+            <th>Status</th>
+            <th>Validation Summary</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr>
+      <td>New subscriber onboarding</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Registration, OTP, email verification handoff, risk, compliance, plan selection, Stripe payment, and dashboard access.</td>
+    </tr>
+    <tr>
+      <td>Profile verification</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Profile page loads after login and email remains read-only.</td>
+    </tr>
+    <tr>
+      <td>Password validation</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Mismatch and wrong-current-password validation messages are verified.</td>
+    </tr>
+    <tr>
+      <td>Authentication guardrails</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Required login fields, invalid email handling, protected route redirects, and forgot-password form validation are verified.</td>
+    </tr>
+    <tr>
+      <td>Signup guardrails</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Required fields, email validation, mobile validation, password confirmation, visibility toggles, and pre-OTP submit protection are verified.</td>
+    </tr>
+    <tr>
+      <td>Session security</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Logout protection, direct protected URL redirect after logout, refresh behavior, and authenticated new-tab access are verified.</td>
+    </tr>
+    <tr>
+      <td>Billing and invoice</td>
+      <td><span class="badge passed">Passed</span></td>
+      <td>Billing navigation, plan visibility, transactions, invoice page, PDF link, and logout are verified.</td>
+    </tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>What We Validated</h2>
+      <div class="validation-grid">
+    <article class="validation-card">
+      <h3>New subscriber onboarding</h3>
+      <ul>
+        <li>Account registration with generated email and US mobile number</li><li>SMS OTP verification during sign-up</li><li>Email verification handoff before login</li><li>Risk profile completion</li><li>Compliance profile completion and disclosure acceptance</li><li>Income Builder plan selection</li><li>Stripe checkout payment completion</li><li>Dashboard access after successful onboarding</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Profile</h3>
+      <ul>
+        <li>Subscriber login</li><li>Profile page access</li><li>Profile data loads successfully</li><li>Email field remains disabled/read-only</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Password validation</h3>
+      <ul>
+        <li>New password and confirm password mismatch validation</li><li>Wrong current password validation</li><li>Expected validation messages are displayed</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Authentication guardrails</h3>
+      <ul>
+        <li>Login form blocks empty required fields</li><li>Login form blocks empty email only</li><li>Login form blocks empty password only</li><li>Login form blocks invalid email format</li><li>Login form rejects SQL injection style input</li><li>Login form rejects XSS/script style input</li><li>Login form rejects very long email input</li><li>Protected dashboard, onboarding, profile, billing, settings, security, subscription, notifications, and activity routes redirect unauthenticated users to login</li><li>Forgot password form blocks empty email</li><li>Forgot password form blocks invalid email format</li><li>Forgot password rejects SQL injection style input</li><li>Forgot password rejects XSS/script style input</li><li>Forgot password rejects very long email input</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Signup guardrails</h3>
+      <ul>
+        <li>Signup form blocks empty required fields</li><li>Signup form blocks invalid email format</li><li>Signup form blocks missing domain, missing @, SQL injection style, and XSS/script style email input</li><li>Signup email trims leading and trailing spaces</li><li>Password and confirmation fields are visible and required before submit</li><li>Mismatched password and confirmation keeps submit disabled</li><li>OTP request stays disabled without a mobile number</li><li>Short mobile number keeps OTP request disabled</li><li>Mobile input strips letters</li><li>Formatted US mobile number is normalized</li><li>Extra mobile digits are limited to ten digits</li><li>US mobile number guidance is visible</li><li>Password visibility toggles work for password and confirmation fields</li><li>Submit stays disabled before mobile OTP verification</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Session security</h3>
+      <ul>
+        <li>Logout prevents browser back navigation from restoring dashboard access</li><li>Direct dashboard URL after logout redirects to login</li><li>Logged-out session remains on login after refresh</li><li>Authenticated session can open dashboard in a new tab</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Subscriber billing</h3>
+      <ul>
+        <li>Dashboard access and refresh persistence</li><li>Billing page navigation from profile menu</li><li>Plans tab opens and Income Builder plan is visible</li><li>Transaction history opens and paid status is verified</li><li>Invoice page opens successfully</li><li>Invoice PDF link is available and opens</li><li>Subscriber logout completes successfully</li>
+      </ul>
+    </article></div>
+    </section>
+
+    <section>
+      <h2>Not Included In This Client Run</h2>
+      <p class="notes">These flows are automated separately, but they require mailbox access, a locked-account state, or a fresh reset URL, so they are not part of the clean client regression report.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Flow</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr>
+      <td>Forgot password reset</td>
+      <td>Requires opening Gmail, copying the reset email link, and pasting it into the Playwright browser during execution.</td>
+    </tr>
+    <tr>
+      <td>Unlock locked account</td>
+      <td>Requires the target account to already be in a locked state before the test starts.</td>
+    </tr>
+    <tr>
+      <td>Direct reset password URL</td>
+      <td>Requires a fresh RESET_URL environment value generated from an email reset link.</td>
+    </tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Regression Matrix</h2>
+      <p class="notes">Coverage status is based on the current automated suite plus known manual/separate flows.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Positive</th>
+            <th>Negative</th>
+            <th>Security</th>
+            <th>Boundary</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr>
+      <td>Login</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Partial</td>
+      <td>Partial</td>
+      <td>85%</td>
+    </tr>
+    <tr>
+      <td>Signup</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Partial</td>
+      <td>Covered</td>
+      <td>90%</td>
+    </tr>
+    <tr>
+      <td>Forgot Password</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Partial</td>
+      <td>Partial</td>
+      <td>80%</td>
+    </tr>
+    <tr>
+      <td>Reset Password</td>
+      <td>Manual/Separate</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>25%</td>
+    </tr>
+    <tr>
+      <td>Protected Routes</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Partial</td>
+      <td>90%</td>
+    </tr>
+    <tr>
+      <td>Session Security</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Covered</td>
+      <td>Partial</td>
+      <td>85%</td>
+    </tr>
+    <tr>
+      <td>Billing</td>
+      <td>Covered</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>65%</td>
+    </tr>
+    <tr>
+      <td>MFA</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>Planned</td>
+      <td>0%</td>
+    </tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Recommended Next Coverage</h2>
+      <div class="validation-grid">
+    <article class="validation-card">
+      <h3>Phase 1 - Must Have</h3>
+      <ul>
+        <li>Wrong password and unregistered email validation with lockout-safe test data</li><li>Existing email and existing mobile signup validation</li><li>Wrong OTP and expired OTP validation using controlled OTP state</li><li>Reset password policy validation with fresh reset URL</li><li>Logout security: browser back button and direct URL after logout</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Phase 2 - Security and Edge Cases</h3>
+      <ul>
+        <li>SQL injection and XSS coverage for signup fields</li><li>Leading/trailing spaces validation for login, signup, and forgot password</li><li>Duplicate click and button disabled while processing checks</li><li>Session expiry redirect validation</li>
+      </ul>
+    </article>
+    <article class="validation-card">
+      <h3>Phase 3 - Accessibility and Browser Behavior</h3>
+      <ul>
+        <li>Keyboard-only navigation</li><li>Tab order validation</li><li>Enter key submission</li><li>Focus moves to first invalid field</li><li>Refresh and browser navigation behavior across key flows</li>
+      </ul>
+    </article></div>
+    </section>
+
+    <section>
+      <h2>Test Results</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Test</th>
+            <th>Project</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Error</th>
+          </tr>
+        </thead>
+        <tbody>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty required fields</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>17s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty email only</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>3s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty password only</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks invalid email format</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>3s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects SQL injection input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects XSS injection input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects very long email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/profile redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/billing redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /onboarding redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/settings redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/security redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>1s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/subscription redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/notifications redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/activity redirects unauthenticated user to login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password form blocks empty email</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>3s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password form blocks invalid email format</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>4s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects SQL injection input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>4s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects XSS injection input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>3s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects very long email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>3s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>onboarding.spec.ts &gt; OOLTool Onboarding Flow &gt; Register -&gt; Verify Email -&gt; Login -&gt; Risk -&gt; Compliance</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>2m 34s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Profile.spec.ts &gt; Profile Update</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>12s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>ProfilePasswordMismatch.spec.ts &gt; Password Mismatch Validation</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>12s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>ProfileWrongCurrentPassword.spec.ts &gt; Wrong Current Password Validation</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>15s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Logout prevents browser back and direct dashboard access</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>14s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Logged-out session remains on login after refresh</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>12s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Authenticated session can open dashboard in a new tab</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>10s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks empty required fields</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>7s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks invalid email format</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks missing domain email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks missing @ email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>7s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks SQL injection email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>7s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks XSS injection email input</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>7s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup email trims leading and trailing spaces</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps submit disabled without password and confirmation</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps submit disabled when passwords do not match</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps OTP request disabled without mobile number</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps OTP request disabled for short mobile number</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input strips letters and keeps OTP disabled</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>10s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input normalizes formatted US number</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input limits extra digits to ten digits</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form shows US mobile number guidance before OTP request</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>9s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup password visibility toggles work for both password fields</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>8s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup submit stays disabled before mobile OTP verification</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>9s</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Subscriber.spec.ts &gt; Subscriber Login</td>
+        <td>chromium</td>
+        <td><span class="badge passed">passed</span></td>
+        <td>33s</td>
+        <td></td>
+      </tr></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

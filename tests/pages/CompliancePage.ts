@@ -51,7 +51,7 @@ constructor(page: Page) {
    await this.page.waitForTimeout(
   WAITS.NORMAL
 );
-   console.log('• State of Residence');
+   console.log(' State of Residence');
 const dropdowns =
   this.page.locator(
     'button[role="combobox"]'

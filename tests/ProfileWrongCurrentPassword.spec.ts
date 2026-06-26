@@ -43,15 +43,7 @@ test(
       TEST_USERS.subscriber.password
     );
 
-
-    await page.goto(
-      'https://puat.ooltool.com/dashboard/profile'
-    );
-
-
-    await page.waitForTimeout(
-      3000
-    );
+    await profile.open();
 
 
     await profile.changePasswordMismatch(

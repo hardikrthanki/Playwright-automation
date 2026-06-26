@@ -125,7 +125,7 @@ const PASSWORD = 'Test@123456';
 
 test.describe('OOLTool Onboarding Flow', () => {
   test(
-    'Register → Verify Email → Login → Risk → Compliance',
+    'Register -> Verify Email -> Login -> Risk -> Compliance',
     async () => {
       test.setTimeout(20 * 60 * 1000); // 20 minutes
 
@@ -150,15 +150,7 @@ test.describe('OOLTool Onboarding Flow', () => {
       );
 
       console.log(
-        '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
-      );
-
-      console.log(
-        `🚀 Test Email: ${email}`
-      );
-
-      console.log(
-        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+        `Test Email: ${email}`
       );
 
       try {
@@ -184,10 +176,10 @@ test.describe('OOLTool Onboarding Flow', () => {
             if (
               AUTH_SETTINGS.emailVerificationRequired
             ) {
-            console.log('\n📧 MANUAL EMAIL VERIFICATION REQUIRED');
-            console.log(`📧 Verify email sent to: ${email}`);
-            console.log('📧 Open Gmail and click the verification link.');
-            console.log('▶️ After verification, resume Playwright.');
+            console.log('\nMANUAL EMAIL VERIFICATION REQUIRED');
+            console.log(`Verify email sent to: ${email}`);
+            console.log('Open Gmail and click the verification link.');
+            console.log('After verification, resume Playwright.');
             await page.pause();
             } else {
               console.log(
@@ -279,11 +271,7 @@ test.describe('OOLTool Onboarding Flow', () => {
           }
         );
         console.log(
-          '🎉 OOLTOOL ONBOARDING FLOW COMPLETED SUCCESSFULLY'
-        );
-
-        console.log(
-          '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'
+          'OOLTOOL ONBOARDING FLOW COMPLETED SUCCESSFULLY'
         );
 
       } finally {
@@ -291,7 +279,7 @@ test.describe('OOLTool Onboarding Flow', () => {
         await browser.close();
 
         console.log(
-          '✅ Browser Closed'
+          'Browser Closed'
         );
       }
     }

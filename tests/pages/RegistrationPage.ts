@@ -155,6 +155,12 @@ extends BasePage {
           name: 'Create Account',
           exact: true
         }
+      ).or(
+        page.locator(
+          'button[type="submit"]'
+        ).filter({
+          hasText: /create account/i
+        })
       );
 
   }
@@ -190,6 +196,18 @@ extends BasePage {
       this.createAccountLink,
       'Open Create Account'
     );
+
+    await expect(
+      this.firstNameInput
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.submitButton
+    ).toBeVisible({
+      timeout: 15000
+    });
 
 
     Logger.success(

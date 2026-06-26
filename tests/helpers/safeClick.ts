@@ -13,7 +13,7 @@ export async function safeClick(
   locator: Locator,
   label: string
 ) {
-  console.log(`👉 ${label}`);
+  console.log(`[CLICK] ${label}`);
 
   await locator.waitFor({
     state: 'visible',

@@ -1,12 +1,13 @@
 import { Page } from '@playwright/test';
 
 /* ============================================================================
-   BASE PAGE
+PAGE OBJECT: BasePage
 
-   Parent class for all Page Objects.
+PURPOSE
+-------
+Parent class for all page objects. Provides shared page navigation,
+refresh, wait, and URL helper methods.
 
-   Common reusable methods should be added here
-   instead of duplicating them across pages.
 ============================================================================ */
 
 export class BasePage {

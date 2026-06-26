@@ -4,10 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "execution": "npm run test:execution && npm run report:execution",
+    "controlled": "npm run test:controlled && npm run report:execution",
     "test": "playwright test",
+    "test:execution": "playwright test tests/onboarding.spec.ts tests/AuthNegative.spec.ts tests/SignupNegative.spec.ts tests/PasswordPolicy.spec.ts tests/SessionSecurity.spec.ts tests/AccessibilityBrowser.spec.ts tests/Profile.spec.ts tests/ProfileNegative.spec.ts tests/ProfilePasswordMismatch.spec.ts tests/ProfileWrongCurrentPassword.spec.ts tests/BillingDeep.spec.ts tests/Subscriber.spec.ts",
+    "test:controlled": "playwright test tests/ResetPasswordNegative.spec.ts tests/PaymentNegative.spec.ts",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report",
-    "typecheck": "tsc -p tests/config/tsconfig.json --noEmit"
+    "report:execution": "node scripts/generate-execution-report.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const recordAllArtifacts =
+  process.env.RECORD_ALL_ARTIFACTS === 'true';
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: false,
@@ -9,13 +12,19 @@ export default defineConfig({
 
   reporter: [
     ['list'],
-    ['html', { open: 'never' }],
+    ['html', {
+      open: 'never',
+      title: 'OOLTool PUAT Automation Report',
+    }],
+    ['json', {
+      outputFile: 'test-results/results.json',
+    }],
   ],
 
   use: {
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    trace: recordAllArtifacts ? 'on' : 'retain-on-failure',
+    screenshot: recordAllArtifacts ? 'on' : 'only-on-failure',
+    video: recordAllArtifacts ? 'on' : 'retain-on-failure',
 
     actionTimeout: 30000,
     navigationTimeout: 30000,

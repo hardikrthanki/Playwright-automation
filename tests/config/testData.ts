@@ -112,7 +112,7 @@ export const TEST_USERS = {
 
     password:
       process.env.SUBSCRIBER_PASSWORD ??
-      'H@rdik9944'
+      'H@rdik1989'
   }
 };
 

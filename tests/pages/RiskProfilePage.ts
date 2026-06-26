@@ -69,7 +69,7 @@ export class RiskProfilePage
       'Select 3-5 years'
     );
     console.log(
-  '• Options Experience → Beginner'
+  ' Options Experience  Beginner'
 );
 
 await safeClick(
@@ -80,7 +80,7 @@ await safeClick(
 );
 
 console.log(
-  '• Multi-leg Strategies → No'
+  ' Multi-leg Strategies  No'
 );
 
 await safeClick(
@@ -92,7 +92,7 @@ await safeClick(
 
 /*
   
-*/    console.log('• Risk Tolerance → Moderate');
+*/    console.log(' Risk Tolerance  Moderate');
 
     await safeClick(
       this.page.getByRole('button', {
@@ -101,11 +101,11 @@ await safeClick(
       'Select Moderate'
     );
     console.log(
-      '• Portfolio Loss → Keeping default 10%'
+      ' Portfolio Loss  Keeping default 10%'
     );
 
     console.log(
-      '• Preferred Duration → 30-60 days'
+      ' Preferred Duration  30-60 days'
     );
 
     const durationCheckboxes =
@@ -140,7 +140,7 @@ await safeClick(
     }
 
     console.log(
-      '• Allowed Strategy → Covered Calls'
+      ' Allowed Strategy  Covered Calls'
     );
 
     await this.selectCheckboxByLabel(
@@ -148,14 +148,14 @@ await safeClick(
     );
 
     console.log(
-      '• Allowed Strategy → Cash Secured Puts'
+      ' Allowed Strategy  Cash Secured Puts'
     );
 
     await this.selectCheckboxByLabel(
       'Cash Secured Puts'
     );
 
-  console.log('• Account Type → Cash');
+  console.log(' Account Type  Cash');
 
 const cashText = this.page.getByText(/^Cash$/).last();
 
@@ -193,7 +193,7 @@ if (!accountSelected) {
 }
 
 console.log(
-  '✅ Cash Account Type selected'
+  ' Cash Account Type selected'
 );
     await safeClick(
       this.page.getByRole('button', {
@@ -225,7 +225,7 @@ for (let i = 0; i < await dropdowns.count(); i++) {
 }
 
 console.log(
-  '➡️ Compliance tab opened successfully'
+  ' Compliance tab opened successfully'
 );
   }
   async selectCheckboxByLabel(

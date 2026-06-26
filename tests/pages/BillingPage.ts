@@ -75,10 +75,6 @@ async validatePlans() {
     'Open Plans Tab'
   );
 
-  await this.page.waitForTimeout(
-    2000
-  );
-
   await expect(
     this.page.getByText(
       /income builder/i
@@ -86,7 +82,7 @@ async validatePlans() {
   ).toBeVisible();
 
   console.log(
-    '✅ Income Builder Plan Visible'
+    ' Income Builder Plan Visible'
   );
 }
 async validateTransactions() {
@@ -105,10 +101,6 @@ async validateTransactions() {
     'Open History Tab'
   );
 
-  await this.page.waitForTimeout(
-    2000
-  );
-
   await safeClick(
     this.page.getByText(
       /^transactions$/i
@@ -123,7 +115,7 @@ async validateTransactions() {
   ).toBeVisible();
 
   console.log(
-    '✅ Paid Status Verified'
+    ' Paid Status Verified'
   );
 }
 async validateInvoicePage() {
@@ -156,7 +148,7 @@ Logger.info(
   ).toBeVisible();
 
   console.log(
-    '✅ Invoice Page Opened'
+    ' Invoice Page Opened'
   );
 
   await invoicePage.close();
@@ -183,23 +175,19 @@ async validatePdfDownload() {
   ).toBeVisible();
 
   console.log(
-    '✅ PDF Link Available'
+    ' PDF Link Available'
   );
 
   await pdfLink.click({
     force: true,
   });
 
-  await this.page.waitForTimeout(
-    3000
+  console.log(
+    ' PDF Link Clicked'
   );
 
   console.log(
-    '✅ PDF Link Clicked'
-  );
-
-  console.log(
-    '🎉 PDF Validation Completed'
+    ' PDF Validation Completed'
   );
 }
 }

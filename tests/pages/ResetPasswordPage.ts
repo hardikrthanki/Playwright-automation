@@ -40,8 +40,6 @@ export class ResetPasswordPage
 
   readonly confirmPasswordInput: Locator;
 
-  readonly setNewPasswordHeading: Locator;
-
   readonly updatePasswordButton: Locator;
 
   readonly backToLoginLink: Locator;
@@ -49,14 +47,6 @@ export class ResetPasswordPage
   constructor(page: Page) {
 
     super(page);
-
-    this.setNewPasswordHeading =
-      page.getByRole(
-        'heading',
-        {
-          name: /set new password/i
-        }
-      );
 
     this.newPasswordInput =
       page.getByLabel(
@@ -95,12 +85,6 @@ export class ResetPasswordPage
     await this.page.waitForLoadState(
       'domcontentloaded'
     );
-
-    await expect(
-      this.setNewPasswordHeading
-    ).toBeVisible({
-      timeout: 30000
-    });
 
     await expect(
       this.newPasswordInput

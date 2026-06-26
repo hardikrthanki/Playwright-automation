@@ -13,6 +13,10 @@ import { safeClick }
 import { Logger }
   from '../utils/logger';
 
+import {
+  BASE_URL
+} from '../config/testData';
+
 /* =============================================================================
 PAGE OBJECT: ProfilePage
 
@@ -89,6 +93,18 @@ constructor(page: Page) {
           name: /change password/i
         }
       );
+  }
+
+  async open() {
+
+    await this.page.goto(
+      `${BASE_URL}/dashboard/profile`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    await this.waitForProfileData();
   }
 
   async updateProfile(

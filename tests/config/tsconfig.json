@@ -1,4 +1,6 @@
 {
+  "_comment": "PURPOSE: TypeScript compiler settings for Playwright test files under tests/.",
+
   "compilerOptions": {
 
     "target": "ES2022",

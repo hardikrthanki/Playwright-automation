@@ -3,39 +3,39 @@ UTILITY: Logger
 
 PURPOSE
 -------
-Standardized logging across Playwright framework.
+Standardized ASCII logging across the Playwright framework.
 
 ============================================================================= */
 
 export class Logger {
 
   static info(message: string) {
-    console.log(`ℹ️ ${message}`);
+    console.log(`[INFO] ${message}`);
   }
 
   static success(message: string) {
-    console.log(`✅ ${message}`);
+    console.log(`[PASS] ${message}`);
   }
 
   static warning(message: string) {
-    console.log(`⚠️ ${message}`);
+    console.log(`[WARN] ${message}`);
   }
 
   static step(message: string) {
-    console.log(`👉 ${message}`);
+    console.log(`[STEP] ${message}`);
   }
 
   static celebration(message: string) {
-    console.log(`🎉 ${message}`);
+    console.log(`[DONE] ${message}`);
   }
 
   static url(url: string) {
-    console.log(`🌐 ${url}`);
+    console.log(`[URL] ${url}`);
   }
 
   static section(title: string) {
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('\n========================================');
     console.log(title);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.log('========================================\n');
   }
 }

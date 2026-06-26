@@ -46,18 +46,18 @@ Step 10 - Logout Validation
 
 ## VALIDATIONS
 
-✓ Subscriber login successful
-✓ Dashboard accessible
-✓ Billing page accessible
-✓ Current subscription visible
-✓ Billing cycle visible
-✓ Active subscription status verified
-✓ Transaction history available
-✓ Invoice link available
-✓ Invoice download successful
-✓ Receipt download successful
-✓ PDF link available
-✓ Logout successful
+ Subscriber login successful
+ Dashboard accessible
+ Billing page accessible
+ Current subscription visible
+ Billing cycle visible
+ Active subscription status verified
+ Transaction history available
+ Invoice link available
+ Invoice download successful
+ Receipt download successful
+ PDF link available
+ Logout successful
 
 ## TEST DATA
 
@@ -67,20 +67,20 @@ Environment       : PUAT
 
 ## DEPENDENCIES
 
-• Active subscriber account required
-• Valid subscription required
-• Billing data available
-• Stripe invoice records available
+ Active subscriber account required
+ Valid subscription required
+ Billing data available
+ Stripe invoice records available
 
 ## PAGE OBJECTS USED
 
-• LoginPage.ts
-• DashboardPage.ts
-• BillingPage.ts
+ LoginPage.ts
+ DashboardPage.ts
+ BillingPage.ts
 
 ## HELPERS USED
 
-• safeClick.ts
+ safeClick.ts
 
 ## EXPECTED RESULT
 
@@ -95,13 +95,9 @@ Hardik Thanki
 ============================================================================= */
 
 import {
-  test,
-  expect,
-  Page,
-  Locator,
+  test
 } from '@playwright/test';
 
-import { safeClick } from './helpers/safeClick';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BillingPage } from './pages/BillingPage';

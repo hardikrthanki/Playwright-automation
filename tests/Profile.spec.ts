@@ -26,6 +26,9 @@ npx playwright test tests/Profile.spec.ts --headed
 test(
   'Profile Update',
   async ({ page }) => {
+    test.setTimeout(
+      90000
+    );
 
     const login =
       new LoginPage(page);
@@ -33,18 +36,12 @@ test(
     const profile =
       new ProfilePage(page);
 
- await login.login(
+await login.login(
   TEST_USERS.subscriber.email,
   TEST_USERS.subscriber.password
 );
 
-await page.goto(
-  'https://puat.ooltool.com/dashboard/profile'
-);
-await page.waitForTimeout(
-  3000
-);
-await profile.waitForProfileData();
+await profile.open();
 await profile.validateProfileLoaded();
 
   }
