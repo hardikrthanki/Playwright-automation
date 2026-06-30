@@ -1,5 +1,31 @@
 const schemaVersion = '1.0';
 
+const requiredTopLevelSections = [
+  'schemaVersion',
+  'reportInfo',
+  'project',
+  'environment',
+  'execution',
+  'executionContext',
+  'source',
+  'summary',
+  'discovery',
+  'quality',
+  'release',
+  'releaseDecision',
+  'businessJourneys',
+  'modules',
+  'tests',
+  'failedTests',
+  'evidence',
+  'recommendations',
+  'searchIndex',
+  'history',
+  'futureValidation',
+  'navigation',
+  'engineLog',
+];
+
 function createFutureValidation() {
   return {
     api: { status: 'Roadmap', summary: 'API validation is planned for a future AIR data source.' },
@@ -11,5 +37,6 @@ function createFutureValidation() {
 
 module.exports = {
   schemaVersion,
+  requiredTopLevelSections,
   createFutureValidation,
 };

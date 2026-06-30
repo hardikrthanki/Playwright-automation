@@ -1,0 +1,61 @@
+{
+  "releaseRules": {
+    "allowPartialRelease": false,
+    "go": {
+      "minimumPassRate": 95,
+      "minimumBusinessHealth": 90,
+      "minimumQualityScore": 95,
+      "minimumConfidence": 95,
+      "maximumFailedTests": 0,
+      "maximumBlockerFailures": 0,
+      "maximumCriticalFailures": 0
+    },
+    "conditionalGo": {
+      "minimumPassRate": 90,
+      "minimumBusinessHealth": 80,
+      "minimumQualityScore": 85,
+      "minimumConfidence": 70
+    },
+    "failureSeverity": {
+      "blocker": ["Blocker"],
+      "critical": ["Critical"],
+      "warning": ["High", "Medium"]
+    },
+    "journeyStatus": {
+      "critical": ["Critical", "Failed"],
+      "warning": ["Warning", "Partial", "Not Executed", "No Data Available"]
+    },
+    "moduleRisk": {
+      "critical": ["High"],
+      "warning": ["Medium"]
+    },
+    "decisions": {
+      "criticalJourneyFailed": "NO_GO",
+      "criticalFailureFound": "NO_GO",
+      "partialExecution": "CONDITIONAL_GO",
+      "warningsOnly": "CONDITIONAL_GO",
+      "allRulesPassed": "GO"
+    },
+    "messages": {
+      "goReasons": [
+        "Critical journeys passed",
+        "No blocker failures detected",
+        "Pass rate is above release threshold",
+        "Business risk is low"
+      ],
+      "conditionalReasons": [
+        "Critical journeys are not blocked",
+        "Warnings require review",
+        "Release can proceed after evidence review"
+      ],
+      "noGoReasons": [
+        "Release thresholds were not met",
+        "Failures or missing critical data require review",
+        "Resolve blockers before release approval"
+      ],
+      "goAction": "Proceed with release monitoring.",
+      "conditionalAction": "Review warnings and attached evidence before approval.",
+      "noGoAction": "Do not release until blocker and critical failures are resolved."
+    }
+  }
+}

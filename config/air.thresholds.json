@@ -9,6 +9,23 @@
   },
   "qualityScoreWeights": {
     "passRate": 0.65,
-    "businessHealth": 0.35
+    "businessHealth": 0.35,
+    "moduleHealth": 0,
+    "journeyCoverage": 0,
+    "evidenceReadiness": 0,
+    "failureSeverity": 0
+  },
+  "qualityGradeBoundaries": [
+    { "grade": "Excellent", "minimumScore": 95 },
+    { "grade": "Good", "minimumScore": 85 },
+    { "grade": "Needs Review", "minimumScore": 70 },
+    { "grade": "At Risk", "minimumScore": 0 }
+  ],
+  "qualityThresholds": {
+    "minimumConfidence": 50,
+    "evidenceReadinessMinimum": 80,
+    "criticalFailurePenalty": 15,
+    "highFailurePenalty": 10,
+    "mediumFailurePenalty": 5
   }
 }

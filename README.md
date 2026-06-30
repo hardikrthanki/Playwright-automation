@@ -123,6 +123,12 @@ test-results/
 ## AIR Documentation
 
 ```text
+docs/README.md
+docs/PRODUCT_VISION.md
+docs/ARCHITECTURE.md
+docs/DATA_MODEL.md
+docs/AIR_CORE.md
+docs/ROADMAP.md
 docs/air/air-product-specification.md
 docs/air/air-design-system-wireframes.md
 docs/air/air-decision-log.md
@@ -130,4 +136,4 @@ docs/air/air-report-vision-functional-summary.md
 config/air.config.json
 ```
 
-These documents and configuration define the AIR product direction, visual design system, dashboard wireframes, architecture decisions, and dynamic report metadata.
+Start with `docs/README.md` for the AIR developer documentation set. The root `docs/*.md` files define AIR as an engineering product: product vision, architecture, data model, parser, AIR Core engines, roadmap, coding standards, and contribution workflow. The `docs/air/` files preserve the earlier product specification, design-system notes, decision log, and report vision.

@@ -3,41 +3,49 @@
     {
       "name": "Registration",
       "patterns": ["onboarding", "register", "signup"],
+      "modules": ["Signup"],
       "critical": true
     },
     {
       "name": "Authentication",
       "patterns": ["login", "auth", "forgot password", "unlock account"],
+      "modules": ["Authentication"],
       "critical": true
     },
     {
       "name": "Profile Setup",
       "patterns": ["profile"],
+      "modules": ["Profile"],
       "critical": false
     },
     {
       "name": "Risk Profile",
       "patterns": ["risk"],
+      "modules": ["Onboarding"],
       "critical": true
     },
     {
       "name": "Compliance",
       "patterns": ["compliance"],
+      "modules": ["Onboarding"],
       "critical": true
     },
     {
       "name": "Subscription",
       "patterns": ["subscriber", "subscription", "plans"],
+      "modules": ["Billing"],
       "critical": true
     },
     {
       "name": "Payment",
       "patterns": ["payment", "stripe", "billing"],
+      "modules": ["Billing"],
       "critical": true
     },
     {
       "name": "Dashboard",
       "patterns": ["dashboard"],
+      "modules": ["Authentication"],
       "critical": true
     }
   ]

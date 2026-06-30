@@ -15,6 +15,7 @@ function loadAirConfig(projectRoot) {
   const modulesConfig = readJsonIfExists(path.join(configDir, 'air.modules.json'), {});
   const journeysConfig = readJsonIfExists(path.join(configDir, 'air.journeys.json'), {});
   const thresholdsConfig = readJsonIfExists(path.join(configDir, 'air.thresholds.json'), {});
+  const releaseConfig = readJsonIfExists(path.join(configDir, 'air.release.json'), {});
   const evidenceConfig = readJsonIfExists(path.join(configDir, 'air.evidence.json'), {});
   const navigationConfig = readJsonIfExists(path.join(configDir, 'air.navigation.json'), {});
 
@@ -40,10 +41,13 @@ function loadAirConfig(projectRoot) {
       ...(baseConfig.releaseThresholds ?? {}),
       ...(thresholdsConfig.releaseThresholds ?? {}),
     },
+    releaseRules: releaseConfig.releaseRules ?? thresholdsConfig.releaseRules ?? {},
     qualityScoreWeights: thresholdsConfig.qualityScoreWeights ?? {
       passRate: 0.65,
       businessHealth: 0.35,
     },
+    qualityGradeBoundaries: thresholdsConfig.qualityGradeBoundaries ?? [],
+    qualityThresholds: thresholdsConfig.qualityThresholds ?? {},
     evidence: evidenceConfig,
     navigation: navigationConfig.sections ?? [],
   };

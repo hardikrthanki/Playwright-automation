@@ -1,718 +1,6122 @@
-[
-  {
-    "generatedAt": "2026-06-29T13:36:31.860Z",
-    "generatedAtDisplay": "6/29/2026, 7:06:31 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
+{
+  "executions": [
+    {
+      "generatedAt": "2026-06-30T10:27:56.476Z",
+      "generatedAtDisplay": "6/30/2026, 3:57:56 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
     },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
+    {
+      "generatedAt": "2026-06-30T10:34:40.539Z",
+      "generatedAtDisplay": "6/30/2026, 4:04:40 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
     },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
+    {
+      "generatedAt": "2026-06-30T10:48:47.097Z",
+      "generatedAtDisplay": "6/30/2026, 4:18:47 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
     },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+    {
+      "generatedAt": "2026-06-30T11:07:29.540Z",
+      "generatedAtDisplay": "6/30/2026, 4:37:29 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
       },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
       },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
+      "summary": {
+        "total": 69,
+        "passed": 69,
         "failed": 0,
         "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
       },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
       },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T11:31:47.436Z",
+      "generatedAtDisplay": "6/30/2026, 5:01:47 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
       },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
         "failed": 0,
         "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T12:13:39.735Z",
+      "generatedAtDisplay": "6/30/2026, 5:43:39 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T12:43:40.297Z",
+      "generatedAtDisplay": "6/30/2026, 6:13:40 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright"
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T12:50:40.723Z",
+      "generatedAtDisplay": "6/30/2026, 6:20:40 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T12:55:39.242Z",
+      "generatedAtDisplay": "6/30/2026, 6:25:39 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T13:01:49.533Z",
+      "generatedAtDisplay": "6/30/2026, 6:31:49 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T13:07:38.629Z",
+      "generatedAtDisplay": "6/30/2026, 6:37:38 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T13:20:59.570Z",
+      "generatedAtDisplay": "6/30/2026, 6:50:59 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T13:23:14.053Z",
+      "generatedAtDisplay": "6/30/2026, 6:53:14 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T15:41:32.275Z",
+      "generatedAtDisplay": "6/30/2026, 9:11:32 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T15:45:58.008Z",
+      "generatedAtDisplay": "6/30/2026, 9:15:58 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T15:56:43.164Z",
+      "generatedAtDisplay": "6/30/2026, 9:26:43 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T16:05:37.641Z",
+      "generatedAtDisplay": "6/30/2026, 9:35:37 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T16:42:07.597Z",
+      "generatedAtDisplay": "6/30/2026, 10:12:07 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T16:55:35.032Z",
+      "generatedAtDisplay": "6/30/2026, 10:25:35 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:01:10.916Z",
+      "generatedAtDisplay": "6/30/2026, 10:31:10 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "GO",
+        "estimatedReleaseRisk": "LOW"
+      },
+      "releaseDecision": {
+        "status": "GO",
+        "confidence": 99,
+        "riskLevel": "LOW",
+        "reasons": [
+          "Critical journeys passed",
+          "No blocker failures detected",
+          "Pass rate is above release threshold",
+          "Business risk is low"
+        ],
+        "recommendedAction": "Proceed with release monitoring."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:18:15.128Z",
+      "generatedAtDisplay": "6/30/2026, 10:48:15 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:42:50.033Z",
+      "generatedAtDisplay": "6/30/2026, 11:12:50 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:44:33.836Z",
+      "generatedAtDisplay": "6/30/2026, 11:14:33 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:47:38.359Z",
+      "generatedAtDisplay": "6/30/2026, 11:17:38 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T17:54:37.364Z",
+      "generatedAtDisplay": "6/30/2026, 11:24:37 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T18:03:26.578Z",
+      "generatedAtDisplay": "6/30/2026, 11:33:26 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T18:07:09.844Z",
+      "generatedAtDisplay": "6/30/2026, 11:37:09 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T18:23:54.289Z",
+      "generatedAtDisplay": "6/30/2026, 11:53:54 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "execution": {
+        "id": "air-1782843834289",
+        "startedAt": "",
+        "endedAt": "2026-06-30T18:23:54.289Z",
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "trigger": "Local Execution",
+        "source": "json-reporter"
+      },
+      "executionContext": {
+        "type": "Security",
+        "scope": "Security Validation",
+        "executedModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Password",
+          "Profile",
+          "Signup"
+        ],
+        "configuredModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Onboarding",
+          "Password",
+          "Profile",
+          "Session Security",
+          "Signup"
+        ],
+        "coverage": 75,
+        "confidence": 93,
+        "validationLevel": "Partial Validation"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "quality": {
         "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
+        "confidence": 100,
+        "grade": "Excellent"
+      },
+      "release": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ],
+      "businessJourneys": [
+        {
+          "name": "Registration",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Profile Setup",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Risk Profile",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Compliance",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Subscription",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Payment",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Dashboard",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T18:25:56.951Z",
+      "generatedAtDisplay": "6/30/2026, 11:55:56 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "execution": {
+        "id": "air-1782843956951",
+        "startedAt": "",
+        "endedAt": "2026-06-30T18:25:56.951Z",
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "trigger": "Local Execution",
+        "source": "json-reporter"
+      },
+      "executionContext": {
+        "type": "Regression",
+        "scope": "Whole Product",
+        "executedModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Password",
+          "Profile",
+          "Signup"
+        ],
+        "configuredModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Onboarding",
+          "Password",
+          "Profile",
+          "Session Security",
+          "Signup"
+        ],
+        "coverage": 75,
+        "confidence": 93,
+        "validationLevel": "Full Product Validation"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "quality": {
+        "score": 100,
+        "confidence": 100,
+        "grade": "Excellent"
+      },
+      "release": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ],
+      "businessJourneys": [
+        {
+          "name": "Registration",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Profile Setup",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Risk Profile",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Compliance",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Subscription",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Payment",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Dashboard",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-06-30T18:28:04.525Z",
+      "generatedAtDisplay": "6/30/2026, 11:58:04 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "execution": {
+        "id": "air-1782844084525",
+        "startedAt": "",
+        "endedAt": "2026-06-30T18:28:04.525Z",
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "trigger": "Local Execution",
+        "source": "json-reporter"
+      },
+      "executionContext": {
+        "type": "Regression",
+        "scope": "Whole Product",
+        "executedModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Password",
+          "Profile",
+          "Signup"
+        ],
+        "configuredModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Onboarding",
+          "Password",
+          "Profile",
+          "Session Security",
+          "Signup"
+        ],
+        "coverage": 75,
+        "confidence": 93,
+        "validationLevel": "Partial Product Regression"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "quality": {
+        "score": 100,
+        "confidence": 100,
+        "grade": "Excellent"
+      },
+      "release": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ],
+      "businessJourneys": [
+        {
+          "name": "Registration",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Profile Setup",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Risk Profile",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Compliance",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Subscription",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Payment",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Dashboard",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        }
+      ]
+    }
+  ],
+  "trends": {
+    "quality": {
+      "name": "Quality Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 100
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 100
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 100
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 100
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 100
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 100
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 100
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 100
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 100
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 100
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 100
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 100
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 100
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 100
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 100
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 100
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 100
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 100
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 100
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 100
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 100
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 100
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 100
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 100
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 100
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 100
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 100
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 100
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 100
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 100
+        }
+      ]
+    },
+    "release": {
+      "name": "Release Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": "GO"
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": "GO"
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": "GO"
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": "GO"
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": "GO"
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": "GO"
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": "GO"
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": "GO"
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": "GO"
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": "GO"
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": "GO"
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": "GO"
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": "GO"
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": "GO"
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": "GO"
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": "GO"
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": "GO"
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": "GO"
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": "GO"
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": "GO"
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": "CONDITIONAL GO"
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": "CONDITIONAL GO"
+        }
+      ]
+    },
+    "passRate": {
+      "name": "Pass Rate Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 100
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 100
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 100
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 100
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 100
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 100
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 100
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 100
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 100
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 100
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 100
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 100
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 100
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 100
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 100
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 100
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 100
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 100
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 100
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 100
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 100
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 100
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 100
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 100
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 100
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 100
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 100
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 100
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 100
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 100
+        }
+      ]
+    },
+    "failures": {
+      "name": "Failure Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 0
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 0
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 0
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 0
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 0
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 0
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 0
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 0
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 0
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 0
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 0
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 0
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 0
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 0
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 0
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 0
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 0
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 0
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 0
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 0
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 0
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 0
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 0
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 0
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 0
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 0
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 0
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 0
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 0
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 0
+        }
+      ]
+    },
+    "duration": {
+      "name": "Execution Duration Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 701308
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 701308
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 701308
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 701308
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 701308
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 701308
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 701308
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 701308
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 701308
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 701308
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 701308
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 701308
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 701308
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 701308
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 701308
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 701308
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 701308
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 701308
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 701308
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 701308
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 701308
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 701308
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 701308
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 701308
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 701308
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 701308
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 701308
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 701308
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 701308
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 701308
+        }
+      ]
+    },
+    "moduleCoverage": {
+      "name": "Module Coverage Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 100
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 100
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 100
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 100
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 100
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 100
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 100
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 100
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 100
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 100
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 100
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 100
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 100
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 100
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 100
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 100
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 100
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 100
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 100
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 100
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 100
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 100
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 100
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 100
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 100
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 100
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 100
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 100
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 100
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 100
+        }
+      ]
+    },
+    "journeyCoverage": {
+      "name": "Journey Coverage Trend",
+      "points": [
+        {
+          "index": 1,
+          "generatedAt": "2026-06-30T10:27:56.476Z",
+          "label": "6/30/2026, 3:57:56 PM",
+          "value": 0
+        },
+        {
+          "index": 2,
+          "generatedAt": "2026-06-30T10:34:40.539Z",
+          "label": "6/30/2026, 4:04:40 PM",
+          "value": 0
+        },
+        {
+          "index": 3,
+          "generatedAt": "2026-06-30T10:48:47.097Z",
+          "label": "6/30/2026, 4:18:47 PM",
+          "value": 0
+        },
+        {
+          "index": 4,
+          "generatedAt": "2026-06-30T11:07:29.540Z",
+          "label": "6/30/2026, 4:37:29 PM",
+          "value": 0
+        },
+        {
+          "index": 5,
+          "generatedAt": "2026-06-30T11:31:47.436Z",
+          "label": "6/30/2026, 5:01:47 PM",
+          "value": 0
+        },
+        {
+          "index": 6,
+          "generatedAt": "2026-06-30T12:13:39.735Z",
+          "label": "6/30/2026, 5:43:39 PM",
+          "value": 0
+        },
+        {
+          "index": 7,
+          "generatedAt": "2026-06-30T12:43:40.297Z",
+          "label": "6/30/2026, 6:13:40 PM",
+          "value": 0
+        },
+        {
+          "index": 8,
+          "generatedAt": "2026-06-30T12:50:40.723Z",
+          "label": "6/30/2026, 6:20:40 PM",
+          "value": 0
+        },
+        {
+          "index": 9,
+          "generatedAt": "2026-06-30T12:55:39.242Z",
+          "label": "6/30/2026, 6:25:39 PM",
+          "value": 0
+        },
+        {
+          "index": 10,
+          "generatedAt": "2026-06-30T13:01:49.533Z",
+          "label": "6/30/2026, 6:31:49 PM",
+          "value": 0
+        },
+        {
+          "index": 11,
+          "generatedAt": "2026-06-30T13:07:38.629Z",
+          "label": "6/30/2026, 6:37:38 PM",
+          "value": 0
+        },
+        {
+          "index": 12,
+          "generatedAt": "2026-06-30T13:20:59.570Z",
+          "label": "6/30/2026, 6:50:59 PM",
+          "value": 0
+        },
+        {
+          "index": 13,
+          "generatedAt": "2026-06-30T13:23:14.053Z",
+          "label": "6/30/2026, 6:53:14 PM",
+          "value": 0
+        },
+        {
+          "index": 14,
+          "generatedAt": "2026-06-30T15:41:32.275Z",
+          "label": "6/30/2026, 9:11:32 PM",
+          "value": 0
+        },
+        {
+          "index": 15,
+          "generatedAt": "2026-06-30T15:45:58.008Z",
+          "label": "6/30/2026, 9:15:58 PM",
+          "value": 0
+        },
+        {
+          "index": 16,
+          "generatedAt": "2026-06-30T15:56:43.164Z",
+          "label": "6/30/2026, 9:26:43 PM",
+          "value": 0
+        },
+        {
+          "index": 17,
+          "generatedAt": "2026-06-30T16:05:37.641Z",
+          "label": "6/30/2026, 9:35:37 PM",
+          "value": 0
+        },
+        {
+          "index": 18,
+          "generatedAt": "2026-06-30T16:42:07.597Z",
+          "label": "6/30/2026, 10:12:07 PM",
+          "value": 0
+        },
+        {
+          "index": 19,
+          "generatedAt": "2026-06-30T16:55:35.032Z",
+          "label": "6/30/2026, 10:25:35 PM",
+          "value": 0
+        },
+        {
+          "index": 20,
+          "generatedAt": "2026-06-30T17:01:10.916Z",
+          "label": "6/30/2026, 10:31:10 PM",
+          "value": 0
+        },
+        {
+          "index": 21,
+          "generatedAt": "2026-06-30T17:18:15.128Z",
+          "label": "6/30/2026, 10:48:15 PM",
+          "value": 0
+        },
+        {
+          "index": 22,
+          "generatedAt": "2026-06-30T17:42:50.033Z",
+          "label": "6/30/2026, 11:12:50 PM",
+          "value": 0
+        },
+        {
+          "index": 23,
+          "generatedAt": "2026-06-30T17:44:33.836Z",
+          "label": "6/30/2026, 11:14:33 PM",
+          "value": 0
+        },
+        {
+          "index": 24,
+          "generatedAt": "2026-06-30T17:47:38.359Z",
+          "label": "6/30/2026, 11:17:38 PM",
+          "value": 0
+        },
+        {
+          "index": 25,
+          "generatedAt": "2026-06-30T17:54:37.364Z",
+          "label": "6/30/2026, 11:24:37 PM",
+          "value": 0
+        },
+        {
+          "index": 26,
+          "generatedAt": "2026-06-30T18:03:26.578Z",
+          "label": "6/30/2026, 11:33:26 PM",
+          "value": 0
+        },
+        {
+          "index": 27,
+          "generatedAt": "2026-06-30T18:07:09.844Z",
+          "label": "6/30/2026, 11:37:09 PM",
+          "value": 0
+        },
+        {
+          "index": 28,
+          "generatedAt": "2026-06-30T18:23:54.289Z",
+          "label": "6/30/2026, 11:53:54 PM",
+          "value": 75
+        },
+        {
+          "index": 29,
+          "generatedAt": "2026-06-30T18:25:56.951Z",
+          "label": "6/30/2026, 11:55:56 PM",
+          "value": 75
+        },
+        {
+          "index": 30,
+          "generatedAt": "2026-06-30T18:28:04.525Z",
+          "label": "6/30/2026, 11:58:04 PM",
+          "value": 75
+        }
+      ]
+    }
   },
-  {
-    "generatedAt": "2026-06-29T15:05:41.097Z",
-    "generatedAtDisplay": "6/29/2026, 8:35:41 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
+  "comparison": {
+    "status": "Compared",
+    "current": {
+      "generatedAt": "2026-06-30T18:28:04.525Z",
+      "generatedAtDisplay": "6/30/2026, 11:58:04 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "execution": {
+        "id": "air-1782844084525",
+        "startedAt": "",
+        "endedAt": "2026-06-30T18:28:04.525Z",
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "trigger": "Local Execution",
+        "source": "json-reporter"
+      },
+      "executionContext": {
+        "type": "Regression",
+        "scope": "Whole Product",
+        "executedModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Password",
+          "Profile",
+          "Signup"
+        ],
+        "configuredModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Onboarding",
+          "Password",
+          "Profile",
+          "Session Security",
+          "Signup"
+        ],
+        "coverage": 75,
+        "confidence": 93,
+        "validationLevel": "Partial Product Regression"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "quality": {
+        "score": 100,
+        "confidence": 100,
+        "grade": "Excellent"
+      },
+      "release": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ],
+      "businessJourneys": [
+        {
+          "name": "Registration",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Profile Setup",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Risk Profile",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Compliance",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Subscription",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Payment",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Dashboard",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        }
+      ]
     },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
+    "previous": {
+      "generatedAt": "2026-06-30T18:25:56.951Z",
+      "generatedAtDisplay": "6/30/2026, 11:55:56 PM",
+      "project": {
+        "name": "OOLTool",
+        "environment": "PUAT",
+        "buildVersion": "Playwright JSON",
+        "branch": "Local",
+        "commit": "Local",
+        "trigger": "Local Execution"
+      },
+      "execution": {
+        "id": "air-1782843956951",
+        "startedAt": "",
+        "endedAt": "2026-06-30T18:25:56.951Z",
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "trigger": "Local Execution",
+        "source": "json-reporter"
+      },
+      "executionContext": {
+        "type": "Regression",
+        "scope": "Whole Product",
+        "executedModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Password",
+          "Profile",
+          "Signup"
+        ],
+        "configuredModules": [
+          "Accessibility",
+          "Authentication",
+          "Billing",
+          "Onboarding",
+          "Password",
+          "Profile",
+          "Session Security",
+          "Signup"
+        ],
+        "coverage": 75,
+        "confidence": 93,
+        "validationLevel": "Full Product Validation"
+      },
+      "source": {
+        "type": "json-reporter",
+        "hasResults": true,
+        "framework": "Playwright",
+        "adapterWarning": ""
+      },
+      "summary": {
+        "total": 69,
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "interrupted": 0,
+        "durationMs": 701308,
+        "duration": "11m 41s",
+        "passRate": 100,
+        "failureRate": 0,
+        "executionStatus": "Passed",
+        "businessHealth": 100,
+        "qualityScore": 100,
+        "releaseDecision": "CONDITIONAL GO",
+        "estimatedReleaseRisk": "MEDIUM"
+      },
+      "quality": {
+        "score": 100,
+        "confidence": 100,
+        "grade": "Excellent"
+      },
+      "release": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "releaseDecision": {
+        "decision": "CONDITIONAL_GO",
+        "status": "CONDITIONAL GO",
+        "confidence": 100,
+        "risk": "MEDIUM",
+        "riskLevel": "MEDIUM",
+        "reasons": [
+          "Critical journeys are not blocked",
+          "Warnings require review",
+          "Release can proceed after evidence review"
+        ],
+        "warnings": [
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "reason": "Journey status is Not Executed."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "reason": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ],
+        "blockers": [],
+        "requiredActions": [
+          "Review warnings and attached evidence before approval."
+        ],
+        "recommendedAction": "Review warnings and attached evidence before approval.",
+        "explanation": "AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval."
+      },
+      "modules": [
+        {
+          "name": "Accessibility",
+          "critical": false,
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Billing",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Password",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Profile",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        },
+        {
+          "name": "Signup",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "skipped": 0,
+          "score": 100,
+          "coverage": 100,
+          "risk": "Low",
+          "status": "Healthy"
+        }
+      ],
+      "businessJourneys": [
+        {
+          "name": "Registration",
+          "critical": true,
+          "total": 14,
+          "passed": 14,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Authentication",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Profile Setup",
+          "critical": false,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Risk Profile",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Compliance",
+          "critical": true,
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "score": 0,
+          "coverage": 0,
+          "status": "Not Executed",
+          "risk": "No Data"
+        },
+        {
+          "name": "Subscription",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Payment",
+          "critical": true,
+          "total": 5,
+          "passed": 5,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        },
+        {
+          "name": "Dashboard",
+          "critical": true,
+          "total": 25,
+          "passed": 25,
+          "failed": 0,
+          "score": 100,
+          "coverage": 100,
+          "status": "Healthy",
+          "risk": "Low"
+        }
+      ]
     },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
-    },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+    "metrics": {
+      "quality": {
+        "current": 100,
+        "previous": 100,
+        "delta": 0,
+        "direction": "Stable"
       },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "passRate": {
+        "current": 100,
+        "previous": 100,
+        "delta": 0,
+        "direction": "Stable"
       },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "failures": {
+        "current": 0,
+        "previous": 0,
+        "delta": 0,
+        "direction": "Stable"
       },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "durationMs": {
+        "current": 701308,
+        "previous": 701308,
+        "delta": 0,
+        "direction": "Stable"
       },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "moduleCoverage": {
+        "current": 100,
+        "previous": 100,
+        "delta": 0,
+        "direction": "Stable"
       },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
+      "journeyCoverage": {
+        "current": 75,
+        "previous": 75,
+        "delta": 0,
+        "direction": "Stable"
       }
-    ]
+    },
+    "summary": "Current build compared with previous build: quality stable, failures stable, duration stable."
   },
-  {
-    "generatedAt": "2026-06-29T15:15:12.590Z",
-    "generatedAtDisplay": "6/29/2026, 8:45:12 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
-    },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
-  },
-  {
-    "generatedAt": "2026-06-29T15:25:09.306Z",
-    "generatedAtDisplay": "6/29/2026, 8:55:09 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
-    },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
-  },
-  {
-    "generatedAt": "2026-06-29T15:34:38.191Z",
-    "generatedAtDisplay": "6/29/2026, 9:04:38 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
-    },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
-  },
-  {
-    "generatedAt": "2026-06-29T15:36:19.592Z",
-    "generatedAtDisplay": "6/29/2026, 9:06:19 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 69,
-      "passed": 69,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 751476,
-      "duration": "12m 31s",
-      "passRate": 100,
-      "businessHealth": 96,
-      "qualityScore": 99,
-      "releaseDecision": "GO",
-      "estimatedReleaseRisk": "LOW"
-    },
-    "modules": [
-      {
-        "name": "Accessibility",
-        "total": 6,
-        "passed": 6,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Authentication",
-        "total": 25,
-        "passed": 25,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Billing",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Password",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Profile",
-        "total": 5,
-        "passed": 5,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      },
-      {
-        "name": "Signup",
-        "total": 14,
-        "passed": 14,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
-  },
-  {
-    "generatedAt": "2026-06-29T15:42:40.610Z",
-    "generatedAtDisplay": "6/29/2026, 9:12:40 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "missing",
-      "hasResults": false,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 0,
-      "passed": 0,
-      "failed": 0,
-      "skipped": 0,
-      "interrupted": 0,
-      "durationMs": 0,
-      "duration": "0s",
-      "passRate": 0,
-      "businessHealth": 0,
-      "qualityScore": 0,
-      "releaseDecision": "NO GO",
-      "estimatedReleaseRisk": "HIGH"
-    },
-    "modules": []
-  },
-  {
-    "generatedAt": "2026-06-29T15:54:16.495Z",
-    "generatedAtDisplay": "6/29/2026, 9:24:16 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 8,
-      "passed": 6,
-      "failed": 0,
-      "skipped": 2,
-      "interrupted": 0,
-      "durationMs": 321158,
-      "duration": "5m 21s",
-      "passRate": 75,
-      "businessHealth": 96,
-      "qualityScore": 82,
-      "releaseDecision": "NO GO",
-      "estimatedReleaseRisk": "HIGH"
-    },
-    "modules": [
-      {
-        "name": "Authentication",
-        "total": 4,
-        "passed": 3,
-        "failed": 0,
-        "skipped": 1,
-        "score": 75,
-        "risk": "Medium",
-        "status": "Partial"
-      },
-      {
-        "name": "Password",
-        "total": 3,
-        "passed": 2,
-        "failed": 0,
-        "skipped": 1,
-        "score": 67,
-        "risk": "Medium",
-        "status": "At Risk"
-      },
-      {
-        "name": "Profile",
-        "total": 1,
-        "passed": 1,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
-  },
-  {
-    "generatedAt": "2026-06-29T15:55:26.345Z",
-    "generatedAtDisplay": "6/29/2026, 9:25:26 PM",
-    "project": {
-      "name": "OOLTool",
-      "environment": "PUAT",
-      "buildVersion": "Playwright JSON",
-      "branch": "Local",
-      "commit": "Local",
-      "trigger": "Local Execution"
-    },
-    "source": {
-      "type": "html-report",
-      "hasResults": true,
-      "framework": "Playwright"
-    },
-    "summary": {
-      "total": 8,
-      "passed": 6,
-      "failed": 0,
-      "skipped": 2,
-      "interrupted": 0,
-      "durationMs": 321158,
-      "duration": "5m 21s",
-      "passRate": 75,
-      "businessHealth": 96,
-      "qualityScore": 82,
-      "releaseDecision": "NO GO",
-      "estimatedReleaseRisk": "HIGH"
-    },
-    "modules": [
-      {
-        "name": "Authentication",
-        "total": 4,
-        "passed": 3,
-        "failed": 0,
-        "skipped": 1,
-        "score": 75,
-        "risk": "Medium",
-        "status": "Partial"
-      },
-      {
-        "name": "Password",
-        "total": 3,
-        "passed": 2,
-        "failed": 0,
-        "skipped": 1,
-        "score": 67,
-        "risk": "Medium",
-        "status": "At Risk"
-      },
-      {
-        "name": "Profile",
-        "total": 1,
-        "passed": 1,
-        "failed": 0,
-        "skipped": 0,
-        "score": 100,
-        "risk": "Low",
-        "status": "Healthy"
-      }
-    ]
+  "regressions": [],
+  "improvements": [],
+  "summary": {
+    "status": "Compared",
+    "totalExecutions": 30,
+    "firstExecution": false,
+    "latestExecution": "2026-06-30T18:28:04.525Z",
+    "qualityChanged": "Stable",
+    "releaseChanged": "CONDITIONAL GO -> CONDITIONAL GO"
   }
-]
+}
