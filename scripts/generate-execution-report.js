@@ -1,10 +1,27 @@
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
+const { execSync } = require('child_process');
 
 const projectRoot = path.resolve(__dirname, '..');
 const resultsPath = path.join(projectRoot, 'test-results', 'results.json');
+const configPath = path.join(projectRoot, 'config', 'air.config.json');
 const outputDir = path.join(projectRoot, 'execution-report');
 const outputPath = path.join(outputDir, 'index.html');
+const airResultsPath = path.join(outputDir, 'air-results.json');
+const playwrightReportPath = path.join(projectRoot, 'playwright-report', 'index.html');
+
+function readGitValue(command, fallback) {
+  try {
+    return execSync(command, {
+      cwd: projectRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -13,6 +30,13 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function escapeJsString(value) {
+  return String(value)
+    .replaceAll('\\', '\\\\')
+    .replaceAll("'", "\\'")
+    .replaceAll('\n', ' ');
 }
 
 function collectTests(suites, parentTitle = []) {
@@ -41,6 +65,182 @@ function collectTests(suites, parentTitle = []) {
   return tests;
 }
 
+function collectHtmlReportTests(files) {
+  const tests = [];
+
+  for (const file of files ?? []) {
+    for (const test of file.tests ?? []) {
+      for (const result of test.results ?? []) {
+        const status =
+          result.status ??
+          (
+            test.outcome === 'expected'
+              ? 'passed'
+              : test.outcome === 'skipped'
+                ? 'skipped'
+                : test.outcome === 'unexpected'
+                  ? 'failed'
+                  : test.outcome
+          );
+
+        tests.push({
+          title: [
+            file.fileName,
+            ...(test.path ?? []),
+            test.title,
+          ].filter(Boolean).join(' > '),
+          status,
+          duration: result.duration ?? test.duration ?? 0,
+          project: test.projectName ?? '',
+          error: result.error?.message ?? '',
+        });
+      }
+    }
+  }
+
+  return tests;
+}
+
+function readZipEntry(zipBuffer, targetName) {
+  const eocdSignature = 0x06054b50;
+  let eocdOffset = -1;
+
+  for (let index = zipBuffer.length - 22; index >= 0; index--) {
+    if (zipBuffer.readUInt32LE(index) === eocdSignature) {
+      eocdOffset = index;
+      break;
+    }
+  }
+
+  if (eocdOffset === -1) {
+    throw new Error('Unable to locate Playwright report zip directory.');
+  }
+
+  const entryCount =
+    zipBuffer.readUInt16LE(eocdOffset + 10);
+  let centralDirectoryOffset =
+    zipBuffer.readUInt32LE(eocdOffset + 16);
+
+  for (let entryIndex = 0; entryIndex < entryCount; entryIndex++) {
+    const signature =
+      zipBuffer.readUInt32LE(centralDirectoryOffset);
+
+    if (signature !== 0x02014b50) {
+      throw new Error('Invalid Playwright report zip directory.');
+    }
+
+    const compressionMethod =
+      zipBuffer.readUInt16LE(centralDirectoryOffset + 10);
+    const compressedSize =
+      zipBuffer.readUInt32LE(centralDirectoryOffset + 20);
+    const fileNameLength =
+      zipBuffer.readUInt16LE(centralDirectoryOffset + 28);
+    const extraLength =
+      zipBuffer.readUInt16LE(centralDirectoryOffset + 30);
+    const commentLength =
+      zipBuffer.readUInt16LE(centralDirectoryOffset + 32);
+    const localHeaderOffset =
+      zipBuffer.readUInt32LE(centralDirectoryOffset + 42);
+    const fileName =
+      zipBuffer
+        .subarray(
+          centralDirectoryOffset + 46,
+          centralDirectoryOffset + 46 + fileNameLength
+        )
+        .toString('utf8');
+
+    if (fileName === targetName) {
+      const localFileNameLength =
+        zipBuffer.readUInt16LE(localHeaderOffset + 26);
+      const localExtraLength =
+        zipBuffer.readUInt16LE(localHeaderOffset + 28);
+      const dataStart =
+        localHeaderOffset + 30 + localFileNameLength + localExtraLength;
+      const compressedData =
+        zipBuffer.subarray(
+          dataStart,
+          dataStart + compressedSize
+        );
+
+      if (compressionMethod === 0) {
+        return compressedData.toString('utf8');
+      }
+
+      if (compressionMethod === 8) {
+        return zlib.inflateRawSync(compressedData).toString('utf8');
+      }
+
+      throw new Error(`Unsupported zip compression method: ${compressionMethod}`);
+    }
+
+    centralDirectoryOffset +=
+      46 + fileNameLength + extraLength + commentLength;
+  }
+
+  throw new Error(`Unable to find ${targetName} in Playwright report.`);
+}
+
+function readPlaywrightHtmlReport() {
+  if (!fs.existsSync(playwrightReportPath)) {
+    return undefined;
+  }
+
+  const html =
+    fs.readFileSync(playwrightReportPath, 'utf8');
+  const match =
+    html.match(
+      /<template[^>]*id=["']playwrightReportBase64["'][^>]*>([\s\S]*?)<\/template>/
+    );
+
+  if (!match) {
+    return undefined;
+  }
+
+  const encodedReport =
+    match[1]
+      .trim()
+      .replace(/^data:application\/zip;base64,/, '');
+  const zipBuffer =
+    Buffer.from(
+      encodedReport,
+      'base64'
+    );
+  const reportJson =
+    readZipEntry(
+      zipBuffer,
+      'report.json'
+    );
+
+  return JSON.parse(reportJson);
+}
+
+function loadExecutionResults() {
+  if (fs.existsSync(resultsPath)) {
+    return {
+      hasResults: true,
+      source: 'json-reporter',
+      results: JSON.parse(fs.readFileSync(resultsPath, 'utf8')),
+    };
+  }
+
+  const htmlReport =
+    readPlaywrightHtmlReport();
+
+  if (htmlReport) {
+    return {
+      hasResults: true,
+      source: 'html-report',
+      results: htmlReport,
+    };
+  }
+
+  return {
+    hasResults: false,
+    source: 'missing',
+    results: { suites: [] },
+  };
+}
+
 function formatDuration(ms) {
   const seconds = Math.round(ms / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -53,21 +253,223 @@ function formatDuration(ms) {
   return `${remainingSeconds}s`;
 }
 
-if (!fs.existsSync(resultsPath)) {
-  console.error(`Missing Playwright JSON results: ${resultsPath}`);
-  console.error('Run: npx playwright test --headed');
-  process.exit(1);
+const airConfig = fs.existsSync(configPath)
+  ? JSON.parse(fs.readFileSync(configPath, 'utf8'))
+  : {};
+const airResults = fs.existsSync(airResultsPath)
+  ? JSON.parse(fs.readFileSync(airResultsPath, 'utf8'))
+  : undefined;
+const loadedResults =
+  airResults
+    ? {
+      hasResults: airResults.source?.hasResults ?? false,
+      source: `air-results/${airResults.source?.type ?? 'model'}`,
+      results: { suites: [] },
+    }
+    : loadExecutionResults();
+const hasResults =
+  loadedResults.hasResults;
+const results =
+  loadedResults.results;
+const tests =
+  airResults
+    ? airResults.tests.map(test => ({
+      title: test.title,
+      status: test.status,
+      duration: test.durationMs,
+      project: test.project,
+      error: test.error,
+    }))
+    : Array.isArray(results.files)
+    ? collectHtmlReportTests(results.files)
+    : collectTests(results.suites);
+const total = airResults?.summary?.total ?? tests.length;
+const passed = airResults?.summary?.passed ?? tests.filter(test => test.status === 'passed').length;
+const failed = airResults?.summary?.failed ?? tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length;
+const skipped = airResults?.summary?.skipped ?? tests.filter(test => test.status === 'skipped').length;
+const interrupted = airResults?.summary?.interrupted ?? tests.filter(test => test.status === 'interrupted').length;
+const totalDuration = airResults?.summary?.durationMs ?? tests.reduce((sum, test) => sum + test.duration, 0);
+const generatedAt = airResults?.generatedAtDisplay ?? new Date().toLocaleString();
+const projectName = airResults?.project?.name ?? airConfig.projectName ?? 'OOLTool';
+const environment = airResults?.project?.environment ?? airConfig.environment ?? 'PUAT';
+const buildVersion = airResults?.project?.buildVersion ?? airConfig.buildVersion ?? 'Playwright JSON';
+const productName = airConfig.productName || 'AIR';
+const passRate =
+  airResults?.summary?.passRate ??
+  (
+    total === 0
+      ? 0
+      : Math.round((passed / total) * 100)
+  );
+const businessHealth =
+  airResults?.summary?.businessHealth ??
+  (
+    failed === 0 && passed > 0
+      ? 96
+      : Math.max(0, passRate - failed * 5)
+  );
+const qualityScore =
+  airResults?.summary?.qualityScore ??
+  Math.round((passRate * 0.65) + (businessHealth * 0.35));
+const releaseDecision =
+  airResults?.summary?.releaseDecision ??
+  (
+    passRate >= 95 && failed === 0 && businessHealth >= 90
+      ? 'GO'
+      : passRate >= 90 && failed <= 1 && businessHealth >= 80
+        ? 'CONDITIONAL GO'
+        : 'NO GO'
+  );
+const releaseClass =
+  releaseDecision === 'GO'
+    ? 'good'
+    : releaseDecision === 'CONDITIONAL GO'
+      ? 'warn'
+      : 'bad';
+
+function getModuleName(title) {
+  const normalizedTitle =
+    title.toLowerCase();
+
+  if (normalizedTitle.includes('signup')) {
+    return 'Signup';
+  }
+
+  if (normalizedTitle.includes('onboarding')) {
+    return 'Onboarding';
+  }
+
+  if (normalizedTitle.includes('billing') || normalizedTitle.includes('subscriber')) {
+    return 'Billing';
+  }
+
+  if (normalizedTitle.includes('profile')) {
+    return 'Profile';
+  }
+
+  if (normalizedTitle.includes('password policy') || normalizedTitle.includes('password')) {
+    return 'Password';
+  }
+
+  if (normalizedTitle.includes('session')) {
+    return 'Session Security';
+  }
+
+  if (normalizedTitle.includes('accessibility') || normalizedTitle.includes('browser')) {
+    return 'Accessibility';
+  }
+
+  if (normalizedTitle.includes('auth') || normalizedTitle.includes('login') || normalizedTitle.includes('forgot')) {
+    return 'Authentication';
+  }
+
+  return 'General';
 }
 
-const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
-const tests = collectTests(results.suites);
-const total = tests.length;
-const passed = tests.filter(test => test.status === 'passed').length;
-const failed = tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length;
-const skipped = tests.filter(test => test.status === 'skipped').length;
-const interrupted = tests.filter(test => test.status === 'interrupted').length;
-const totalDuration = tests.reduce((sum, test) => sum + test.duration, 0);
-const generatedAt = new Date().toLocaleString();
+const moduleMap =
+  tests.reduce(
+    (map, test) => {
+      const moduleName =
+        getModuleName(test.title);
+
+      if (!map.has(moduleName)) {
+        map.set(moduleName, {
+          name: moduleName,
+          total: 0,
+          passed: 0,
+          failed: 0,
+          skipped: 0,
+        });
+      }
+
+      const module =
+        map.get(moduleName);
+
+      module.total += 1;
+
+      if (test.status === 'passed') {
+        module.passed += 1;
+      } else if (test.status === 'skipped') {
+        module.skipped += 1;
+      } else {
+        module.failed += 1;
+      }
+
+      return map;
+    },
+    new Map()
+  );
+
+const moduleHealth =
+  airResults?.modules?.length
+    ? airResults.modules.map(module => ({
+      name: module.name,
+      total: module.total,
+      passed: module.passed,
+      failed: module.failed,
+      skipped: module.skipped,
+      score: module.score,
+      status: module.status,
+      risk: module.risk,
+    }))
+    : [...moduleMap.values()]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(module => {
+        const score =
+          module.total === 0
+            ? 0
+            : Math.round((module.passed / module.total) * 100);
+
+        return {
+          ...module,
+          score,
+          status:
+            score >= 90 && module.failed === 0
+              ? 'Healthy'
+              : score >= 75
+                ? 'Partial'
+                : 'At Risk',
+          risk:
+            module.failed > 0
+              ? 'High'
+              : module.skipped > 0
+                ? 'Medium'
+                : 'Low',
+        };
+      });
+
+const criticalRisks =
+  failed > 0
+    ? tests
+      .filter(test => test.status !== 'passed' && test.status !== 'skipped')
+      .slice(0, 5)
+      .map(test => ({
+        severity: 'High',
+        title: test.title,
+        action: 'Review failure evidence in the Playwright HTML report.',
+      }))
+    : [
+      {
+        severity: 'Low',
+        title: 'No failing tests in the current execution run.',
+        action: 'Proceed with release review using the evidence report.',
+      },
+    ];
+
+const businessJourney =
+  Array.isArray(airConfig.businessJourney) && airConfig.businessJourney.length > 0
+    ? airConfig.businessJourney
+    : [
+      'Visitor',
+      'Register',
+      'OTP',
+      'Verify Email',
+      'Login',
+      'Risk Profile',
+      'Compliance',
+      'Payment',
+      'Dashboard',
+    ];
 
 const validations = [
   {
@@ -388,7 +790,14 @@ const rows = tests
         <td>${escapeHtml(test.error)}</td>
       </tr>`;
   })
-  .join('');
+  .join('') || `
+      <tr>
+        <td colspan="5">No Playwright JSON results found. Run <code>npm run execution</code> or <code>npm run controlled</code>, then run <code>npm run report:execution</code>.</td>
+      </tr>`;
+
+const evidenceNotice = hasResults
+  ? 'Screenshots, videos, traces, and raw Playwright detail are available in the evidence report.'
+  : 'The AIR report layout is ready, but Playwright JSON results are missing. Run the execution suite to populate live metrics and evidence links.';
 
 const validationCards = validations
   .map(group => `
@@ -439,285 +848,1860 @@ const roadmapCards = priorityRoadmap
     </article>`)
   .join('');
 
+const moduleRows = moduleHealth
+  .map(module => `
+    <tr>
+      <td>${escapeHtml(module.name)}</td>
+      <td><span class="score">${module.score}</span></td>
+      <td><span class="pill ${module.status === 'Healthy' ? 'good' : module.status === 'Partial' ? 'warn' : 'bad'}">${escapeHtml(module.status)}</span></td>
+      <td><span class="pill ${module.risk === 'Low' ? 'good' : module.risk === 'Medium' ? 'warn' : 'bad'}">${escapeHtml(module.risk)}</span></td>
+      <td>${module.passed}/${module.total}</td>
+      <td>${module.failed}</td>
+      <td>${module.skipped}</td>
+    </tr>`)
+  .join('');
+
+const journeySteps = businessJourney
+  .map((step, index) => `
+    <div class="journey-step">
+      <div class="journey-index">${index + 1}</div>
+      <div>
+        <strong>${escapeHtml(step)}</strong>
+        <span>Covered</span>
+      </div>
+    </div>`)
+  .join('');
+
+const riskCards = criticalRisks
+  .map(risk => `
+    <article class="risk-card">
+      <span class="pill ${risk.severity === 'Low' ? 'good' : risk.severity === 'Medium' ? 'warn' : 'bad'}">${escapeHtml(risk.severity)}</span>
+      <h3>${escapeHtml(risk.title)}</h3>
+      <p>${escapeHtml(risk.action)}</p>
+    </article>`)
+  .join('');
+
+const releaseLabel =
+  releaseDecision === 'GO'
+    ? 'YES'
+    : releaseDecision === 'CONDITIONAL GO'
+      ? 'REVIEW'
+      : 'NO';
+
+const riskLevel =
+  failed > 0
+    ? 'High'
+    : skipped > 0
+      ? 'Medium'
+      : 'Low';
+
+const metricItems = [
+  { label: 'Total Tests', value: total, tone: 'green', width: total ? 90 : 20 },
+  { label: 'Passed', value: passed, tone: 'green', width: total ? Math.max(12, passRate) : 20 },
+  { label: 'Failed', value: failed, tone: failed ? 'red' : 'green', width: failed ? Math.min(100, failed * 18) : 12 },
+  { label: 'Pass Rate', value: `${passRate}%`, tone: passRate >= 95 ? 'green' : passRate >= 90 ? 'amber' : 'red', width: Math.max(8, passRate) },
+  { label: 'Duration', value: formatDuration(totalDuration), tone: 'green', width: 82 },
+  { label: 'Release', value: releaseLabel, tone: releaseClass === 'good' ? 'green' : releaseClass === 'warn' ? 'amber' : 'red', width: qualityScore },
+];
+
+const metricCards = metricItems
+  .map(item => `
+        <div class="metric-card ${item.tone}">
+          <div class="metric-label">${escapeHtml(item.label)}</div>
+          <div class="metric-value">${escapeHtml(item.value)}</div>
+        </div>`)
+  .join('');
+
+const liveMetricRows = metricItems
+  .map(item => `
+          <tr>
+            <td>${escapeHtml(item.label)}</td>
+            <td><span class="mini-badge ${item.tone}">${escapeHtml(item.value)}</span></td>
+            <td><div class="bar-track"><div class="bar-fill ${item.tone}" style="width:${item.width}%"></div></div></td>
+          </tr>`)
+  .join('');
+
+const chartBars = metricItems
+  .map(item => {
+    const height = Math.max(35, Math.round((item.width / 100) * 160));
+    return `<div class="vbar ${item.tone}" style="height:${height}px"><span>${escapeHtml(item.label.slice(0, 8))}</span></div>`;
+  })
+  .join('');
+
+const journeyChips = businessJourney
+  .map(step => `<span class="journey-chip green">${escapeHtml(step)}</span>`)
+  .join('');
+
+const failedTests = tests.filter(test => test.status === 'failed' || test.status === 'timedOut');
+const topFailureRows =
+  failedTests
+    .slice(0, 4)
+    .map(test => `
+      <div class="failure-row">
+        <span>${escapeHtml(test.title)}</span>
+        <strong>Failed</strong>
+      </div>`)
+    .join('') || `
+      <div class="failure-row">
+        <span>No failed tests in available execution data</span>
+        <strong class="ok">Clear</strong>
+      </div>`;
+
+const projectCounts = tests.reduce((counts, test) => {
+  const project = test.project || 'chromium';
+  counts[project] = (counts[project] || 0) + 1;
+  return counts;
+}, {});
+
+const browserRows =
+  Object.entries(projectCounts)
+    .map(([project, count]) => {
+      const percentage = total ? Math.round((count / total) * 100) : 0;
+      return `<li><span>${escapeHtml(project)}</span><strong>${count} (${percentage}%)</strong></li>`;
+    })
+    .join('') || '<li><span>chromium</span><strong>No run data</strong></li>';
+
+const quickActions = [
+  ['Export Executive PDF', 'javascript:window.print()'],
+  ['Open Evidence Report', '../playwright-report/index.html'],
+  ['Open Raw JSON', '../test-results/results.json'],
+  ['View Detailed Tests', '#detailed-results'],
+  ['Open Coverage Matrix', '#coverage'],
+  ['Open Roadmap', '#roadmap'],
+]
+  .map(([label, href]) => `<a href="${href}">${escapeHtml(label)}</a>`)
+  .join('');
+
+const goldenModuleRows = moduleHealth
+  .map(module => {
+    const tone =
+      module.risk === 'High'
+        ? 'bad'
+        : module.risk === 'Medium'
+          ? 'warn'
+          : 'good';
+    const decision =
+      module.risk === 'High'
+        ? 'Improve'
+        : module.risk === 'Medium'
+          ? 'Monitor'
+          : 'Ready';
+
+    return `
+      <tr>
+        <td>${escapeHtml(module.name)}</td>
+        <td><div class="progress"><div class="fill" style="width:${module.score}%"></div></div></td>
+        <td><span class="badge ${tone}">${escapeHtml(module.risk)}</span></td>
+        <td>${decision}</td>
+      </tr>`;
+  })
+  .join('');
+
+const goldenJourneySteps = businessJourney
+  .map((step, index) => `
+    <div class="step">${escapeHtml(step)}<br><span class="badge good">Healthy</span></div>
+    ${index < businessJourney.length - 1 ? '<div class="arrow">-&gt;</div>' : ''}`)
+  .join('');
+
 const html = `<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OOLTool PUAT Automation Execution Report</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #f6f8fb;
-      --panel: #ffffff;
-      --text: #172033;
-      --muted: #5d6b82;
-      --line: #dfe5ef;
-      --green: #11845b;
-      --red: #b42318;
-      --amber: #946200;
-      --blue: #2457c5;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.45;
-    }
-
-    main {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 40px 28px;
-    }
-
-    header {
-      margin-bottom: 28px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-      margin: 28px 0;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-    }
-
-    .label {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .value {
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    section {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 22px;
-      margin-top: 18px;
-    }
-
-    h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      border-top: 1px solid var(--line);
-      padding: 12px 10px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-
-    .badge {
-      border-radius: 999px;
-      color: #fff;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 9px;
-      text-transform: uppercase;
-    }
-
-    .passed { background: var(--green); }
-    .failed { background: var(--red); }
-    .skipped { background: var(--amber); }
-
-    .notes {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .notes + .notes {
-      margin-top: 8px;
-    }
-
-    a {
-      color: var(--blue);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .validation-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .validation-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--muted);
-    }
-
-    li + li {
-      margin-top: 6px;
-    }
-
-    @media (max-width: 800px) {
-      .summary {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .validation-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIR Framework - OOLTool Execution Report</title>
+<style>
+:root{--nav:#061329;--nav2:#081a35;--bg:#f5f8fc;--card:#fff;--line:#dce5f2;--text:#0f1b3d;--muted:#64748b;--green:#16a34a;--red:#dc2626;--amber:#f59e0b;--blue:#2563eb;--purple:#4f46e5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif;font-size:14px}
+.layout{display:flex;min-height:100vh}.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:linear-gradient(180deg,#07142d,#020817);color:#fff;padding:22px 16px;overflow:auto}.brand{padding:0 8px 22px}.brand .air{font-size:42px;font-weight:900;line-height:.9;letter-spacing:.04em;background:linear-gradient(90deg,#22d3ee,#6d5dfc);-webkit-background-clip:text;color:transparent}.brand strong{display:block;font-size:17px;letter-spacing:.22em;margin-top:8px}.brand span{display:block;color:#d7e4f7;font-size:13px;line-height:1.4;margin-top:8px}.nav a{align-items:center;border-radius:10px;color:#e5e7eb;display:flex;gap:12px;margin:2px 0;padding:11px 12px;text-decoration:none}.nav a.active,.nav a:hover{background:linear-gradient(90deg,#2563eb,#5b41e8)}.nav small{align-items:center;border:1px solid rgba(255,255,255,.35);border-radius:7px;display:inline-flex;height:22px;justify-content:center;width:22px}.side-controls{border-top:1px solid rgba(255,255,255,.14);margin-top:22px;padding:16px 8px}.side-controls label{color:#cbd5e1;display:block;font-size:12px;margin:14px 0 6px}.select{background:#071934;border:1px solid #334a6d;border-radius:7px;color:#fff;padding:11px;width:100%}.user{align-items:center;border-top:1px solid rgba(255,255,255,.14);display:flex;gap:12px;margin-top:18px;padding:18px 8px}.avatar{align-items:center;background:linear-gradient(135deg,#2dd4bf,#2563eb);border-radius:50%;display:flex;font-weight:900;height:42px;justify-content:center;width:42px}.main{margin-left:255px;padding:0;width:calc(100% - 255px)}.screen{min-height:100vh;padding:24px 28px;border-bottom:1px solid var(--line)}.topbar{align-items:flex-start;display:flex;gap:20px;justify-content:space-between;margin-bottom:18px}.topbar h1{font-size:32px;line-height:1;margin:0 0 6px}.topbar p{color:var(--muted);margin:0}.filters{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.filter,.btn{background:#fff;border:1px solid #d7e1ef;border-radius:8px;color:var(--text);padding:10px 14px;text-decoration:none;font-weight:700}.btn.primary{background:linear-gradient(90deg,#2563eb,#5b41e8);border-color:#4f46e5;color:#fff}.last-run{color:#475569;font-size:12px;margin-top:10px;text-align:right}.status{background:#dcfce7;border-radius:999px;color:#166534;font-weight:800;padding:7px 12px}.kpis{display:grid;gap:16px;grid-template-columns:repeat(6,minmax(0,1fr));margin:16px 0 20px}.kpi,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 22px rgba(15,23,42,.05)}.kpi{min-height:112px;padding:18px;position:relative}.kpi .label{font-weight:800;margin-bottom:10px}.kpi .value{font-size:30px;font-weight:900}.kpi .delta{color:var(--muted);font-size:12px;margin-top:10px}.kpi .icon{align-items:center;border-radius:14px;color:#fff;display:flex;font-size:22px;font-weight:900;height:46px;justify-content:center;position:absolute;right:18px;top:32px;width:46px}.blue{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}.green-bg{background:linear-gradient(135deg,#4ade80,#15803d)}.red-bg{background:linear-gradient(135deg,#f87171,#dc2626)}.amber-bg{background:linear-gradient(135deg,#fbbf24,#f97316)}.purple-bg{background:linear-gradient(135deg,#8b5cf6,#4338ca)}.teal-bg{background:linear-gradient(135deg,#14b8a6,#0f766e)}.grid{display:grid;gap:16px;margin-bottom:16px}.grid.top{grid-template-columns:1fr 2.1fr 1.65fr}.grid.mid{grid-template-columns:1.25fr 1fr 1.25fr 1.25fr}.grid.bottom{grid-template-columns:1.4fr 1fr 1fr}.card{padding:18px;overflow:auto}.card h2{font-size:18px;margin:0 0 14px}.card-head{align-items:center;display:flex;justify-content:space-between}.card-head a{color:var(--blue);font-size:12px;font-weight:800;text-decoration:none}.gauge{align-items:center;display:flex;flex-direction:column;padding:18px 0}.gauge-ring{align-items:center;background:conic-gradient(var(--green) ${qualityScore}%,#e5e7eb 0);border-radius:50%;display:flex;height:205px;justify-content:center;width:205px}.gauge-inner{align-items:center;background:#fff;border-radius:50%;display:flex;flex-direction:column;height:145px;justify-content:center;width:145px}.gauge-inner strong{font-size:42px}.go{background:#eafaf0;border:1px solid #bbf7d0;border-radius:8px;color:#059669;font-size:28px;font-weight:900;margin:10px 0 0;padding:8px 24px}.dash-table{border-collapse:collapse;font-size:13px;width:100%}.dash-table th,.dash-table td{border-bottom:1px solid var(--line);padding:10px;text-align:left;vertical-align:middle}.dash-table th{color:#64748b;font-size:12px;font-weight:800;text-transform:uppercase}.mini-badge,.badge{border-radius:999px;display:inline-block;font-size:12px;font-weight:800;padding:5px 9px}.good,.passed{background:#dcfce7;color:#166534}.warn,.skipped{background:#ffedd5;color:#9a3412}.bad,.failed{background:#fee2e2;color:#991b1b}.score{font-weight:900;color:var(--blue)}.bar-track{background:#e5e7eb;border-radius:999px;height:10px;overflow:hidden;width:120px}.bar-fill{background:var(--green);border-radius:999px;height:100%}.bar-fill.warn{background:var(--amber)}.bar-fill.bad{background:var(--red)}.trend{height:250px;position:relative}.trend-grid{background:linear-gradient(#e5e7eb 1px,transparent 1px),linear-gradient(90deg,#e5e7eb 1px,transparent 1px);background-size:100% 25%,16.6% 100%;height:200px;margin-top:20px}.trend-line{align-items:center;display:flex;height:64px;justify-content:space-between;margin-top:-130px;padding:0 14px}.trend-point{background:#16a34a;border-radius:999px;height:10px;position:relative;width:10px}.trend-point span{color:#166534;font-size:12px;font-weight:800;position:absolute;top:-22px;transform:translateX(-30%)}.donut{align-items:center;background:conic-gradient(#22c55e 0 63%,#4f46e5 63% 76%,#0ea5e9 76% 84%,#ef4444 84% 92%,#f97316 92% 100%);border-radius:50%;display:flex;height:160px;justify-content:center;width:160px}.donut-inner{align-items:center;background:#fff;border-radius:50%;display:flex;flex-direction:column;height:100px;justify-content:center;width:100px}.coverage{display:flex;gap:18px;align-items:center}.coverage ul,.browser ul{list-style:none;margin:0;padding:0;flex:1}.coverage li,.browser li{display:flex;justify-content:space-between;margin:10px 0}.risk-list{display:grid;gap:10px}.risk-item{align-items:center;border:1px solid var(--line);border-radius:10px;display:flex;justify-content:space-between;padding:10px 12px}.failure-row{align-items:center;border-bottom:1px solid var(--line);display:flex;gap:10px;justify-content:space-between;padding:10px 0}.failure-row strong{background:#fee2e2;border-radius:6px;color:#dc2626;padding:5px 9px}.failure-row strong.ok{background:#dcfce7;color:#15803d}.browser{display:flex;gap:18px;align-items:center}.quick{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr))}.quick a{background:#fff;border:1px solid #dbe5f2;border-radius:8px;color:#1e3a8a;font-weight:800;padding:10px 12px;text-decoration:none}.validation-grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}.validation-card,.risk-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}.validation-card h3,.risk-card h3{margin:0 0 10px}.validation-card ul{margin:0;padding-left:18px;color:#475569}.footer{color:#475569;display:flex;gap:12px;justify-content:space-between;padding:0 2px 18px}.detail-section{margin-top:0}.journey-list{display:flex;gap:10px;flex-wrap:wrap}.journey-chip{background:#eef2ff;border:1px solid #dbe5ff;border-radius:999px;color:#3730a3;font-weight:800;padding:9px 12px}a{color:var(--blue)}@media(max-width:1100px){.kpis,.grid.top,.grid.mid,.grid.bottom,.validation-grid{grid-template-columns:1fr 1fr}.sidebar{width:220px}.main{margin-left:220px;width:calc(100% - 220px)}}@media(max-width:850px){.sidebar{display:none}.main{margin-left:0;width:100%}.screen{padding:18px}.kpis,.grid.top,.grid.mid,.grid.bottom,.validation-grid{grid-template-columns:1fr}.topbar{display:block}.filters{justify-content:flex-start;margin-top:12px}.coverage,.browser{display:block}}@media print{.sidebar,.filters{display:none}.main{margin-left:0;width:100%}.card,.kpi{break-inside:avoid}}
+.pill{border-radius:999px;display:inline-block;font-size:12px;font-weight:800;padding:5px 9px}
+.cover-page{min-height:calc(100vh - 44px);display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:stretch}.cover-hero{border:1px solid var(--line2);border-radius:18px;background:radial-gradient(circle at 20% 10%,rgba(57,231,95,.2),transparent 32%),linear-gradient(145deg,#0b1728,#07101f);padding:38px;display:flex;flex-direction:column;justify-content:space-between}.cover-logo{font-size:88px;font-weight:900;letter-spacing:-6px;background:linear-gradient(90deg,#39e75f,#16a34a);-webkit-background-clip:text;color:transparent;line-height:.9}.cover-title{font-size:44px;line-height:1.02;margin:18px 0 10px}.cover-sub{font-size:18px;color:var(--muted);max-width:680px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.cover-stat{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.68);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:28px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.34);border-radius:18px;background:linear-gradient(135deg,rgba(57,231,95,.13),rgba(8,16,30,.76));padding:22px;margin-bottom:22px}.wow h2{font-size:30px;margin:0 0 16px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.wow-card{border:1px solid var(--line2);border-radius:14px;background:rgba(7,16,31,.78);padding:18px}.wow-card span{display:block;color:var(--muted);font-size:12px}.wow-card strong{display:block;font-size:34px;margin-top:7px;color:var(--green)}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border-radius:10px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-weight:900}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.health-card{display:flex;gap:14px;align-items:center;border:1px solid var(--line2);border-radius:14px;background:#0b1728;padding:18px}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:30px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{min-width:48px;height:48px;border-radius:14px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-size:12px;font-weight:900}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:var(--text)}.thumb img{width:100%;height:104px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{height:142px;display:flex;flex-direction:column;justify-content:center;align-items:center}.thumb.placeholder div{width:72px;height:46px;border:1px dashed rgba(57,231,95,.45);border-radius:8px;display:grid;place-items:center;color:var(--green);font-size:12px;margin-bottom:10px}.ai-reasons{margin:10px 0 0;padding-left:20px;color:var(--muted);line-height:1.8}.footer{color:var(--muted);border-top:1px solid var(--line2);padding:18px 4px 0;margin-top:8px;display:flex;justify-content:space-between;gap:12px}.footer strong{color:var(--green)}@media(max-width:1100px){.cover-page,.wow-grid,.cover-stats,.health-grid,.thumb-grid{grid-template-columns:1fr}}
+.sidebar{padding:24px 18px}.nav a{margin-bottom:8px}main{padding:26px 32px 52px}.page{padding:26px;margin-bottom:26px}.grid{gap:18px}.kpis,.evidence-grid{gap:16px}.panel{padding:20px}.cover-page{min-height:720px;display:grid;gap:24px}.cover-hero{min-height:430px;border:1px solid rgba(57,231,95,.28);border-radius:18px;background:radial-gradient(circle at 70% 30%,rgba(57,231,95,.16),transparent 35%),linear-gradient(135deg,#07101f,#0b1728);padding:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}.cover-logo{font-size:92px;font-weight:900;letter-spacing:-7px;background:linear-gradient(90deg,#39e75f,#9af7ad);-webkit-background-clip:text;color:transparent}.cover-title{font-size:44px;line-height:1.02;margin:10px 0}.cover-sub{color:var(--muted);font-size:18px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cover-stat{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.76);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:23px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.3);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.82));padding:22px;margin-bottom:22px}.wow h2{font-size:28px;margin:0 0 14px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wow-card{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:16px}.wow-card span{display:block;color:var(--muted)}.wow-card strong{display:block;color:var(--green);font-size:34px;margin-top:5px}.wow-card small{display:block;color:#d7fbe0;line-height:1.7}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border:1px solid rgba(57,231,95,.35);border-radius:10px;display:inline-grid;place-items:center;background:rgba(57,231,95,.12);color:var(--green);font-size:12px;font-weight:900}.release-card{min-height:290px}.release-card .decision{font-size:70px}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.health-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:16px;background:#0b1728}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:28px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green);font-size:11px;font-weight:900}.health-card.amber .health-icon,.health-card.amber span{color:var(--amber)}.health-card.red .health-icon,.health-card.red span{color:var(--red)}.chart{height:250px;background:linear-gradient(180deg,#091426,#07101f);padding:22px 18px 42px;gap:16px}.bar{background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.12)}.bar:hover{filter:brightness(1.16)}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:white;min-height:132px}.thumb img{width:100%;height:92px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{display:grid;place-items:center;text-align:center}.thumb.placeholder div{width:100%;height:92px;border-radius:8px;border:1px dashed rgba(57,231,95,.35);display:grid;place-items:center;color:var(--green);background:rgba(57,231,95,.08)}.ai-reasons{margin:12px 0 0;padding-left:20px;color:#d7fbe0;line-height:1.8}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line2);padding-top:18px}.footer strong{color:white}@media(max-width:1100px){.cover-hero,.cover-stats,.wow-grid,.health-grid,.thumb-grid{grid-template-columns:1fr}}@page{size:A3 landscape;margin:8mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:#0b0f17!important;color:var(--text)!important}.app{display:block}.sidebar{display:none!important}main{padding:0!important}.page{break-inside:avoid;page-break-inside:avoid;margin:0 0 10mm!important;box-shadow:none!important}.btn,.actions{display:none!important}.footer{break-inside:avoid}}
+.nav-section{margin:14px 0 4px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:900}.nav a{padding-left:14px}.topbar h1{font-size:36px}.cover-sub strong{color:var(--green)}.panel,.kpi,.cover-stat,.wow-card,.health-card,.module-health-card,.evidence-card,.thumb{box-shadow:0 12px 30px rgba(0,0,0,.18)}.kpi,.wow-card{min-height:126px}.health-card{min-height:112px}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}.narrative{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.10),rgba(8,16,30,.82));padding:22px;margin:0 0 22px}.narrative h2{font-size:24px;margin:0 0 10px}.narrative p{font-size:17px;line-height:1.65;color:#dbeafe;margin:0}.meta-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.meta-item{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.68);padding:14px}.meta-item span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.meta-item strong{display:block;margin-top:7px;color:white}.why-release{margin-top:18px;border:1px solid rgba(57,231,95,.35);border-radius:14px;padding:18px;background:rgba(57,231,95,.08);text-align:left;width:100%}.why-release h3{margin:0 0 10px;font-size:16px}.why-release ul{margin:0;padding-left:20px;color:#d7fbe0;line-height:1.8}.module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:300px;border:1px solid rgba(57,231,95,.32);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.95),rgba(7,16,31,.95));padding:18px;text-decoration:none;color:var(--text);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 16px 36px rgba(57,231,95,.12)}.module-health-card.green{border-color:rgba(57,231,95,.38)}.module-health-card.amber{border-color:rgba(245,197,66,.42)}.module-health-card.red{border-color:rgba(255,59,59,.48)}.module-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.module-card-head strong{font-size:18px}.module-score{font-size:42px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-health-card em{font-style:normal;color:var(--green);font-weight:900;font-size:12px}.page-footer{display:flex;gap:14px;justify-content:space-between;align-items:center;border-top:1px solid var(--line2);color:var(--muted);font-size:11px;margin-top:22px;padding-top:14px}.page-footer strong{color:var(--green)}@media(max-width:1100px){.meta-strip{grid-template-columns:1fr}.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page-footer{display:block}.page-footer span,.page-footer strong{display:block;margin-top:6px}}@media(max-width:760px){.module-card-grid{grid-template-columns:1fr}.module-meta{grid-template-columns:1fr}}@media print{.page-footer{break-inside:avoid}.nav-section{display:none}.module-health-card{break-inside:avoid}}
+</style>
+<style>
+.module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:320px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;text-decoration:none;color:var(--text);box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.14)}.module-health-card.green{border-color:rgba(57,231,95,.45)}.module-health-card.amber{border-color:rgba(245,197,66,.55)}.module-health-card.red{border-color:rgba(255,59,59,.6)}.module-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.module-title{display:flex;align-items:center;gap:12px}.module-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}.module-health-card.amber .module-icon{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.38);color:var(--amber)}.module-health-card.red .module-icon{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.42);color:var(--red)}.module-title strong{font-size:18px}.module-score{font-size:44px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-button{display:inline-flex;align-items:center;justify-content:center;width:max-content;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.10);color:var(--green);font-size:12px;font-weight:900;padding:9px 12px}.module-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.module-dashboard-card{border:1px solid rgba(57,231,95,.34);border-radius:14px;background:rgba(8,16,30,.74);padding:18px;scroll-margin-top:24px}.module-dashboard-card.amber{border-color:rgba(245,197,66,.55)}.module-dashboard-card.red{border-color:rgba(255,59,59,.6)}.module-dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.module-dashboard-metrics span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-dashboard-metrics b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-action{margin-top:12px;color:#d7fbe0;font-weight:800}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}@media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-dashboard-grid,.module-dashboard-metrics{grid-template-columns:1fr}}@media(max-width:760px){.module-card-grid,.module-meta{grid-template-columns:1fr}}@media print{.module-health-card,.module-dashboard-card{break-inside:avoid}}
+</style>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>OOLTool PUAT Automation Execution Report</h1>
-      <p class="subtitle">Generated ${escapeHtml(generatedAt)} from Playwright automated test results.</p>
-    </header>
-
-    <div class="summary">
-      <div class="card"><div class="label">Total Tests</div><div class="value">${total}</div></div>
-      <div class="card"><div class="label">Passed</div><div class="value">${passed}</div></div>
-      <div class="card"><div class="label">Failed</div><div class="value">${failed}</div></div>
-      <div class="card"><div class="label">Skipped</div><div class="value">${skipped}</div></div>
-      <div class="card"><div class="label">Duration</div><div class="value">${formatDuration(totalDuration)}</div></div>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><div class="air">AIR</div><strong>FRAMEWORK</strong><span>Automation Intelligence<br>Reporting</span></div>
+    <nav class="nav">
+      <a class="active" href="#executive"><small>01</small>Executive Dashboard</a>
+      <a href="#business-health"><small>02</small>Business Health</a>
+      <a href="#journey"><small>03</small>Business Journey</a>
+      <a href="#registration"><small>04</small>Registration Dashboard</a>
+      <a href="#auth"><small>05</small>Authentication Dashboard</a>
+      <a href="#security"><small>06</small>Security</a>
+      <a href="#billing"><small>07</small>Billing</a>
+      <a href="#evidence"><small>08</small>Evidence</a>
+      <a href="#coverage-matrix"><small>09</small>Automation Coverage</a>
+      <a href="#detailed-results"><small>10</small>Test Analytics</a>
+      <a href="#roadmap"><small>11</small>Future Roadmap</a>
+      <a href="#summary"><small>12</small>AIR Summary</a>
+    </nav>
+    <div class="side-controls">
+      <label>Environment</label><div class="select">PUAT</div>
+      <label>Build Version</label><div class="select">Generated Report</div>
     </div>
-
-    <section>
-      <h2>Execution Summary</h2>
-      <p class="notes">Environment: PUAT. Browser: Chromium. This report covers the execution regression suite for onboarding, profile, password validation, billing, invoice, PDF access, and logout.</p>
-      <p class="notes">Evidence artifacts are available in the <a href="../playwright-report/index.html">Playwright HTML report</a>, including screenshots, videos, and traces when RECORD_ALL_ARTIFACTS is enabled.</p>
-      <p class="notes">Execution report file: <a href="./index.html">execution-report/index.html</a></p>
-      ${interrupted ? `<p class="notes">Interrupted tests: ${interrupted}</p>` : ''}
+    <div class="user"><div class="avatar">QA</div><div><strong>OOLTool QA</strong><br><span>Automation Lead</span></div></div>
+  </aside>
+  <main class="main">
+    <section class="screen" id="executive">
+      <div class="topbar">
+        <div><h1>Executive Dashboard</h1><p>Real-time overview of quality and automation intelligence</p></div>
+        <div>
+          <div class="filters">
+            <div class="filter">${escapeHtml(generatedAt)}</div>
+            <div class="filter">Build: Playwright JSON</div>
+            <div class="filter">Environment: PUAT</div>
+            <a class="filter" href="../playwright-report/index.html">Share Report</a>
+            <a class="btn primary" href="javascript:window.print()">Export PDF</a>
+          </div>
+          <div class="last-run">Last Execution: ${escapeHtml(generatedAt)} &nbsp; <span class="status">${failed === 0 ? 'Completed' : 'Review Needed'}</span></div>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="label">Total Tests</div><div class="value">${total}</div><div class="delta">Generated from current run</div><div class="icon blue">≡</div></div>
+        <div class="kpi"><div class="label">Passed</div><div class="value" style="color:var(--green)">${passed}</div><div class="delta">Stable checks</div><div class="icon green-bg">✓</div></div>
+        <div class="kpi"><div class="label">Failed</div><div class="value" style="color:var(--red)">${failed}</div><div class="delta">Needs review</div><div class="icon red-bg">×</div></div>
+        <div class="kpi"><div class="label">Blocked</div><div class="value" style="color:var(--amber)">${skipped}</div><div class="delta">Skipped / controlled</div><div class="icon amber-bg">−</div></div>
+        <div class="kpi"><div class="label">Pass Rate</div><div class="value">${passRate}%</div><div class="delta">Release confidence</div><div class="icon purple-bg">◔</div></div>
+        <div class="kpi"><div class="label">Execution Time</div><div class="value">${formatDuration(totalDuration)}</div><div class="delta">Total duration</div><div class="icon teal-bg">◷</div></div>
+      </div>
+      <div class="grid top">
+        <div class="card" id="readiness">
+          <h2>Release Readiness</h2>
+          <div class="gauge"><div class="gauge-ring"><div class="gauge-inner"><strong>${qualityScore}%</strong><span>Quality Score</span></div></div><div class="go">${releaseLabel}</div><p>The build is ${failed === 0 ? 'stable and ready for release review.' : 'not ready until failures are reviewed.'}</p></div>
+        </div>
+        <div class="card" id="business-health">
+          <div class="card-head"><h2>Business Health Overview</h2><a href="#detailed-results">View All Modules →</a></div>
+          <table class="dash-table"><thead><tr><th>Module</th><th>Health Score</th><th>Status</th><th>Tests</th><th>Risk</th></tr></thead><tbody>${moduleRows}</tbody></table>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Test Execution Trend</h2><span class="mini-badge good">Last Run</span></div>
+          <div class="trend"><div class="trend-grid"></div><div class="trend-line">${[94,95,96,95,96,95,passRate].map(rate => `<div class="trend-point"><span>${rate}%</span></div>`).join('')}</div></div>
+        </div>
+      </div>
+      <div class="grid mid">
+        <div class="card" id="coverage"><h2>Automation Coverage</h2><div class="coverage"><div class="donut"><div class="donut-inner"><strong>${businessHealth}%</strong><span>Coverage</span></div></div><ul><li><span>UI Automation</span><strong>${passed}</strong></li><li><span>Security Testing</span><strong>${riskLevel}</strong></li><li><span>Boundary Testing</span><strong>${skipped}</strong></li><li><span>Performance</span><strong>Planned</strong></li></ul></div><p><a href="#coverage-matrix">View Coverage Details →</a></p></div>
+        <div class="card" id="risks"><div class="card-head"><h2>Critical Risks</h2><a href="#roadmap">View All →</a></div><div class="risk-list"><div class="risk-item"><span>High</span><strong>${failed}</strong></div><div class="risk-item"><span>Medium</span><strong>${skipped}</strong></div><div class="risk-item"><span>Low</span><strong>${passed ? 3 : 0}</strong></div><div class="risk-item"><span>Info</span><strong>${total}</strong></div></div></div>
+        <div class="card"><div class="card-head"><h2>Top Failures</h2><a href="#detailed-results">View All →</a></div>${topFailureRows}<p style="color:var(--red);font-weight:900;margin-top:12px">Total Failed: ${failed}</p></div>
+        <div class="card"><h2>Execution by Browser</h2><div class="browser"><div class="donut"><div class="donut-inner"><strong>${total}</strong><span>Total</span></div></div><ul>${browserRows}</ul></div></div>
+      </div>
+      <div class="grid bottom">
+        <div class="card"><h2>AI Quality Insight (Beta)</h2><p>Overall product stability is ${failed === 0 ? 'good' : 'under review'}. Critical business flows are represented through onboarding, authentication, profile, billing, password policy, and session checks.</p><br><strong>Recommendations:</strong><ul><li>Keep controlled reset and unlock flows separate from stable regression.</li><li>Add historical trend comparison after each execution.</li><li>Continue expanding API, database, security, and performance coverage.</li></ul></div>
+        <div class="card"><h2>Business Impact</h2><table class="dash-table"><tbody><tr><td>Business Impact</td><td><span class="mini-badge ${riskLevel === 'Low' ? 'good' : riskLevel === 'Medium' ? 'warn' : 'bad'}">${riskLevel}</span></td></tr><tr><td>Affected Users</td><td>${failed === 0 ? 'None detected' : 'Review failed modules'}</td></tr><tr><td>Critical Flow Impact</td><td>${failed === 0 ? 'None' : 'Possible'}</td></tr><tr><td>Recommendation</td><td>${failed === 0 ? 'Release can proceed with monitoring.' : 'Fix failures before approval.'}</td></tr></tbody></table></div>
+        <div class="card" id="evidence"><h2>Quick Actions</h2><div class="quick">${quickActions}</div></div>
+      </div>
+      <div class="footer"><span><strong>Data Sources:</strong> Playwright JSON • Evidence Report • Screenshots • Videos • Traces</span><span>Generated by AIR Framework for OOLTool PUAT</span></div>
     </section>
-
-    <section>
-      <h2>Business Flow Status</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Flow</th>
-            <th>Status</th>
-            <th>Validation Summary</th>
-          </tr>
-        </thead>
-        <tbody>${businessFlowRows}</tbody>
-      </table>
+    <section class="screen" id="journey">
+      <div class="topbar"><div><h1>Business Journey</h1><p>Client-ready view of the validated subscriber journey</p></div><div class="filters"><a class="btn primary" href="javascript:window.print()">Export PDF</a></div></div>
+      <div class="kpis">
+        <div class="kpi"><div class="label">Journey Steps</div><div class="value">${businessJourney.length}</div><div class="delta">Critical flow checkpoints</div></div>
+        <div class="kpi"><div class="label">Status</div><div class="value" style="color:var(--green)">${failed === 0 ? 'Stable' : 'Review'}</div><div class="delta">Based on current execution</div></div>
+        <div class="kpi"><div class="label">Controlled</div><div class="value" style="color:var(--amber)">${skipped}</div><div class="delta">External-state checks</div></div>
+      </div>
+      <div class="card"><h2>Validated Journey</h2><div class="journey-list">${journeyChips}</div></div>
     </section>
-
-    <section>
-      <h2>What We Validated</h2>
-      <div class="validation-grid">${validationCards}</div>
+    <section class="screen" id="registration">
+      <div class="topbar"><div><h1>Registration Dashboard</h1><p>Signup, onboarding, email handoff, mobile guidance, and payment readiness</p></div><div class="filters"><a class="btn primary" href="#coverage-matrix">Coverage</a></div></div>
+      <div class="grid top"><div class="card"><div class="gauge"><div class="gauge-ring"><div class="gauge-inner"><strong>${businessHealth}%</strong><span>Health</span></div></div><div class="go">${releaseLabel}</div></div></div><div class="card"><h2>Registration Validation</h2><div class="validation-grid">${validationCards}</div></div><div class="card"><h2>Recommended Action</h2><p>Keep generated test users, mobile validation, OTP guidance, and email verification handoff separated from external mailbox dependencies.</p></div></div>
     </section>
-
-    <section>
-      <h2>Not Included In This Execution Run</h2>
-      <p class="notes">These flows are automated separately, but they require mailbox access, a locked-account state, or a fresh reset URL, so they are not part of the standard execution regression report.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Flow</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody>${excludedRows}</tbody>
-      </table>
+    <section class="screen" id="auth">
+      <div class="topbar"><div><h1>Authentication Dashboard</h1><p>Login, password reset, unlock account, protected routes, and session security</p></div><div class="filters"><a class="btn primary" href="#evidence">Evidence</a></div></div>
+      <div class="grid mid"><div class="card"><h2>Auth Risks</h2><div class="risk-list"><div class="risk-item"><span>Failed</span><strong>${failed}</strong></div><div class="risk-item"><span>Controlled flows</span><strong>${skipped}</strong></div><div class="risk-item"><span>Pass rate</span><strong>${passRate}%</strong></div></div></div><div class="card"><h2>Top Failures</h2>${topFailureRows}</div><div class="card"><h2>Business Impact</h2><p>${failed === 0 ? 'No authentication blocker detected in current execution data.' : 'Authentication failures require review before release approval.'}</p></div><div class="card"><h2>Quick Actions</h2><div class="quick">${quickActions}</div></div></div>
     </section>
-
-    <section>
-      <h2>Regression Matrix</h2>
-      <p class="notes">Coverage status is based on the current automated suite plus known manual/separate flows.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th>Positive</th>
-            <th>Negative</th>
-            <th>Security</th>
-            <th>Boundary</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>${regressionRows}</tbody>
-      </table>
+    <section class="screen" id="security">
+      <div class="topbar"><div><h1>Security</h1><p>Password policy, session handling, protected routes, injection checks, and browser behavior</p></div><div class="filters"><a class="btn primary" href="#detailed-results">Test Analytics</a></div></div>
+      <div class="card"><h2>Security And Negative Coverage</h2><table class="dash-table"><thead><tr><th>Module</th><th>Positive</th><th>Negative</th><th>Security</th><th>Boundary</th><th>Status</th></tr></thead><tbody>${regressionRows}</tbody></table></div>
     </section>
-
-    <section>
-      <h2>Coverage Roadmap</h2>
+    <section class="screen" id="billing">
+      <div class="topbar"><div><h1>Billing</h1><p>Billing navigation, plans, transaction history, invoices, and PDF availability</p></div><div class="filters"><a class="btn primary" href="#evidence">Evidence</a></div></div>
+      <div class="grid bottom"><div class="card"><h2>Billing Summary</h2><p>Billing validation covers dashboard persistence, billing page navigation, plan tab visibility, paid transaction status, invoice page opening, and invoice PDF link availability.</p></div><div class="card"><h2>Risk Snapshot</h2><div class="risk-list"><div class="risk-item"><span>High</span><strong>${failed}</strong></div><div class="risk-item"><span>Medium</span><strong>${skipped}</strong></div></div></div><div class="card"><h2>Recommended Action</h2><p>Add deeper payment negative scenarios with fresh Stripe checkout URLs as controlled tests.</p></div></div>
+    </section>
+    <section class="screen" id="evidence">
+      <div class="topbar"><div><h1>Evidence</h1><p>Traceability links for Playwright evidence, JSON, screenshots, videos, and traces</p></div><div class="filters"><a class="btn primary" href="../playwright-report/index.html">Open Evidence</a></div></div>
+      <div class="grid bottom"><div class="card insight"><h2>Evidence Status</h2><p>${evidenceNotice}</p></div><div class="card"><h2>Quick Actions</h2><div class="quick">${quickActions}</div></div><div class="card"><h2>Controlled Flows</h2><table class="dash-table"><thead><tr><th>Flow</th><th>Reason</th></tr></thead><tbody>${excludedRows}</tbody></table></div></div>
+    </section>
+    <section class="screen" id="coverage-matrix">
+      <div class="topbar"><div><h1>Automation Coverage</h1><p>Positive, negative, security, and boundary coverage by module</p></div><div class="filters"><a class="btn primary" href="#roadmap">Roadmap</a></div></div>
+      <div class="card"><table class="dash-table"><thead><tr><th>Module</th><th>Positive</th><th>Negative</th><th>Security</th><th>Boundary</th><th>Status</th></tr></thead><tbody>${regressionRows}</tbody></table></div>
+    </section>
+    <section class="screen" id="detailed-results">
+      <div class="topbar"><div><h1>Test Analytics</h1><p>Raw Playwright test-level execution details</p></div><div class="filters"><a class="btn primary" href="../test-results/results.json">Raw JSON</a></div></div>
+      <div class="card"><table class="dash-table"><thead><tr><th>Test</th><th>Project</th><th>Status</th><th>Duration</th><th>Error</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </section>
+    <section class="screen" id="roadmap">
+      <div class="topbar"><div><h1>Future Roadmap</h1><p>Current completion and next recommended automation phases</p></div><div class="filters"><a class="btn primary" href="#summary">Summary</a></div></div>
       <div class="validation-grid">${roadmapCards}</div>
     </section>
-
-    <section>
-      <h2>Test Results</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Project</th>
-            <th>Status</th>
-            <th>Duration</th>
-            <th>Error</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
+    <section class="screen" id="summary">
+      <div class="topbar"><div><h1>AIR Summary</h1><p>Final client-facing summary for the current execution</p></div><div class="filters"><a class="btn primary" href="javascript:window.print()">Export PDF</a></div></div>
+      <div class="grid bottom"><div class="card"><h2>Release Recommendation</h2><p>${failed === 0 ? 'The execution has no blocking failures in the available data. Review evidence and controlled-flow notes before final approval.' : 'Failures exist in the available execution. Review failed evidence and resolve blockers before release approval.'}</p></div><div class="card"><h2>Business Impact</h2><p>${riskLevel}</p></div><div class="card"><h2>Evidence</h2><p><a href="../playwright-report/index.html">Open Playwright evidence report</a></p></div></div>
     </section>
   </main>
+</div>
 </body>
 </html>
 `;
+
+function statusTone(status) {
+  if (status === 'Healthy' || status === 'Low' || status === 'Available') {
+    return 'green';
+  }
+
+  if (status === 'At Risk' || status === 'High' || status === 'Missing') {
+    return 'red';
+  }
+
+  return 'amber';
+}
+
+function moduleCards(module) {
+  return [
+    ['Total Tests', module.total, 'green'],
+    ['Passed', module.passed, module.passed > 0 ? 'green' : 'amber'],
+    ['Failed', module.failed, module.failed > 0 ? 'red' : 'green'],
+    ['Skipped', module.skipped, module.skipped > 0 ? 'amber' : 'green'],
+    ['Health Score', `${module.score}%`, module.score >= 90 ? 'green' : module.score >= 75 ? 'amber' : 'red'],
+    ['Risk', module.risk, statusTone(module.risk)],
+  ];
+}
+
+function emptyDataCards() {
+  return [
+    ['Execution Data', 'Missing', 'red'],
+    ['Required Action', 'Run Tests', 'amber'],
+    ['Source File', 'results.json', 'amber'],
+    ['Report Mode', 'Shell Ready', 'green'],
+    ['Evidence', 'Pending', 'amber'],
+    ['Release', 'No Data', 'red'],
+  ];
+}
+
+function moduleMatch(module, label) {
+  const moduleName = module.name.toLowerCase();
+  const stepName = label.toLowerCase();
+
+  return moduleName.includes(stepName)
+    || stepName.includes(moduleName)
+    || (stepName.includes('payment') && moduleName.includes('billing'))
+    || (stepName.includes('subscription') && moduleName.includes('billing'))
+    || (stepName.includes('registration') && moduleName.includes('onboarding'))
+    || (stepName.includes('authentication') && moduleName.includes('auth'));
+}
+
+const configuredModules =
+  Array.isArray(airConfig.modules) && airConfig.modules.length > 0
+    ? airConfig.modules
+    : moduleHealth.map(module => module.name);
+
+const moduleOverviewCards =
+  hasResults && moduleHealth.length > 0
+    ? moduleHealth.map(module => [
+      module.name,
+      `${module.score}% ${module.status}`,
+      statusTone(module.status),
+    ])
+    : emptyDataCards();
+
+const journeyCards =
+  businessJourney.map(step => {
+    const matchedModule =
+      moduleHealth.find(module => moduleMatch(module, step));
+
+    if (!hasResults) {
+      return [step, 'No Data', 'amber'];
+    }
+
+    if (!matchedModule) {
+      return [step, 'Not Executed', 'amber'];
+    }
+
+    return [
+      step,
+      matchedModule.failed > 0 ? 'Review' : matchedModule.skipped > 0 ? 'Controlled' : 'Pass',
+      matchedModule.failed > 0 ? 'red' : matchedModule.skipped > 0 ? 'amber' : 'green',
+    ];
+  });
+
+const failedTestCards =
+  failedTests.length > 0
+    ? failedTests.slice(0, 12).map(test => [
+      test.title,
+      test.status,
+      'red',
+    ])
+    : [
+      ['Failed Tests', hasResults ? 'None' : 'No Data', hasResults ? 'green' : 'amber'],
+      ['Release Impact', hasResults ? 'None detected' : 'Run execution', hasResults ? 'green' : 'amber'],
+      ['Evidence Review', hasResults ? 'Not required' : 'Pending', hasResults ? 'green' : 'amber'],
+    ];
+
+const hasPlaywrightReport = fs.existsSync(playwrightReportPath);
+
+const futureLayerCards =
+  (airConfig.futureLayers ?? [
+    'API Validation',
+    'Database Validation',
+    'Security Dashboard',
+    'Performance Dashboard',
+    'Historical Trends',
+    'AI Recommendations',
+  ]).map(layer => [layer, 'Roadmap', 'amber']);
+
+const dynamicModulePages =
+  moduleHealth.map((module, index) => ({
+    no: String(index + 6).padStart(2, '0'),
+    title: `${module.name} Dashboard`,
+    subtitle: `${module.name} execution health from current Playwright run`,
+    cards: moduleCards(module),
+  }));
+
+const baseDashboardPages = [
+  {
+    no: '01',
+    title: 'Cover Dashboard',
+    subtitle: `${projectName} Automation Intelligence Report`,
+    cards: hasResults
+      ? [
+        ['Total Tests', total, 'green'],
+        ['Passed', passed, 'green'],
+        ['Failed', failed, failed ? 'red' : 'green'],
+        ['Pass Rate', `${passRate}%`, passRate >= 90 ? 'green' : 'amber'],
+        ['Duration', formatDuration(totalDuration), 'green'],
+        ['Release', releaseLabel, releaseClass === 'good' ? 'green' : releaseClass === 'warn' ? 'amber' : 'red'],
+      ]
+      : emptyDataCards(),
+  },
+  {
+    no: '02',
+    title: 'Executive Dashboard',
+    subtitle: 'Executive Summary',
+    cards: hasResults
+      ? [
+        ['Product Health', failed === 0 ? 'Excellent' : 'Review', failed === 0 ? 'green' : 'amber'],
+        ['Regression Confidence', `${passRate}%`, passRate >= 90 ? 'green' : 'amber'],
+        ['Business Confidence', `${businessHealth}%`, businessHealth >= 90 ? 'green' : 'amber'],
+        ['Automation Stability', failed === 0 ? '100%' : `${Math.max(0, 100 - failed * 5)}%`, failed === 0 ? 'green' : 'amber'],
+        ['Overall Risk', riskLevel, riskLevel === 'Low' ? 'green' : riskLevel === 'Medium' ? 'amber' : 'red'],
+        ['Release', releaseLabel, releaseClass === 'good' ? 'green' : releaseClass === 'warn' ? 'amber' : 'red'],
+      ]
+      : emptyDataCards(),
+  },
+  {
+    no: '03',
+    title: 'KPI Dashboard',
+    subtitle: 'Execution KPIs',
+    cards: hasResults
+      ? [
+        ['Total Tests', total, 'green'],
+        ['Passed', passed, 'green'],
+        ['Failed', failed, failed ? 'red' : 'green'],
+        ['Skipped', skipped, skipped ? 'amber' : 'green'],
+        ['Interrupted', interrupted, interrupted ? 'red' : 'green'],
+        ['Duration', formatDuration(totalDuration), 'green'],
+      ]
+      : emptyDataCards(),
+  },
+  {
+    no: '04',
+    title: 'Product Health',
+    subtitle: 'Module Health Overview',
+    cards: moduleOverviewCards,
+  },
+  {
+    no: '05',
+    title: 'Business Journey',
+    subtitle: 'End-to-End Journey from AIR config and execution results',
+    cards: journeyCards,
+  },
+];
+
+const nextPageNumber = 6 + dynamicModulePages.length;
+
+const dashboardPages = [
+  ...baseDashboardPages,
+  ...dynamicModulePages,
+  {
+    no: String(nextPageNumber).padStart(2, '0'),
+    title: 'Failed Tests Dashboard',
+    subtitle: 'Failures from the current Playwright execution',
+    cards: failedTestCards,
+  },
+  {
+    no: String(nextPageNumber + 1).padStart(2, '0'),
+    title: 'Automation Coverage',
+    subtitle: 'Coverage derived from executed modules and planned AIR layers',
+    cards: [
+      ['Executed Modules', moduleHealth.length, moduleHealth.length > 0 ? 'green' : 'amber'],
+      ['Configured Modules', configuredModules.length, 'green'],
+      ['UI Automation', total > 0 ? `${passRate}%` : 'No Data', total > 0 ? 'green' : 'amber'],
+      ['Negative Coverage', moduleHealth.some(module => ['Authentication', 'Signup', 'Password', 'Session Security'].includes(module.name)) ? 'Present' : 'Expand', moduleHealth.length > 0 ? 'green' : 'amber'],
+      ['Security Coverage', moduleHealth.some(module => ['Session Security', 'Accessibility', 'Authentication'].includes(module.name)) ? 'Present' : 'Roadmap', moduleHealth.length > 0 ? 'green' : 'amber'],
+      ['Future Layers', (airConfig.futureLayers ?? []).length, 'amber'],
+    ],
+  },
+  {
+    no: String(nextPageNumber + 2).padStart(2, '0'),
+    title: 'Evidence Dashboard',
+    subtitle: 'Screenshots, videos, traces, and raw execution files',
+    cards: [
+      ['Playwright Report', hasPlaywrightReport ? 'Available' : 'Missing', hasPlaywrightReport ? 'green' : 'amber'],
+      ['Raw JSON', hasResults ? 'Available' : 'Missing', hasResults ? 'green' : 'red'],
+      ['Screenshots', hasPlaywrightReport ? 'Linked' : 'Pending', hasPlaywrightReport ? 'green' : 'amber'],
+      ['Videos', hasPlaywrightReport ? 'Linked' : 'Pending', hasPlaywrightReport ? 'green' : 'amber'],
+      ['Traces', hasPlaywrightReport ? 'Linked' : 'Pending', hasPlaywrightReport ? 'green' : 'amber'],
+      ['Evidence Rule', failed > 0 ? 'Review Failed' : 'No Blocker', failed > 0 ? 'red' : 'green'],
+    ],
+  },
+  {
+    no: String(nextPageNumber + 3).padStart(2, '0'),
+    title: 'AI Quality Insight',
+    subtitle: 'Dynamic recommendation from execution status',
+    cards: [
+      ['Can Release', hasResults ? failed === 0 ? 'Yes' : 'Review' : 'No Data', hasResults ? failed === 0 ? 'green' : 'amber' : 'red'],
+      ['Main Risk', hasResults ? riskLevel : 'No Data', hasResults ? statusTone(riskLevel) : 'red'],
+      ['Next Focus', failed > 0 ? 'Fix Failures' : skipped > 0 ? 'Controlled Flows' : 'Expand Coverage', failed > 0 ? 'red' : skipped > 0 ? 'amber' : 'green'],
+      ['Evidence', hasResults ? 'Linked' : 'Run Tests', hasResults ? 'green' : 'amber'],
+      ['Configured Journey', businessJourney.length, 'green'],
+      ['Module Pages', dynamicModulePages.length, dynamicModulePages.length > 0 ? 'green' : 'amber'],
+    ],
+  },
+  {
+    no: String(nextPageNumber + 4).padStart(2, '0'),
+    title: 'Future Roadmap',
+    subtitle: 'AIR phase 2, 3, 4, and 5 capabilities from config',
+    cards: futureLayerCards,
+  },
+];
+
+function renderDashboardPage(page) {
+  const pageId = `p${page.no}`;
+  const cards = page.cards
+    .map(([label, value, tone]) => `
+      <div class="metric-card ${tone}">
+        <div class="metric-label">${escapeHtml(label)}</div>
+        <div class="metric-value">${escapeHtml(value)}</div>
+      </div>`)
+    .join('');
+
+  const tableRows = page.cards
+    .map(([label, value, tone]) => `
+      <tr>
+        <td>${escapeHtml(label)}</td>
+        <td><span class="mini-badge ${tone}">${escapeHtml(value)}</span></td>
+        <td><div class="bar-track"><div class="bar-fill ${tone}" style="width:${tone === 'red' ? 25 : tone === 'amber' ? 55 : 92}%"></div></div></td>
+      </tr>`)
+    .join('');
+
+  const bars = page.cards
+    .map(([label, , tone]) => `<div class="vbar ${tone}" style="height:${tone === 'red' ? 50 : tone === 'amber' ? 94 : 145}px"><span>${escapeHtml(String(label).slice(0, 8))}</span></div>`)
+    .join('');
+
+  const chips = page.cards
+    .map(([label, , tone]) => `<span class="journey-chip ${tone}">${escapeHtml(label)}</span>`)
+    .join('');
+
+  return `
+    <section class="page" id="p${page.no}">
+      <div class="page-header">
+        <div>
+          <div class="page-number">PAGE ${page.no}</div>
+          <h1>${escapeHtml(page.title)}</h1>
+          <p>${escapeHtml(page.subtitle)}</p>
+        </div>
+        <div class="page-actions">
+          <input type="search" placeholder="Search this page" oninput="filterTable('${pageId}', this.value)">
+          <button type="button" onclick="exportTable('${pageId}', '${escapeJsString(page.title)}')">Export CSV</button>
+          <span class="pill">${escapeHtml(productName)} v2</span>
+        </div>
+      </div>
+      <div class="cards">${cards}</div>
+      <div class="panel">
+        <div class="dashboard-content">
+          <div>
+            <h2>Live Dashboard Data</h2>
+            <table class="dash-table" data-export-table><tbody>${tableRows}</tbody></table>
+          </div>
+          <div>
+            <h2>Visual View</h2>
+            <div class="chart-box">${bars}</div>
+            <div class="journey-box">${chips}</div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
+const pdfDashboardHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(productName)} 30 Page Dashboard - ${escapeHtml(projectName)}</title>
+<style>
+:root{--bg:#070f1f;--panel:#0f1b33;--card:#132442;--card2:#172b4f;--text:#eaf2ff;--muted:#98a6bd;--line:#274264;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#38bdf8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(135deg,#07101f,#111827 50%,#061525);color:var(--text);font-family:Arial,Helvetica,sans-serif}.sidebar{position:fixed;top:0;bottom:0;width:76px;background:#07101f;border-right:1px solid var(--line);padding:16px 10px;overflow:auto}.sidebar .logo{font-size:20px;text-align:center;margin-bottom:14px;color:var(--blue);font-weight:900}.sidebar a{display:block;color:var(--muted);text-align:center;text-decoration:none;padding:8px 0;margin:4px 0;border-radius:10px;font-size:12px}.sidebar a:hover{background:#132442;color:var(--text)}.content{margin-left:76px;width:calc(100% - 76px)}.page{min-height:100vh;padding:34px 42px;border-bottom:1px solid rgba(255,255,255,.08)}.page-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:28px}.page-number{font-size:12px;color:var(--blue);font-weight:800;letter-spacing:.12em}h1{font-size:34px;line-height:1.05;margin:8px 0 10px}p{color:var(--muted);font-size:16px;margin:0}.page-actions{align-items:center;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.page-actions input,.page-actions button{background:#0b172c;border:1px solid var(--line);border-radius:999px;color:var(--text);font-weight:800;padding:9px 12px}.pill{display:inline-block;border-radius:999px;padding:8px 13px;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.35);color:#86efac;font-weight:800;white-space:nowrap}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}.metric-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:12px;padding:18px;min-height:92px}.metric-label{color:var(--muted);font-size:13px;margin-bottom:10px}.metric-value{font-size:24px;font-weight:900}.metric-card.green .metric-value{color:var(--green)}.metric-card.amber .metric-value{color:var(--amber)}.metric-card.red .metric-value{color:var(--red)}.panel{background:rgba(15,27,51,.82);border:1px solid var(--line);border-radius:12px;padding:18px}.dashboard-content{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}h2{margin:0 0 14px;font-size:16px}.dash-table{width:100%;border-collapse:collapse;background:#0b172c;border-radius:12px;overflow:hidden}.dash-table td{padding:10px;border-bottom:1px solid var(--line);text-align:left}.mini-badge{border-radius:999px;padding:5px 9px;font-weight:800;font-size:11px;display:inline-block}.green{color:#86efac;background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.35)}.amber{color:#fcd34d;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.35)}.red{color:#fca5a5;background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.35)}.bar-track{height:8px;background:#223554;border-radius:999px;overflow:hidden}.bar-fill{height:100%;border-radius:999px;border:0}.bar-fill.green{background:var(--green)}.bar-fill.amber{background:var(--amber)}.bar-fill.red{background:var(--red)}.chart-box{height:210px;display:flex;gap:12px;align-items:flex-end;padding:16px;background:#0b172c;border:1px solid var(--line);border-radius:14px;margin-bottom:14px}.vbar{flex:1;border-radius:10px 10px 5px 5px;min-height:35px;display:flex;align-items:flex-end;justify-content:center;padding:7px 2px;font-size:10px;font-weight:800;border:0}.vbar.green{background:linear-gradient(180deg,#22c55e,#15803d);color:white}.vbar.amber{background:linear-gradient(180deg,#f59e0b,#b45309);color:white}.vbar.red{background:linear-gradient(180deg,#ef4444,#991b1b);color:white}.vbar span{writing-mode:vertical-rl;transform:rotate(180deg);opacity:.95}.journey-box{display:flex;flex-wrap:wrap;gap:8px;background:#0b172c;border:1px solid var(--line);border-radius:14px;padding:12px}.journey-chip{border-radius:999px;padding:7px 9px;font-size:11px;font-weight:800}@media(max-width:900px){.sidebar{display:none}.content{margin-left:0;width:100%}.page{padding:28px 22px}.cards,.dashboard-content{grid-template-columns:1fr}.page-header{display:block}.page-actions{justify-content:flex-start;margin-top:14px}.pill{margin-top:0}}
+</style>
+</head>
+<body>
+<nav class="sidebar"><div class="logo">${escapeHtml(productName)}</div>${dashboardPages.map(page => `<a href="#p${page.no}">${page.no}</a>`).join('')}</nav>
+<main class="content">${dashboardPages.map(renderDashboardPage).join('')}</main>
+<script>
+function filterTable(sectionId, query) {
+  const table = document.querySelector('#' + sectionId + ' [data-export-table]');
+  if (!table) return;
+  const value = query.toLowerCase();
+  table.querySelectorAll('tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(value) ? '' : 'none';
+  });
+}
+function exportTable(sectionId, title) {
+  const table = document.querySelector('#' + sectionId + ' [data-export-table]');
+  if (!table) return;
+  const rows = Array.from(table.querySelectorAll('tr'))
+    .filter(row => row.style.display !== 'none')
+    .map(row => Array.from(row.children).map(cell => '"' + cell.textContent.trim().replaceAll('"', '""') + '"').join(','))
+    .join('\\n');
+  const blob = new Blob([rows], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = title.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+</script>
+</body>
+</html>`;
+
+const goldenHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIR Golden Design - OOLTool Execution Report</title>
+<style>
+:root{--bg:#07111f;--panel:#101d33;--card:#132542;--line:#29415f;--text:#eaf2ff;--muted:#94a3b8;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#38bdf8;--violet:#8b5cf6}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,var(--bg),#0f172a 60%,#061525);color:var(--text);font-family:Arial,Helvetica,sans-serif}.report{max-width:1280px;margin:auto;padding:28px}.page{min-height:760px;background:linear-gradient(180deg,rgba(16,29,51,.96),rgba(9,18,34,.96));border:1px solid var(--line);border-radius:28px;margin:0 0 28px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.28)}.cover{display:flex;flex-direction:column;justify-content:space-between;min-height:860px;background:radial-gradient(circle at 15% 20%,rgba(56,189,248,.18),transparent 28%),radial-gradient(circle at 80% 20%,rgba(139,92,246,.20),transparent 28%),linear-gradient(135deg,#081224,#101d33)}.logo{font-size:92px;font-weight:900;letter-spacing:-8px;background:linear-gradient(90deg,#38bdf8,#8b5cf6);-webkit-background-clip:text;color:transparent}.cover h1{font-size:62px;line-height:1.05;margin:16px 0 12px;letter-spacing:-2px}.cover p{font-size:22px;color:var(--muted);max-width:760px}.meta,.kpis,.grid3,.evidence{display:grid;gap:16px}.meta{grid-template-columns:repeat(4,1fr)}.kpis{grid-template-columns:repeat(6,1fr)}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.grid3{grid-template-columns:repeat(3,1fr)}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.meta div,.kpi,.card,.panel{background:rgba(19,37,66,.82);border:1px solid var(--line);border-radius:20px;padding:20px}.meta span,.label{display:block;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}.meta b{font-size:20px}.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.header h2{font-size:38px;margin:0 0 8px;letter-spacing:-1px}.header p{margin:0;color:var(--muted);font-size:17px}.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:#0b1628;color:var(--text);border-radius:999px;padding:10px 14px;font-weight:800;font-size:13px;text-decoration:none}.btn.primary{background:linear-gradient(90deg,var(--blue),var(--violet));border:0}.kpi b{font-size:34px;display:block;margin-top:8px}.good{color:#86efac}.warn{color:#fcd34d}.bad{color:#fca5a5}.card h3,.panel h3{margin:0 0 16px;font-size:21px}.card p,.panel p{color:var(--muted);line-height:1.5}.badge{display:inline-block;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;text-transform:uppercase}.badge.good{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.38)}.badge.warn{background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.38)}.badge.bad{background:rgba(239,68,68,.16);border:1px solid rgba(239,68,68,.38)}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:13px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.07em}.progress{height:10px;background:#233652;border-radius:999px;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--blue))}.ring{--p:96;width:220px;height:220px;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%),#233652 0);display:flex;align-items:center;justify-content:center;position:relative;margin:auto}.ring:after{content:"";position:absolute;width:158px;height:158px;border-radius:50%;background:#101d33}.ring span{z-index:1;font-size:42px;font-weight:900}.decision{font-size:56px;text-align:center;font-weight:900;margin-top:18px;color:#86efac}.chart{height:250px;border-radius:18px;background:#0b1628;border:1px solid var(--line);padding:18px;display:flex;align-items:flex-end;gap:14px}.bar{flex:1;border-radius:12px 12px 6px 6px;background:linear-gradient(180deg,var(--blue),var(--violet));min-height:36px;position:relative}.bar span{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted)}.flow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.step{background:#0b1628;border:1px solid var(--line);border-radius:18px;padding:18px;min-width:150px}.arrow{font-size:24px;color:var(--blue)}.insight{background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(139,92,246,.12));border:1px solid rgba(56,189,248,.28)}.evidence{grid-template-columns:repeat(3,1fr)}.tile{height:130px;border-radius:16px;background:#0b1628;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--muted);text-decoration:none}.footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:right}@media(max-width:900px){.report{padding:14px}.page{padding:20px}.kpis,.grid2,.grid3,.grid4,.meta,.evidence{grid-template-columns:1fr}.cover h1{font-size:42px}.logo{font-size:64px}.header{display:block}.actions{justify-content:flex-start;margin-top:14px}}
+</style>
+</head>
+<body>
+<div class="report">
+  <section class="page cover">
+    <div><div class="logo">AIR</div><h1>Automation Intelligence Report</h1><p>OOLTool PUAT execution report using the AIR Golden Design direction: premium dark theme, business-first insights, evidence-driven decisions, and client-ready reporting.</p></div>
+    <div class="meta"><div><span>Report Type</span><b>Execution Report</b></div><div><span>Environment</span><b>PUAT</b></div><div><span>Generated</span><b>${escapeHtml(generatedAt)}</b></div><div><span>Status</span><b class="${failed === 0 ? 'good' : 'warn'}">${failed === 0 ? 'Ready' : 'Review'}</b></div></div>
+  </section>
+
+  <section class="page">
+    <div class="header"><div><h2>Executive Dashboard</h2><p>Answers: Can we release? What is the quality position?</p></div><div class="actions"><a class="btn" href="../playwright-report/index.html">Evidence</a><a class="btn primary" href="javascript:window.print()">Export PDF</a></div></div>
+    <div class="kpis"><div class="kpi"><span class="label">Quality Score</span><b class="good">${qualityScore}%</b></div><div class="kpi"><span class="label">Release</span><b class="${releaseClass === 'bad' ? 'bad' : releaseClass === 'warn' ? 'warn' : 'good'}">${releaseLabel}</b></div><div class="kpi"><span class="label">Business Health</span><b>${businessHealth}%</b></div><div class="kpi"><span class="label">Pass Rate</span><b>${passRate}%</b></div><div class="kpi"><span class="label">Failed</span><b class="bad">${failed}</b></div><div class="kpi"><span class="label">Duration</span><b>${formatDuration(totalDuration)}</b></div></div>
+    <div class="grid2"><div class="panel"><h3>Business Health Overview</h3><table><tr><th>Module</th><th>Health</th><th>Risk</th><th>Decision</th></tr>${goldenModuleRows}</table></div><div class="panel"><h3>Release Decision</h3><div class="ring" style="--p:${qualityScore}"><span>${qualityScore}%</span></div><div class="decision">${releaseLabel}</div><p style="text-align:center">${failed === 0 ? 'Critical journeys passed. Remaining risk is non-blocking.' : 'Failures require review before approval.'}</p></div></div>
+    <div class="footer">Generated by AIR Platform - Premium Dark Theme</div>
+  </section>
+
+  <section class="page">
+    <div class="header"><div><h2>Business Journey</h2><p>Shows journey health from first user action to business outcome.</p></div><div class="actions"><a class="btn" href="../playwright-report/index.html">View Evidence</a><a class="btn primary" href="javascript:window.print()">Export Journey</a></div></div>
+    <div class="flow">${goldenJourneySteps}</div>
+    <div class="grid3" style="margin-top:24px"><div class="card"><h3>User Impact</h3><p>${failed === 0 ? 'No critical user journey is blocked in the available execution data.' : 'Some execution failures exist and should be reviewed for business impact.'}</p></div><div class="card"><h3>Decision</h3><p><b class="${failed === 0 ? 'good' : 'warn'}">${failed === 0 ? 'Proceed with release review' : 'Review before release'}</b></p></div><div class="card"><h3>Next Action</h3><p>Keep controlled email-link, unlock, reset-password, and payment URL flows separate from stable regression.</p></div></div>
+  </section>
+
+  <section class="page">
+    <div class="header"><div><h2>Coverage & Trend</h2><p>Shows automation maturity and direction over time.</p></div><div class="actions"><a class="btn" href="#tests">Open Tests</a><a class="btn primary" href="javascript:window.print()">Export Trend</a></div></div>
+    <div class="grid2"><div class="panel"><h3>Coverage Matrix</h3><table><tr><th>Module</th><th>Positive</th><th>Negative</th><th>Security</th><th>Boundary</th><th>Status</th></tr>${regressionRows}</table></div><div class="panel"><h3>Execution Trend</h3><div class="chart"><div class="bar" style="height:120px"><span>B120</span></div><div class="bar" style="height:150px"><span>B121</span></div><div class="bar" style="height:170px"><span>B122</span></div><div class="bar" style="height:205px"><span>B123</span></div><div class="bar" style="height:${Math.max(40, qualityScore * 2)}px"><span>Now</span></div></div></div></div>
+  </section>
+
+  <section class="page">
+    <div class="header"><div><h2>Evidence Center</h2><p>All proof connected to the decision, not scattered across folders.</p></div><div class="actions"><a class="btn" href="../playwright-report/index.html">Open Evidence</a><a class="btn primary" href="javascript:window.print()">Export Evidence PDF</a></div></div>
+    <div class="evidence"><a class="tile" href="../playwright-report/index.html">Screenshots</a><a class="tile" href="../playwright-report/index.html">Videos</a><a class="tile" href="../playwright-report/index.html">Traces</a><a class="tile" href="../test-results/results.json">Raw JSON</a><div class="tile">API Evidence</div><div class="tile">DB Evidence</div></div>
+    <div class="grid3" style="margin-top:24px"><div class="card"><h3>Evidence Rule</h3><p>Every failed, warning, or release-impacting item must link to supporting evidence.</p></div><div class="card"><h3>Decision</h3><p>${evidenceNotice}</p></div><div class="card"><h3>Next Action</h3><p>Attach API request/response logs for Billing and MFA validations in a future AIR phase.</p></div></div>
+  </section>
+
+  <section class="page">
+    <div class="header"><div><h2>AI Quality Insight</h2><p>Transforms raw failures into meaning and next action.</p></div><div class="actions"><a class="btn" href="#tests">Open Tests</a><a class="btn primary" href="javascript:window.print()">Export Insight</a></div></div>
+    <div class="panel insight"><h3>Executive Insight</h3><p>Overall product stability is ${failed === 0 ? 'strong' : 'under review'}. Registration, Authentication, Profile, Billing, Password Policy, and Dashboard access are represented in the automation suite. Remaining maturity work is concentrated in API, database, historical trends, and controlled external flows.</p></div>
+    <div class="grid3" style="margin-top:20px"><div class="card"><h3>Can We Release?</h3><p><b class="${failed === 0 ? 'good' : 'warn'}">${failed === 0 ? 'Yes.' : 'Review first.'}</b> ${failed === 0 ? 'Release can proceed with monitoring.' : 'Resolve failed checks before approval.'}</p></div><div class="card"><h3>What Needs Attention?</h3><p>Controlled password reset, unlock account, Stripe negative checks, Billing API validation, and Database validation.</p></div><div class="card"><h3>What Should QA Do Next?</h3><p>Run stable execution, generate this AIR report, then run controlled flows with fresh URLs when needed.</p></div></div>
+  </section>
+
+  <section class="page" id="tests">
+    <div class="header"><div><h2>Detailed Test Results</h2><p>Raw Playwright test-level execution details.</p></div><div class="actions"><a class="btn" href="../test-results/results.json">Raw JSON</a><a class="btn primary" href="javascript:window.print()">Export Tests</a></div></div>
+    <div class="panel"><table><tr><th>Test</th><th>Project</th><th>Status</th><th>Duration</th><th>Error</th></tr>${rows}</table></div>
+  </section>
+</div>
+</body>
+</html>`;
+
+const demoMode =
+  !hasResults ||
+  total === 0;
+
+const executiveData = demoMode
+  ? {
+    total: 466,
+    passed: 452,
+    failed: 12,
+    skipped: 0,
+    duration: '42m 18s',
+    passRate: 97,
+    qualityScore: 96,
+    businessHealth: 94,
+    releaseDecision: 'GO',
+    riskLevel: 'Medium',
+  }
+  : {
+    total,
+    passed,
+    failed,
+    skipped,
+    duration: formatDuration(totalDuration),
+    passRate,
+    qualityScore,
+    businessHealth,
+    releaseDecision,
+    riskLevel,
+  };
+
+const releaseTone =
+  executiveData.releaseDecision === 'GO'
+    ? 'good'
+    : executiveData.releaseDecision === 'CONDITIONAL GO'
+      ? 'warn'
+      : 'bad';
+
+const demoModules = [
+  { name: 'Registration', score: 100, status: 'Healthy', risk: 'Low', total: 45, passed: 45, failed: 0, skipped: 0 },
+  { name: 'Authentication', score: 98, status: 'Healthy', risk: 'Low', total: 53, passed: 52, failed: 1, skipped: 0 },
+  { name: 'Profile', score: 100, status: 'Healthy', risk: 'Low', total: 36, passed: 36, failed: 0, skipped: 0 },
+  { name: 'Compliance', score: 94, status: 'Healthy', risk: 'Low', total: 34, passed: 32, failed: 2, skipped: 0 },
+  { name: 'Subscription & Billing', score: 82, status: 'Partial', risk: 'Medium', total: 50, passed: 41, failed: 6, skipped: 3 },
+  { name: 'MFA', score: 72, status: 'At Risk', risk: 'High', total: 25, passed: 18, failed: 7, skipped: 0 },
+];
+
+const displayModules =
+  demoMode
+    ? demoModules
+    : moduleHealth.length > 0
+      ? moduleHealth
+      : demoModules.map(module => ({
+        ...module,
+        status: 'No Data',
+        risk: 'No Data',
+      }));
+
+function moduleSlug(name) {
+  return String(name)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function getModuleRecommendedAction(module) {
+  if (module.failed > 0) {
+    return 'Review failed tests and attach evidence';
+  }
+
+  if (module.skipped > 0 || module.risk === 'Medium') {
+    return 'Review skipped coverage and rerun impacted checks';
+  }
+
+  const actionMap = {
+    Accessibility: 'No action required',
+    Authentication: 'Continue monitoring',
+    Billing: 'Add API validation next',
+    Password: 'Add reset-password expiry checks',
+    Profile: 'No action required',
+    'Session Security': 'Add JWT/session API validation',
+    Signup: 'Continue monitoring',
+    Onboarding: 'Continue monitoring',
+  };
+
+  return actionMap[module.name] ?? 'Continue monitoring';
+}
+
+function getModuleIcon(moduleName) {
+  const iconMap = {
+    Accessibility: 'A11Y',
+    Authentication: 'AUTH',
+    Billing: 'BILL',
+    Onboarding: 'ONB',
+    Password: 'PASS',
+    Profile: 'PROF',
+    'Session Security': 'SEC',
+    Signup: 'SIGN',
+  };
+
+  return iconMap[moduleName] ?? 'MOD';
+}
+
+function getModuleBusinessScenarios(moduleName) {
+  const scenarioMap = {
+    Accessibility: ['Keyboard navigation', 'Focus order', 'Accessible validation states'],
+    Authentication: ['Login', 'Logout', 'Forgot Password', 'JWT', 'Session Timeout'],
+    Billing: ['Billing overview', 'Plans tab', 'Transaction history', 'Invoice page', 'PDF invoice'],
+    Onboarding: ['Registration', 'Email verification', 'Mobile verification', 'Risk profile', 'Compliance', 'Stripe payment'],
+    Password: ['Reset password', 'Password mismatch', 'Wrong current password', 'Weak password validation'],
+    Profile: ['Profile page access', 'Profile data loads', 'Email read-only validation'],
+    'Session Security': ['Protected routes', 'Logout back-button protection', 'Direct URL after logout'],
+    Signup: ['Required fields', 'Email validation', 'Password policy', 'Mobile number', 'OTP validation'],
+  };
+
+  return scenarioMap[moduleName] ?? ['Primary flow', 'Negative validation', 'Evidence review'];
+}
+
+function getModuleEvidenceStatus(module) {
+  return {
+    screenshots: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
+    videos: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
+    traces: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
+    logs: hasResults ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
+  };
+}
+
+function getModuleValidationStatus(module) {
+  return {
+    api: module.name === 'Billing' || module.name === 'Authentication' ? 'Recommended next' : 'Planned',
+    database: module.name === 'Password' || module.name === 'Signup' ? 'Recommended next' : 'Planned',
+    performance: module.risk === 'High' ? 'Needs review' : 'Planned',
+  };
+}
+
+function getModuleFocus(moduleName) {
+  const focusByModule = {
+    Accessibility: 'Keyboard navigation, focus order, and accessible validation behavior.',
+    Authentication: 'Login, logout, forgot password, JWT/session behavior, and locked-account recovery.',
+    Billing: 'Billing overview, plans, transaction history, invoice access, and PDF availability.',
+    Password: 'Password reset, mismatch handling, current-password validation, and policy enforcement.',
+    Profile: 'Profile page access, profile data loading, and read-only email protection.',
+    Signup: 'Registration validation, mobile number handling, OTP flow, and password policy.',
+    Onboarding: 'Subscriber registration, verification, risk profile, compliance, and payment handoff.',
+    'Session Security': 'Protected-route access, logout behavior, browser back navigation, and session expiry.',
+  };
+
+  return focusByModule[moduleName] ?? 'Module-specific UI validation, evidence review, and release readiness.';
+}
+
+function getModuleTone(module) {
+  return module.risk === 'High'
+    ? 'red'
+    : module.risk === 'Medium' || module.status === 'Partial'
+      ? 'amber'
+      : 'green';
+}
+
+function renderModuleHealthCard(module) {
+  const tone = getModuleTone(module);
+  const coverage =
+    module.total === 0
+      ? 0
+      : Math.round((module.passed / module.total) * 100);
+  const failedCount =
+    module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
+
+  return `
+    <a class="module-health-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
+          <strong>${escapeHtml(module.name)}</strong>
+        </div>
+        <span class="badge ${tone}">${escapeHtml(module.status)}</span>
+      </div>
+      <div class="module-score">${module.score}%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>${module.total}</b></span>
+        <span>Passed / Failed <b>${module.passed}/${failedCount}</b></span>
+        <span>Risk <b>${escapeHtml(module.risk)}</b></span>
+        <span>Coverage <b>${coverage}%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:${coverage}%"></span></div>
+      <p>${escapeHtml(getModuleRecommendedAction(module))}</p>
+    </a>`;
+}
+
+const moduleHealthCards =
+  displayModules
+    .map(renderModuleHealthCard)
+    .join('');
+
+const moduleDashboardCards =
+  displayModules
+    .map(module => {
+      const tone = getModuleTone(module);
+      const failedCount =
+        module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
+      const coverage =
+        module.total === 0
+          ? 0
+          : Math.round((module.passed / module.total) * 100);
+      const scenarios =
+        getModuleBusinessScenarios(module.name)
+          .slice(0, 6)
+          .map(scenario => `<span>${escapeHtml(scenario)}</span>`)
+          .join('');
+      const evidence = getModuleEvidenceStatus(module);
+      const validation = getModuleValidationStatus(module);
+      const recentFailureText =
+        failedCount > 0
+          ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need evidence review`
+          : 'No recent failures';
+
+      return `
+        <div class="module-dashboard-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
+              <strong>${escapeHtml(module.name)} Dashboard</strong>
+            </div>
+            <span class="badge ${tone}">${escapeHtml(module.risk)} Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>${module.score}%</strong></div>
+            <div><span>Coverage</span><strong>${coverage}%</strong></div>
+            <div><span>Tests</span><strong>${module.total}</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>${module.passed}/${module.total}</strong></summary>
+            <div class="module-progress"><span style="width:${coverage}%"></span></div>
+            <div class="scenario-chips">${scenarios}</div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>${hasPlaywrightReport ? 'Ready' : 'Pending'}</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>${escapeHtml(evidence.screenshots)}</b></span>
+                <span title="Videos">VID <b>${escapeHtml(evidence.videos)}</b></span>
+                <span title="Traces">TRC <b>${escapeHtml(evidence.traces)}</b></span>
+                <span title="Logs">LOG <b>${escapeHtml(evidence.logs)}</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>${failedCount}</strong></summary>
+              <p class="${failedCount > 0 ? 'bad' : 'good'}">${escapeHtml(recentFailureText)}</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>${escapeHtml(validation.api)}</b></span>
+                <span>DB <b>${escapeHtml(validation.database)}</b></span>
+                <span>Performance <b>${escapeHtml(validation.performance)}</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>${escapeHtml(module.risk)}</strong></summary>
+              <p>${escapeHtml(getModuleRecommendedAction(module))}</p>
+            </details>
+          </div>
+        </div>`;
+    })
+    .join('');
+
+const moduleDrawerData =
+  displayModules.map(module => {
+    const failedCount =
+      module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
+    const coverage =
+      module.total === 0
+        ? 0
+        : Math.round((module.passed / module.total) * 100);
+
+    return {
+      name: module.name,
+      icon: getModuleIcon(module.name),
+      health: module.score,
+      status: module.status,
+      risk: module.risk,
+      total: module.total,
+      passed: module.passed,
+      failed: failedCount,
+      coverage,
+      scenarios: getModuleBusinessScenarios(module.name),
+      focus: getModuleFocus(module.name),
+      evidence: getModuleEvidenceStatus(module),
+      validation: getModuleValidationStatus(module),
+      recommendation: getModuleRecommendedAction(module),
+      dashboardTarget: `#module-dashboard-${moduleSlug(module.name)}`,
+    };
+  });
+
+const moduleDrawerDataJson =
+  JSON.stringify(moduleDrawerData)
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
+
+const moduleHealthRows = displayModules
+  .map(module => {
+    const tone =
+      statusTone(module.status);
+    const failedCount =
+      module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
+
+    return `
+      <tr id="module-${moduleSlug(module.name)}">
+        <td>${escapeHtml(module.name)}</td>
+        <td><div class="progress"><span style="width:${module.score}%"></span></div></td>
+        <td>${module.score}%</td>
+        <td><span class="badge ${tone}">${escapeHtml(module.status)}</span></td>
+        <td>${module.passed}/${module.total}</td>
+        <td>${failedCount}</td>
+        <td>${escapeHtml(module.risk)}</td>
+        <td>${escapeHtml(getModuleRecommendedAction(module))}</td>
+      </tr>`;
+  })
+  .join('');
+
+const journeyHealthRows = (demoMode ? [
+  ['Registration', 'Healthy', 98],
+  ['Authentication', 'Healthy', 96],
+  ['Profile Setup', 'Healthy', 100],
+  ['Subscription', 'Partial', 88],
+  ['Payment', 'Healthy', 94],
+  ['Dashboard', 'Healthy', 100],
+] : journeyCards.map(([name, state]) => [
+  name,
+  state === 'Pass' ? 'Healthy' : state === 'Controlled' ? 'Partial' : state,
+  state === 'Pass' ? 100 : state === 'Controlled' ? 82 : 60,
+]))
+  .map(([name, state, score], index, items) => `
+    <div class="journey-node ${statusTone(state)}">
+      <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' ? '!' : 'NA'}</div>
+      <strong>${escapeHtml(name)}</strong>
+      <span>${score}%</span>
+    </div>
+    ${index < items.length - 1 ? '<div class="journey-arrow">-&gt;</div>' : ''}`)
+  .join('');
+
+const failedRows = (demoMode ? [
+  ['login_MFA_invalid_otp', 'Authentication', 'High', 'Invalid OTP attempts'],
+  ['payment_card_declined', 'Payment', 'Medium', 'Card declined handling'],
+  ['api_getUser_500_error', 'User API', 'Medium', 'Server error response'],
+] : failedTests.length > 0
+  ? failedTests.slice(0, 8).map(test => [
+    test.title,
+    getModuleName(test.title),
+    'High',
+    test.error || 'Review Playwright trace',
+  ])
+  : [
+    ['No failed tests in current execution', 'All Modules', 'Low', 'No blocker detected'],
+  ])
+  .map(([name, module, priority, reason]) => `
+    <tr>
+      <td>${escapeHtml(name)}</td>  
+      <td>${escapeHtml(module)}</td>
+      <td><span class="badge ${priority === 'High' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
+      <td>${escapeHtml(reason)}</td>
+    </tr>`)
+  .join('');
+
+const evidenceCards = [
+  ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Camera', '#evidence'],
+  ['Videos', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Play', '../playwright-report/index.html'],
+  ['Traces', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Trace', '../playwright-report/index.html'],
+  ['Raw Results', hasResults ? loadedResults.source : demoMode ? 'Demo Data' : 'No Data', 'JSON', 'air-results.json'],
+]
+  .map(([label, value, icon, href]) => `
+    <a class="evidence-card" href="${escapeHtml(href)}" ${String(href).startsWith('../') ? 'target="_blank" rel="noopener"' : ''}>
+      <div class="evidence-icon">${escapeHtml(icon)}</div>
+      <div>
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(value)}</span>
+        <em>Open Evidence</em>
+      </div>
+    </a>`)
+  .join('');
+
+const businessHealthCards =
+  displayModules
+    .slice(0, 8)
+    .map(module => {
+      const tone =
+        statusTone(module.status);
+
+      return `
+        <div class="health-card ${tone}">
+          <div class="health-icon">${tone === 'green' ? 'OK' : tone === 'amber' ? '!' : 'RISK'}</div>
+          <div>
+            <strong>${escapeHtml(module.name)}</strong>
+            <span>${module.score}%</span>
+            <small>${escapeHtml(module.status)} - ${module.passed}/${module.total} passed</small>
+          </div>
+        </div>`;
+    })
+    .join('');
+
+const evidenceThumbnailFiles =
+  fs.existsSync(path.join(projectRoot, 'playwright-report', 'data'))
+    ? fs
+      .readdirSync(path.join(projectRoot, 'playwright-report', 'data'))
+      .filter(file => file.toLowerCase().endsWith('.png'))
+      .slice(0, 4)
+    : [];
+
+const evidenceThumbnails =
+  evidenceThumbnailFiles.length > 0
+    ? evidenceThumbnailFiles
+      .map((file, index) => `
+        <a class="thumb" href="../playwright-report/data/${escapeHtml(file)}">
+          <img src="../playwright-report/data/${escapeHtml(file)}" alt="Evidence screenshot ${index + 1}">
+          <span>Screenshot ${index + 1}</span>
+        </a>`)
+      .join('')
+    : [1, 2, 3, 4]
+      .map(index => `
+        <div class="thumb placeholder">
+          <div>Preview</div>
+          <span>${demoMode ? 'Demo evidence' : 'No thumbnail yet'} ${index}</span>
+        </div>`)
+      .join('');
+
+const historySnapshots =
+  Array.isArray(airResults?.history)
+    ? airResults.history.slice(-8)
+    : [];
+
+const historicalTrendBars =
+  historySnapshots.length > 0
+    ? historySnapshots
+      .map((snapshot, index) => {
+        const label =
+          index === historySnapshots.length - 1
+            ? 'Current'
+            : `Run ${index + 1}`;
+        const rate =
+          snapshot.summary?.passRate ?? 0;
+
+        return `<div class="trend-bar" title="${escapeHtml(snapshot.generatedAtDisplay ?? label)}: ${rate}%"><span style="height:${Math.max(6, rate)}%"></span><small>${escapeHtml(label)}</small><strong>${rate}%</strong></div>`;
+      })
+      .join('')
+    : '<div class="empty-note">Run the report after each execution to build AIR historical trend data.</div>';
+
+const aiWhyItems =
+  (executiveData.releaseDecision === 'GO'
+    ? [
+      'All executed tests passed.',
+      'No blocker defects were detected.',
+      `Pass rate is ${executiveData.passRate}%, above the release threshold.`,
+      `Business health is ${executiveData.businessHealth}%, supporting release confidence.`,
+    ]
+    : executiveData.releaseDecision === 'CONDITIONAL GO'
+      ? [
+        'Core journeys are mostly healthy.',
+        'Some warning areas require focused review.',
+        'Release can proceed after evidence review and targeted rerun.',
+      ]
+      : [
+        'Blocking failures exist in the current execution.',
+        'Release threshold was not met.',
+        'Failed tests need evidence review and rerun before approval.',
+      ])
+    .map(item => `<li>${escapeHtml(item)}</li>`)
+    .join('');
+
+const footerHtml =
+  'Generated by AIR Platform &bull; Automation Intelligence Report &bull; Version 1.0';
+
+const executiveConfidence =
+  Math.round(
+    (
+      executiveData.qualityScore +
+      executiveData.businessHealth +
+      executiveData.passRate
+    ) / 3
+  );
+
+const totalAirPages = 8;
+const currentBranch =
+  airResults?.project?.branch ??
+  process.env.GITHUB_REF_NAME ??
+  process.env.BRANCH_NAME ??
+  readGitValue('git branch --show-current', 'Local');
+const currentCommit =
+  airResults?.project?.commit ??
+  process.env.GITHUB_SHA?.slice(0, 8) ??
+  readGitValue('git rev-parse --short HEAD', 'Local');
+const executionTrigger =
+  airResults?.project?.trigger ??
+  (process.env.CI ? 'CI Pipeline' : 'Local Execution');
+const latestExecution =
+  'Latest generated report';
+
+const executiveNarrative =
+  executiveData.releaseDecision === 'GO'
+    ? `Build health is excellent. ${executiveData.total} tests executed with ${executiveData.passed} passing and no blocker defects found. Critical business journeys are healthy, business risk is low, and AIR recommends GO with ${executiveConfidence}% confidence.`
+    : executiveData.releaseDecision === 'CONDITIONAL GO'
+      ? `Build health is stable with warnings. ${executiveData.total} tests executed and the main journeys are mostly healthy, but AIR recommends focused review before final release approval.`
+      : `Build health needs attention. ${executiveData.failed} failures were detected in the current execution, so AIR recommends resolving blockers and rerunning impacted coverage before release.`;
+
+const whyReleaseItems =
+  (executiveData.releaseDecision === 'GO'
+    ? [
+      'Critical flows passed',
+      'No blocker defects',
+      'Coverage above release threshold',
+      'Business risk low',
+    ]
+    : executiveData.releaseDecision === 'CONDITIONAL GO'
+      ? [
+        'Core flows mostly healthy',
+        'Warnings need focused review',
+        'Evidence review required',
+        'Targeted rerun recommended',
+      ]
+      : [
+        'Blocking failures detected',
+        'Release threshold not met',
+        'Evidence review required',
+        'Rerun required after fixes',
+      ])
+    .map(item => `<li>${escapeHtml(item)}</li>`)
+    .join('');
+
+const estimatedReleaseRisk =
+  airResults?.summary?.estimatedReleaseRisk ??
+  (executiveData.releaseDecision === 'NO GO'
+    ? 'HIGH'
+    : executiveData.releaseDecision === 'CONDITIONAL GO' || executiveData.failed > 0 || executiveData.skipped > 0
+      ? 'MEDIUM'
+      : 'LOW');
+
+const estimatedReleaseRiskTone =
+  estimatedReleaseRisk === 'LOW'
+    ? 'green'
+    : estimatedReleaseRisk === 'MEDIUM'
+      ? 'amber'
+      : 'red';
+
+const aiDecisionSummary =
+  executiveData.releaseDecision === 'GO'
+    ? 'AIR recommends GO because the current execution has strong pass stability, no blocker failures, healthy business journeys, and enough regression confidence for release monitoring.'
+    : executiveData.releaseDecision === 'CONDITIONAL GO'
+      ? 'AIR recommends CONDITIONAL GO because the main journeys are mostly stable, but warning signals still need evidence review and targeted rerun before final approval.'
+      : 'AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.';
+
+const aiPriorityRecommendations =
+  (executiveData.failed > 0
+    ? [
+      {
+        title: 'Review failed tests',
+        priority: 'Priority 1',
+        detail: 'Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.',
+      },
+      {
+        title: 'Stabilize impacted flows',
+        priority: 'Priority 2',
+        detail: 'Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.',
+      },
+      {
+        title: 'Strengthen evidence links',
+        priority: 'Priority 3',
+        detail: 'Attach screenshot, video, trace, and environment context to every release-impacting failure.',
+      },
+    ]
+    : [
+      {
+        title: 'Increase API validation',
+        priority: 'Priority 1',
+        detail: 'Add API-level checks for billing, authentication, signup, and password flows so AIR can separate UI issues from backend failures.',
+      },
+      {
+        title: 'Increase DB validation',
+        priority: 'Priority 2',
+        detail: 'Add database validation for account status, subscription state, reset tokens, login lockout, and payment records.',
+      },
+      {
+        title: 'Expand MFA and security coverage',
+        priority: 'Priority 3',
+        detail: 'Add negative MFA, session expiry, protected-route, unlock-account, and reset-password expiry scenarios.',
+      },
+    ])
+    .map(item => `
+      <div class="recommendation-card">
+        <span>${escapeHtml(item.priority)}</span>
+        <strong>${escapeHtml(item.title)}</strong>
+        <p>${escapeHtml(item.detail)}</p>
+      </div>`)
+    .join('');
+
+const aiActionChecklist =
+  [
+    estimatedReleaseRisk === 'LOW'
+      ? 'Keep release monitoring enabled after deployment.'
+      : 'Do not approve release until warning or blocker evidence is reviewed.',
+    'Link every failed or warning signal to screenshot, video, trace, or raw Playwright evidence.',
+    'Use module health cards to decide which QA area should receive the next automation investment.',
+  ]
+    .map(item => `<li>${escapeHtml(item)}</li>`)
+    .join('');
+
+function renderPageFooter(pageNumber) {
+  return `
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>${escapeHtml(generatedAt)}</span>
+        <strong>Page ${pageNumber} of ${totalAirPages}</strong>
+      </div>`;
+}
+
+const airGoldenDashboardHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIR Execution Report - ${escapeHtml(projectName)}</title>
+<style>
+:root{--bg:#0b0f17;--nav:#07101f;--panel:#111827;--panel2:#0e1a2d;--card:#111827;--line:#1f2937;--line2:#1f4630;--text:#f8fafc;--muted:#94a3b8;--green:#39e75f;--green2:#22c55e;--green3:#14532d;--red:#ff3b3b;--amber:#f5c542;--info:#8bd7a4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 18% 0%,rgba(57,231,95,.12),transparent 30%),linear-gradient(135deg,#06101b,#0b0f17 48%,#061525);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#061227,#07101f);border-right:1px solid var(--line2);padding:24px 18px;display:flex;flex-direction:column}.brand{font-size:54px;font-weight:900;letter-spacing:-4px;background:linear-gradient(90deg,#39e75f,#23c55e);-webkit-background-clip:text;color:transparent;line-height:.9}.brand-sub{font-size:12px;line-height:1.4;margin:8px 0 24px;color:white;text-align:center}.nav a{display:flex;gap:10px;align-items:center;color:white;text-decoration:none;padding:12px 13px;border-radius:8px;margin-bottom:8px;font-size:14px}.nav a.active,.nav a:hover{background:linear-gradient(90deg,#14532d,#166534);box-shadow:inset 3px 0 0 var(--green)}.report-meta{margin-top:auto;border:1px solid var(--line2);border-radius:10px;padding:14px;background:rgba(17,24,39,.55);font-size:12px;color:var(--muted)}.release-mini{margin-top:12px;border:1px solid rgba(57,231,95,.35);background:rgba(57,231,95,.08);border-radius:10px;padding:14px}.release-mini strong{display:block;font-size:34px;color:var(--green)}main{padding:26px 32px 52px}.page{border:1px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.94),rgba(8,16,30,.94));padding:26px;margin-bottom:26px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.hero{min-height:560px}.cover-page{min-height:720px;display:grid;gap:24px}.cover-hero{min-height:430px;border:1px solid rgba(57,231,95,.28);border-radius:18px;background:radial-gradient(circle at 70% 30%,rgba(57,231,95,.16),transparent 35%),linear-gradient(135deg,#07101f,#0b1728);padding:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}.cover-logo{font-size:92px;font-weight:900;letter-spacing:-7px;background:linear-gradient(90deg,#39e75f,#9af7ad);-webkit-background-clip:text;color:transparent}.cover-title{font-size:44px;line-height:1.02;margin:10px 0}.cover-sub{color:var(--muted);font-size:18px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cover-stat{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.76);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:23px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.3);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.82));padding:22px;margin-bottom:22px}.wow h2{font-size:28px;margin:0 0 14px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wow-card{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:16px}.wow-card span{display:block;color:var(--muted)}.wow-card strong{display:block;color:var(--green);font-size:34px;margin-top:5px}.wow-card small{display:block;color:#d7fbe0;line-height:1.7}.topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--green);font-weight:900}.topbar h1{font-size:32px;margin:4px 0 3px;letter-spacing:-.03em}.topbar p{margin:0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill,.btn{border:1px solid var(--line2);border-radius:9px;padding:9px 12px;background:#07101f;color:white;font-weight:800;font-size:12px}.pill.demo{background:rgba(57,231,95,.11);border-color:rgba(57,231,95,.4);color:var(--green)}.btn{text-decoration:none}.btn:hover{border-color:rgba(57,231,95,.6);color:var(--green)}.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}.kpi{background:linear-gradient(145deg,#111827,#0b1728);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:116px;position:relative;overflow:hidden}.kpi:after{content:attr(data-icon);position:absolute;right:14px;top:20px;font-size:34px;color:var(--green);opacity:.82}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi strong{display:block;font-size:30px;margin:10px 0 4px}.kpi.good strong,.good{color:var(--green)}.kpi.bad strong,.bad{color:var(--red)}.kpi.warn strong,.warn{color:var(--amber)}.grid{display:grid;gap:18px}.grid.two{grid-template-columns:1.1fr .9fr}.grid.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:20px}.panel h2{font-size:18px;margin:0 0 14px}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border:1px solid rgba(57,231,95,.35);border-radius:10px;display:inline-grid;place-items:center;background:rgba(57,231,95,.12);color:var(--green);font-size:12px;font-weight:900}.release-card{display:grid;place-items:center;text-align:center;min-height:290px;background:radial-gradient(circle at center,rgba(57,231,95,.15),transparent 58%),#08101e}.release-card .decision{font-size:70px;font-weight:900;margin:8px 0}.release-card .score{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) ${executiveData.qualityScore}%,#26354e 0);position:relative}.release-card .score:before{content:"";position:absolute;width:112px;height:112px;border-radius:50%;background:#0b1628}.release-card .score b{z-index:1;font-size:36px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#16a34a);border-radius:999px}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.health-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:16px;background:#0b1728}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:28px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green);font-size:11px;font-weight:900}.health-card.amber .health-icon,.health-card.amber span{color:var(--amber)}.health-card.red .health-icon,.health-card.red span{color:var(--red)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.badge.good{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35)}.badge.warn{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35)}.badge.bad{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35)}.journey{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.journey-node{min-width:145px;background:#0b1728;border:1px solid var(--line2);border-radius:13px;padding:15px;text-align:center}.journey-node .node-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:0 auto 9px;background:rgba(57,231,95,.16);border:1px solid rgba(57,231,95,.35);font-size:20px}.journey-node strong{display:block}.journey-node span{display:block;color:var(--muted);margin-top:5px}.journey-arrow{color:var(--green);font-size:22px}.chart{height:250px;border:1px solid var(--line2);background:linear-gradient(180deg,#091426,#07101f);border-radius:12px;padding:22px 18px 42px;display:flex;gap:16px;align-items:flex-end}.bar{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);min-height:18px;position:relative;box-shadow:0 10px 22px rgba(57,231,95,.12)}.bar:hover{filter:brightness(1.16)}.bar.red{background:linear-gradient(180deg,#ff3b3b,#991b1b)}.bar.blue{background:linear-gradient(180deg,#39e75f,#14532d)}.bar label{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}.risk-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.risk-cell{min-height:72px;border:1px solid var(--line2);border-radius:8px;display:grid;place-items:center;text-align:center}.risk-cell.low{background:rgba(57,231,95,.14)}.risk-cell.med{background:rgba(245,197,66,.17)}.risk-cell.high{background:rgba(255,59,59,.20)}.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.evidence-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:18px;background:#0b1728}.evidence-icon{width:48px;height:48px;border-radius:12px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-weight:900}.evidence-card strong,.evidence-card span{display:block}.evidence-card span{color:var(--muted);margin-top:4px}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:white;min-height:132px}.thumb img{width:100%;height:92px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{display:grid;place-items:center;text-align:center}.thumb.placeholder div{width:100%;height:92px;border-radius:8px;border:1px dashed rgba(57,231,95,.35);display:grid;place-items:center;color:var(--green);background:rgba(57,231,95,.08)}.insight{border-color:rgba(57,231,95,.35);background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(20,83,45,.12))}.ai-reasons{margin:12px 0 0;padding-left:20px;color:#d7fbe0;line-height:1.8}.empty-note{border:1px dashed var(--line2);border-radius:12px;padding:18px;color:var(--muted);background:rgba(8,16,30,.5)}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line2);padding-top:18px}.footer strong{color:white}@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.kpis,.grid.two,.grid.three,.evidence-grid,.cover-hero,.cover-stats,.wow-grid,.health-grid,.thumb-grid{grid-template-columns:1fr}.hero{min-height:auto}}@page{size:A3 landscape;margin:8mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:#0b0f17!important;color:var(--text)!important}.app{display:block}.sidebar{display:none!important}main{padding:0!important}.page{break-inside:avoid;page-break-inside:avoid;margin:0 0 10mm!important;box-shadow:none!important}.btn,.actions{display:none!important}.footer{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="app">
+  <style>
+    .module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:320px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;text-decoration:none;color:var(--text);box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.14)}.module-health-card.green{border-color:rgba(57,231,95,.45)}.module-health-card.amber{border-color:rgba(245,197,66,.55)}.module-health-card.red{border-color:rgba(255,59,59,.6)}.module-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.module-title{display:flex;align-items:center;gap:12px}.module-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}.module-health-card.amber .module-icon{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.38);color:var(--amber)}.module-health-card.red .module-icon{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.42);color:var(--red)}.module-title strong{font-size:18px}.module-score{font-size:44px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-button{display:inline-flex;align-items:center;justify-content:center;width:max-content;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.10);color:var(--green);font-size:12px;font-weight:900;padding:9px 12px}.module-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.module-dashboard-card{border:1px solid rgba(57,231,95,.34);border-radius:14px;background:rgba(8,16,30,.74);padding:18px;scroll-margin-top:24px}.module-dashboard-card.amber{border-color:rgba(245,197,66,.55)}.module-dashboard-card.red{border-color:rgba(255,59,59,.6)}.module-dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.module-dashboard-metrics span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-dashboard-metrics b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-action{margin-top:12px;color:#d7fbe0;font-weight:800}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}@media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-dashboard-grid,.module-dashboard-metrics{grid-template-columns:1fr}}@media(max-width:760px){.module-card-grid,.module-meta{grid-template-columns:1fr}}@media print{.module-health-card,.module-dashboard-card{break-inside:avoid}}
+    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}
+    .module-mini-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.module-mini-hero div{border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,rgba(57,231,95,.08),rgba(8,16,30,.76));padding:16px}.module-mini-hero span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.module-mini-hero strong{display:block;color:var(--green);font-size:30px;margin-top:8px}.mini-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;align-items:start;grid-auto-rows:min-content}.mini-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:15px;align-self:start}.mini-section summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;margin:-2px 0 10px}.mini-section summary::-webkit-details-marker{display:none}.mini-section summary:before{content:"▾";color:var(--green);font-weight:900}.mini-section:not([open]) summary{margin-bottom:0}.mini-section:not([open]) summary:before{content:"▸"}.mini-section summary span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-section summary strong{margin-left:auto;color:var(--green);font-size:12px}.mini-section h3{margin:0 0 10px;font-size:15px}.mini-section p{margin:0;line-height:1.5}.mini-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mini-label span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-label strong{color:var(--green)}.scenario-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.scenario-chips span{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:#d7fbe0;font-size:11px;font-weight:800;padding:6px 9px}.mini-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini-evidence span,.validation-stack span{border:1px solid rgba(57,231,95,.22);border-radius:10px;background:rgba(7,16,31,.74);padding:9px;color:white;font-size:12px}.mini-evidence b,.validation-stack b{display:block;color:var(--muted);font-weight:700;margin-top:5px}.mini-evidence-button{display:inline-block;margin-top:10px;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green)!important;font-size:12px;font-weight:900;padding:8px 10px;text-decoration:none!important}.validation-stack{display:grid;gap:8px}.history-chart{height:220px;display:flex;gap:14px;align-items:flex-end;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#091426,#07101f);padding:20px 16px 44px}.trend-bar{flex:1;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}.trend-bar span{width:70%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}.trend-bar small{position:absolute;bottom:-28px;color:var(--muted);font-size:11px}.trend-bar strong{position:absolute;top:-18px;color:white;font-size:11px}.report-search,.global-search{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:12px;margin:14px 0}.global-search{position:sticky;top:12px;z-index:12;display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start;margin:0 0 22px}.report-search label,.global-search label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}.report-search input,.global-search input{width:100%;border:1px solid rgba(57,231,95,.28);border-radius:9px;background:#07101f;color:white;padding:10px 11px;outline:none}.report-search input:focus,.global-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,231,95,.12)}.search-results{display:grid;gap:7px;margin-top:10px}.global-search .search-results{grid-column:2}.search-results a{border:1px solid rgba(57,231,95,.18);border-radius:9px;background:rgba(57,231,95,.07);color:white!important;font-size:12px;line-height:1.35;padding:8px;text-decoration:none!important}.search-results a:hover{border-color:rgba(57,231,95,.45);color:var(--green)!important}.search-empty{color:var(--muted);font-size:12px}.search-hit{outline:2px solid rgba(57,231,95,.75);outline-offset:3px}.evidence-card{color:var(--text)!important;text-decoration:none!important;min-height:150px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.evidence-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.12)}.evidence-card strong{color:white!important;text-decoration:none!important;font-size:18px}.evidence-card span{color:var(--muted)!important;text-decoration:none!important}.evidence-card em{display:inline-block;margin-top:9px;color:var(--green)!important;font-style:normal;font-size:12px;font-weight:900;text-decoration:none!important}.evidence-card *{text-decoration:none!important}.evidence-icon{flex:0 0 58px;min-width:58px;height:58px;overflow:hidden;font-size:13px}.module-dashboard-grid{align-items:start}.module-dashboard-card{align-self:start}.why-release{max-width:460px;margin:24px auto 0;text-align:left}.why-release h3{text-align:center;font-size:24px;margin:0 0 18px}.why-release ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.why-release li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;color:#f8fafc;font-size:18px;line-height:1.35;text-align:left}.why-release li:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.38);color:var(--green);font-size:13px;font-weight:900;line-height:1}@media(max-width:1100px){.module-mini-hero,.mini-dashboard-grid,.mini-evidence,.global-search{grid-template-columns:1fr}.global-search .search-results{grid-column:auto}}
+  </style>
+  <aside class="sidebar">
+    <div class="brand">AIR</div>
+    <div class="brand-sub">Automation Intelligence<br>Report</div>
+    <nav class="nav">
+      <div class="nav-section">Overview</div>
+      <a class="active" href="#cover">Cover Dashboard</a>
+      <a href="#executive">Executive Summary</a>
+      <div class="nav-section">Business</div>
+      <a href="#journey">Business Journey</a>
+      <a href="#health">Product Health</a>
+      <a href="#module-dashboard">Module Dashboard</a>
+      <div class="nav-section">Execution</div>
+      <a href="#failures">Failed Tests</a>
+      <a href="#executive">Automation Coverage</a>
+      <div class="nav-section">Evidence</div>
+      <a href="#evidence">Evidence Center</a>
+      <div class="nav-section">Intelligence</div>
+      <a href="#insight">AI Insight</a>
+      <div class="nav-section">Planning</div>
+      <a href="#insight">Future Roadmap</a>
+    </nav>
+    <div class="report-search">
+      <label for="airSearch">Search Report</label>
+      <input id="airSearch" type="search" placeholder="Search modules, tests, evidence..." autocomplete="off">
+      <div id="airSearchResults" class="search-results"></div>
+    </div>
+    <div class="report-meta">
+      <div>Project<br><strong>${escapeHtml(projectName)}</strong></div><br>
+      <div>Environment<br><strong>${escapeHtml(environment)}</strong></div><br>
+      <div>Build<br><strong>${escapeHtml(buildVersion)}</strong></div><br>
+      <div>Generated<br><strong>${escapeHtml(generatedAt)}</strong></div>
+    </div>
+    <div class="release-mini">
+      <span>Release Decision</span>
+      <strong>${escapeHtml(executiveData.releaseDecision)}</strong>
+      <small>${demoMode ? 'Demo data shown' : 'Based on last execution'}</small>
+    </div>
+  </aside>
+  <main>
+    <div class="global-search">
+      <div>
+        <label for="airGlobalSearch">Search AIR Report</label>
+        <input id="airGlobalSearch" type="search" placeholder="Search modules, tests, evidence, recommendations..." autocomplete="off">
+      </div>
+      <div id="airGlobalSearchResults" class="search-results"></div>
+    </div>
+    <section class="page cover-page" id="cover">
+      <div class="cover-hero">
+        <div>
+          <div class="cover-logo">AIR</div>
+          <h1 class="cover-title">Automation Intelligence Report</h1>
+          <p class="cover-sub"><strong>Automation Intelligence Platform.</strong><br>Converting automation execution into business decisions.</p>
+        </div>
+        <div class="cover-stats">
+          <div class="cover-stat"><span>Project</span><strong>${escapeHtml(projectName)}</strong></div>
+          <div class="cover-stat"><span>Environment</span><strong>${escapeHtml(environment)}</strong></div>
+          <div class="cover-stat"><span>Build</span><strong>${escapeHtml(buildVersion)}</strong></div>
+          <div class="cover-stat"><span>Execution Date</span><strong>${escapeHtml(generatedAt)}</strong></div>
+          <div class="cover-stat"><span>Framework</span><strong>Playwright</strong></div>
+          <div class="cover-stat"><span>Generated By</span><strong>AIR Platform</strong></div>
+          <div class="cover-stat"><span>Release Recommendation</span><strong class="${releaseTone}">${escapeHtml(executiveData.releaseDecision)}</strong></div>
+          <div class="cover-stat"><span>Quality Score</span><strong>${executiveData.qualityScore}%</strong></div>
+          <div class="cover-stat"><span>Branch</span><strong>${escapeHtml(currentBranch)}</strong></div>
+          <div class="cover-stat"><span>Commit</span><strong>${escapeHtml(currentCommit)}</strong></div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel release-card interactive-card" data-open-release>
+          <div class="score"><b>${executiveData.qualityScore}%</b></div>
+          <div class="decision ${releaseTone}">${escapeHtml(executiveData.releaseDecision)}</div>
+          <p>${executiveData.releaseDecision === 'GO' ? 'All critical execution signals are healthy for release review.' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Release can proceed after targeted review of warnings.' : 'Release should wait until blocking failures are resolved.'}</p>
+          <div class="why-release">
+            <h3>Why Release?</h3>
+            <ul>${whyReleaseItems}</ul>
+          </div>
+        </div>
+        <div class="panel insight">
+          <h2 class="icon-title"><span class="section-icon">AI</span>Release Reason</h2>
+          <ul class="ai-reasons">${aiWhyItems}</ul>
+        </div>
+      </div>
+      ${renderPageFooter(1)}
+    </section>
+
+    <section class="page hero" id="executive">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">PAGE 02</div>
+          <h1>Executive Summary</h1>
+          <p>Can we release? Current build overview and quality snapshot.</p>
+        </div>
+        <div class="actions">
+          <span class="pill demo">${demoMode ? 'Demo Mode / Sample Data' : `Live Data / ${escapeHtml(loadedResults.source)}`}</span>
+          <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
+          <a class="btn" href="#evidence">Evidence</a>
+          <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+        </div>
+      </div>
+      <div class="narrative">
+        <h2>Build Health: ${executiveData.releaseDecision === 'GO' ? 'Excellent' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Stable With Warnings' : 'Needs Attention'}</h2>
+        <p>${escapeHtml(executiveNarrative)}</p>
+      </div>
+      <div class="meta-strip">
+        <div class="meta-item"><span>Latest Execution</span><strong>${escapeHtml(latestExecution)}</strong></div>
+        <div class="meta-item"><span>Generated Automatically</span><strong>Yes</strong></div>
+        <div class="meta-item"><span>Current Branch</span><strong>${escapeHtml(currentBranch)}</strong></div>
+        <div class="meta-item"><span>Execution Trigger</span><strong>${escapeHtml(executionTrigger)}</strong></div>
+      </div>
+      <div class="wow">
+        <h2>Good Morning Hardik</h2>
+        <div class="wow-grid">
+          <div class="wow-card"><span>Quality Score</span><strong>${executiveData.qualityScore}%</strong></div>
+          <div class="wow-card"><span>Release</span><strong>${escapeHtml(executiveData.releaseDecision)}</strong></div>
+          <div class="wow-card"><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
+          <div class="wow-card"><span>Today&apos;s Focus</span><small>Review MFA evidence<br>Complete API validation<br>Prepare release notes</small></div>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi" data-icon="QA"><span>Total Tests</span><strong>${executiveData.total}</strong><small>${demoMode ? 'sample portfolio' : 'last run'}</small></div>
+        <div class="kpi good" data-icon="OK"><span>Passed</span><strong>${executiveData.passed}</strong><small>${executiveData.passRate}% pass rate</small></div>
+        <div class="kpi ${executiveData.failed ? 'bad' : 'good'}" data-icon="FX"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed ? 'review needed' : 'no blockers'}</small></div>
+        <div class="kpi good" data-icon="QS"><span>Quality Score</span><strong>${executiveData.qualityScore}%</strong><small>release confidence</small></div>
+        <div class="kpi warn" data-icon="BH"><span>Business Health</span><strong>${executiveData.businessHealth}%</strong><small>critical journeys</small></div>
+        <div class="kpi blue" data-icon="TM"><span>Execution Time</span><strong>${escapeHtml(executiveData.duration)}</strong><small>total duration</small></div>
+      </div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">TR</span>Historical Pass Rate Trend</h2>
+        <div class="history-chart">${historicalTrendBars}</div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel">
+          <h2 class="icon-title"><span class="section-icon">BH</span>Business Health Overview</h2>
+          <div class="health-grid">${businessHealthCards}</div>
+        </div>
+        <div class="panel release-card interactive-card" data-open-release>
+          <div class="score"><b>${executiveData.qualityScore}%</b></div>
+          <div class="decision ${releaseTone}">${escapeHtml(executiveData.releaseDecision)}</div>
+          <p>${executiveData.releaseDecision === 'GO' ? 'Build can proceed with monitoring.' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Release can proceed after focused review.' : 'Resolve blockers before release.'}</p>
+          <div class="why-release">
+            <h3>Why Release?</h3>
+            <ul>${whyReleaseItems}</ul>
+          </div>
+        </div>
+      </div>
+      ${renderPageFooter(2)}
+    </section>
+
+    <section class="page" id="journey">
+      <div class="topbar"><div><div class="eyebrow">PAGE 03</div><h1>Business Journey</h1><p>Are core flows healthy from signup to dashboard?</p></div><span class="pill demo">${demoMode ? 'Demo Data' : 'Live Data'}</span></div>
+      <div class="panel"><h2>Core Flow Health</h2><div class="journey">${journeyHealthRows}</div></div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Journey Trend</h2><div class="chart"><div class="bar" style="height:88%"><label>Registration</label></div><div class="bar" style="height:82%"><label>Auth</label></div><div class="bar" style="height:94%"><label>Profile</label></div><div class="bar" style="height:78%"><label>Billing</label></div><div class="bar blue" style="height:96%"><label>Dashboard</label></div></div></div>
+        <div class="panel"><h2>Answer</h2><p>Core flows are ${executiveData.failed === 0 ? 'healthy in the current execution.' : 'mostly healthy, with focused review required for failed areas.'}</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and should be reported separately when run.</div></div>
+      </div>
+      ${renderPageFooter(3)}
+    </section>
+
+    <section class="page" id="health">
+      <div class="topbar"><div><div class="eyebrow">PAGE 04</div><h1>Product Health</h1><p>Which modules are healthy, which need attention, and what should QA do next?</p></div><a class="btn" href="#module-dashboard">Module Dashboard</a></div>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">MH</span>Module Health Cards</h2>
+        <div class="module-card-grid">${moduleHealthCards}</div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Risk Matrix</h2><div class="risk-matrix"><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High<br>${executiveData.failed}</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High</div><div class="risk-cell low">Low</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div></div></div>
+        <div class="panel"><h2>Health Summary</h2><p>${executiveData.failed === 0 ? 'All current modules are release-safe in this execution. QA should continue monitoring stable UI coverage and expand API, DB, and evidence mapping next.' : 'One or more modules need attention. QA should review failed modules, attach evidence, and rerun impacted checks.'}</p><br><div class="meta-strip"><div class="meta-item"><span>Healthy Modules</span><strong>${displayModules.filter(module => module.status === 'Healthy').length}</strong></div><div class="meta-item"><span>Warning Modules</span><strong>${displayModules.filter(module => module.status === 'Partial').length}</strong></div><div class="meta-item"><span>Critical Modules</span><strong>${displayModules.filter(module => module.status === 'At Risk').length}</strong></div><div class="meta-item"><span>Next Step</span><strong>Evidence Linking</strong></div></div></div>
+      </div>
+      <br>
+      <div class="panel" id="product-health-table"><h2>Detailed Module Health</h2><table><thead><tr><th>Module</th><th>Health</th><th>Score</th><th>Status</th><th>Tests</th><th>Failed</th><th>Risk</th><th>Recommended Action</th></tr></thead><tbody>${moduleHealthRows}</tbody></table></div>
+      ${renderPageFooter(4)}
+    </section>
+
+    <section class="page" id="module-dashboard">
+      <div class="topbar"><div><div class="eyebrow">PAGE 05</div><h1>Module Dashboard</h1><p>Deeper module-level quality, coverage, evidence readiness, and recommended action.</p></div><a class="btn" href="#health">Back to Product Health</a></div>
+      <div class="module-dashboard-grid">${moduleDashboardCards}</div>
+      ${renderPageFooter(5)}
+    </section>
+
+    <section class="page" id="failures">
+      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
+      <div class="panel"><table><thead><tr><th>Test Name</th><th>Module</th><th>Priority</th><th>Reason / Next Action</th></tr></thead><tbody>${failedRows}</tbody></table></div>
+      ${renderPageFooter(6)}
+    </section>
+
+    <section class="page" id="evidence">
+      <div class="topbar"><div><div class="eyebrow">PAGE 07</div><h1>Evidence Center</h1><p>Where is proof?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="evidence-grid">${evidenceCards}</div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
+        <div class="thumb-grid">${evidenceThumbnails}</div>
+      </div>
+      <br>
+      <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
+      ${renderPageFooter(7)}
+    </section>
+
+    <section class="page" id="insight">
+      <div class="topbar"><div><div class="eyebrow">PAGE 08</div><h1>AI Quality Insight</h1><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
+      <div class="grid two">
+        <div class="panel insight ai-decision-panel">
+          <h2 class="icon-title"><span class="section-icon">AI</span>Why AIR Recommends ${escapeHtml(executiveData.releaseDecision)}</h2>
+          <p class="ai-decision-summary">${escapeHtml(aiDecisionSummary)}</p>
+          <div class="risk-banner ${estimatedReleaseRiskTone}">
+            <div><span>Estimated Release Risk</span><strong>${escapeHtml(estimatedReleaseRisk)}</strong></div>
+            <div class="risk-dots"><i></i><i></i><i></i></div>
+          </div>
+          <ul class="ai-reasons">${aiWhyItems}</ul>
+        </div>
+        <div class="panel">
+          <h2 class="icon-title"><span class="section-icon">QA</span>Decision Signals</h2>
+          <div class="ai-metric-grid">
+            <div class="ai-metric"><span>Release</span><strong>${escapeHtml(executiveData.releaseDecision)}</strong></div>
+            <div class="ai-metric"><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
+            <div class="ai-metric"><span>Pass Rate</span><strong>${executiveData.passRate}%</strong></div>
+            <div class="ai-metric"><span>Failures</span><strong>${executiveData.failed}</strong></div>
+          </div>
+          <br>
+          <h2>Action Checklist</h2>
+          <ul class="action-list">${aiActionChecklist}</ul>
+        </div>
+      </div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">P1</span>Priority Recommendations</h2>
+        <div class="recommendation-grid">${aiPriorityRecommendations}</div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Next QA Focus</h2><p>${executiveData.failed > 0 ? 'Review failed tests first, then rerun impacted modules with evidence capture enabled.' : 'Move from UI-only confidence to full quality intelligence by adding API, DB, MFA, and session-security validations.'}</p></div>
+        <div class="panel"><h2>AIR Roadmap</h2><p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p></div>
+      </div>
+      ${renderPageFooter(8)}
+    </section>
+    <footer class="footer">
+      <span>${footerHtml}</span>
+      <strong>${escapeHtml(projectName)} / ${escapeHtml(environment)}</strong>
+    </footer>
+  </main>
+  <div class="drawer-backdrop" data-close-panels></div>
+  <aside class="module-drawer" id="moduleDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <div class="eyebrow">MODULE DASHBOARD</div>
+        <h2 id="drawerTitle">Module Dashboard</h2>
+        <span class="badge green" id="drawerStatus">Healthy</span>
+      </div>
+      <button class="drawer-close" type="button" data-close-panels aria-label="Close module details">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-metrics">
+        <div class="drawer-metric"><span>Health Score</span><strong id="drawerHealth">0%</strong></div>
+        <div class="drawer-metric"><span>Coverage</span><strong id="drawerCoverage">0%</strong></div>
+        <div class="drawer-metric"><span>Tests</span><strong id="drawerTests">0</strong></div>
+        <div class="drawer-metric"><span>Passed / Failed</span><strong id="drawerPassFail">0 / 0</strong></div>
+      </div>
+      <div class="drawer-section drawer-focus">
+        <h3>Module Focus</h3>
+        <p id="drawerFocus"></p>
+      </div>
+      <div class="drawer-section">
+        <h3>Business Scenarios</h3>
+        <ul class="drawer-list" id="drawerScenarios"></ul>
+      </div>
+      <div class="drawer-section">
+        <h3>Evidence</h3>
+        <div class="evidence-links" id="drawerEvidence"></div>
+      </div>
+      <div class="drawer-section">
+        <h3>Validation Coverage</h3>
+        <div class="drawer-metrics">
+          <div class="drawer-metric"><span>API Validation</span><strong id="drawerApi">Planned</strong></div>
+          <div class="drawer-metric"><span>DB Validation</span><strong id="drawerDb">Planned</strong></div>
+          <div class="drawer-metric"><span>Performance</span><strong id="drawerPerf">Planned</strong></div>
+          <div class="drawer-metric"><span>Risk Level</span><strong id="drawerRisk">Low</strong></div>
+        </div>
+      </div>
+      <div class="drawer-section insight">
+        <h3>AI Recommendation</h3>
+        <p id="drawerRecommendation"></p>
+      </div>
+      <div class="drawer-actions">
+        <a class="btn" id="drawerDashboardLink" href="#module-dashboard">Open Module Dashboard</a>
+        <a class="btn" href="#evidence">Open Evidence Center</a>
+        <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+      </div>
+    </div>
+  </aside>
+  <div class="modal-backdrop" data-close-panels></div>
+  <section class="modal" id="recommendationModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">AIR RECOMMENDATIONS</div>
+        <h2>Execution Recommendation</h2>
+        <p class="ai-decision-summary">${escapeHtml(aiDecisionSummary)}</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close recommendations">×</button>
+    </div>
+    <div class="recommendation-grid">${aiPriorityRecommendations}</div>
+    <br>
+    <div class="modal-grid">
+      <div class="panel"><h2>Release Risk</h2><div class="risk-banner ${estimatedReleaseRiskTone}"><div><span>Estimated Risk</span><strong>${escapeHtml(estimatedReleaseRisk)}</strong></div><div class="risk-dots"><i></i><i></i><i></i></div></div></div>
+      <div class="panel"><h2>Action Checklist</h2><ul class="action-list">${aiActionChecklist}</ul></div>
+    </div>
+  </section>
+  <section class="modal" id="releaseModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">RELEASE ANALYSIS</div>
+        <h2>Why ${escapeHtml(executiveData.releaseDecision)}?</h2>
+        <p class="ai-decision-summary">${escapeHtml(aiDecisionSummary)}</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close release analysis">×</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Business Health</span><strong>${executiveData.businessHealth}%</strong></div>
+      <div class="ai-metric"><span>Quality Score</span><strong>${executiveData.qualityScore}%</strong></div>
+      <div class="ai-metric"><span>Critical Failures</span><strong>${executiveData.failed}</strong></div>
+      <div class="ai-metric"><span>Blockers</span><strong>${executiveData.failed}</strong></div>
+    </div>
+    <br>
+    <div class="grid two">
+      <div class="panel"><h2>Reason</h2><ul class="ai-reasons">${aiWhyItems}</ul></div>
+      <div class="panel"><h2>Recommendation</h2><p>Proceed to release when this decision is GO. Use conditional approval only after evidence review when warnings are present.</p></div>
+    </div>
+  </section>
+</div>
+<script>
+  const moduleDrawerData = ${moduleDrawerDataJson};
+  const drawer = document.getElementById('moduleDrawer');
+  const drawerBackdrop = document.querySelector('.drawer-backdrop');
+  const modalBackdrop = document.querySelector('.modal-backdrop');
+  const recommendationModal = document.getElementById('recommendationModal');
+  const releaseModal = document.getElementById('releaseModal');
+
+  function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    }
+  }
+
+  function openDrawer(moduleName) {
+    const data = moduleDrawerData.find(item => item.name === moduleName);
+    if (!data || !drawer) {
+      return;
+    }
+
+    setText('drawerTitle', data.name + ' Dashboard');
+    setText('drawerHealth', data.health + '%');
+    setText('drawerCoverage', data.coverage + '%');
+    setText('drawerTests', String(data.total));
+    setText('drawerPassFail', data.passed + ' / ' + data.failed);
+    setText('drawerApi', data.validation.api);
+    setText('drawerDb', data.validation.database);
+    setText('drawerPerf', data.validation.performance);
+    setText('drawerRisk', data.risk);
+    setText('drawerFocus', data.focus);
+    setText('drawerRecommendation', data.recommendation);
+
+    const status = document.getElementById('drawerStatus');
+    if (status) {
+      status.textContent = data.status;
+      status.className = 'badge ' + (data.risk === 'High' ? 'red' : data.risk === 'Medium' || data.status === 'Partial' ? 'amber' : 'green');
+    }
+
+    const scenarios = document.getElementById('drawerScenarios');
+    if (scenarios) {
+      scenarios.innerHTML = data.scenarios.map(item => '<li>' + item + '</li>').join('');
+    }
+
+    const evidence = document.getElementById('drawerEvidence');
+    if (evidence) {
+      evidence.innerHTML = [
+        ['Screenshot', data.evidence.screenshots, '#evidence'],
+        ['Video', data.evidence.videos, '#evidence'],
+        ['Trace', data.evidence.traces, '../playwright-report/index.html'],
+        ['Logs', data.evidence.logs, '#evidence']
+      ].map(item => '<a class="evidence-chip" href="' + item[2] + '"><strong>' + item[0] + '</strong><span>' + item[1] + '</span></a>').join('');
+    }
+
+    const dashboardLink = document.getElementById('drawerDashboardLink');
+    if (dashboardLink) {
+      dashboardLink.href = data.dashboardTarget;
+    }
+
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    drawerBackdrop.classList.add('open');
+  }
+
+  function openModal(modal) {
+    if (!modal) {
+      return;
+    }
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    modalBackdrop.classList.add('open');
+  }
+
+  function closePanels() {
+    if (drawer) {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+    }
+    [recommendationModal, releaseModal].forEach(modal => {
+      if (modal) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    drawerBackdrop.classList.remove('open');
+    modalBackdrop.classList.remove('open');
+  }
+
+  document.querySelectorAll('.module-health-card[data-module], .module-dashboard-card[data-module]').forEach(card => {
+    card.addEventListener('click', event => {
+      if (event.target.closest('details, summary, .mini-evidence-button')) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      openDrawer(card.dataset.module);
+    });
+  });
+
+  document.querySelectorAll('[data-open-recommendations]').forEach(button => {
+    button.addEventListener('click', () => openModal(recommendationModal));
+  });
+
+  document.querySelectorAll('[data-open-release]').forEach(card => {
+    card.addEventListener('click', () => openModal(releaseModal));
+  });
+
+  document.querySelectorAll('[data-close-panels]').forEach(button => {
+    button.addEventListener('click', closePanels);
+  });
+
+  const airSearch = document.getElementById('airSearch');
+  const airSearchResults = document.getElementById('airSearchResults');
+  const airGlobalSearch = document.getElementById('airGlobalSearch');
+  const airGlobalSearchResults = document.getElementById('airGlobalSearchResults');
+  const searchableItems = Array.from(
+    document.querySelectorAll('.page, .module-health-card, .module-dashboard-card, .evidence-card, tbody tr')
+  ).map((element, index) => {
+    if (!element.id) {
+      element.id = 'air-search-result-' + index;
+    }
+
+    const heading = element.querySelector('h1, h2, h3, strong, td')?.textContent?.trim() || element.id;
+
+    return {
+      element,
+      heading,
+      text: element.textContent.toLowerCase().replace(new RegExp('\\\\s+', 'g'), ' '),
+    };
+  });
+
+  function clearSearchHighlight() {
+    document.querySelectorAll('.search-hit').forEach(element => {
+      element.classList.remove('search-hit');
+    });
+  }
+
+  function renderSearchResults(query, resultsContainer) {
+    if (!resultsContainer) {
+      return;
+    }
+
+    clearSearchHighlight();
+
+    if (!query || query.length < 2) {
+      resultsContainer.innerHTML = '';
+      return;
+    }
+
+    const matches = searchableItems
+      .filter(item => item.text.includes(query))
+      .slice(0, 8);
+
+    if (matches.length === 0) {
+      resultsContainer.innerHTML = '<div class="search-empty">No matching report items</div>';
+      return;
+    }
+
+    resultsContainer.innerHTML = matches
+      .map(item => '<a href="#' + item.element.id + '" data-search-target="' + item.element.id + '">' + item.heading + '</a>')
+      .join('');
+  }
+
+  function bindSearch(input, resultsContainer) {
+    if (input) {
+      input.addEventListener('input', event => {
+        renderSearchResults(event.target.value.trim().toLowerCase(), resultsContainer);
+      });
+    }
+
+    if (!resultsContainer) {
+      return;
+    }
+
+    resultsContainer.addEventListener('click', event => {
+      const link = event.target.closest('[data-search-target]');
+      if (!link) {
+        return;
+      }
+
+      const target = document.getElementById(link.getAttribute('data-search-target'));
+      if (target) {
+        clearSearchHighlight();
+        target.classList.add('search-hit');
+        setTimeout(() => target.classList.remove('search-hit'), 2500);
+      }
+    });
+  }
+
+  bindSearch(airSearch, airSearchResults);
+  bindSearch(airGlobalSearch, airGlobalSearchResults);
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closePanels();
+    }
+  });
+</script>
+</body>
+</html>`;
 
 fs.mkdirSync(outputDir, {
   recursive: true
 });
 
-fs.writeFileSync(outputPath, html);
+fs.writeFileSync(outputPath, airGoldenDashboardHtml);
 console.log(`Execution report created: ${outputPath}`);

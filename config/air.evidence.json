@@ -1,0 +1,5 @@
+{
+  "evidenceTypes": ["screenshot", "video", "trace", "log", "raw-report"],
+  "playwrightReportPath": "playwright-report/index.html",
+  "rawResultsPath": "test-results/results.json"
+}

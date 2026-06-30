@@ -1,0 +1,44 @@
+{
+  "modules": [
+    {
+      "name": "Accessibility",
+      "patterns": ["accessibility", "browser", "keyboard", "tab order"],
+      "critical": false
+    },
+    {
+      "name": "Authentication",
+      "patterns": ["auth", "login", "forgot", "unlock account"],
+      "critical": true
+    },
+    {
+      "name": "Billing",
+      "patterns": ["billing", "subscriber", "invoice", "transaction", "plans"],
+      "critical": true
+    },
+    {
+      "name": "Onboarding",
+      "patterns": ["onboarding", "register", "verify email", "stripe", "compliance", "risk"],
+      "critical": true
+    },
+    {
+      "name": "Password",
+      "patterns": ["password", "reset password", "password policy", "wrong current password"],
+      "critical": true
+    },
+    {
+      "name": "Profile",
+      "patterns": ["profile"],
+      "critical": false
+    },
+    {
+      "name": "Session Security",
+      "patterns": ["session", "protected route", "logout", "back button"],
+      "critical": true
+    },
+    {
+      "name": "Signup",
+      "patterns": ["signup", "otp", "mobile number"],
+      "critical": true
+    }
+  ]
+}

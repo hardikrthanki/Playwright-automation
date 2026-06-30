@@ -1,0 +1,14 @@
+{
+  "releaseThresholds": {
+    "goPassRate": 95,
+    "conditionalGoPassRate": 90,
+    "goBusinessHealth": 90,
+    "conditionalGoBusinessHealth": 80,
+    "criticalFailureLimitForGo": 0,
+    "blockerFailureLimitForGo": 0
+  },
+  "qualityScoreWeights": {
+    "passRate": 0.65,
+    "businessHealth": 0.35
+  }
+}

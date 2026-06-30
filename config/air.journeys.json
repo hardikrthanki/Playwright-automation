@@ -1,0 +1,44 @@
+{
+  "businessJourneys": [
+    {
+      "name": "Registration",
+      "patterns": ["onboarding", "register", "signup"],
+      "critical": true
+    },
+    {
+      "name": "Authentication",
+      "patterns": ["login", "auth", "forgot password", "unlock account"],
+      "critical": true
+    },
+    {
+      "name": "Profile Setup",
+      "patterns": ["profile"],
+      "critical": false
+    },
+    {
+      "name": "Risk Profile",
+      "patterns": ["risk"],
+      "critical": true
+    },
+    {
+      "name": "Compliance",
+      "patterns": ["compliance"],
+      "critical": true
+    },
+    {
+      "name": "Subscription",
+      "patterns": ["subscriber", "subscription", "plans"],
+      "critical": true
+    },
+    {
+      "name": "Payment",
+      "patterns": ["payment", "stripe", "billing"],
+      "critical": true
+    },
+    {
+      "name": "Dashboard",
+      "patterns": ["dashboard"],
+      "critical": true
+    }
+  ]
+}

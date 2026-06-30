@@ -5,6 +5,10 @@ import {
 import { ResetPasswordPage }
   from './pages/ResetPasswordPage';
 
+import {
+  TEST_USERS
+} from './config/testData';
+
 /* =============================================================================
 TEST SUITE: Reset Password
 
@@ -26,20 +30,20 @@ npx playwright test tests/ResetPassword.spec.ts --headed
 test(
   'Reset Password',
   async ({ page }) => {
-const RESET_URL =
-  process.env.RESET_URL ??
-  '';
+    const RESET_URL =
+      process.env.RESET_URL ??
+      '';
 
-if (!RESET_URL) {
-  test.skip(
-    true,
-    'RESET_URL is required for this standalone reset-password test.'
-  );
-}
+    if (!RESET_URL) {
+      test.skip(
+        true,
+        'RESET_URL is required for this standalone reset-password test.'
+      );
+    }
 
-await page.goto(
-  RESET_URL
-);
+    await page.goto(
+      RESET_URL
+    );
 
     const resetPassword =
       new ResetPasswordPage(
@@ -47,7 +51,7 @@ await page.goto(
       );
 
     await resetPassword.fillPassword(
-      'H@rdik1989'
+      TEST_USERS.subscriber.password
     );
 
     await resetPassword.updatePassword();

@@ -1,0 +1,44 @@
+{
+  "sections": [
+    {
+      "name": "Overview",
+      "items": [
+        { "label": "Cover Dashboard", "target": "#cover" },
+        { "label": "Executive Summary", "target": "#executive" }
+      ]
+    },
+    {
+      "name": "Business",
+      "items": [
+        { "label": "Business Journey", "target": "#journey" },
+        { "label": "Product Health", "target": "#health" },
+        { "label": "Module Dashboard", "target": "#module-dashboard" }
+      ]
+    },
+    {
+      "name": "Execution",
+      "items": [
+        { "label": "Failed Tests", "target": "#failures" },
+        { "label": "Automation Coverage", "target": "#executive" }
+      ]
+    },
+    {
+      "name": "Evidence",
+      "items": [
+        { "label": "Evidence Center", "target": "#evidence" }
+      ]
+    },
+    {
+      "name": "Intelligence",
+      "items": [
+        { "label": "AI Insight", "target": "#insight" }
+      ]
+    },
+    {
+      "name": "Planning",
+      "items": [
+        { "label": "Future Roadmap", "target": "#roadmap" }
+      ]
+    }
+  ]
+}

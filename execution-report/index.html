@@ -1,928 +1,1236 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OOLTool PUAT Automation Execution Report</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #f6f8fb;
-      --panel: #ffffff;
-      --text: #172033;
-      --muted: #5d6b82;
-      --line: #dfe5ef;
-      --green: #11845b;
-      --red: #b42318;
-      --amber: #946200;
-      --blue: #2457c5;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.45;
-    }
-
-    main {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 40px 28px;
-    }
-
-    header {
-      margin-bottom: 28px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 30px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-      margin: 28px 0;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 18px;
-    }
-
-    .label {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .value {
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    section {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 22px;
-      margin-top: 18px;
-    }
-
-    h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      border-top: 1px solid var(--line);
-      padding: 12px 10px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-
-    .badge {
-      border-radius: 999px;
-      color: #fff;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 9px;
-      text-transform: uppercase;
-    }
-
-    .passed { background: var(--green); }
-    .failed { background: var(--red); }
-    .skipped { background: var(--amber); }
-
-    .notes {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .notes + .notes {
-      margin-top: 8px;
-    }
-
-    a {
-      color: var(--blue);
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .validation-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .validation-card {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    h3 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--muted);
-    }
-
-    li + li {
-      margin-top: 6px;
-    }
-
-    @media (max-width: 800px) {
-      .summary {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .validation-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIR Execution Report - OOLTool</title>
+<style>
+:root{--bg:#0b0f17;--nav:#07101f;--panel:#111827;--panel2:#0e1a2d;--card:#111827;--line:#1f2937;--line2:#1f4630;--text:#f8fafc;--muted:#94a3b8;--green:#39e75f;--green2:#22c55e;--green3:#14532d;--red:#ff3b3b;--amber:#f5c542;--info:#8bd7a4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 18% 0%,rgba(57,231,95,.12),transparent 30%),linear-gradient(135deg,#06101b,#0b0f17 48%,#061525);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:linear-gradient(180deg,#061227,#07101f);border-right:1px solid var(--line2);padding:24px 18px;display:flex;flex-direction:column}.brand{font-size:54px;font-weight:900;letter-spacing:-4px;background:linear-gradient(90deg,#39e75f,#23c55e);-webkit-background-clip:text;color:transparent;line-height:.9}.brand-sub{font-size:12px;line-height:1.4;margin:8px 0 24px;color:white;text-align:center}.nav a{display:flex;gap:10px;align-items:center;color:white;text-decoration:none;padding:12px 13px;border-radius:8px;margin-bottom:8px;font-size:14px}.nav a.active,.nav a:hover{background:linear-gradient(90deg,#14532d,#166534);box-shadow:inset 3px 0 0 var(--green)}.report-meta{margin-top:auto;border:1px solid var(--line2);border-radius:10px;padding:14px;background:rgba(17,24,39,.55);font-size:12px;color:var(--muted)}.release-mini{margin-top:12px;border:1px solid rgba(57,231,95,.35);background:rgba(57,231,95,.08);border-radius:10px;padding:14px}.release-mini strong{display:block;font-size:34px;color:var(--green)}main{padding:26px 32px 52px}.page{border:1px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.94),rgba(8,16,30,.94));padding:26px;margin-bottom:26px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.hero{min-height:560px}.cover-page{min-height:720px;display:grid;gap:24px}.cover-hero{min-height:430px;border:1px solid rgba(57,231,95,.28);border-radius:18px;background:radial-gradient(circle at 70% 30%,rgba(57,231,95,.16),transparent 35%),linear-gradient(135deg,#07101f,#0b1728);padding:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}.cover-logo{font-size:92px;font-weight:900;letter-spacing:-7px;background:linear-gradient(90deg,#39e75f,#9af7ad);-webkit-background-clip:text;color:transparent}.cover-title{font-size:44px;line-height:1.02;margin:10px 0}.cover-sub{color:var(--muted);font-size:18px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cover-stat{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.76);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:23px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.3);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.82));padding:22px;margin-bottom:22px}.wow h2{font-size:28px;margin:0 0 14px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wow-card{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:16px}.wow-card span{display:block;color:var(--muted)}.wow-card strong{display:block;color:var(--green);font-size:34px;margin-top:5px}.wow-card small{display:block;color:#d7fbe0;line-height:1.7}.topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--green);font-weight:900}.topbar h1{font-size:32px;margin:4px 0 3px;letter-spacing:-.03em}.topbar p{margin:0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill,.btn{border:1px solid var(--line2);border-radius:9px;padding:9px 12px;background:#07101f;color:white;font-weight:800;font-size:12px}.pill.demo{background:rgba(57,231,95,.11);border-color:rgba(57,231,95,.4);color:var(--green)}.btn{text-decoration:none}.btn:hover{border-color:rgba(57,231,95,.6);color:var(--green)}.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}.kpi{background:linear-gradient(145deg,#111827,#0b1728);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:116px;position:relative;overflow:hidden}.kpi:after{content:attr(data-icon);position:absolute;right:14px;top:20px;font-size:34px;color:var(--green);opacity:.82}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi strong{display:block;font-size:30px;margin:10px 0 4px}.kpi.good strong,.good{color:var(--green)}.kpi.bad strong,.bad{color:var(--red)}.kpi.warn strong,.warn{color:var(--amber)}.grid{display:grid;gap:18px}.grid.two{grid-template-columns:1.1fr .9fr}.grid.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:20px}.panel h2{font-size:18px;margin:0 0 14px}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border:1px solid rgba(57,231,95,.35);border-radius:10px;display:inline-grid;place-items:center;background:rgba(57,231,95,.12);color:var(--green);font-size:12px;font-weight:900}.release-card{display:grid;place-items:center;text-align:center;min-height:290px;background:radial-gradient(circle at center,rgba(57,231,95,.15),transparent 58%),#08101e}.release-card .decision{font-size:70px;font-weight:900;margin:8px 0}.release-card .score{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) 99%,#26354e 0);position:relative}.release-card .score:before{content:"";position:absolute;width:112px;height:112px;border-radius:50%;background:#0b1628}.release-card .score b{z-index:1;font-size:36px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#16a34a);border-radius:999px}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.health-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:16px;background:#0b1728}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:28px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green);font-size:11px;font-weight:900}.health-card.amber .health-icon,.health-card.amber span{color:var(--amber)}.health-card.red .health-icon,.health-card.red span{color:var(--red)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.badge.good{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35)}.badge.warn{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35)}.badge.bad{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35)}.journey{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.journey-node{min-width:145px;background:#0b1728;border:1px solid var(--line2);border-radius:13px;padding:15px;text-align:center}.journey-node .node-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:0 auto 9px;background:rgba(57,231,95,.16);border:1px solid rgba(57,231,95,.35);font-size:20px}.journey-node strong{display:block}.journey-node span{display:block;color:var(--muted);margin-top:5px}.journey-arrow{color:var(--green);font-size:22px}.chart{height:250px;border:1px solid var(--line2);background:linear-gradient(180deg,#091426,#07101f);border-radius:12px;padding:22px 18px 42px;display:flex;gap:16px;align-items:flex-end}.bar{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);min-height:18px;position:relative;box-shadow:0 10px 22px rgba(57,231,95,.12)}.bar:hover{filter:brightness(1.16)}.bar.red{background:linear-gradient(180deg,#ff3b3b,#991b1b)}.bar.blue{background:linear-gradient(180deg,#39e75f,#14532d)}.bar label{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}.risk-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.risk-cell{min-height:72px;border:1px solid var(--line2);border-radius:8px;display:grid;place-items:center;text-align:center}.risk-cell.low{background:rgba(57,231,95,.14)}.risk-cell.med{background:rgba(245,197,66,.17)}.risk-cell.high{background:rgba(255,59,59,.20)}.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.evidence-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:18px;background:#0b1728}.evidence-icon{width:48px;height:48px;border-radius:12px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-weight:900}.evidence-card strong,.evidence-card span{display:block}.evidence-card span{color:var(--muted);margin-top:4px}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:white;min-height:132px}.thumb img{width:100%;height:92px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{display:grid;place-items:center;text-align:center}.thumb.placeholder div{width:100%;height:92px;border-radius:8px;border:1px dashed rgba(57,231,95,.35);display:grid;place-items:center;color:var(--green);background:rgba(57,231,95,.08)}.insight{border-color:rgba(57,231,95,.35);background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(20,83,45,.12))}.ai-reasons{margin:12px 0 0;padding-left:20px;color:#d7fbe0;line-height:1.8}.empty-note{border:1px dashed var(--line2);border-radius:12px;padding:18px;color:var(--muted);background:rgba(8,16,30,.5)}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line2);padding-top:18px}.footer strong{color:white}@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.kpis,.grid.two,.grid.three,.evidence-grid,.cover-hero,.cover-stats,.wow-grid,.health-grid,.thumb-grid{grid-template-columns:1fr}.hero{min-height:auto}}@page{size:A3 landscape;margin:8mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:#0b0f17!important;color:var(--text)!important}.app{display:block}.sidebar{display:none!important}main{padding:0!important}.page{break-inside:avoid;page-break-inside:avoid;margin:0 0 10mm!important;box-shadow:none!important}.btn,.actions{display:none!important}.footer{break-inside:avoid}}
+</style>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>OOLTool PUAT Automation Execution Report</h1>
-      <p class="subtitle">Generated 6/26/2026, 7:00:57 PM from Playwright automated test results.</p>
-    </header>
-
-    <div class="summary">
-      <div class="card"><div class="label">Total Tests</div><div class="value">64</div></div>
-      <div class="card"><div class="label">Passed</div><div class="value">64</div></div>
-      <div class="card"><div class="label">Failed</div><div class="value">0</div></div>
-      <div class="card"><div class="label">Skipped</div><div class="value">0</div></div>
-      <div class="card"><div class="label">Duration</div><div class="value">10m 37s</div></div>
+<div class="app">
+  <style>
+    .module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:320px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;text-decoration:none;color:var(--text);box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.14)}.module-health-card.green{border-color:rgba(57,231,95,.45)}.module-health-card.amber{border-color:rgba(245,197,66,.55)}.module-health-card.red{border-color:rgba(255,59,59,.6)}.module-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.module-title{display:flex;align-items:center;gap:12px}.module-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}.module-health-card.amber .module-icon{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.38);color:var(--amber)}.module-health-card.red .module-icon{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.42);color:var(--red)}.module-title strong{font-size:18px}.module-score{font-size:44px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-button{display:inline-flex;align-items:center;justify-content:center;width:max-content;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.10);color:var(--green);font-size:12px;font-weight:900;padding:9px 12px}.module-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.module-dashboard-card{border:1px solid rgba(57,231,95,.34);border-radius:14px;background:rgba(8,16,30,.74);padding:18px;scroll-margin-top:24px}.module-dashboard-card.amber{border-color:rgba(245,197,66,.55)}.module-dashboard-card.red{border-color:rgba(255,59,59,.6)}.module-dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.module-dashboard-metrics span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-dashboard-metrics b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-action{margin-top:12px;color:#d7fbe0;font-weight:800}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}@media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-dashboard-grid,.module-dashboard-metrics{grid-template-columns:1fr}}@media(max-width:760px){.module-card-grid,.module-meta{grid-template-columns:1fr}}@media print{.module-health-card,.module-dashboard-card{break-inside:avoid}}
+    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}
+    .module-mini-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.module-mini-hero div{border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,rgba(57,231,95,.08),rgba(8,16,30,.76));padding:16px}.module-mini-hero span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.module-mini-hero strong{display:block;color:var(--green);font-size:30px;margin-top:8px}.mini-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;align-items:start;grid-auto-rows:min-content}.mini-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:15px;align-self:start}.mini-section summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;margin:-2px 0 10px}.mini-section summary::-webkit-details-marker{display:none}.mini-section summary:before{content:"▾";color:var(--green);font-weight:900}.mini-section:not([open]) summary{margin-bottom:0}.mini-section:not([open]) summary:before{content:"▸"}.mini-section summary span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-section summary strong{margin-left:auto;color:var(--green);font-size:12px}.mini-section h3{margin:0 0 10px;font-size:15px}.mini-section p{margin:0;line-height:1.5}.mini-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mini-label span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-label strong{color:var(--green)}.scenario-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.scenario-chips span{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:#d7fbe0;font-size:11px;font-weight:800;padding:6px 9px}.mini-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini-evidence span,.validation-stack span{border:1px solid rgba(57,231,95,.22);border-radius:10px;background:rgba(7,16,31,.74);padding:9px;color:white;font-size:12px}.mini-evidence b,.validation-stack b{display:block;color:var(--muted);font-weight:700;margin-top:5px}.mini-evidence-button{display:inline-block;margin-top:10px;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green)!important;font-size:12px;font-weight:900;padding:8px 10px;text-decoration:none!important}.validation-stack{display:grid;gap:8px}.history-chart{height:220px;display:flex;gap:14px;align-items:flex-end;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#091426,#07101f);padding:20px 16px 44px}.trend-bar{flex:1;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}.trend-bar span{width:70%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}.trend-bar small{position:absolute;bottom:-28px;color:var(--muted);font-size:11px}.trend-bar strong{position:absolute;top:-18px;color:white;font-size:11px}.report-search,.global-search{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:12px;margin:14px 0}.global-search{position:sticky;top:12px;z-index:12;display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start;margin:0 0 22px}.report-search label,.global-search label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}.report-search input,.global-search input{width:100%;border:1px solid rgba(57,231,95,.28);border-radius:9px;background:#07101f;color:white;padding:10px 11px;outline:none}.report-search input:focus,.global-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,231,95,.12)}.search-results{display:grid;gap:7px;margin-top:10px}.global-search .search-results{grid-column:2}.search-results a{border:1px solid rgba(57,231,95,.18);border-radius:9px;background:rgba(57,231,95,.07);color:white!important;font-size:12px;line-height:1.35;padding:8px;text-decoration:none!important}.search-results a:hover{border-color:rgba(57,231,95,.45);color:var(--green)!important}.search-empty{color:var(--muted);font-size:12px}.search-hit{outline:2px solid rgba(57,231,95,.75);outline-offset:3px}.evidence-card{color:var(--text)!important;text-decoration:none!important;min-height:150px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.evidence-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.12)}.evidence-card strong{color:white!important;text-decoration:none!important;font-size:18px}.evidence-card span{color:var(--muted)!important;text-decoration:none!important}.evidence-card em{display:inline-block;margin-top:9px;color:var(--green)!important;font-style:normal;font-size:12px;font-weight:900;text-decoration:none!important}.evidence-card *{text-decoration:none!important}.evidence-icon{flex:0 0 58px;min-width:58px;height:58px;overflow:hidden;font-size:13px}.module-dashboard-grid{align-items:start}.module-dashboard-card{align-self:start}.why-release{max-width:460px;margin:24px auto 0;text-align:left}.why-release h3{text-align:center;font-size:24px;margin:0 0 18px}.why-release ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.why-release li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;color:#f8fafc;font-size:18px;line-height:1.35;text-align:left}.why-release li:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.38);color:var(--green);font-size:13px;font-weight:900;line-height:1}@media(max-width:1100px){.module-mini-hero,.mini-dashboard-grid,.mini-evidence,.global-search{grid-template-columns:1fr}.global-search .search-results{grid-column:auto}}
+  </style>
+  <aside class="sidebar">
+    <div class="brand">AIR</div>
+    <div class="brand-sub">Automation Intelligence<br>Report</div>
+    <nav class="nav">
+      <div class="nav-section">Overview</div>
+      <a class="active" href="#cover">Cover Dashboard</a>
+      <a href="#executive">Executive Summary</a>
+      <div class="nav-section">Business</div>
+      <a href="#journey">Business Journey</a>
+      <a href="#health">Product Health</a>
+      <a href="#module-dashboard">Module Dashboard</a>
+      <div class="nav-section">Execution</div>
+      <a href="#failures">Failed Tests</a>
+      <a href="#executive">Automation Coverage</a>
+      <div class="nav-section">Evidence</div>
+      <a href="#evidence">Evidence Center</a>
+      <div class="nav-section">Intelligence</div>
+      <a href="#insight">AI Insight</a>
+      <div class="nav-section">Planning</div>
+      <a href="#insight">Future Roadmap</a>
+    </nav>
+    <div class="report-search">
+      <label for="airSearch">Search Report</label>
+      <input id="airSearch" type="search" placeholder="Search modules, tests, evidence..." autocomplete="off">
+      <div id="airSearchResults" class="search-results"></div>
     </div>
-
-    <section>
-      <h2>Execution Summary</h2>
-      <p class="notes">Environment: PUAT. Browser: Chromium. This report covers the execution regression suite for onboarding, profile, password validation, billing, invoice, PDF access, and logout.</p>
-      <p class="notes">Evidence artifacts are available in the <a href="../playwright-report/index.html">Playwright HTML report</a>, including screenshots, videos, and traces when RECORD_ALL_ARTIFACTS is enabled.</p>
-      <p class="notes">Execution report file: <a href="./index.html">execution-report/index.html</a></p>
+    <div class="report-meta">
+      <div>Project<br><strong>OOLTool</strong></div><br>
+      <div>Environment<br><strong>PUAT</strong></div><br>
+      <div>Build<br><strong>Playwright JSON</strong></div><br>
+      <div>Generated<br><strong>6/29/2026, 9:37:26 PM</strong></div>
+    </div>
+    <div class="release-mini">
+      <span>Release Decision</span>
+      <strong>GO</strong>
+      <small>Based on last execution</small>
+    </div>
+  </aside>
+  <main>
+    <div class="global-search">
+      <div>
+        <label for="airGlobalSearch">Search AIR Report</label>
+        <input id="airGlobalSearch" type="search" placeholder="Search modules, tests, evidence, recommendations..." autocomplete="off">
+      </div>
+      <div id="airGlobalSearchResults" class="search-results"></div>
+    </div>
+    <section class="page cover-page" id="cover">
+      <div class="cover-hero">
+        <div>
+          <div class="cover-logo">AIR</div>
+          <h1 class="cover-title">Automation Intelligence Report</h1>
+          <p class="cover-sub"><strong>Automation Intelligence Platform.</strong><br>Converting automation execution into business decisions.</p>
+        </div>
+        <div class="cover-stats">
+          <div class="cover-stat"><span>Project</span><strong>OOLTool</strong></div>
+          <div class="cover-stat"><span>Environment</span><strong>PUAT</strong></div>
+          <div class="cover-stat"><span>Build</span><strong>Playwright JSON</strong></div>
+          <div class="cover-stat"><span>Execution Date</span><strong>6/29/2026, 9:37:26 PM</strong></div>
+          <div class="cover-stat"><span>Framework</span><strong>Playwright</strong></div>
+          <div class="cover-stat"><span>Generated By</span><strong>AIR Platform</strong></div>
+          <div class="cover-stat"><span>Release Recommendation</span><strong class="good">GO</strong></div>
+          <div class="cover-stat"><span>Quality Score</span><strong>99%</strong></div>
+          <div class="cover-stat"><span>Branch</span><strong>Local</strong></div>
+          <div class="cover-stat"><span>Commit</span><strong>Local</strong></div>
+        </div>
+      </div>
+      <div class="grid two">
+        <div class="panel release-card interactive-card" data-open-release>
+          <div class="score"><b>99%</b></div>
+          <div class="decision good">GO</div>
+          <p>All critical execution signals are healthy for release review.</p>
+          <div class="why-release">
+            <h3>Why Release?</h3>
+            <ul><li>Critical flows passed</li><li>No blocker defects</li><li>Coverage above release threshold</li><li>Business risk low</li></ul>
+          </div>
+        </div>
+        <div class="panel insight">
+          <h2 class="icon-title"><span class="section-icon">AI</span>Release Reason</h2>
+          <ul class="ai-reasons"><li>All executed tests passed.</li><li>No blocker defects were detected.</li><li>Pass rate is 100%, above the release threshold.</li><li>Business health is 96%, supporting release confidence.</li></ul>
+        </div>
+      </div>
       
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 1 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>Business Flow Status</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Flow</th>
-            <th>Status</th>
-            <th>Validation Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-    <tr>
-      <td>New subscriber onboarding</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Registration, OTP, email verification handoff, risk, compliance, plan selection, Stripe payment, and dashboard access.</td>
-    </tr>
-    <tr>
-      <td>Profile verification</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Profile page loads after login, email remains read-only, unsaved drafts do not persist, and refresh keeps profile data.</td>
-    </tr>
-    <tr>
-      <td>Password validation</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Configured policy rules, banned passwords, mismatch, and wrong-current-password validation are verified.</td>
-    </tr>
-    <tr>
-      <td>Authentication guardrails</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Required login fields, invalid email handling, protected route redirects, and forgot-password form validation are verified.</td>
-    </tr>
-    <tr>
-      <td>Signup guardrails</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Required fields, email validation, mobile validation, password confirmation, visibility toggles, and pre-OTP submit protection are verified.</td>
-    </tr>
-    <tr>
-      <td>Session security</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Logout protection, direct protected URL redirect after logout, refresh behavior, and authenticated new-tab access are verified.</td>
-    </tr>
-    <tr>
-      <td>Accessibility and browser behavior</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Accessible auth controls, Enter-key behavior, Back-to-login navigation, and register refresh behavior are verified.</td>
-    </tr>
-    <tr>
-      <td>Billing and invoice</td>
-      <td><span class="badge passed">Passed</span></td>
-      <td>Billing navigation, plan visibility, transactions, invoice page, PDF link, and logout are verified.</td>
-    </tr></tbody>
-      </table>
+    <section class="page hero" id="executive">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">PAGE 02</div>
+          <h1>Executive Summary</h1>
+          <p>Can we release? Current build overview and quality snapshot.</p>
+        </div>
+        <div class="actions">
+          <span class="pill demo">Live Data / air-results/air-history</span>
+          <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
+          <a class="btn" href="#evidence">Evidence</a>
+          <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+        </div>
+      </div>
+      <div class="narrative">
+        <h2>Build Health: Excellent</h2>
+        <p>Build health is excellent. 69 tests executed with 69 passing and no blocker defects found. Critical business journeys are healthy, business risk is low, and AIR recommends GO with 98% confidence.</p>
+      </div>
+      <div class="meta-strip">
+        <div class="meta-item"><span>Latest Execution</span><strong>Latest generated report</strong></div>
+        <div class="meta-item"><span>Generated Automatically</span><strong>Yes</strong></div>
+        <div class="meta-item"><span>Current Branch</span><strong>Local</strong></div>
+        <div class="meta-item"><span>Execution Trigger</span><strong>Local Execution</strong></div>
+      </div>
+      <div class="wow">
+        <h2>Good Morning Hardik</h2>
+        <div class="wow-grid">
+          <div class="wow-card"><span>Quality Score</span><strong>99%</strong></div>
+          <div class="wow-card"><span>Release</span><strong>GO</strong></div>
+          <div class="wow-card"><span>Confidence</span><strong>98%</strong></div>
+          <div class="wow-card"><span>Today&apos;s Focus</span><small>Review MFA evidence<br>Complete API validation<br>Prepare release notes</small></div>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi" data-icon="QA"><span>Total Tests</span><strong>69</strong><small>last run</small></div>
+        <div class="kpi good" data-icon="OK"><span>Passed</span><strong>69</strong><small>100% pass rate</small></div>
+        <div class="kpi good" data-icon="FX"><span>Failed</span><strong>0</strong><small>no blockers</small></div>
+        <div class="kpi good" data-icon="QS"><span>Quality Score</span><strong>99%</strong><small>release confidence</small></div>
+        <div class="kpi warn" data-icon="BH"><span>Business Health</span><strong>96%</strong><small>critical journeys</small></div>
+        <div class="kpi blue" data-icon="TM"><span>Execution Time</span><strong>12m 31s</strong><small>total duration</small></div>
+      </div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">TR</span>Historical Pass Rate Trend</h2>
+        <div class="history-chart"><div class="trend-bar" title="6/29/2026, 8:35:41 PM: 100%"><span style="height:100%"></span><small>Run 1</small><strong>100%</strong></div><div class="trend-bar" title="6/29/2026, 8:45:12 PM: 100%"><span style="height:100%"></span><small>Run 2</small><strong>100%</strong></div><div class="trend-bar" title="6/29/2026, 8:55:09 PM: 100%"><span style="height:100%"></span><small>Run 3</small><strong>100%</strong></div><div class="trend-bar" title="6/29/2026, 9:04:38 PM: 100%"><span style="height:100%"></span><small>Run 4</small><strong>100%</strong></div><div class="trend-bar" title="6/29/2026, 9:06:19 PM: 100%"><span style="height:100%"></span><small>Run 5</small><strong>100%</strong></div><div class="trend-bar" title="6/29/2026, 9:12:40 PM: 0%"><span style="height:6%"></span><small>Run 6</small><strong>0%</strong></div><div class="trend-bar" title="6/29/2026, 9:24:16 PM: 75%"><span style="height:75%"></span><small>Run 7</small><strong>75%</strong></div><div class="trend-bar" title="6/29/2026, 9:25:26 PM: 75%"><span style="height:75%"></span><small>Current</small><strong>75%</strong></div></div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel">
+          <h2 class="icon-title"><span class="section-icon">BH</span>Business Health Overview</h2>
+          <div class="health-grid">
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Accessibility</strong>
+            <span>100%</span>
+            <small>Healthy - 6/6 passed</small>
+          </div>
+        </div>
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Authentication</strong>
+            <span>100%</span>
+            <small>Healthy - 25/25 passed</small>
+          </div>
+        </div>
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Billing</strong>
+            <span>100%</span>
+            <small>Healthy - 5/5 passed</small>
+          </div>
+        </div>
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Password</strong>
+            <span>100%</span>
+            <small>Healthy - 14/14 passed</small>
+          </div>
+        </div>
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Profile</strong>
+            <span>100%</span>
+            <small>Healthy - 5/5 passed</small>
+          </div>
+        </div>
+        <div class="health-card green">
+          <div class="health-icon">OK</div>
+          <div>
+            <strong>Signup</strong>
+            <span>100%</span>
+            <small>Healthy - 14/14 passed</small>
+          </div>
+        </div></div>
+        </div>
+        <div class="panel release-card interactive-card" data-open-release>
+          <div class="score"><b>99%</b></div>
+          <div class="decision good">GO</div>
+          <p>Build can proceed with monitoring.</p>
+          <div class="why-release">
+            <h3>Why Release?</h3>
+            <ul><li>Critical flows passed</li><li>No blocker defects</li><li>Coverage above release threshold</li><li>Business risk low</li></ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 2 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>What We Validated</h2>
-      <div class="validation-grid">
-    <article class="validation-card">
-      <h3>New subscriber onboarding</h3>
-      <ul>
-        <li>Account registration with generated email and US mobile number</li><li>SMS OTP verification during sign-up</li><li>Email verification handoff before login</li><li>Risk profile completion</li><li>Compliance profile completion and disclosure acceptance</li><li>Income Builder plan selection</li><li>Stripe checkout payment completion</li><li>Dashboard access after successful onboarding</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Profile</h3>
-      <ul>
-        <li>Subscriber login</li><li>Profile page access</li><li>Profile data loads successfully</li><li>Email field remains disabled/read-only</li><li>Email field cannot be edited</li><li>Unsaved empty first-name draft is not persisted after refresh</li><li>Unsaved empty last-name draft is not persisted after refresh</li><li>Profile data persists after refresh</li><li>Password-change action remains on profile page with empty password fields</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Password validation</h3>
-      <ul>
-        <li>Configured password policy accepts valid passwords</li><li>Configured minimum password length is enforced</li><li>Configured banned passwords are rejected</li><li>Banned password matching is case-insensitive</li><li>Uppercase, lowercase, digit, and symbol rules follow admin/config settings</li><li>New password and confirm password mismatch validation</li><li>Wrong current password validation</li><li>Expected validation messages are displayed</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Authentication guardrails</h3>
-      <ul>
-        <li>Login form blocks empty required fields</li><li>Login form blocks empty email only</li><li>Login form blocks empty password only</li><li>Login form blocks invalid email format</li><li>Login form rejects SQL injection style input</li><li>Login form rejects XSS/script style input</li><li>Login form rejects very long email input</li><li>Protected dashboard, onboarding, profile, billing, settings, security, subscription, notifications, and activity routes redirect unauthenticated users to login</li><li>Forgot password form blocks empty email</li><li>Forgot password form blocks invalid email format</li><li>Forgot password rejects SQL injection style input</li><li>Forgot password rejects XSS/script style input</li><li>Forgot password rejects very long email input</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Signup guardrails</h3>
-      <ul>
-        <li>Signup form blocks empty required fields</li><li>Signup form blocks invalid email format</li><li>Signup form blocks missing domain, missing @, SQL injection style, and XSS/script style email input</li><li>Signup email trims leading and trailing spaces</li><li>Password and confirmation fields are visible and required before submit</li><li>Mismatched password and confirmation keeps submit disabled</li><li>OTP request stays disabled without a mobile number</li><li>Short mobile number keeps OTP request disabled</li><li>Mobile input strips letters</li><li>Formatted US mobile number is normalized</li><li>Extra mobile digits are limited to ten digits</li><li>US mobile number guidance is visible</li><li>Password visibility toggles work for password and confirmation fields</li><li>Submit stays disabled before mobile OTP verification</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Session security</h3>
-      <ul>
-        <li>Logout prevents browser back navigation from restoring dashboard access</li><li>Direct dashboard URL after logout redirects to login</li><li>Logged-out session remains on login after refresh</li><li>Authenticated session can open dashboard in a new tab</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Accessibility and browser behavior</h3>
-      <ul>
-        <li>Login form exposes accessible email and password fields</li><li>Login form supports Enter key submission without authenticating invalid data</li><li>Forgot password supports Back to login navigation</li><li>Register page keeps form visible after browser refresh</li><li>Register page exposes accessible primary actions</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Subscriber billing</h3>
-      <ul>
-        <li>Dashboard access and refresh persistence</li><li>Billing page navigation from profile menu</li><li>Plans tab opens and Income Builder plan is visible</li><li>Transaction history opens and paid status is verified</li><li>Invoice page opens successfully</li><li>Invoice PDF link is available and opens</li><li>Subscriber logout completes successfully</li>
-      </ul>
-    </article></div>
+    <section class="page" id="journey">
+      <div class="topbar"><div><div class="eyebrow">PAGE 03</div><h1>Business Journey</h1><p>Are core flows healthy from signup to dashboard?</p></div><span class="pill demo">Live Data</span></div>
+      <div class="panel"><h2>Core Flow Health</h2><div class="journey">
+    <div class="journey-node amber">
+      <div class="node-icon">NA</div>
+      <strong>Registration</strong>
+      <span>60%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node green">
+      <div class="node-icon">OK</div>
+      <strong>Authentication</strong>
+      <span>100%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node green">
+      <div class="node-icon">OK</div>
+      <strong>Profile Setup</strong>
+      <span>100%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node green">
+      <div class="node-icon">OK</div>
+      <strong>Risk Profile</strong>
+      <span>100%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node amber">
+      <div class="node-icon">NA</div>
+      <strong>Compliance</strong>
+      <span>60%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node green">
+      <div class="node-icon">OK</div>
+      <strong>Subscription</strong>
+      <span>100%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node green">
+      <div class="node-icon">OK</div>
+      <strong>Payment</strong>
+      <span>100%</span>
+    </div>
+    <div class="journey-arrow">-&gt;</div>
+    <div class="journey-node amber">
+      <div class="node-icon">NA</div>
+      <strong>Dashboard</strong>
+      <span>60%</span>
+    </div>
+    </div></div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Journey Trend</h2><div class="chart"><div class="bar" style="height:88%"><label>Registration</label></div><div class="bar" style="height:82%"><label>Auth</label></div><div class="bar" style="height:94%"><label>Profile</label></div><div class="bar" style="height:78%"><label>Billing</label></div><div class="bar blue" style="height:96%"><label>Dashboard</label></div></div></div>
+        <div class="panel"><h2>Answer</h2><p>Core flows are healthy in the current execution.</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and should be reported separately when run.</div></div>
+      </div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 3 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>Not Included In This Execution Run</h2>
-      <p class="notes">These flows are automated separately, but they require mailbox access, a locked-account state, or a fresh reset URL, so they are not part of the standard execution regression report.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Flow</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody>
-    <tr>
-      <td>Forgot password reset</td>
-      <td>Requires opening Gmail, copying the reset email link, and pasting it into the Playwright browser during execution.</td>
-    </tr>
-    <tr>
-      <td>Unlock locked account</td>
-      <td>Requires the target account to already be in a locked state before the test starts.</td>
-    </tr>
-    <tr>
-      <td>Direct reset password URL</td>
-      <td>Requires a fresh RESET_URL environment value generated from an email reset link.</td>
-    </tr></tbody>
-      </table>
+    <section class="page" id="health">
+      <div class="topbar"><div><div class="eyebrow">PAGE 04</div><h1>Product Health</h1><p>Which modules are healthy, which need attention, and what should QA do next?</p></div><a class="btn" href="#module-dashboard">Module Dashboard</a></div>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">MH</span>Module Health Cards</h2>
+        <div class="module-card-grid">
+    <a class="module-health-card green interactive-card" href="#module-dashboard-accessibility" id="card-accessibility" data-module="Accessibility">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">A11Y</span>
+          <strong>Accessibility</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>6</b></span>
+        <span>Passed / Failed <b>6/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>No action required</p>
+    </a>
+    <a class="module-health-card green interactive-card" href="#module-dashboard-authentication" id="card-authentication" data-module="Authentication">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">AUTH</span>
+          <strong>Authentication</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>25</b></span>
+        <span>Passed / Failed <b>25/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>Continue monitoring</p>
+    </a>
+    <a class="module-health-card green interactive-card" href="#module-dashboard-billing" id="card-billing" data-module="Billing">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">BILL</span>
+          <strong>Billing</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>5</b></span>
+        <span>Passed / Failed <b>5/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>Add API validation next</p>
+    </a>
+    <a class="module-health-card green interactive-card" href="#module-dashboard-password" id="card-password" data-module="Password">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">PASS</span>
+          <strong>Password</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>14</b></span>
+        <span>Passed / Failed <b>14/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>Add reset-password expiry checks</p>
+    </a>
+    <a class="module-health-card green interactive-card" href="#module-dashboard-profile" id="card-profile" data-module="Profile">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">PROF</span>
+          <strong>Profile</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>5</b></span>
+        <span>Passed / Failed <b>5/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>No action required</p>
+    </a>
+    <a class="module-health-card green interactive-card" href="#module-dashboard-signup" id="card-signup" data-module="Signup">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">SIGN</span>
+          <strong>Signup</strong>
+        </div>
+        <span class="badge green">Healthy</span>
+      </div>
+      <div class="module-score">100%</div>
+      <div class="module-meta">
+        <span>Total Tests <b>14</b></span>
+        <span>Passed / Failed <b>14/0</b></span>
+        <span>Risk <b>Low</b></span>
+        <span>Coverage <b>100%</b></span>
+      </div>
+      <div class="module-progress"><span style="width:100%"></span></div>
+      <p>Continue monitoring</p>
+    </a></div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Risk Matrix</h2><div class="risk-matrix"><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High<br>0</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High</div><div class="risk-cell low">Low</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div></div></div>
+        <div class="panel"><h2>Health Summary</h2><p>All current modules are release-safe in this execution. QA should continue monitoring stable UI coverage and expand API, DB, and evidence mapping next.</p><br><div class="meta-strip"><div class="meta-item"><span>Healthy Modules</span><strong>6</strong></div><div class="meta-item"><span>Warning Modules</span><strong>0</strong></div><div class="meta-item"><span>Critical Modules</span><strong>0</strong></div><div class="meta-item"><span>Next Step</span><strong>Evidence Linking</strong></div></div></div>
+      </div>
+      <br>
+      <div class="panel" id="product-health-table"><h2>Detailed Module Health</h2><table><thead><tr><th>Module</th><th>Health</th><th>Score</th><th>Status</th><th>Tests</th><th>Failed</th><th>Risk</th><th>Recommended Action</th></tr></thead><tbody>
+      <tr id="module-accessibility">
+        <td>Accessibility</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>6/6</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>No action required</td>
+      </tr>
+      <tr id="module-authentication">
+        <td>Authentication</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>25/25</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>Continue monitoring</td>
+      </tr>
+      <tr id="module-billing">
+        <td>Billing</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>5/5</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>Add API validation next</td>
+      </tr>
+      <tr id="module-password">
+        <td>Password</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>14/14</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>Add reset-password expiry checks</td>
+      </tr>
+      <tr id="module-profile">
+        <td>Profile</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>5/5</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>No action required</td>
+      </tr>
+      <tr id="module-signup">
+        <td>Signup</td>
+        <td><div class="progress"><span style="width:100%"></span></div></td>
+        <td>100%</td>
+        <td><span class="badge green">Healthy</span></td>
+        <td>14/14</td>
+        <td>0</td>
+        <td>Low</td>
+        <td>Continue monitoring</td>
+      </tr></tbody></table></div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 4 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>Regression Matrix</h2>
-      <p class="notes">Coverage status is based on the current automated suite plus known manual/separate flows.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Module</th>
-            <th>Positive</th>
-            <th>Negative</th>
-            <th>Security</th>
-            <th>Boundary</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-    <tr>
-      <td>Login</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>85%</td>
-    </tr>
-    <tr>
-      <td>Signup</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Covered</td>
-      <td>90%</td>
-    </tr>
-    <tr>
-      <td>Profile</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>75%</td>
-    </tr>
-    <tr>
-      <td>Forgot Password</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>80%</td>
-    </tr>
-    <tr>
-      <td>Reset Password</td>
-      <td>Manual/Separate</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>25%</td>
-    </tr>
-    <tr>
-      <td>Protected Routes</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>90%</td>
-    </tr>
-    <tr>
-      <td>Session Security</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>85%</td>
-    </tr>
-    <tr>
-      <td>Accessibility</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Planned</td>
-      <td>Partial</td>
-      <td>55%</td>
-    </tr>
-    <tr>
-      <td>Browser Behavior</td>
-      <td>Covered</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>Partial</td>
-      <td>60%</td>
-    </tr>
-    <tr>
-      <td>Billing</td>
-      <td>Covered</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>65%</td>
-    </tr>
-    <tr>
-      <td>MFA</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>Planned</td>
-      <td>0%</td>
-    </tr></tbody>
-      </table>
+    <section class="page" id="module-dashboard">
+      <div class="topbar"><div><div class="eyebrow">PAGE 05</div><h1>Module Dashboard</h1><p>Deeper module-level quality, coverage, evidence readiness, and recommended action.</p></div><a class="btn" href="#health">Back to Product Health</a></div>
+      <div class="module-dashboard-grid">
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-accessibility" data-module="Accessibility">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">A11Y</span>
+              <strong>Accessibility Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>6</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>6/6</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Keyboard navigation</span><span>Focus order</span><span>Accessible validation states</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Planned</b></span>
+                <span>DB <b>Planned</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>No action required</p>
+            </details>
+          </div>
+        </div>
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-authentication" data-module="Authentication">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">AUTH</span>
+              <strong>Authentication Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>25</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>25/25</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Login</span><span>Logout</span><span>Forgot Password</span><span>JWT</span><span>Session Timeout</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Recommended next</b></span>
+                <span>DB <b>Planned</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>Continue monitoring</p>
+            </details>
+          </div>
+        </div>
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-billing" data-module="Billing">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">BILL</span>
+              <strong>Billing Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>5</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>5/5</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Billing overview</span><span>Plans tab</span><span>Transaction history</span><span>Invoice page</span><span>PDF invoice</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Recommended next</b></span>
+                <span>DB <b>Planned</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>Add API validation next</p>
+            </details>
+          </div>
+        </div>
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-password" data-module="Password">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">PASS</span>
+              <strong>Password Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>14</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>14/14</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Reset password</span><span>Password mismatch</span><span>Wrong current password</span><span>Weak password validation</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Planned</b></span>
+                <span>DB <b>Recommended next</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>Add reset-password expiry checks</p>
+            </details>
+          </div>
+        </div>
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-profile" data-module="Profile">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">PROF</span>
+              <strong>Profile Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>5</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>5/5</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Profile page access</span><span>Profile data loads</span><span>Email read-only validation</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Planned</b></span>
+                <span>DB <b>Planned</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>No action required</p>
+            </details>
+          </div>
+        </div>
+        <div class="module-dashboard-card green interactive-card" id="module-dashboard-signup" data-module="Signup">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">SIGN</span>
+              <strong>Signup Dashboard</strong>
+            </div>
+            <span class="badge green">Low Risk</span>
+          </div>
+          <div class="module-mini-hero">
+            <div><span>Health</span><strong>100%</strong></div>
+            <div><span>Coverage</span><strong>100%</strong></div>
+            <div><span>Tests</span><strong>14</strong></div>
+          </div>
+          <details class="mini-section" open>
+            <summary><span>Scenario Coverage</span><strong>14/14</strong></summary>
+            <div class="module-progress"><span style="width:100%"></span></div>
+            <div class="scenario-chips"><span>Required fields</span><span>Email validation</span><span>Password policy</span><span>Mobile number</span><span>OTP validation</span></div>
+          </details>
+          <div class="mini-dashboard-grid">
+            <details class="mini-section" open>
+              <summary><span>Evidence</span><strong>Ready</strong></summary>
+              <div class="mini-evidence">
+                <span title="Screenshots">IMG <b>Available</b></span>
+                <span title="Videos">VID <b>Available</b></span>
+                <span title="Traces">TRC <b>Available</b></span>
+                <span title="Logs">LOG <b>Available</b></span>
+              </div>
+              <a class="mini-evidence-button" href="#evidence">Open Evidence</a>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>Recent Failures</span><strong>0</strong></summary>
+              <p class="good">No recent failures</p>
+            </details>
+            <details class="mini-section" open>
+              <summary><span>API / Database / Performance</span><strong>Planned</strong></summary>
+              <div class="validation-stack">
+                <span>API <b>Planned</b></span>
+                <span>DB <b>Recommended next</b></span>
+                <span>Performance <b>Planned</b></span>
+              </div>
+            </details>
+            <details class="mini-section insight" open>
+              <summary><span>AI Recommendation</span><strong>Low</strong></summary>
+              <p>Continue monitoring</p>
+            </details>
+          </div>
+        </div></div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 5 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>Coverage Roadmap</h2>
-      <div class="validation-grid">
-    <article class="validation-card">
-      <h3>Completed In Current Execution</h3>
-      <ul>
-        <li>Protected route redirects for dashboard, onboarding, profile, billing, settings, security, subscription, notifications, and activity pages</li><li>Logout security: browser back button, direct dashboard URL after logout, and refresh after logout</li><li>Signup email validation: invalid format, missing domain, missing @, SQL injection style input, XSS/script style input, and leading/trailing spaces</li><li>Signup mobile validation: missing number, short number, letters stripped, formatted US number normalized, and extra digits limited</li><li>Signup password guardrails: mismatch, password visibility toggles, and submit disabled before OTP verification</li><li>Password policy validation: minimum length, banned passwords, case-insensitive banned password check, and configurable uppercase/lowercase/digit/symbol rules</li><li>Accessibility/browser checks: accessible auth controls, Enter-key login behavior, Back to login, and register refresh behavior</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Phase 2 - Remaining Security And Edge Cases</h3>
-      <ul>
-        <li>Wrong password and unregistered email validation with lockout-safe test data</li><li>Existing email and existing mobile signup validation</li><li>Wrong OTP, expired OTP, resend OTP, and resend limit validation using controlled OTP state</li><li>Duplicate click and button disabled while processing checks for signup, login, password reset, and payment</li><li>Session expiry redirect validation</li><li>Reset-password negative checks using a fresh RESET_URL</li><li>Payment negative checks using a fresh STRIPE_CHECKOUT_URL</li>
-      </ul>
-    </article>
-    <article class="validation-card">
-      <h3>Phase 3 - Remaining Accessibility And Browser Behavior</h3>
-      <ul>
-        <li>Tab order validation</li><li>Focus moves to first invalid field</li><li>Keyboard-only navigation across login, signup, forgot password, profile, and billing</li><li>Screen-reader label audit for all required auth and onboarding fields</li><li>Browser refresh and back/forward behavior across onboarding, billing, profile, and reset-password pages</li><li>Mobile viewport validation for auth, signup, onboarding, billing, and report pages</li>
-      </ul>
-    </article></div>
+    <section class="page" id="failures">
+      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">0 Failures</span></div>
+      <div class="panel"><table><thead><tr><th>Test Name</th><th>Module</th><th>Priority</th><th>Reason / Next Action</th></tr></thead><tbody>
+    <tr>
+      <td>No failed tests in current execution</td>  
+      <td>All Modules</td>
+      <td><span class="badge good">Low</span></td>
+      <td>No blocker detected</td>
+    </tr></tbody></table></div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 6 of 8</strong>
+      </div>
     </section>
 
-    <section>
-      <h2>Test Results</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Project</th>
-            <th>Status</th>
-            <th>Duration</th>
-            <th>Error</th>
-          </tr>
-        </thead>
-        <tbody>
-      <tr>
-        <td>AccessibilityBrowser.spec.ts &gt; Accessibility And Browser Behavior &gt; Login form exposes accessible email and password fields</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AccessibilityBrowser.spec.ts &gt; Accessibility And Browser Behavior &gt; Login form supports Enter key submission without authenticating invalid data</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AccessibilityBrowser.spec.ts &gt; Accessibility And Browser Behavior &gt; Forgot password form supports Back to login navigation</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>4s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AccessibilityBrowser.spec.ts &gt; Accessibility And Browser Behavior &gt; Register page keeps form visible after browser refresh</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>9s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AccessibilityBrowser.spec.ts &gt; Accessibility And Browser Behavior &gt; Register page exposes accessible primary actions</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>12s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty required fields</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>3s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty email only</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks empty password only</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form blocks invalid email format</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects SQL injection input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects XSS injection input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Login form rejects very long email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/profile redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/billing redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>1s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /onboarding redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/settings redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/security redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/subscription redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>1s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/notifications redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Protected route /dashboard/activity redirects unauthenticated user to login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password form blocks empty email</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>3s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password form blocks invalid email format</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects SQL injection input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>3s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects XSS injection input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>4s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>AuthNegative.spec.ts &gt; Auth Negative Scenarios &gt; Forgot password rejects very long email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>4s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>onboarding.spec.ts &gt; OOLTool Onboarding Flow &gt; Register -&gt; Verify Email -&gt; Login -&gt; Risk -&gt; Compliance</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>2m 15s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Accepts a valid password that satisfies configured policy</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Rejects password shorter than configured minimum length</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Rejects banned passwords from configured policy</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Banned password comparison is case-insensitive</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Uppercase rule follows configuration</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Lowercase rule follows configuration</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Digit rule follows configuration</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>PasswordPolicy.spec.ts &gt; Password Policy &gt; Symbol rule follows configuration</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>0s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>Profile.spec.ts &gt; Profile Update</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>12s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileNegative.spec.ts &gt; Profile Negative Scenarios &gt; Profile email field cannot be edited</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>11s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileNegative.spec.ts &gt; Profile Negative Scenarios &gt; Profile first name empty draft is not persisted without saving</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>1m 1s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileNegative.spec.ts &gt; Profile Negative Scenarios &gt; Profile last name empty draft is not persisted without saving</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>16s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileNegative.spec.ts &gt; Profile Negative Scenarios &gt; Profile page keeps data after refresh</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>16s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileNegative.spec.ts &gt; Profile Negative Scenarios &gt; Profile password change button stays safe with empty password fields</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>34s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfilePasswordMismatch.spec.ts &gt; Password Mismatch Validation</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>36s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>ProfileWrongCurrentPassword.spec.ts &gt; Wrong Current Password Validation</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>14s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Logout prevents browser back and direct dashboard access</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>15s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Logged-out session remains on login after refresh</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>13s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SessionSecurity.spec.ts &gt; Session Security &gt; Authenticated session can open dashboard in a new tab</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>36s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks empty required fields</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>7s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks invalid email format</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>7s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks missing domain email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>9s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks missing @ email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>7s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks SQL injection email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form blocks XSS injection email input</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup email trims leading and trailing spaces</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps submit disabled without password and confirmation</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps submit disabled when passwords do not match</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps OTP request disabled without mobile number</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>7s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form keeps OTP request disabled for short mobile number</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input strips letters and keeps OTP disabled</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>7s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input normalizes formatted US number</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>9s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup mobile input limits extra digits to ten digits</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup form shows US mobile number guidance before OTP request</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>9s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup password visibility toggles work for both password fields</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>SignupNegative.spec.ts &gt; Signup Negative Scenarios &gt; Signup submit stays disabled before mobile OTP verification</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>8s</td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>Subscriber.spec.ts &gt; Subscriber Login</td>
-        <td>chromium</td>
-        <td><span class="badge passed">passed</span></td>
-        <td>32s</td>
-        <td></td>
-      </tr></tbody>
-      </table>
+    <section class="page" id="evidence">
+      <div class="topbar"><div><div class="eyebrow">PAGE 07</div><h1>Evidence Center</h1><p>Where is proof?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="evidence-grid">
+    <a class="evidence-card" href="#evidence" >
+      <div class="evidence-icon">Camera</div>
+      <div>
+        <strong>Screenshots</strong>
+        <span>Available</span>
+        <em>Open Evidence</em>
+      </div>
+    </a>
+    <a class="evidence-card" href="../playwright-report/index.html" target="_blank" rel="noopener">
+      <div class="evidence-icon">Play</div>
+      <div>
+        <strong>Videos</strong>
+        <span>Available</span>
+        <em>Open Evidence</em>
+      </div>
+    </a>
+    <a class="evidence-card" href="../playwright-report/index.html" target="_blank" rel="noopener">
+      <div class="evidence-icon">Trace</div>
+      <div>
+        <strong>Traces</strong>
+        <span>Available</span>
+        <em>Open Evidence</em>
+      </div>
+    </a>
+    <a class="evidence-card" href="air-results.json" >
+      <div class="evidence-icon">JSON</div>
+      <div>
+        <strong>Raw Results</strong>
+        <span>air-results/air-history</span>
+        <em>Open Evidence</em>
+      </div>
+    </a></div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
+        <div class="thumb-grid">
+        <a class="thumb" href="../playwright-report/data/0f19f6a43a72c6805e0d7051d77fa82fdc89d048.png">
+          <img src="../playwright-report/data/0f19f6a43a72c6805e0d7051d77fa82fdc89d048.png" alt="Evidence screenshot 1">
+          <span>Screenshot 1</span>
+        </a>
+        <a class="thumb" href="../playwright-report/data/206f7b2b841e9a4dace544cf10a6fec919af437f.png">
+          <img src="../playwright-report/data/206f7b2b841e9a4dace544cf10a6fec919af437f.png" alt="Evidence screenshot 2">
+          <span>Screenshot 2</span>
+        </a>
+        <a class="thumb" href="../playwright-report/data/5552242c10417e2c303ae7741930be015e1f2321.png">
+          <img src="../playwright-report/data/5552242c10417e2c303ae7741930be015e1f2321.png" alt="Evidence screenshot 3">
+          <span>Screenshot 3</span>
+        </a>
+        <a class="thumb" href="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png">
+          <img src="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png" alt="Evidence screenshot 4">
+          <span>Screenshot 4</span>
+        </a></div>
+      </div>
+      <br>
+      <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 7 of 8</strong>
+      </div>
     </section>
+
+    <section class="page" id="insight">
+      <div class="topbar"><div><div class="eyebrow">PAGE 08</div><h1>AI Quality Insight</h1><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>Execution Recommendation</button></div>
+      <div class="grid two">
+        <div class="panel insight ai-decision-panel">
+          <h2 class="icon-title"><span class="section-icon">AI</span>Why AIR Recommends GO</h2>
+          <p class="ai-decision-summary">AIR recommends GO because the current execution has strong pass stability, no blocker failures, healthy business journeys, and enough regression confidence for release monitoring.</p>
+          <div class="risk-banner green">
+            <div><span>Estimated Release Risk</span><strong>LOW</strong></div>
+            <div class="risk-dots"><i></i><i></i><i></i></div>
+          </div>
+          <ul class="ai-reasons"><li>All executed tests passed.</li><li>No blocker defects were detected.</li><li>Pass rate is 100%, above the release threshold.</li><li>Business health is 96%, supporting release confidence.</li></ul>
+        </div>
+        <div class="panel">
+          <h2 class="icon-title"><span class="section-icon">QA</span>Decision Signals</h2>
+          <div class="ai-metric-grid">
+            <div class="ai-metric"><span>Release</span><strong>GO</strong></div>
+            <div class="ai-metric"><span>Confidence</span><strong>98%</strong></div>
+            <div class="ai-metric"><span>Pass Rate</span><strong>100%</strong></div>
+            <div class="ai-metric"><span>Failures</span><strong>0</strong></div>
+          </div>
+          <br>
+          <h2>Action Checklist</h2>
+          <ul class="action-list"><li>Keep release monitoring enabled after deployment.</li><li>Link every failed or warning signal to screenshot, video, trace, or raw Playwright evidence.</li><li>Use module health cards to decide which QA area should receive the next automation investment.</li></ul>
+        </div>
+      </div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">P1</span>Priority Recommendations</h2>
+        <div class="recommendation-grid">
+      <div class="recommendation-card">
+        <span>Priority 1</span>
+        <strong>Increase API validation</strong>
+        <p>Add API-level checks for billing, authentication, signup, and password flows so AIR can separate UI issues from backend failures.</p>
+      </div>
+      <div class="recommendation-card">
+        <span>Priority 2</span>
+        <strong>Increase DB validation</strong>
+        <p>Add database validation for account status, subscription state, reset tokens, login lockout, and payment records.</p>
+      </div>
+      <div class="recommendation-card">
+        <span>Priority 3</span>
+        <strong>Expand MFA and security coverage</strong>
+        <p>Add negative MFA, session expiry, protected-route, unlock-account, and reset-password expiry scenarios.</p>
+      </div></div>
+      </div>
+      <br>
+      <div class="grid two">
+        <div class="panel"><h2>Next QA Focus</h2><p>Move from UI-only confidence to full quality intelligence by adding API, DB, MFA, and session-security validations.</p></div>
+        <div class="panel"><h2>AIR Roadmap</h2><p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p></div>
+      </div>
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Reporting</span>
+        <span>Version 1.0</span>
+        <span>6/29/2026, 9:37:26 PM</span>
+        <strong>Page 8 of 8</strong>
+      </div>
+    </section>
+    <footer class="footer">
+      <span>Generated by AIR Platform &bull; Automation Intelligence Report &bull; Version 1.0</span>
+      <strong>OOLTool / PUAT</strong>
+    </footer>
   </main>
+  <div class="drawer-backdrop" data-close-panels></div>
+  <aside class="module-drawer" id="moduleDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <div class="eyebrow">MODULE DASHBOARD</div>
+        <h2 id="drawerTitle">Module Dashboard</h2>
+        <span class="badge green" id="drawerStatus">Healthy</span>
+      </div>
+      <button class="drawer-close" type="button" data-close-panels aria-label="Close module details">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-metrics">
+        <div class="drawer-metric"><span>Health Score</span><strong id="drawerHealth">0%</strong></div>
+        <div class="drawer-metric"><span>Coverage</span><strong id="drawerCoverage">0%</strong></div>
+        <div class="drawer-metric"><span>Tests</span><strong id="drawerTests">0</strong></div>
+        <div class="drawer-metric"><span>Passed / Failed</span><strong id="drawerPassFail">0 / 0</strong></div>
+      </div>
+      <div class="drawer-section drawer-focus">
+        <h3>Module Focus</h3>
+        <p id="drawerFocus"></p>
+      </div>
+      <div class="drawer-section">
+        <h3>Business Scenarios</h3>
+        <ul class="drawer-list" id="drawerScenarios"></ul>
+      </div>
+      <div class="drawer-section">
+        <h3>Evidence</h3>
+        <div class="evidence-links" id="drawerEvidence"></div>
+      </div>
+      <div class="drawer-section">
+        <h3>Validation Coverage</h3>
+        <div class="drawer-metrics">
+          <div class="drawer-metric"><span>API Validation</span><strong id="drawerApi">Planned</strong></div>
+          <div class="drawer-metric"><span>DB Validation</span><strong id="drawerDb">Planned</strong></div>
+          <div class="drawer-metric"><span>Performance</span><strong id="drawerPerf">Planned</strong></div>
+          <div class="drawer-metric"><span>Risk Level</span><strong id="drawerRisk">Low</strong></div>
+        </div>
+      </div>
+      <div class="drawer-section insight">
+        <h3>AI Recommendation</h3>
+        <p id="drawerRecommendation"></p>
+      </div>
+      <div class="drawer-actions">
+        <a class="btn" id="drawerDashboardLink" href="#module-dashboard">Open Module Dashboard</a>
+        <a class="btn" href="#evidence">Open Evidence Center</a>
+        <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+      </div>
+    </div>
+  </aside>
+  <div class="modal-backdrop" data-close-panels></div>
+  <section class="modal" id="recommendationModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">AIR RECOMMENDATIONS</div>
+        <h2>Execution Recommendation</h2>
+        <p class="ai-decision-summary">AIR recommends GO because the current execution has strong pass stability, no blocker failures, healthy business journeys, and enough regression confidence for release monitoring.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close recommendations">×</button>
+    </div>
+    <div class="recommendation-grid">
+      <div class="recommendation-card">
+        <span>Priority 1</span>
+        <strong>Increase API validation</strong>
+        <p>Add API-level checks for billing, authentication, signup, and password flows so AIR can separate UI issues from backend failures.</p>
+      </div>
+      <div class="recommendation-card">
+        <span>Priority 2</span>
+        <strong>Increase DB validation</strong>
+        <p>Add database validation for account status, subscription state, reset tokens, login lockout, and payment records.</p>
+      </div>
+      <div class="recommendation-card">
+        <span>Priority 3</span>
+        <strong>Expand MFA and security coverage</strong>
+        <p>Add negative MFA, session expiry, protected-route, unlock-account, and reset-password expiry scenarios.</p>
+      </div></div>
+    <br>
+    <div class="modal-grid">
+      <div class="panel"><h2>Release Risk</h2><div class="risk-banner green"><div><span>Estimated Risk</span><strong>LOW</strong></div><div class="risk-dots"><i></i><i></i><i></i></div></div></div>
+      <div class="panel"><h2>Action Checklist</h2><ul class="action-list"><li>Keep release monitoring enabled after deployment.</li><li>Link every failed or warning signal to screenshot, video, trace, or raw Playwright evidence.</li><li>Use module health cards to decide which QA area should receive the next automation investment.</li></ul></div>
+    </div>
+  </section>
+  <section class="modal" id="releaseModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">RELEASE ANALYSIS</div>
+        <h2>Why GO?</h2>
+        <p class="ai-decision-summary">AIR recommends GO because the current execution has strong pass stability, no blocker failures, healthy business journeys, and enough regression confidence for release monitoring.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close release analysis">×</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Business Health</span><strong>96%</strong></div>
+      <div class="ai-metric"><span>Quality Score</span><strong>99%</strong></div>
+      <div class="ai-metric"><span>Critical Failures</span><strong>0</strong></div>
+      <div class="ai-metric"><span>Blockers</span><strong>0</strong></div>
+    </div>
+    <br>
+    <div class="grid two">
+      <div class="panel"><h2>Reason</h2><ul class="ai-reasons"><li>All executed tests passed.</li><li>No blocker defects were detected.</li><li>Pass rate is 100%, above the release threshold.</li><li>Business health is 96%, supporting release confidence.</li></ul></div>
+      <div class="panel"><h2>Recommendation</h2><p>Proceed to release when this decision is GO. Use conditional approval only after evidence review when warnings are present.</p></div>
+    </div>
+  </section>
+</div>
+<script>
+  const moduleDrawerData = [{"name":"Accessibility","icon":"A11Y","health":100,"status":"Healthy","risk":"Low","total":6,"passed":6,"failed":0,"coverage":100,"scenarios":["Keyboard navigation","Focus order","Accessible validation states"],"focus":"Keyboard navigation, focus order, and accessible validation behavior.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-accessibility"},{"name":"Authentication","icon":"AUTH","health":100,"status":"Healthy","risk":"Low","total":25,"passed":25,"failed":0,"coverage":100,"scenarios":["Login","Logout","Forgot Password","JWT","Session Timeout"],"focus":"Login, logout, forgot password, JWT/session behavior, and locked-account recovery.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-authentication"},{"name":"Billing","icon":"BILL","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Billing overview","Plans tab","Transaction history","Invoice page","PDF invoice"],"focus":"Billing overview, plans, transaction history, invoice access, and PDF availability.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Add API validation next","dashboardTarget":"#module-dashboard-billing"},{"name":"Password","icon":"PASS","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Reset password","Password mismatch","Wrong current password","Weak password validation"],"focus":"Password reset, mismatch handling, current-password validation, and policy enforcement.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Add reset-password expiry checks","dashboardTarget":"#module-dashboard-password"},{"name":"Profile","icon":"PROF","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Profile page access","Profile data loads","Email read-only validation"],"focus":"Profile page access, profile data loading, and read-only email protection.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-profile"},{"name":"Signup","icon":"SIGN","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Required fields","Email validation","Password policy","Mobile number","OTP validation"],"focus":"Registration validation, mobile number handling, OTP flow, and password policy.","evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-signup"}];
+  const drawer = document.getElementById('moduleDrawer');
+  const drawerBackdrop = document.querySelector('.drawer-backdrop');
+  const modalBackdrop = document.querySelector('.modal-backdrop');
+  const recommendationModal = document.getElementById('recommendationModal');
+  const releaseModal = document.getElementById('releaseModal');
+
+  function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    }
+  }
+
+  function openDrawer(moduleName) {
+    const data = moduleDrawerData.find(item => item.name === moduleName);
+    if (!data || !drawer) {
+      return;
+    }
+
+    setText('drawerTitle', data.name + ' Dashboard');
+    setText('drawerHealth', data.health + '%');
+    setText('drawerCoverage', data.coverage + '%');
+    setText('drawerTests', String(data.total));
+    setText('drawerPassFail', data.passed + ' / ' + data.failed);
+    setText('drawerApi', data.validation.api);
+    setText('drawerDb', data.validation.database);
+    setText('drawerPerf', data.validation.performance);
+    setText('drawerRisk', data.risk);
+    setText('drawerFocus', data.focus);
+    setText('drawerRecommendation', data.recommendation);
+
+    const status = document.getElementById('drawerStatus');
+    if (status) {
+      status.textContent = data.status;
+      status.className = 'badge ' + (data.risk === 'High' ? 'red' : data.risk === 'Medium' || data.status === 'Partial' ? 'amber' : 'green');
+    }
+
+    const scenarios = document.getElementById('drawerScenarios');
+    if (scenarios) {
+      scenarios.innerHTML = data.scenarios.map(item => '<li>' + item + '</li>').join('');
+    }
+
+    const evidence = document.getElementById('drawerEvidence');
+    if (evidence) {
+      evidence.innerHTML = [
+        ['Screenshot', data.evidence.screenshots, '#evidence'],
+        ['Video', data.evidence.videos, '#evidence'],
+        ['Trace', data.evidence.traces, '../playwright-report/index.html'],
+        ['Logs', data.evidence.logs, '#evidence']
+      ].map(item => '<a class="evidence-chip" href="' + item[2] + '"><strong>' + item[0] + '</strong><span>' + item[1] + '</span></a>').join('');
+    }
+
+    const dashboardLink = document.getElementById('drawerDashboardLink');
+    if (dashboardLink) {
+      dashboardLink.href = data.dashboardTarget;
+    }
+
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    drawerBackdrop.classList.add('open');
+  }
+
+  function openModal(modal) {
+    if (!modal) {
+      return;
+    }
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    modalBackdrop.classList.add('open');
+  }
+
+  function closePanels() {
+    if (drawer) {
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+    }
+    [recommendationModal, releaseModal].forEach(modal => {
+      if (modal) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    drawerBackdrop.classList.remove('open');
+    modalBackdrop.classList.remove('open');
+  }
+
+  document.querySelectorAll('.module-health-card[data-module], .module-dashboard-card[data-module]').forEach(card => {
+    card.addEventListener('click', event => {
+      if (event.target.closest('details, summary, .mini-evidence-button')) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      openDrawer(card.dataset.module);
+    });
+  });
+
+  document.querySelectorAll('[data-open-recommendations]').forEach(button => {
+    button.addEventListener('click', () => openModal(recommendationModal));
+  });
+
+  document.querySelectorAll('[data-open-release]').forEach(card => {
+    card.addEventListener('click', () => openModal(releaseModal));
+  });
+
+  document.querySelectorAll('[data-close-panels]').forEach(button => {
+    button.addEventListener('click', closePanels);
+  });
+
+  const airSearch = document.getElementById('airSearch');
+  const airSearchResults = document.getElementById('airSearchResults');
+  const airGlobalSearch = document.getElementById('airGlobalSearch');
+  const airGlobalSearchResults = document.getElementById('airGlobalSearchResults');
+  const searchableItems = Array.from(
+    document.querySelectorAll('.page, .module-health-card, .module-dashboard-card, .evidence-card, tbody tr')
+  ).map((element, index) => {
+    if (!element.id) {
+      element.id = 'air-search-result-' + index;
+    }
+
+    const heading = element.querySelector('h1, h2, h3, strong, td')?.textContent?.trim() || element.id;
+
+    return {
+      element,
+      heading,
+      text: element.textContent.toLowerCase().replace(new RegExp('\\s+', 'g'), ' '),
+    };
+  });
+
+  function clearSearchHighlight() {
+    document.querySelectorAll('.search-hit').forEach(element => {
+      element.classList.remove('search-hit');
+    });
+  }
+
+  function renderSearchResults(query, resultsContainer) {
+    if (!resultsContainer) {
+      return;
+    }
+
+    clearSearchHighlight();
+
+    if (!query || query.length < 2) {
+      resultsContainer.innerHTML = '';
+      return;
+    }
+
+    const matches = searchableItems
+      .filter(item => item.text.includes(query))
+      .slice(0, 8);
+
+    if (matches.length === 0) {
+      resultsContainer.innerHTML = '<div class="search-empty">No matching report items</div>';
+      return;
+    }
+
+    resultsContainer.innerHTML = matches
+      .map(item => '<a href="#' + item.element.id + '" data-search-target="' + item.element.id + '">' + item.heading + '</a>')
+      .join('');
+  }
+
+  function bindSearch(input, resultsContainer) {
+    if (input) {
+      input.addEventListener('input', event => {
+        renderSearchResults(event.target.value.trim().toLowerCase(), resultsContainer);
+      });
+    }
+
+    if (!resultsContainer) {
+      return;
+    }
+
+    resultsContainer.addEventListener('click', event => {
+      const link = event.target.closest('[data-search-target]');
+      if (!link) {
+        return;
+      }
+
+      const target = document.getElementById(link.getAttribute('data-search-target'));
+      if (target) {
+        clearSearchHighlight();
+        target.classList.add('search-hit');
+        setTimeout(() => target.classList.remove('search-hit'), 2500);
+      }
+    });
+  }
+
+  bindSearch(airSearch, airSearchResults);
+  bindSearch(airGlobalSearch, airGlobalSearchResults);
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closePanels();
+    }
+  });
+</script>
 </body>
 </html>

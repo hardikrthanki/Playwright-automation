@@ -1,0 +1,53 @@
+{
+  "productName": "AIR",
+  "productFullName": "Automation Intelligence Reporting",
+  "projectName": "OOLTool",
+  "environment": "PUAT",
+  "buildVersion": "Playwright JSON",
+  "preparedBy": "QA Automation",
+  "theme": "air-30-page-dashboard",
+  "releaseThresholds": {
+    "goPassRate": 95,
+    "conditionalGoPassRate": 90,
+    "goBusinessHealth": 90,
+    "conditionalGoBusinessHealth": 80
+  },
+  "modules": [
+    "Accessibility",
+    "Authentication",
+    "Billing",
+    "Onboarding",
+    "Password",
+    "Profile",
+    "Session Security",
+    "Signup"
+  ],
+  "moduleMappings": {
+    "Accessibility": ["accessibility", "browser", "keyboard", "tab order"],
+    "Authentication": ["auth", "login", "forgot", "unlock account"],
+    "Billing": ["billing", "subscriber", "invoice", "transaction", "plans"],
+    "Onboarding": ["onboarding", "register", "verify email", "stripe", "compliance", "risk"],
+    "Password": ["password", "reset password", "password policy", "wrong current password"],
+    "Profile": ["profile"],
+    "Session Security": ["session", "protected route", "logout", "back button"],
+    "Signup": ["signup", "otp", "mobile number"]
+  },
+  "businessJourney": [
+    "Registration",
+    "Authentication",
+    "Profile Setup",
+    "Risk Profile",
+    "Compliance",
+    "Subscription",
+    "Payment",
+    "Dashboard"
+  ],
+  "futureLayers": [
+    "API Validation",
+    "Database Validation",
+    "Security Dashboard",
+    "Performance Dashboard",
+    "Historical Trends",
+    "AI Recommendations"
+  ]
+}
