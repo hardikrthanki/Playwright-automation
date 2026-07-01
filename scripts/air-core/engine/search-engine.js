@@ -288,10 +288,10 @@ function buildHistoryEntries(airResults = {}, entries, seen) {
       id: `history-${slug(item.generatedAt)}`,
       type: 'history',
       title: item.generatedAtDisplay ?? item.generatedAt ?? 'AIR history',
-      target: '#roadmap',
+      target: '#comparison',
       status: item.summary?.executionStatus,
       priority: item.releaseDecision?.riskLevel ?? item.summary?.estimatedReleaseRisk,
-      keywords: ['history', 'trend', 'previous execution'],
+      keywords: ['history', 'trend', 'previous execution', 'historical intelligence', 'build comparison'],
       text: [
         item.project?.name,
         item.project?.environment,

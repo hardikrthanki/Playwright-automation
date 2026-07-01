@@ -6,6 +6,11 @@
       "critical": false
     },
     {
+      "name": "MFA",
+      "patterns": ["mfa", "multi-factor", "two-factor", "authenticator", "backup code", "trusted device", "remember this device"],
+      "critical": true
+    },
+    {
       "name": "Authentication",
       "patterns": ["auth", "login", "forgot", "unlock account"],
       "critical": true

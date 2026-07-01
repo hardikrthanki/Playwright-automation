@@ -2,7 +2,7 @@
 
 AIR should evolve from report generation into a Quality Intelligence Platform.
 
-## AIR v1.0 - Executive Intelligence
+## AIR v1.0 - Executive Quality Dashboard
 
 Status: Completed
 
@@ -18,33 +18,48 @@ Status: Completed
 - Search.
 - PDF export.
 
-## AIR v1.1 - AIR Core
+## AIR v1.1 - Framework-independent AIR Core
 
-Status: In Progress
+Status: Completed
 
-Purpose: build the intelligence engine behind AIR.
+Purpose: build the framework-independent intelligence engine behind AIR.
 
 - Normalized `air-results.json`.
-- Parser architecture.
+- Parser Service.
+- Schema Validation.
+- AIR Validator.
+- Execution Summary Engine.
+- Failure Engine.
 - Quality Engine.
 - Release Engine.
+- Recommendation Engine.
 - Journey Engine.
 - Module Engine.
 - Evidence Engine.
 - Search Engine.
+- Discovery Engine.
+- History Engine.
+- Execution Context Engine.
+- Engine Orchestrator.
 
-## AIR v1.2 - Quality Analytics
+## AIR v1.2 - Historical Analytics & Build Comparison
 
-Status: Planned
+Status: In Progress
 
 - Historical dashboard.
 - Build comparison.
+- Historical intelligence dashboard.
+- Executive build comparison.
+- Failure intelligence.
+- Release intelligence.
+- Engineering insights.
+- Historical timeline.
 - Pass rate trends.
 - Duration trends.
 - Coverage trends.
 - Module trends.
 
-## AIR v1.3 - AI Intelligence
+## AIR v1.3 - AI Investigation & Root Cause Assistant
 
 Status: Planned
 
@@ -54,7 +69,7 @@ Status: Planned
 - Automation gap analysis.
 - Test prioritization.
 
-## AIR v2.0 - Integrations
+## AIR v2.0 - Engineering Intelligence Platform
 
 Status: Planned
 
@@ -66,7 +81,19 @@ Status: Planned
 - Email reports.
 - Webhooks.
 
-## AIR v3.0 - Validation Plugins
+## AIR v2.5 - Multi-framework Support
+
+Status: Planned
+
+- Playwright.
+- Cypress.
+- Selenium.
+- Robot Framework.
+- Appium.
+- Postman.
+- JMeter.
+
+## AIR v3.0 - Unified Quality Platform
 
 Status: Future
 
@@ -77,7 +104,7 @@ Status: Future
 - Accessibility testing.
 - Visual testing.
 
-## AIR v4.0 - Enterprise Platform
+## AIR v4.0 - Enterprise Intelligence Platform
 
 Status: Future
 
@@ -87,7 +114,7 @@ Status: Future
 - Cloud deployment.
 - Team dashboards.
 
-## AIR v5.0 - Engineering Intelligence
+## AIR v5.0 - Autonomous Engineering Intelligence
 
 Status: Vision
 
@@ -96,4 +123,3 @@ Status: Vision
 - Release prediction.
 - Continuous learning.
 - Engineering assistant.
-

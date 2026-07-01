@@ -18,6 +18,7 @@ function loadAirConfig(projectRoot) {
   const releaseConfig = readJsonIfExists(path.join(configDir, 'air.release.json'), {});
   const evidenceConfig = readJsonIfExists(path.join(configDir, 'air.evidence.json'), {});
   const navigationConfig = readJsonIfExists(path.join(configDir, 'air.navigation.json'), {});
+  const manualDefectsConfig = readJsonIfExists(path.join(configDir, 'air.manual-defects.json'), {});
 
   const legacyModuleMappings = Object.entries(baseConfig.moduleMappings ?? {}).map(([name, patterns]) => ({
     name,
@@ -50,6 +51,7 @@ function loadAirConfig(projectRoot) {
     qualityThresholds: thresholdsConfig.qualityThresholds ?? {},
     evidence: evidenceConfig,
     navigation: navigationConfig.sections ?? [],
+    manualDefects: manualDefectsConfig.defects ?? [],
   };
 }
 

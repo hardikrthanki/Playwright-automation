@@ -1,0 +1,32 @@
+{
+  "defects": [
+    {
+      "id": "MFA-BACKUP-CODE-FORMAT-001",
+      "enabled": true,
+      "title": "MFA backup codes generated in incomplete format are rejected during login recovery",
+      "module": "MFA",
+      "severity": "Critical",
+      "critical": true,
+      "category": "Authentication",
+      "source": "manual-verification",
+      "description": "Generated and downloaded MFA backup codes are displayed as XXXX-XXXX-, while the MFA challenge expects XXXX-XXXX-XX. Manual entry and automation both remain on the MFA challenge and show invalid backup-code behavior.",
+      "errorMessage": "Backup codes generated/downloaded in format XXXX-XXXX- are rejected by the MFA challenge that expects XXXX-XXXX-XX.",
+      "businessImpact": "Users may be unable to recover access with backup codes if they lose authenticator access.",
+      "recommendedInvestigationAction": "Review backup-code generation, download/export formatting, storage validation, and MFA challenge validation rules so generated codes match the accepted login format."
+    },
+    {
+      "id": "MFA-GOOGLE-AUTH-PASSWORD-001",
+      "enabled": true,
+      "title": "Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA",
+      "module": "MFA",
+      "severity": "Critical",
+      "critical": true,
+      "category": "Authentication",
+      "source": "manual-verification",
+      "description": "Google OAuth users do not have an application password, but MFA backup-code regeneration and disable-2FA flows require password confirmation.",
+      "errorMessage": "Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.",
+      "businessImpact": "Google-authenticated users may be unable to manage or recover MFA settings without admin/support intervention.",
+      "recommendedInvestigationAction": "Update MFA management confirmation for OAuth users to use an OAuth-safe verification method, such as recent login, TOTP confirmation, email verification, or step-up authentication."
+    }
+  ]
+}

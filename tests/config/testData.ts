@@ -113,6 +113,39 @@ export const TEST_USERS = {
     password:
       process.env.SUBSCRIBER_PASSWORD ??
       'H@rdik1989'
+  },
+
+  mfaLocal: {
+
+    email:
+      process.env.MFA_LOCAL_EMAIL,
+
+    password:
+      process.env.MFA_LOCAL_PASSWORD,
+
+    secret:
+      process.env.MFA_LOCAL_TOTP_SECRET,
+
+    backupCode:
+      process.env.MFA_LOCAL_BACKUP_CODE,
+
+    reuseBackupCode:
+      process.env.MFA_REUSE_BACKUP_CODE
+  },
+
+  mfaGoogle: {
+
+    email:
+      process.env.MFA_GOOGLE_EMAIL,
+
+    password:
+      process.env.MFA_GOOGLE_PASSWORD,
+
+    secret:
+      process.env.MFA_GOOGLE_TOTP_SECRET,
+
+    backupCode:
+      process.env.MFA_GOOGLE_BACKUP_CODE
   }
 };
 
@@ -229,6 +262,36 @@ export const PASSWORD_POLICY = {
 ============================================================================ */
 
 export const MFA_SETTINGS = {
+
+  userFlowEnabled:
+    getBooleanEnv(
+      'MFA_USER_FLOW_ENABLED',
+      false
+    ),
+
+  allowDestructiveUserFlow:
+    getBooleanEnv(
+      'MFA_ALLOW_DESTRUCTIVE_USER_FLOW',
+      false
+    ),
+
+  allowGoogleUserFlow:
+    getBooleanEnv(
+      'MFA_ALLOW_GOOGLE_USER_FLOW',
+      false
+    ),
+
+  manualOtpFlowEnabled:
+    getBooleanEnv(
+      'MFA_MANUAL_OTP_FLOW_ENABLED',
+      false
+    ),
+
+  manualExpectTrustedDevice:
+    getBooleanEnv(
+      'MFA_MANUAL_EXPECT_TRUSTED_DEVICE',
+      false
+    ),
 
   availableToUsers:
     getBooleanEnv(

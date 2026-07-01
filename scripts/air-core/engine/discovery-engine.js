@@ -232,6 +232,7 @@ function buildDiscovery({ tests = [], config = {}, existingHistory = {} } = {}) 
     criticality: entry.criticality,
     status: 'Suggestion Only',
   }));
+  const configurationIssues = findConfigurationIssues(entries, tests, config);
 
   return {
     summary: {
@@ -240,13 +241,13 @@ function buildDiscovery({ tests = [], config = {}, existingHistory = {} } = {}) 
       unmapped: unmappedTests.length,
       newTests: newTests.length,
       suggestions: suggestions.length,
-      configurationIssues: 0,
+      configurationIssues: configurationIssues.length,
     },
     newTests,
     mappedTests,
     unmappedTests,
     suggestions,
-    configurationIssues: findConfigurationIssues(entries, tests, config),
+    configurationIssues,
     configSync: {
       status: 'Prepared',
       autoUpdateEnabled: false,

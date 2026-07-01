@@ -24,6 +24,20 @@ function getQualityScore(item = {}) {
   return item.quality?.score ?? item.summary?.qualityScore ?? 0;
 }
 
+function getEvidenceTotal(item = {}) {
+  return item.evidence?.summary?.total ?? item.evidence?.total ?? 0;
+}
+
+function getFailureRate(item = {}) {
+  const total = item.summary?.total ?? 0;
+
+  if (total === 0) {
+    return 0;
+  }
+
+  return Math.round(((item.summary?.failed ?? 0) / total) * 10000) / 100;
+}
+
 function createExecutionSnapshot(airResults = {}) {
   return {
     generatedAt: airResults.generatedAt,
@@ -40,6 +54,9 @@ function createExecutionSnapshot(airResults = {}) {
     },
     release: airResults.release,
     releaseDecision: airResults.releaseDecision,
+    evidence: {
+      summary: airResults.evidence?.summary ?? {},
+    },
     modules: asArray(airResults.modules).map(module => ({
       name: module.name,
       critical: module.critical,
@@ -51,6 +68,8 @@ function createExecutionSnapshot(airResults = {}) {
       coverage: module.coverage,
       risk: module.risk,
       status: module.status,
+      recommendation: module.recommendation,
+      durationMs: module.durationMs,
     })),
     tests: asArray(airResults.tests).map(test => ({
       id: test.id,
@@ -58,6 +77,15 @@ function createExecutionSnapshot(airResults = {}) {
       file: test.file,
       module: test.module,
       status: test.status,
+    })),
+    failedTests: asArray(airResults.failedTests).map(failure => ({
+      testId: failure.testId,
+      testName: failure.testName,
+      title: failure.title,
+      module: failure.module,
+      severity: failure.severity,
+      category: failure.category,
+      status: failure.status,
     })),
     businessJourneys: asArray(airResults.businessJourneys).map(journey => ({
       name: journey.name,
@@ -69,6 +97,7 @@ function createExecutionSnapshot(airResults = {}) {
       coverage: journey.coverage,
       status: journey.status,
       risk: journey.risk,
+      recommendation: journey.recommendation,
     })),
   };
 }
@@ -143,11 +172,17 @@ function compareBuilds(executions = []) {
 
   const metrics = {
     quality: compareNumber(getQualityScore(current), getQualityScore(previous)),
+    confidence: compareNumber(current.quality?.confidence ?? 0, previous.quality?.confidence ?? 0),
+    businessHealth: compareNumber(current.summary?.businessHealth ?? 0, previous.summary?.businessHealth ?? 0),
     passRate: compareNumber(current.summary?.passRate ?? 0, previous.summary?.passRate ?? 0),
+    failureRate: compareNumber(getFailureRate(current), getFailureRate(previous), 'lower-is-better'),
     failures: compareNumber(current.summary?.failed ?? 0, previous.summary?.failed ?? 0, 'lower-is-better'),
     durationMs: compareNumber(current.summary?.durationMs ?? 0, previous.summary?.durationMs ?? 0, 'lower-is-better'),
     moduleCoverage: compareNumber(getAverageModuleCoverage(current), getAverageModuleCoverage(previous)),
     journeyCoverage: compareNumber(getAverageJourneyCoverage(current), getAverageJourneyCoverage(previous)),
+    evidence: compareNumber(getEvidenceTotal(current), getEvidenceTotal(previous)),
+    modulesExecuted: compareNumber(asArray(current.modules).filter(module => (module.total ?? 0) > 0).length, asArray(previous.modules).filter(module => (module.total ?? 0) > 0).length),
+    journeysExecuted: compareNumber(asArray(current.businessJourneys).filter(journey => (journey.total ?? 0) > 0).length, asArray(previous.businessJourneys).filter(journey => (journey.total ?? 0) > 0).length),
   };
 
   return {
@@ -186,10 +221,13 @@ function buildTrends(executions = []) {
     quality: buildTrend(executions, 'Quality Trend', getQualityScore),
     release: buildTrend(executions, 'Release Trend', getReleaseStatus),
     passRate: buildTrend(executions, 'Pass Rate Trend', execution => execution.summary?.passRate ?? 0),
+    businessHealth: buildTrend(executions, 'Business Health Trend', execution => execution.summary?.businessHealth ?? 0),
     failures: buildTrend(executions, 'Failure Trend', execution => execution.summary?.failed ?? 0),
+    failureRate: buildTrend(executions, 'Failure Rate Trend', getFailureRate),
     duration: buildTrend(executions, 'Execution Duration Trend', execution => execution.summary?.durationMs ?? 0),
     moduleCoverage: buildTrend(executions, 'Module Coverage Trend', getAverageModuleCoverage),
     journeyCoverage: buildTrend(executions, 'Journey Coverage Trend', getAverageJourneyCoverage),
+    evidence: buildTrend(executions, 'Evidence Trend', getEvidenceTotal),
   };
 }
 

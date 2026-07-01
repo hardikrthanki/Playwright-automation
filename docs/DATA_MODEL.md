@@ -329,7 +329,19 @@ The History Engine owns `history`.
     "executions": [],
     "trends": {},
     "comparison": {
-      "status": "First Execution"
+      "status": "First Execution",
+      "current": {},
+      "previous": {},
+      "metrics": {
+        "quality": {},
+        "confidence": {},
+        "passRate": {},
+        "failures": {},
+        "durationMs": {},
+        "moduleCoverage": {},
+        "journeyCoverage": {},
+        "evidence": {}
+      }
     },
     "regressions": [],
     "improvements": [],

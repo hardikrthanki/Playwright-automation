@@ -19,8 +19,38 @@ function createEngine(name, execute, options = {}) {
   };
 }
 
+function buildManualDefectTests(manualDefects = []) {
+  return manualDefects
+    .filter(defect => defect.enabled !== false)
+    .map((defect, index) => ({
+      id: defect.id ?? `manual-defect-${index + 1}`,
+      title: defect.title ?? defect.testName ?? `Manual defect ${index + 1}`,
+      file: defect.source ?? 'manual-defect',
+      status: 'failed',
+      durationMs: 0,
+      error: defect.errorMessage ?? defect.description ?? 'Manual product defect recorded in AIR.',
+      module: defect.module,
+      critical: defect.severity === 'Critical' || defect.critical === true,
+      category: defect.category,
+      businessImpact: defect.businessImpact,
+      recommendedInvestigationAction: defect.recommendedInvestigationAction,
+      manualDefect: true,
+    }));
+}
+
 function getDefaultEnginePipeline() {
   return [
+    createEngine('Manual Defect Engine', (model, context) => {
+      const manualDefectTests = buildManualDefectTests(context.config.manualDefects);
+
+      return {
+        ...model,
+        tests: [
+          ...model.tests,
+          ...manualDefectTests,
+        ],
+      };
+    }),
     createEngine('Execution Summary Engine', model => {
       const summary = buildExecutionSummary(model.tests);
 
@@ -202,6 +232,7 @@ function runEnginePipeline(initialModel, context = {}, engines = getDefaultEngin
 }
 
 module.exports = {
+  buildManualDefectTests,
   createEngine,
   getDefaultEnginePipeline,
   runEnginePipeline,

@@ -189,10 +189,11 @@ Current implementation:
 Responsibilities:
 
 - Store execution history.
-- Calculate quality, release, module, journey, pass rate, failure, duration, and coverage trends.
+- Calculate quality, release, business health, module, journey, pass rate, failure, failure rate, duration, coverage, and evidence trends.
 - Compare current execution with previous execution.
 - Detect regressions and improvements.
 - Return `First Execution` when there is no previous history.
+- Provide the data used by the Historical Intelligence dashboard.
 
 Non-responsibilities:
 

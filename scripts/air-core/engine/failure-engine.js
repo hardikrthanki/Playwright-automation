@@ -7,6 +7,10 @@ function getFailureSeverity(test = {}) {
 }
 
 function getFailureCategory(test = {}) {
+  if (test.category) {
+    return test.category;
+  }
+
   const title = String(test.title ?? '').toLowerCase();
   const error = String(test.error ?? '').toLowerCase();
 
@@ -14,7 +18,16 @@ function getFailureCategory(test = {}) {
     return 'Billing';
   }
 
-  if (title.includes('login') || title.includes('auth') || title.includes('session')) {
+  if (
+    title.includes('login') ||
+    title.includes('auth') ||
+    title.includes('session') ||
+    title.includes('mfa') ||
+    title.includes('2fa') ||
+    title.includes('two-factor') ||
+    title.includes('backup code') ||
+    title.includes('authenticator')
+  ) {
     return 'Authentication';
   }
 
@@ -34,6 +47,10 @@ function getFailureCategory(test = {}) {
 }
 
 function getBusinessImpact(test = {}) {
+  if (test.businessImpact) {
+    return test.businessImpact;
+  }
+
   if (test.critical) {
     return 'Critical business flow may be blocked.';
   }
@@ -42,6 +59,10 @@ function getBusinessImpact(test = {}) {
 }
 
 function getRecommendedInvestigationAction(test = {}) {
+  if (test.recommendedInvestigationAction) {
+    return test.recommendedInvestigationAction;
+  }
+
   const category = getFailureCategory(test);
 
   if (category === 'Timeout') {

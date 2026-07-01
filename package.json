@@ -12,6 +12,7 @@
     "test:execution": "playwright test tests/onboarding.spec.ts tests/AuthNegative.spec.ts tests/SignupNegative.spec.ts tests/PasswordPolicy.spec.ts tests/SessionSecurity.spec.ts tests/AccessibilityBrowser.spec.ts tests/Profile.spec.ts tests/ProfileNegative.spec.ts tests/ProfilePasswordMismatch.spec.ts tests/ProfileWrongCurrentPassword.spec.ts tests/BillingDeep.spec.ts tests/Subscriber.spec.ts",
     "test:controlled": "playwright test tests/ResetPasswordNegative.spec.ts tests/PaymentNegative.spec.ts",
     "test:controlled:email": "playwright test tests/forgotpassword.spec.ts tests/UnlockAccount.spec.ts",
+    "test:controlled:mfa": "playwright test tests/MfaUserFlow.spec.ts",
     "test:controlled:reset": "playwright test tests/ResetPassword.spec.ts tests/ResetPasswordNegative.spec.ts",
     "test:controlled:payment": "playwright test tests/PaymentNegative.spec.ts",
     "test:headed": "playwright test --headed",

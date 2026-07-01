@@ -16,7 +16,109 @@
     .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}
     .module-mini-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.module-mini-hero div{border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,rgba(57,231,95,.08),rgba(8,16,30,.76));padding:16px}.module-mini-hero span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.module-mini-hero strong{display:block;color:var(--green);font-size:30px;margin-top:8px}.mini-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;align-items:start;grid-auto-rows:min-content}.mini-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:15px;align-self:start}.mini-section summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;margin:-2px 0 10px}.mini-section summary::-webkit-details-marker{display:none}.mini-section summary:before{content:"▾";color:var(--green);font-weight:900}.mini-section:not([open]) summary{margin-bottom:0}.mini-section:not([open]) summary:before{content:"▸"}.mini-section summary span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-section summary strong{margin-left:auto;color:var(--green);font-size:12px}.mini-section h3{margin:0 0 10px;font-size:15px}.mini-section p{margin:0;line-height:1.5}.mini-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mini-label span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-label strong{color:var(--green)}.scenario-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.scenario-chips span{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:#d7fbe0;font-size:11px;font-weight:800;padding:6px 9px}.mini-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini-evidence span,.validation-stack span{border:1px solid rgba(57,231,95,.22);border-radius:10px;background:rgba(7,16,31,.74);padding:9px;color:white;font-size:12px}.mini-evidence b,.validation-stack b{display:block;color:var(--muted);font-weight:700;margin-top:5px}.mini-evidence-button{display:inline-block;margin-top:10px;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green)!important;font-size:12px;font-weight:900;padding:8px 10px;text-decoration:none!important}.validation-stack{display:grid;gap:8px}.history-chart{height:220px;display:flex;gap:14px;align-items:flex-end;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#091426,#07101f);padding:20px 16px 44px}.trend-bar{flex:1;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}.trend-bar span{width:70%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}.trend-bar small{position:absolute;bottom:-28px;color:var(--muted);font-size:11px}.trend-bar strong{position:absolute;top:-18px;color:white;font-size:11px}.report-search,.global-search{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:12px;margin:14px 0}.global-search{position:sticky;top:12px;z-index:12;display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start;margin:0 0 22px}.report-search label,.global-search label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}.report-search input,.global-search input{width:100%;border:1px solid rgba(57,231,95,.28);border-radius:9px;background:#07101f;color:white;padding:10px 11px;outline:none}.report-search input:focus,.global-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,231,95,.12)}.search-results{display:grid;gap:7px;margin-top:10px}.global-search .search-results{grid-column:2}.search-results a{border:1px solid rgba(57,231,95,.18);border-radius:9px;background:rgba(57,231,95,.07);color:white!important;font-size:12px;line-height:1.35;padding:8px;text-decoration:none!important}.search-results a:hover{border-color:rgba(57,231,95,.45);color:var(--green)!important}.search-empty{color:var(--muted);font-size:12px}.search-hit{outline:2px solid rgba(57,231,95,.75);outline-offset:3px}.evidence-card{color:var(--text)!important;text-decoration:none!important;min-height:150px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.evidence-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.12)}.evidence-card strong{color:white!important;text-decoration:none!important;font-size:18px}.evidence-card span{color:var(--muted)!important;text-decoration:none!important}.evidence-card em{display:inline-block;margin-top:9px;color:var(--green)!important;font-style:normal;font-size:12px;font-weight:900;text-decoration:none!important}.evidence-card *{text-decoration:none!important}.evidence-icon{flex:0 0 58px;min-width:58px;height:58px;overflow:hidden;font-size:13px}.module-dashboard-grid{align-items:start}.module-dashboard-card{align-self:start}.why-release{max-width:460px;margin:24px auto 0;text-align:left}.why-release h3{text-align:center;font-size:24px;margin:0 0 18px}.why-release ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.why-release li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;color:#f8fafc;font-size:18px;line-height:1.35;text-align:left}.why-release li:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.38);color:var(--green);font-size:13px;font-weight:900;line-height:1}@media(max-width:1100px){.module-mini-hero,.mini-dashboard-grid,.mini-evidence,.global-search{grid-template-columns:1fr}.global-search .search-results{grid-column:auto}}
     .nav a.disabled{opacity:.62;cursor:not-allowed}.nav a.disabled:hover{background:transparent;box-shadow:none}.nav a.disabled .nav-icon{color:var(--muted);border-color:rgba(148,163,184,.22);background:rgba(148,163,184,.06)}.nav a em{margin-left:auto;border:1px solid rgba(57,231,95,.24);border-radius:999px;color:var(--muted);font-style:normal;font-size:9px;font-weight:900;padding:3px 6px;text-transform:uppercase;letter-spacing:.04em}.mission-label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}.mission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin:12px 0 14px}.mission-grid div{border:1px solid rgba(57,231,95,.24);border-radius:12px;background:rgba(7,16,31,.7);padding:12px}.mission-grid span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.mission-grid strong{display:block;color:var(--green);font-size:22px;margin-top:6px}.evidence-preview-body{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:18px;min-height:180px}.evidence-preview-body img,.evidence-preview-body video{max-width:100%;border-radius:12px;border:1px solid var(--line2);background:#07101f}.evidence-preview-body .preview-meta{display:grid;gap:10px}.evidence-preview-body .preview-meta a{color:var(--green);font-weight:900}.roadmap-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.roadmap-summary div{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px}.roadmap-summary span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-summary strong{display:block;color:var(--green);font-size:28px;margin-top:8px}.roadmap-progress{height:13px;border-radius:999px;background:#1d2b44;overflow:hidden;margin:16px 0 8px}.roadmap-progress span{display:block;height:100%;width:18%;border-radius:999px;background:linear-gradient(90deg,var(--green),#9af7ad)}.roadmap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.roadmap-card{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px}.roadmap-card.green{border-color:rgba(57,231,95,.48)}.roadmap-card.amber{border-color:rgba(245,197,66,.45)}.roadmap-card.blue{border-color:rgba(139,215,164,.36)}.roadmap-card.purple{border-color:rgba(148,163,184,.36)}.roadmap-card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.roadmap-card-head span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-card-head h2{margin:5px 0 0}.roadmap-card-head strong{border:1px solid rgba(57,231,95,.28);border-radius:999px;color:var(--green);font-size:11px;padding:6px 9px;white-space:nowrap}.roadmap-card p{color:#d7fbe0;line-height:1.55}.roadmap-card ul{columns:2;margin:12px 0 0;padding-left:18px;color:var(--muted);line-height:1.7}.module-filter{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}.module-filter button{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:#07101f;color:white;cursor:pointer;font-weight:900;padding:8px 12px}.module-filter button.active,.module-filter button:hover{border-color:var(--green);background:rgba(57,231,95,.12);color:var(--green)}.success-empty-state{text-align:center;padding:34px 18px}.success-icon{display:grid;place-items:center;width:76px;height:76px;margin:0 auto 18px;border-radius:50%;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-weight:900}.success-empty-state h2{font-size:28px;margin:0 0 10px}.success-empty-state p{max-width:720px;margin:0 auto;color:#d7fbe0;line-height:1.7}.success-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px auto 0;max-width:820px}.success-grid span{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:14px;color:var(--muted)}.success-grid b{display:block;color:var(--green);font-size:24px;margin-bottom:4px}.module-status-card{min-height:148px;gap:12px}.module-status-card p{font-size:18px;color:#d7fbe0;flex:0}.module-status-card em,.module-selector-card em{font-style:normal;color:var(--green);font-size:12px;font-weight:900}.module-selector-card{min-height:250px;display:flex;flex-direction:column;gap:14px}.module-selector-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.module-selector-summary span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-selector-summary b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-selector-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-dashboard-intro{border:1px solid rgba(57,231,95,.28);border-radius:14px;background:linear-gradient(135deg,rgba(57,231,95,.1),rgba(8,16,30,.72));padding:18px;margin-bottom:18px}.module-dashboard-intro h2{margin:0 0 8px}.module-dashboard-intro p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-test-list{display:grid;gap:9px}.drawer-test-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.drawer-test-row strong{display:block;color:white;font-size:13px;line-height:1.35}.drawer-test-row span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.drawer-test-row em{font-style:normal;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900;text-transform:uppercase}.drawer-test-row em.green{background:rgba(57,231,95,.14);color:var(--green);border:1px solid rgba(57,231,95,.35)}.drawer-test-row em.amber{background:rgba(245,197,66,.14);color:var(--amber);border:1px solid rgba(245,197,66,.35)}.drawer-test-row em.red{background:rgba(255,59,59,.14);color:var(--red);border:1px solid rgba(255,59,59,.35)}@media(max-width:1100px){.roadmap-summary,.roadmap-grid{grid-template-columns:1fr}}@media(max-width:760px){.module-selector-summary,.mission-grid,.success-grid{grid-template-columns:1fr}.roadmap-card ul{columns:1}}
-    .release-status-badge{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;border-radius:999px;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-size:22px;font-weight:900;letter-spacing:.04em;line-height:1.1;padding:10px 16px;text-transform:uppercase;white-space:normal;text-align:center}.release-status-badge.warn{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--amber)}.release-status-badge.bad{border-color:rgba(255,59,59,.45);background:rgba(255,59,59,.12);color:var(--red)}.release-status-badge.compact{font-size:13px;padding:7px 10px;letter-spacing:.03em}.release-mini .release-status-badge{margin:8px 0 6px}.cover-stat .release-status-badge{margin-top:10px}.release-card{align-content:center;gap:14px;padding:24px}.release-card .release-status-badge{font-size:30px;padding:12px 22px;margin:4px auto 2px}.release-card p{max-width:620px;margin:0 auto;color:#d7fbe0;line-height:1.55}.release-card .decision{font-size:30px}.mission-grid{margin-top:4px}.ai-metric-grid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}.ai-metric{min-width:0;overflow:visible}.ai-metric strong{max-width:100%;font-size:clamp(22px,2.1vw,30px);line-height:1.08;overflow-wrap:anywhere;word-break:normal}.ai-metric .release-status-badge{margin-top:7px;max-width:100%;width:100%;font-size:11px;line-height:1.15;padding:7px 6px;overflow-wrap:anywhere}.modal-header h2 .release-status-badge{vertical-align:middle;margin:0 4px;width:auto;font-size:14px;padding:7px 10px}.modal-header h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}@media(max-width:760px){.release-card .release-status-badge{font-size:22px}.release-status-badge{font-size:18px}.release-status-badge.compact{font-size:12px}}
+    .release-status-badge{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;border-radius:999px;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-size:22px;font-weight:900;letter-spacing:.04em;line-height:1.1;padding:10px 16px;text-transform:uppercase;white-space:normal;text-align:center}.release-status-badge.warn{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--amber)}.release-status-badge.bad{border-color:rgba(255,59,59,.45);background:rgba(255,59,59,.12);color:var(--red)}.release-status-badge.compact{font-size:13px;padding:7px 10px;letter-spacing:.03em}.release-mini .release-status-badge{margin:8px 0 6px}.cover-stat .release-status-badge{margin-top:10px}.release-card{align-content:center;gap:14px;padding:24px}.release-card .release-status-badge{font-size:30px;padding:12px 22px;margin:4px auto 2px}.release-card p{max-width:620px;margin:0 auto;color:#d7fbe0;line-height:1.55}.release-card .decision{font-size:30px}.mission-grid{margin-top:4px}.ai-metric-grid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}.ai-metric{min-width:0;overflow:visible}.ai-metric strong{max-width:100%;font-size:clamp(22px,2.1vw,30px);line-height:1.08;overflow-wrap:anywhere;word-break:normal}.ai-metric .release-status-badge{margin-top:7px;max-width:100%;width:100%;font-size:11px;line-height:1.15;padding:7px 6px;overflow-wrap:anywhere}.metric-help{display:inline-grid;place-items:center;width:16px;height:16px;margin-left:5px;border:1px solid rgba(57,231,95,.36);border-radius:50%;color:var(--green);font-size:10px;font-style:normal;font-weight:900;vertical-align:middle;cursor:help}.core-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.core-status-item{border:1px solid rgba(57,231,95,.24);border-radius:11px;background:rgba(7,16,31,.72);padding:10px}.core-status-item span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.core-status-item strong{display:block;color:var(--green);font-size:13px;margin-top:5px}.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.compare-card{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;min-height:126px}.compare-card span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.compare-card strong{display:block;color:white;font-size:24px;margin:9px 0 5px}.compare-card small{display:block;color:var(--muted);line-height:1.4}.compare-card em{display:inline-block;margin-top:10px;border-radius:999px;border:1px solid rgba(57,231,95,.28);padding:5px 8px;color:var(--green);font-style:normal;font-size:11px;font-weight:900}.compare-card.red em{border-color:rgba(255,59,59,.36);color:var(--red)}.compare-card.amber em{border-color:rgba(245,197,66,.36);color:var(--amber)}.compare-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.compare-list li{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.compare-list strong{font-size:13px}.compare-list span{color:var(--muted);font-size:12px}.modal-header h2 .release-status-badge{vertical-align:middle;margin:0 4px;width:auto;font-size:14px;padding:7px 10px}.modal-header h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}@media(max-width:1100px){.compare-grid,.core-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.release-card .release-status-badge{font-size:22px}.release-status-badge{font-size:18px}.release-status-badge.compact{font-size:12px}.compare-grid,.core-status-grid{grid-template-columns:1fr}}
+    :root{--air-success:var(--green);--air-warning:var(--amber);--air-danger:var(--red);--air-info:var(--info);--air-muted:var(--muted);--air-panel:var(--panel);--air-border:var(--line2);--space-xs:6px;--space-sm:10px;--space-md:14px;--space-lg:18px;--space-xl:24px;--type-heading:32px;--type-body:14px;--type-label:11px;--type-metric:30px}
+    .release-status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:0;width:auto;max-inline-size:100%;border-radius:999px;text-align:center;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.12;font-size:clamp(12px,1.1vw,18px);padding:clamp(6px,.7vw,10px) clamp(9px,1vw,16px)}
+    .release-status-badge[data-status="GO"]{border-color:rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--air-success)}
+    .release-status-badge[data-status="CONDITIONAL_GO"]{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--air-warning)}
+    .release-status-badge[data-status="NO_GO"]{border-color:rgba(255,59,59,.45);background:rgba(255,59,59,.12);color:var(--air-danger)}
+    .release-status-badge.compact{font-size:clamp(10px,.9vw,13px);padding:6px 9px}
+    .release-card .release-status-badge{font-size:clamp(18px,2vw,30px);max-width:100%}
+    .ai-metric .release-status-badge,.cover-stat .release-status-badge,.modal-header .release-status-badge{max-width:100%}
+    .cover-stat,.ai-metric,.compare-card,.roadmap-card,.module-health-card,.module-selector-card,.module-dashboard-card,.drawer-metric,.meta-item{min-width:0;overflow-wrap:anywhere}
+    .panel,.page,.module-drawer,.modal{overflow-wrap:anywhere}
+    .global-search{max-width:100%}
+    .empty-state{border:1px dashed rgba(57,231,95,.28);border-radius:14px;background:rgba(8,16,30,.62);min-height:180px;display:grid;place-items:center}
+    .thumb-grid .empty-state{grid-column:1/-1}
+    .success-empty-state p + p{margin-top:8px}
+    .roadmap-card-head strong,.badge,.pill,.nav a em{max-width:100%;white-space:normal;text-align:center}
+    .decision-metrics{gap:16px;margin-bottom:24px}
+    .decision-metrics .ai-metric{min-height:128px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+    .decision-metrics .ai-metric>strong{font-size:clamp(24px,2.2vw,34px);line-height:1.05;white-space:nowrap}
+    .decision-metrics .ai-metric>strong:has(.release-status-badge){white-space:normal}
+    .decision-group{border-top:1px solid rgba(57,231,95,.18);padding-top:22px;margin-top:4px}
+    .decision-group h3{font-size:18px;margin:0 0 12px}
+    .decision-reasons{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .decision-reasons li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:11px;align-items:start;color:#d7fbe0;line-height:1.45}
+    .decision-reasons li:before{content:"✓";display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.34);color:var(--green);font-size:12px;font-weight:900}
+    .support-metrics{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:22px 0 0}
+    .recommendation-callout{margin-top:24px;border:1px solid rgba(57,231,95,.38);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.78));padding:20px}
+    .recommendation-callout span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .recommendation-callout strong{display:block;color:#f8fafc;font-size:18px;line-height:1.45}
+    .nowrap{white-space:nowrap;word-break:normal;overflow-wrap:normal}
+    .health-summary-panel h2{margin-bottom:14px}
+    .summary-lead{font-size:15px;line-height:1.65;color:#d7fbe0;margin:0 0 24px}
+    .health-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:24px}
+    .health-stat{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.68);padding:16px;min-height:126px}
+    .health-stat span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .health-stat strong{display:block;font-size:36px;line-height:1;margin:12px 0 8px}
+    .health-stat small{display:block;color:var(--muted);line-height:1.35}
+    .health-stat.good strong{color:var(--green)}.health-stat.warn strong{color:var(--amber)}.health-stat.bad strong{color:var(--red)}
+    .next-focus-card{border:1px solid rgba(57,231,95,.30);border-radius:14px;background:rgba(57,231,95,.08);padding:18px}
+    .next-focus-card span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .next-focus-card strong{display:block;color:var(--green);font-size:22px;margin:8px 0}
+    .next-focus-card p{margin:0;color:#d7fbe0;line-height:1.55}
+    .executive-decision-card{border:1px solid rgba(57,231,95,.36);border-radius:18px;background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.82));padding:26px;margin:0 0 26px;display:grid;grid-template-columns:minmax(280px,.8fr) 1.2fr;gap:24px;align-items:stretch}
+    .executive-decision-main{border:1px solid rgba(57,231,95,.26);border-radius:16px;background:rgba(8,16,30,.68);padding:22px;display:flex;flex-direction:column;gap:18px;justify-content:center}
+    .executive-decision-main .release-status-badge{font-size:clamp(18px,2vw,30px);align-self:flex-start}
+    .executive-decision-bullets{list-style:none;margin:0;padding:0;display:grid;gap:9px;color:#d7fbe0;line-height:1.45}
+    .executive-decision-bullets li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:9px}
+    .executive-decision-bullets li:before{content:"✓";display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}
+    .executive-decision-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .executive-decision-metrics div{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.68);padding:16px;min-height:118px;display:flex;flex-direction:column;justify-content:center}
+    .executive-decision-metrics span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .executive-decision-metrics strong{display:block;color:var(--green);font-size:clamp(20px,1.8vw,30px);line-height:1.08;margin-top:10px}
+    .executive-action{grid-column:1/-1;border:1px solid rgba(57,231,95,.38);border-radius:16px;background:rgba(57,231,95,.10);padding:20px}
+    .executive-action span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+    .executive-action strong{display:block;color:#f8fafc;font-size:19px;line-height:1.45}
+    .role-recommendation-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .role-recommendation-card{border:1px solid rgba(57,231,95,.28);border-radius:14px;background:rgba(8,16,30,.68);padding:18px;min-height:190px}
+    .role-recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:13px}
+    .role-recommendation-card strong{display:block;font-size:17px;margin-bottom:10px}
+    .role-recommendation-card p{margin:0;color:var(--muted);line-height:1.55}
+    #comparison .panel{margin-bottom:2px}
+    #comparison .panel>h2{margin-bottom:18px}
+    #comparison .grid.two,#comparison .grid.three{gap:22px}
+    .compare-card{min-height:138px}
+    .trend-indicator{display:inline-flex;align-items:center;gap:5px}
+    .module-card-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+    .module-card-head{min-width:0}
+    .module-title{min-width:0}
+    .module-title strong,.module-health-card p,.module-meta b,.module-selector-card p,.module-dashboard-card p{overflow-wrap:anywhere;word-break:normal}
+    .module-score{font-size:clamp(30px,3vw,44px)}
+    .module-meta,.module-selector-summary,.module-dashboard-metrics{grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr))}
+    .module-status-card{min-height:172px;justify-content:space-between}
+    .module-status-card .module-card-head{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:start}
+    .module-status-card .module-title{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center}
+    .module-status-card .badge{justify-self:start;width:max-content;max-width:100%;line-height:1.2}
+    .module-status-card p{margin:0;font-size:16px;line-height:1.35}
+    .compare-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+    .compare-card strong{font-size:clamp(18px,1.8vw,24px);line-height:1.12;white-space:normal;overflow-wrap:anywhere}
+    .compare-card small{overflow-wrap:anywhere}
+    .compare-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}
+    .compare-list strong,.compare-list span{min-width:0;overflow-wrap:anywhere}
+    .roadmap-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+    .roadmap-summary{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+    .roadmap-card-head{display:grid;grid-template-columns:minmax(0,1fr) auto}
+    .roadmap-card-head h2,.roadmap-card p,.roadmap-card li,.roadmap-card-head strong{overflow-wrap:anywhere;word-break:normal}
+    .roadmap-card-head strong{white-space:normal;max-width:130px}
+    #comparison .grid.two,#comparison .grid.three{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+    #comparison .panel p{overflow-wrap:anywhere}
+    .core-status-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px}
+    .engine-card{min-height:210px;display:flex;flex-direction:column;gap:13px;padding:16px}
+    .engine-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .engine-head span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .engine-head strong{border:1px solid rgba(57,231,95,.30);border-radius:999px;background:rgba(57,231,95,.09);padding:5px 8px;font-size:10px;white-space:nowrap}
+    .engine-card p{margin:0;color:#d7fbe0;line-height:1.45;min-height:42px}
+    .engine-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,92px),1fr));gap:9px;margin-top:auto}
+    .engine-metrics div{border:1px solid rgba(57,231,95,.20);border-radius:10px;background:rgba(8,16,30,.62);padding:9px;min-width:0}
+    .engine-metrics small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+    .engine-metrics b{display:block;color:var(--green);font-size:14px;margin-top:5px;overflow-wrap:anywhere;line-height:1.25}
+    @media(max-width:1250px){.compare-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}.executive-decision-metrics{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}}
+    @media(max-width:1100px){.executive-decision-card{grid-template-columns:1fr}.executive-decision-metrics,.role-recommendation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.executive-decision-metrics,.role-recommendation-grid{grid-template-columns:1fr}.executive-decision-main .release-status-badge{align-self:stretch}}
+    @media(max-width:760px){.health-stat-grid{grid-template-columns:1fr}.decision-metrics .ai-metric{min-height:110px}.support-metrics{grid-template-columns:1fr}}
+    @media(max-width:900px){main{padding:20px 16px 42px}.page{padding:20px}.topbar{flex-direction:column}.actions{justify-content:flex-start}.release-status-badge{font-size:clamp(11px,3.2vw,16px)}}
   </style>
   <aside class="sidebar">
     <div class="brand">AIR</div>
@@ -35,8 +137,8 @@
       <a href="#evidence"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m7 15 3-3 2 2 3-4 2 5"></path><circle cx="8" cy="9" r="1"></circle></svg></span><span>Evidence</span></a>
       <div class="nav-section">Insights</div>
       <a href="#insight"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M8.5 14.5a6 6 0 1 1 7 0c-.8.6-1.5 1.5-1.5 2.5h-4c0-1-.7-1.9-1.5-2.5z"></path></svg></span><span>AI Insights</span></a>
+      <a href="#comparison"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-3 3 2 5-7"></path></svg></span><span>Historical Intelligence</span></a>
       <a href="#roadmap"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19V5"></path><path d="M5 6h10l-1.5 3L15 12H5"></path><path d="M19 19H5"></path><path d="M9 19v-4"></path><path d="M15 19v-7"></path></svg></span><span>Roadmap</span></a>
-      <a class="disabled" href="#insight" aria-disabled="true"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-3 3 2 5-7"></path></svg></span><span>Analytics</span><em>Coming Soon</em></a>
       <div class="nav-section">Administration</div>
       <a class="disabled" href="#insight" aria-disabled="true"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 2-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V20h-3v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-2 .1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H5v-3h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-2 .1.1a1.6 1.6 0 0 0 1.8.3 1.6 1.6 0 0 0 1-1.5V4h3v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1 2 2-.1.1a1.6 1.6 0 0 0-.3 1.8 1.6 1.6 0 0 0 1.5 1h.1v3h-.1a1.6 1.6 0 0 0-1.5 1z"></path></svg></span><span>Settings</span><em>Coming Soon</em></a>
       <a class="disabled" href="#insight" aria-disabled="true"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12h8"></path><path d="M7 7h.01"></path><path d="M17 7h.01"></path><path d="M7 17h.01"></path><path d="M17 17h.01"></path><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect></svg></span><span>Integrations</span><em>Coming Soon</em></a>
@@ -50,11 +152,11 @@
       <div>Project<br><strong>OOLTool</strong></div><br>
       <div>Environment<br><strong>PUAT</strong></div><br>
       <div>Build<br><strong>Playwright JSON</strong></div><br>
-      <div>Generated<br><strong>6/30/2026, 11:58:04 PM</strong></div>
+      <div>Generated<br><strong>7/1/2026, 6:40:55 PM</strong></div>
     </div>
     <div class="release-mini">
       <span>Release Decision</span>
-      <span class="release-status-badge compact warn">CONDITIONAL GO</span>
+      <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
       <small>Based on last execution</small>
     </div>
   </aside>
@@ -77,11 +179,14 @@
           <div class="cover-stat"><span>Project</span><strong>OOLTool</strong></div>
           <div class="cover-stat"><span>Environment</span><strong>PUAT</strong></div>
           <div class="cover-stat"><span>Build</span><strong>Playwright JSON</strong></div>
-          <div class="cover-stat"><span>Execution Date</span><strong>6/30/2026, 11:58:04 PM</strong></div>
+          <div class="cover-stat"><span>AIR Platform Version</span><strong>AIR Platform v1.1</strong></div>
+          <div class="cover-stat"><span>AIR Core Version</span><strong>AIR Core Complete</strong></div>
+          <div class="cover-stat"><span>Execution Date</span><strong>7/1/2026, 6:40:55 PM</strong></div>
           <div class="cover-stat"><span>Framework</span><strong>Playwright</strong></div>
+          <div class="cover-stat"><span>Parser</span><strong>air-history</strong></div>
           <div class="cover-stat"><span>Generated By</span><strong>AIR Platform</strong></div>
-          <div class="cover-stat"><span>Release Recommendation</span><span class="release-status-badge compact warn">CONDITIONAL GO</span></div>
-          <div class="cover-stat interactive-card" data-open-quality><span>Quality Score</span><strong>100%</strong></div>
+          <div class="cover-stat"><span>Release Recommendation <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></div>
+          <div class="cover-stat interactive-card" data-open-quality><span>Quality Score <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
           <div class="cover-stat"><span>Branch</span><strong>Local</strong></div>
           <div class="cover-stat"><span>Commit</span><strong>Local</strong></div>
         </div>
@@ -89,32 +194,294 @@
       <div class="grid two">
         <div class="panel release-card interactive-card" data-open-release>
           <span class="mission-label">Release Status</span>
-          <span class="release-status-badge warn">CONDITIONAL GO</span>
+          <span class="release-status-badge bad" data-status="NO_GO">NO GO</span>
           <div class="mission-grid">
-            <div><span>Confidence</span><strong>100%</strong></div>
-            <div><span>Critical Issues</span><strong>0</strong></div>
+            <div><span>Confidence</span><strong>50%</strong></div>
+            <div><span>Critical Issues</span><strong>2</strong></div>
             <div><span>Warnings</span><strong>0</strong></div>
-            <div><span>Ready</span><strong>Yes</strong></div>
+            <div><span>Ready</span><strong>No</strong></div>
           </div>
-          <p>Release can proceed after targeted warning review.</p>
+          <p>Release should wait until blocking failures are resolved.</p>
         </div>
         <div class="panel">
           <h2 class="icon-title"><span class="section-icon">QS</span>Release Overview</h2>
           <div class="ai-metric-grid">
-            <div class="ai-metric"><span>Total Tests</span><strong>69</strong></div>
-            <div class="ai-metric"><span>Pass Rate</span><strong>100%</strong></div>
-            <div class="ai-metric"><span>Failures</span><strong>0</strong></div>
+            <div class="ai-metric"><span>Total Tests</span><strong>71</strong></div>
+            <div class="ai-metric"><span>Pass Rate</span><strong>97%</strong></div>
+            <div class="ai-metric"><span>Failures</span><strong>2</strong></div>
             <div class="ai-metric"><span>Duration</span><strong>11m 41s</strong></div>
           </div>
         </div>
+      </div>
+      <br>
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">CORE</span>AIR Core Status</h2>
+        <div class="core-status-grid">
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Parser</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Normalize source execution data.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Records Parsed</small>
+            <b>71</b>
+          </div>
+          <div>
+            <small>Framework</small>
+            <b>Playwright</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Validator</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Validate AIR model contract.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Schema</small>
+            <b>1.0</b>
+          </div>
+          <div>
+            <small>Warnings</small>
+            <b>9</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Execution</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Summarize executed tests.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Tests</small>
+            <b>71</b>
+          </div>
+          <div>
+            <small>Pass Rate</small>
+            <b>97%</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Failure</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Map failures and impact.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Failures</small>
+            <b>2</b>
+          </div>
+          <div>
+            <small>Critical</small>
+            <b>2</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Module</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Calculate module health.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Modules</small>
+            <b>7</b>
+          </div>
+          <div>
+            <small>Risk</small>
+            <b>HIGH</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Journey</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Evaluate business journeys.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Journeys</small>
+            <b>8</b>
+          </div>
+          <div>
+            <small>Health</small>
+            <b>Healthy</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Evidence</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Map proof to results.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Screenshots</small>
+            <b>0</b>
+          </div>
+          <div>
+            <small>Videos</small>
+            <b>0</b>
+          </div>
+          <div>
+            <small>Traces</small>
+            <b>0</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Quality</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Score release confidence.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Score</small>
+            <b>100%</b>
+          </div>
+          <div>
+            <small>Grade</small>
+            <b>Historical Snapshot</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Release</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Generate release decision.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Decision</small>
+            <b>NO GO</b>
+          </div>
+          <div>
+            <small>Confidence</small>
+            <b>50%</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Recommendation</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Generate next actions.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Items</small>
+            <b>3</b>
+          </div>
+          <div>
+            <small>Focus</small>
+            <b>Failed Module Review</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Search</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Index AIR report data.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Indexed Items</small>
+            <b>0</b>
+          </div>
+          <div>
+            <small>Scope</small>
+            <b>AIR Model</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>History</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Store execution memory.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Executions</small>
+            <b>30</b>
+          </div>
+          <div>
+            <small>Status</small>
+            <b>Compared</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Discovery</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Discover modules and scope.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Modules</small>
+            <b>7</b>
+          </div>
+          <div>
+            <small>Scope</small>
+            <b>Regression</b>
+          </div>
+      </div>
+    </div>
+    <div class="core-status-item engine-card">
+      <div class="engine-head">
+        <span>Orchestrator</span>
+        <strong>Operational</strong>
+      </div>
+      <p>Run the AIR pipeline.</p>
+      <div class="engine-metrics">
+        
+          <div>
+            <small>Engines</small>
+            <b>14</b>
+          </div>
+          <div>
+            <small>Pipeline</small>
+            <b>Operational</b>
+          </div>
+      </div>
+    </div></div>
       </div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 1 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 1 of 10</strong>
       </div>
     </section>
 
@@ -126,44 +493,83 @@
           <p>Why is this the release decision?</p>
         </div>
         <div class="actions">
-          <span class="pill demo">Live Data / air-results/json-reporter</span>
+          <span class="pill demo">Live Data / air-results/air-history</span>
           <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
           <a class="btn" href="#evidence">Evidence</a>
           <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
         </div>
       </div>
-      <div class="narrative">
-        <h2>Build Health: Stable With Warnings</h2>
-        <p>Build health is stable with warnings. 69 tests executed and the main journeys are mostly healthy, but AIR recommends focused review before final release approval.</p>
+      <div class="executive-decision-card">
+        <div class="executive-decision-main">
+          <span class="mission-label">Release Decision</span>
+          <span class="release-status-badge bad" data-status="NO_GO">NO GO</span>
+          <ul class="executive-decision-bullets"><li>71 tests executed in the current run.</li><li>69 passed and 2 failed.</li><li>Healthy business journey status.</li><li>No Evidence Captured evidence readiness.</li></ul>
+        </div>
+        <div class="executive-decision-metrics">
+          <div><span>Confidence</span><strong>50%</strong></div>
+          <div class="interactive-card" data-open-quality><span>Quality</span><strong>100%</strong></div>
+          <div><span>Risk</span><strong class="nowrap">HIGH</strong></div>
+          <div><span>Business Journey</span><strong>Healthy</strong></div>
+          <div><span>Evidence</span><strong>No Evidence Captured</strong></div>
+          <div><span>Critical Issues</span><strong>2</strong></div>
+          <div><span>Warnings</span><strong>0</strong></div>
+        </div>
+        <div class="executive-action">
+          <span>Recommended Action <i class="metric-help" title="Action generated from release decision, warnings, failures, and evidence readiness.">?</i></span>
+          <strong>Resolve confirmed MFA defects, then rerun the affected MFA scenarios before release approval.</strong>
+        </div>
       </div>
       <div class="grid two">
         <div class="panel insight">
           <h2 class="icon-title"><span class="section-icon">WHY</span>Why This Decision?</h2>
           <div class="why-release">
             <h3>Why Release?</h3>
-            <ul><li>Critical journeys are not blocked</li><li>Warnings require review</li><li>Release can proceed after evidence review</li></ul>
+            <ul><li>Full regression baseline passed from restored execution history.</li><li>2 confirmed MFA product defect(s) require resolution before approval.</li></ul>
           </div>
         </div>
         <div class="panel">
           <h2 class="icon-title"><span class="section-icon">RD</span>Decision Summary</h2>
-          <div class="ai-metric-grid">
-            <div class="ai-metric"><span>Release</span><span class="release-status-badge compact warn">CONDITIONAL GO</span></div>
-            <div class="ai-metric"><span>Confidence</span><strong>100%</strong></div>
-            <div class="ai-metric"><span>Risk</span><strong>MEDIUM</strong></div>
-            <div class="ai-metric interactive-card" data-open-quality><span>Quality</span><strong>100%</strong></div>
+          <div class="ai-metric-grid decision-metrics">
+            <div class="ai-metric"><span>Release <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><strong><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></strong></div>
+            <div class="ai-metric"><span>Confidence</span><strong>50%</strong></div>
+            <div class="ai-metric"><span>Risk <i class="metric-help" title="Release risk from failures, warnings, skipped checks, and configured thresholds.">?</i></span><strong class="nowrap">HIGH</strong></div>
+            <div class="ai-metric interactive-card" data-open-quality><span>Quality <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
           </div>
-          <br>
-          <h2>Recommended Action</h2>
-          <p>Review warnings and attached evidence before approval.</p>
+          <div class="decision-group">
+            <h3>Reason</h3>
+            <ul class="decision-reasons"><li>Full regression baseline passed from restored execution history.</li><li>2 confirmed MFA product defect(s) require resolution before approval.</li></ul>
+          </div>
+          <div class="meta-strip support-metrics">
+  <div class="meta-item">
+    <span>Critical Issues <i class="metric-help" title="Current failed tests treated as release-impacting issues.">?</i></span>
+    <strong>2</strong>
+  </div>
+  <div class="meta-item">
+    <span>Warnings <i class="metric-help" title="Warning modules plus skipped checks requiring review.">?</i></span>
+    <strong>0</strong>
+  </div>
+  <div class="meta-item">
+    <span>Business Journey Status <i class="metric-help" title="Business health summarizes configured journey and module stability.">?</i></span>
+    <strong>Healthy</strong>
+  </div>
+  <div class="meta-item">
+    <span>Evidence Readiness <i class="metric-help" title="Evidence readiness shows whether execution artifacts are available for review.">?</i></span>
+    <strong>No Evidence Captured</strong>
+  </div></div>
+          <div class="recommendation-callout">
+            <span>Recommended Action <i class="metric-help" title="Action generated from release decision, warnings, failures, and evidence readiness.">?</i></span>
+            <strong>Resolve confirmed MFA defects, then rerun the affected MFA scenarios before release approval.</strong>
+          </div>
         </div>
       </div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 2 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 2 of 10</strong>
       </div>
     </section>
 
@@ -221,15 +627,16 @@
       <br>
       <div class="grid two">
         <div class="panel"><h2>Journey Trend</h2><div class="chart"><div class="bar" style="height:88%"><label>Registration</label></div><div class="bar" style="height:82%"><label>Auth</label></div><div class="bar" style="height:94%"><label>Profile</label></div><div class="bar" style="height:78%"><label>Billing</label></div><div class="bar blue" style="height:96%"><label>Dashboard</label></div></div></div>
-        <div class="panel"><h2>Answer</h2><p>Core flows are healthy in the current execution.</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and should be reported separately when run.</div></div>
+        <div class="panel"><h2>Answer</h2><p>Core flows are mostly healthy, with focused review required for failed areas.</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and should be reported separately when run.</div></div>
       </div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 3 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 3 of 10</strong>
       </div>
     </section>
 
@@ -309,20 +716,45 @@
       </div>
       <p>14/14 tests passed</p>
       <em>Open module detail</em>
+    </a>
+    <a class="module-health-card module-status-card red interactive-card" href="#module-dashboard-mfa" id="card-mfa" data-module="MFA">
+      <div class="module-card-head">
+        <div class="module-title">
+          <span class="module-icon">MOD</span>
+          <strong>MFA</strong>
+        </div>
+        <span class="badge red">Critical</span>
+      </div>
+      <p>2 failures need review</p>
+      <em>Open module detail</em>
     </a></div>
       </div>
       <br>
       <div class="grid two">
-        <div class="panel"><h2>Risk Matrix</h2><div class="risk-matrix"><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High<br>0</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High</div><div class="risk-cell low">Low</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div></div></div>
-        <div class="panel"><h2>Health Summary</h2><p>All current modules are release-safe in this execution. QA should continue monitoring stable UI coverage and expand API, DB, and evidence mapping next.</p><br><div class="meta-strip"><div class="meta-item"><span>Healthy Modules</span><strong>6</strong></div><div class="meta-item"><span>Warning Modules</span><strong>0</strong></div><div class="meta-item"><span>Critical Modules</span><strong>0</strong></div><div class="meta-item"><span>Next Step</span><strong>Evidence Linking</strong></div></div></div>
+        <div class="panel"><h2>Risk Matrix</h2><div class="risk-matrix"><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High<br>2</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High</div><div class="risk-cell low">Low</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div></div></div>
+        <div class="panel health-summary-panel">
+          <h2>Health Summary <i class="metric-help" title="Business health summarizes configured journey and module stability.">?</i></h2>
+          <p class="summary-lead">One or more modules need attention. QA should review failed modules, attach evidence, and rerun impacted checks.</p>
+          <div class="health-stat-grid">
+            <div class="health-stat good"><span>Healthy</span><strong>6</strong><small>Modules stable</small></div>
+            <div class="health-stat warn"><span>Warning</span><strong>0</strong><small>Need review</small></div>
+            <div class="health-stat bad"><span>Critical</span><strong>0</strong><small>Release risk</small></div>
+          </div>
+          <div class="next-focus-card">
+            <span>Next Focus <i class="metric-help" title="Recommended next improvement based on current module and evidence readiness.">?</i></span>
+            <strong>Failed Module Review</strong>
+            <p>Start with failed modules, attach available evidence, and rerun impacted checks before approval.</p>
+          </div>
+        </div>
       </div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 4 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 4 of 10</strong>
       </div>
     </section>
 
@@ -347,7 +779,7 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>3/3</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>1m 0s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Keyboard navigation, focus order, and accessible validation behavior.</p>
@@ -367,7 +799,7 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>5/5</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>5m 21s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Login, logout, forgot password, JWT/session behavior, and locked-account recovery.</p>
@@ -387,7 +819,7 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>5/5</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>1m 17s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Billing overview, plans, transaction history, invoice access, and PDF availability.</p>
@@ -407,7 +839,7 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>4/4</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>1m 0s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Password reset, mismatch handling, current-password validation, and policy enforcement.</p>
@@ -427,7 +859,7 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>3/3</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>1m 8s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Profile page access, profile data loading, and read-only email protection.</p>
@@ -447,43 +879,66 @@
             <span>Risk <b>Low</b></span>
             <span>Critical Scenarios <b>5/5</b></span>
             <span>Evidence <b>Available</b></span>
-            <span>Execution <b>1m 53s</b></span>
+            <span>Execution <b>No Data</b></span>
           </div>
           <div class="module-progress"><span style="width:100%"></span></div>
           <p>Registration validation, mobile number handling, OTP flow, and password policy.</p>
+          <em>Click to open focused module dashboard</em>
+        </div>
+        <div class="module-dashboard-card module-selector-card red interactive-card" id="module-dashboard-mfa" data-module="MFA">
+          <div class="module-card-head">
+            <div class="module-title">
+              <span class="module-icon">MOD</span>
+              <strong>MFA</strong>
+            </div>
+            <span class="badge red">Critical</span>
+          </div>
+          <div class="module-selector-summary">
+            <span>Health <b>0%</b></span>
+            <span>Tests <b>0/2</b></span>
+            <span>Risk <b>High</b></span>
+            <span>Critical Scenarios <b>3/3</b></span>
+            <span>Evidence <b>Available</b></span>
+            <span>Execution <b>No Data</b></span>
+          </div>
+          <div class="module-progress"><span style="width:0%"></span></div>
+          <p>Module-specific UI validation, evidence review, and release readiness.</p>
           <em>Click to open focused module dashboard</em>
         </div></div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 5 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 5 of 10</strong>
       </div>
     </section>
 
     <section class="page" id="failures">
-      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">0 Failures</span></div>
-      <div class="panel">
-      <div class="success-empty-state">
-        <div class="success-icon">OK</div>
-        <h2>Excellent. No failed tests detected.</h2>
-        <p>All executed checks passed in this run. Release blockers are currently none, and evidence remains available for review through Evidence.</p>
-        <div class="success-grid">
-          <span><b>69</b>Total Tests</span>
-          <span><b>69</b>Passed</span>
-          <span><b>0</b>Failed</span>
-          <span><b>None</b>Blockers</span>
-        </div>
-      </div></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">2 Failures</span></div>
+      <div class="panel"><table><thead><tr><th>Test Name</th><th>Module</th><th>Priority</th><th>Reason / Next Action</th></tr></thead><tbody>
+    <tr>
+      <td>MFA backup codes generated in incomplete format are rejected during login recovery</td>  
+      <td>Authentication</td>
+      <td><span class="badge bad">High</span></td>
+      <td>Backup codes generated/downloaded in format XXXX-XXXX- are rejected by the MFA challenge that expects XXXX-XXXX-XX.</td>
+    </tr>
+    <tr>
+      <td>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</td>  
+      <td>Password</td>
+      <td><span class="badge bad">High</span></td>
+      <td>Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.</td>
+    </tr></tbody></table></div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 6 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 6 of 10</strong>
       </div>
     </section>
 
@@ -514,11 +969,11 @@
         <em>Open Evidence</em>
       </div>
     </a>
-    <a class="evidence-card" href="air-results.json" data-evidence-preview data-evidence-kind="Raw Results" data-evidence-status="air-results/json-reporter" data-evidence-href="air-results.json">
+    <a class="evidence-card" href="air-results.json" data-evidence-preview data-evidence-kind="Raw Results" data-evidence-status="air-results/air-history" data-evidence-href="air-results.json">
       <div class="evidence-icon">JSON</div>
       <div>
         <strong>Raw Results</strong>
-        <span>air-results/json-reporter</span>
+        <span>air-results/air-history</span>
         <em>Open Evidence</em>
       </div>
     </a></div>
@@ -526,22 +981,10 @@
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
         <div class="thumb-grid">
-        <div class="thumb placeholder">
-          <div>Preview</div>
-          <span>No thumbnail yet 1</span>
-        </div>
-        <div class="thumb placeholder">
-          <div>Preview</div>
-          <span>No thumbnail yet 2</span>
-        </div>
-        <div class="thumb placeholder">
-          <div>Preview</div>
-          <span>No thumbnail yet 3</span>
-        </div>
-        <div class="thumb placeholder">
-          <div>Preview</div>
-          <span>No thumbnail yet 4</span>
-        </div></div>
+        <a class="thumb" href="../playwright-report/data/4555b2ebbf66bf5bc7e5951ea0a894c7ab904c14.png" data-evidence-preview data-evidence-kind="Screenshot 1" data-evidence-status="Available" data-evidence-href="../playwright-report/data/4555b2ebbf66bf5bc7e5951ea0a894c7ab904c14.png">
+          <img src="../playwright-report/data/4555b2ebbf66bf5bc7e5951ea0a894c7ab904c14.png" alt="Evidence screenshot 1">
+          <span>Screenshot 1</span>
+        </a></div>
       </div>
       <br>
       <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
@@ -549,9 +992,10 @@
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 7 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 7 of 10</strong>
       </div>
     </section>
 
@@ -559,9 +1003,9 @@
       <div class="topbar"><div><div class="eyebrow">PAGE 08</div><h1>AI Insights</h1><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>Execution Recommendation</button></div>
       <div class="grid two">
         <div class="panel insight ai-decision-panel">
-          <h2 class="icon-title"><span class="section-icon">AI</span>Why AIR Recommends CONDITIONAL GO</h2>
-          <p class="ai-decision-summary">AIR recommends CONDITIONAL GO because the main journeys are mostly stable, but warning signals still need evidence review and targeted rerun before final approval.</p>
-          <ul class="ai-reasons"><li>Critical journeys are not blocked</li><li>Warnings require review</li><li>Release can proceed after evidence review</li></ul>
+          <h2 class="icon-title"><span class="section-icon">AI</span>Why AIR Recommends NO GO</h2>
+          <p class="ai-decision-summary">AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.</p>
+          <ul class="ai-reasons"><li>Full regression baseline passed from restored execution history.</li><li>2 confirmed MFA product defect(s) require resolution before approval.</li></ul>
         </div>
         <div class="panel">
           <h2 class="icon-title"><span class="section-icon">NEXT</span>Action Checklist</h2>
@@ -570,58 +1014,494 @@
       </div>
       <br>
       <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">ROLE</span>Role-Based Reading</h2>
+        <div class="role-recommendation-grid">
+    <div class="role-recommendation-card">
+      <span>Executive Summary</span>
+      <strong>Resolve blockers first</strong>
+      <p>AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.</p>
+    </div>
+    <div class="role-recommendation-card">
+      <span>Engineering Focus</span>
+      <strong>Review failed tests</strong>
+      <p>Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.</p>
+    </div>
+    <div class="role-recommendation-card">
+      <span>QA Focus</span>
+      <strong>Stabilize impacted flows</strong>
+      <p>Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.</p>
+    </div>
+    <div class="role-recommendation-card">
+      <span>Management Focus</span>
+      <strong>Strengthen evidence links</strong>
+      <p>Attach screenshot, video, trace, and environment context to every release-impacting failure.</p>
+    </div></div>
+      </div>
+      <br>
+      <div class="panel">
         <h2 class="icon-title"><span class="section-icon">P1</span>Priority Recommendations</h2>
         <div class="recommendation-grid">
       <div class="recommendation-card">
         <span>Priority 1</span>
-        <strong>Increase API validation</strong>
-        <p>Add API-level checks for billing, authentication, signup, and password flows so AIR can separate UI issues from backend failures.</p>
+        <strong>Review failed tests</strong>
+        <p>Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.</p>
       </div>
       <div class="recommendation-card">
         <span>Priority 2</span>
-        <strong>Increase DB validation</strong>
-        <p>Add database validation for account status, subscription state, reset tokens, login lockout, and payment records.</p>
+        <strong>Stabilize impacted flows</strong>
+        <p>Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.</p>
       </div>
       <div class="recommendation-card">
         <span>Priority 3</span>
-        <strong>Expand MFA and security coverage</strong>
-        <p>Add negative MFA, session expiry, protected-route, unlock-account, and reset-password expiry scenarios.</p>
+        <strong>Strengthen evidence links</strong>
+        <p>Attach screenshot, video, trace, and environment context to every release-impacting failure.</p>
       </div></div>
       </div>
       <br>
       <div class="grid two">
-        <div class="panel"><h2>Next QA Focus</h2><p>Move from UI-only confidence to full quality intelligence by adding API, DB, MFA, and session-security validations.</p></div>
+        <div class="panel"><h2>Next QA Focus</h2><p>Review failed tests first, then rerun impacted modules with evidence capture enabled.</p></div>
         <div class="panel"><h2>AIR Roadmap</h2><p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p></div>
       </div>
       
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 8 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 8 of 10</strong>
+      </div>
+    </section>
+
+    <section class="page" id="comparison">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">PAGE 09</div>
+          <h1>Historical Intelligence</h1>
+          <p>How has software quality evolved over time?</p>
+        </div>
+        <span class="pill demo">Historical Comparison</span>
+      </div>
+      
+        <div class="panel insight">
+          <h2 class="icon-title"><span class="section-icon">HI</span>Executive Build Comparison</h2>
+          <div class="compare-grid">
+            <div class="compare-card"><span>Current Build</span><strong>Playwright JSON</strong><small>Current execution baseline</small></div>
+            <div class="compare-card"><span>Previous Build</span><strong>Previous</strong><small>Last recorded execution</small></div>
+            
+    <div class="compare-card amber">
+      <span>Quality Score</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            <div class="compare-card"><span>Release Decision</span><strong>NO_GO -&gt; NO_GO</strong><small>Current vs previous release decision</small></div>
+            
+    <div class="compare-card amber">
+      <span>Pass Rate</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Execution Time</span>
+      <strong>39s</strong>
+      <small>Previous: 39s</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Coverage</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card red">
+      <span>Failed Tests</span>
+      <strong>3</strong>
+      <small>Previous: 2</small>
+      <em class="trend-indicator">↓ Worse +1</em>
+    </div>
+            <div class="compare-card"><span>Modules Executed</span><strong>7</strong><small>Previous: 1</small></div>
+            <div class="compare-card"><span>Journeys Executed</span><strong>0</strong><small>Previous: 0</small></div>
+          </div>
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Quality Trends</h2>
+          <div class="compare-grid">
+            
+    <div class="compare-card amber">
+      <span>Quality Score</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Business Health</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Coverage</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Pass Rate</span>
+      <strong>0%</strong>
+      <small>Previous: 0%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Execution Duration</span>
+      <strong>39s</strong>
+      <small>Previous: 39s</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Failure Rate</span>
+      <strong>100%</strong>
+      <small>Previous: 100%</small>
+      <em class="trend-indicator">→ Stable 0</em>
+    </div>
+          </div>
+        </div>
+        <br>
+        <div class="grid two">
+          <div class="panel">
+            <h2>Module Trends</h2>
+            <div class="grid two">
+              <div><h2>Improved Modules</h2><div class="empty-note">No improved modules</div></div>
+              <div><h2>Declined Modules</h2><div class="empty-note">No declined modules</div></div>
+              <div><h2>Stable Modules</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>MFA</strong>
+          <span>0% -&gt; 0%</span>
+        </li>
+    </ul></div>
+              <div><h2>New Modules</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>Accessibility</strong>
+          <span>Healthy</span>
+        </li>
+        <li>
+          <strong>Authentication</strong>
+          <span>Healthy</span>
+        </li>
+        <li>
+          <strong>Billing</strong>
+          <span>Healthy</span>
+        </li>
+        <li>
+          <strong>Password</strong>
+          <span>Healthy</span>
+        </li>
+        <li>
+          <strong>Profile</strong>
+          <span>Healthy</span>
+        </li>
+        <li>
+          <strong>Signup</strong>
+          <span>Healthy</span>
+        </li>
+    </ul></div>
+              <div><h2>Removed Modules</h2><div class="empty-note">No removed modules</div></div>
+              <div><h2>Risk Changes</h2><div class="empty-note">No module risk changes</div></div>
+              <div><h2>Recommendation Changes</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>MFA</strong>
+          <span>Recommendation changed</span>
+        </li>
+    </ul></div>
+              <div><h2>Not Executed Modules</h2><div class="empty-note">No not-executed modules</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Business Journey Trends</h2>
+            <div class="grid two">
+              <div><h2>Journey Improvements</h2><div class="empty-note">No journey improvements</div></div>
+              <div><h2>Journey Regressions</h2><div class="empty-note">No journey regressions</div></div>
+              <div><h2>Journey Recovery</h2><div class="empty-note">No journey recoveries</div></div>
+              <div><h2>New Risks</h2><div class="empty-note">No new journey risks</div></div>
+              <div><h2>New Journeys</h2><div class="empty-note">No new journeys</div></div>
+              <div><h2>Not Executed Journeys</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>Authentication</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Compliance</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Dashboard</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Payment</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Profile Setup</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Registration</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Risk Profile</strong>
+          <span>No Data Available</span>
+        </li>
+        <li>
+          <strong>Subscription</strong>
+          <span>No Data Available</span>
+        </li>
+    </ul></div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="grid two">
+          <div class="panel">
+            <h2>Failure Intelligence</h2>
+            <div class="grid three">
+              <div><h2>New Failures</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</strong>
+          <span>failed</span>
+        </li>
+    </ul></div>
+              <div><h2>Resolved Failures</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>MfaUserFlow.spec.ts &gt; User-side MFA - Local User &gt; Backup codes &gt; Login using valid backup code</strong>
+          <span>failed</span>
+        </li>
+    </ul></div>
+              <div><h2>Recurring Failures</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>MFA backup codes generated in incomplete format are rejected during login recovery</strong>
+          <span>failed</span>
+        </li>
+    </ul></div>
+              <div><h2>Critical Failures</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>MFA backup codes generated in incomplete format are rejected during login recovery</strong>
+          <span>Critical</span>
+        </li>
+        <li>
+          <strong>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</strong>
+          <span>Critical</span>
+        </li>
+    </ul></div>
+              <div><h2>Failure Categories</h2>
+    <ul class="compare-list">
+      
+        <li>
+          <strong>Authentication</strong>
+          <span>2 failures</span>
+        </li>
+    </ul></div>
+              <div><h2>Severity Changes</h2><div class="empty-note">No severity changes</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Release Intelligence</h2>
+            <p>Current build compared with previous build: quality stable, failures regressed, duration stable.</p>
+            <div class="compare-grid">
+              <div class="compare-card"><span>GO</span><strong>0</strong><small>Recorded GO decisions</small></div>
+              <div class="compare-card"><span>Conditional GO</span><strong>6</strong><small>Recorded conditional decisions</small></div>
+              <div class="compare-card"><span>No GO</span><strong>2</strong><small>Recorded blocked decisions</small></div>
+              <div class="compare-card"><span>Reason Changes</span><strong>5</strong><small>New reason: Full regression baseline passed from restored execution history. | New reason: 2 confirmed MFA product defect(s) require resolution before approval. | Resolved reason: Release thresholds were not met | Resolved reason: Failures or missing critical data require review | Resolved reason: Resolve blockers before release approval</small></div>
+            </div>
+            <br>
+            <ul class="compare-list"><li><strong>7/1/2026, 10:53:02 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 11:32:27 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 11:41:00 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:40:53 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:48:31 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:55:31 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 6:15:53 PM</strong><span>NO_GO</span></li><li><strong>7/1/2026, 6:17:50 PM</strong><span>NO_GO</span></li></ul>
+          </div>
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Engineering Insights</h2>
+          <p>AIR uses History Engine comparison data to highlight where the team should focus next.</p>
+          
+    <ul class="compare-list">
+      
+        <li>
+          <strong>Top Improvements</strong>
+          <span>No module improvements detected</span>
+        </li>
+        <li>
+          <strong>Top Regressions</strong>
+          <span>No module regressions detected</span>
+        </li>
+        <li>
+          <strong>Most Improved Module</strong>
+          <span>No improvement trend yet</span>
+        </li>
+        <li>
+          <strong>Highest Risk Module</strong>
+          <span>MFA (High)</span>
+        </li>
+        <li>
+          <strong>Fastest Growing Failure Area</strong>
+          <span>1 new failure(s)</span>
+        </li>
+        <li>
+          <strong>Most Stable Journey</strong>
+          <span>No stable journey trend yet</span>
+        </li>
+        <li>
+          <strong>Longest Running Test Area</strong>
+          <span>Accessibility (0s)</span>
+        </li>
+    </ul>
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Historical Timeline</h2>
+          <table>
+            <thead><tr><th>Build</th><th>Version</th><th>Date</th><th>Quality</th><th>Release</th><th>Duration</th><th>Trend</th></tr></thead>
+            <tbody>
+    <tr>
+      <td>Build 1</td>
+      <td>No Data</td>
+      <td>7/1/2026, 10:53:02 AM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Baseline</td>
+    </tr>
+    <tr>
+      <td>Build 2</td>
+      <td>No Data</td>
+      <td>7/1/2026, 11:32:27 AM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 3</td>
+      <td>No Data</td>
+      <td>7/1/2026, 11:41:00 AM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 4</td>
+      <td>No Data</td>
+      <td>7/1/2026, 3:40:53 PM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 5</td>
+      <td>No Data</td>
+      <td>7/1/2026, 3:48:31 PM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 6</td>
+      <td>No Data</td>
+      <td>7/1/2026, 3:55:31 PM</td>
+      <td>100%</td>
+      <td>CONDITIONAL_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 7</td>
+      <td>No Data</td>
+      <td>7/1/2026, 6:15:53 PM</td>
+      <td>0%</td>
+      <td>NO_GO</td>
+      <td>39s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 8</td>
+      <td>No Data</td>
+      <td>7/1/2026, 6:17:50 PM</td>
+      <td>0%</td>
+      <td>NO_GO</td>
+      <td>39s</td>
+      <td>Recorded</td>
+    </tr></tbody>
+          </table>
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Build Comparison Detail</h2>
+          <div class="compare-grid">
+            <div class="compare-card"><span>Current Release</span><strong>NO_GO</strong><small>AIR recommends NO GO because the restored 69-test regression passed, but 2 confirmed MFA product defect(s) remain open.</small></div>
+            <div class="compare-card"><span>Previous Release</span><strong>NO_GO</strong><small>Previous build decision</small></div>
+            <div class="compare-card"><span>Reason Changes</span><strong>5</strong><small>New reason: Full regression baseline passed from restored execution history. | New reason: 2 confirmed MFA product defect(s) require resolution before approval. | Resolved reason: Release thresholds were not met | Resolved reason: Failures or missing critical data require review | Resolved reason: Resolve blockers before release approval</small></div>
+            <div class="compare-card"><span>Build Comparison</span><strong>Compared</strong><small>Current build compared with previous build: quality stable, failures regressed, duration stable.</small></div>
+          </div>
+        </div>
+      
+      
+      <div class="page-footer">
+        <span>Generated by AIR Platform</span>
+        <span>Automation Intelligence Platform</span>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 9 of 10</strong>
       </div>
     </section>
 
     <section class="page" id="roadmap">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 09</div>
+          <div class="eyebrow">PAGE 10</div>
           <h1>AIR Product Roadmap</h1>
           <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
         </div>
         <span class="pill demo">Platform Evolution</span>
       </div>
       <div class="roadmap-summary">
-        <div><span>Completed</span><strong>11</strong></div>
-        <div><span>In Progress</span><strong>10</strong></div>
-        <div><span>Planned / Future</span><strong>48</strong></div>
+        <div><span>Completed</span><strong>27</strong></div>
+        <div><span>In Progress</span><strong>7</strong></div>
+        <div><span>Planned / Future</span><strong>41</strong></div>
         <div><span>Vision</span><strong>Engineering Intelligence</strong></div>
       </div>
       <div class="panel">
         <h2>Platform Evolution Progress</h2>
         <div class="roadmap-progress"><span></span></div>
-        <p>AIR v1.0 is complete. AIR v1.1 is focused on AIR Core, parser architecture, normalized data, evidence correlation, and engines that make the platform reusable beyond Playwright.</p>
+        <p>AIR v1.0 and AIR v1.1 are complete. AIR v1.2 is now focused on historical analytics, build comparison, and trend intelligence.</p>
       </div>
       <br>
       <div class="roadmap-grid">
@@ -629,40 +1509,40 @@
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.0</span>
-              <h2>Executive Intelligence</h2>
+              <h2>Executive Quality Dashboard</h2>
             </div>
             <strong>Completed</strong>
           </div>
           <p>Turn automation execution into executive release visibility.</p>
           <ul><li>Executive Dashboard</li><li>Release Dashboard</li><li>Business Journeys</li><li>Product Health</li><li>Module Details</li><li>Failed Tests</li><li>Evidence</li><li>AI Insights</li><li>PDF Export</li><li>Search</li><li>Responsive UI</li></ul>
         </article>
-        <article class="roadmap-card amber">
+        <article class="roadmap-card green">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.1</span>
-              <h2>AIR Core</h2>
+              <h2>Framework-independent AIR Core</h2>
             </div>
-            <strong>In Progress</strong>
+            <strong>Completed</strong>
           </div>
-          <p>Build the intelligence engine behind AIR.</p>
-          <ul><li>AIR Core Architecture</li><li>Playwright Parser</li><li>air-results.json</li><li>Quality Engine</li><li>Release Engine</li><li>Journey Engine</li><li>Module Engine</li><li>Evidence Engine</li><li>Search Engine</li><li>History Engine</li></ul>
+          <p>Build the reusable intelligence engine behind AIR.</p>
+          <ul><li>Parser Service</li><li>Schema Validation</li><li>AIR Validator</li><li>Execution Summary Engine</li><li>Failure Engine</li><li>Module Engine</li><li>Journey Engine</li><li>Evidence Engine</li><li>Quality Engine</li><li>Release Engine</li><li>Recommendation Engine</li><li>Search Engine</li><li>History Engine</li><li>Execution Context Engine</li><li>Discovery Engine</li><li>Engine Orchestrator</li></ul>
         </article>
         <article class="roadmap-card amber">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.2</span>
-              <h2>Quality Analytics</h2>
+              <h2>Historical Analytics &amp; Build Comparison</h2>
             </div>
-            <strong>Planned</strong>
+            <strong>In Progress</strong>
           </div>
-          <p>Help teams understand quality trends across executions.</p>
+          <p>Help teams understand what changed between executions.</p>
           <ul><li>Historical Dashboard</li><li>Build Comparison</li><li>Module Trends</li><li>Pass Rate Trends</li><li>Duration Trends</li><li>Coverage Trends</li><li>Quality Trends</li></ul>
         </article>
         <article class="roadmap-card amber">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.3</span>
-              <h2>AI Intelligence</h2>
+              <h2>AI Investigation &amp; Root Cause Assistant</h2>
             </div>
             <strong>Planned</strong>
           </div>
@@ -673,20 +1553,20 @@
           <div class="roadmap-card-head">
             <div>
               <span>AIR v2.0</span>
-              <h2>Integrations</h2>
+              <h2>Engineering Intelligence Platform</h2>
             </div>
             <strong>Planned</strong>
           </div>
           <p>Connect AIR to engineering tools.</p>
           <ul><li>GitHub</li><li>Azure DevOps</li><li>Jira</li><li>Slack</li><li>Microsoft Teams</li><li>Email Reports</li><li>Webhooks</li></ul>
         </article>
-        <article class="roadmap-card blue">
+        <article class="roadmap-card amber">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v2.5</span>
-              <h2>Multi Framework</h2>
+              <h2>Multi-framework Support</h2>
             </div>
-            <strong>Future</strong>
+            <strong>Planned</strong>
           </div>
           <p>Support any automation framework.</p>
           <ul><li>Playwright</li><li>Cypress</li><li>Selenium</li><li>Robot Framework</li><li>Appium</li><li>Postman</li><li>JMeter</li></ul>
@@ -695,7 +1575,7 @@
           <div class="roadmap-card-head">
             <div>
               <span>AIR v3.0</span>
-              <h2>Validation Plugins</h2>
+              <h2>Unified Quality Platform</h2>
             </div>
             <strong>Future</strong>
           </div>
@@ -706,7 +1586,7 @@
           <div class="roadmap-card-head">
             <div>
               <span>AIR v4.0</span>
-              <h2>Enterprise Platform</h2>
+              <h2>Enterprise Intelligence Platform</h2>
             </div>
             <strong>Future</strong>
           </div>
@@ -717,7 +1597,7 @@
           <div class="roadmap-card-head">
             <div>
               <span>AIR v5.0</span>
-              <h2>Engineering Intelligence</h2>
+              <h2>Autonomous Engineering Intelligence</h2>
             </div>
             <strong>Vision</strong>
           </div>
@@ -726,53 +1606,53 @@
         </article></div>
       <br>
       <div class="panel">
-        <h2>Why This Matters</h2>
+        <h2>AIR Product Evolution Roadmap</h2>
         <table>
           <thead><tr><th>Version</th><th>Goal</th><th>Status</th></tr></thead>
           <tbody>
       <tr>
         <td>AIR v1.0</td>
-        <td>Executive visibility into software quality</td>
+        <td>Executive Quality Dashboard</td>
         <td><span class="badge good">Completed</span></td>
       </tr>
       <tr>
         <td>AIR v1.1</td>
-        <td>Create a reusable AIR Core architecture</td>
-        <td><span class="badge warn">In Progress</span></td>
+        <td>Framework-independent AIR Core</td>
+        <td><span class="badge good">Completed</span></td>
       </tr>
       <tr>
         <td>AIR v1.2</td>
-        <td>Track quality trends across executions</td>
-        <td><span class="badge warn">Planned</span></td>
+        <td>Historical Analytics &amp; Build Comparison</td>
+        <td><span class="badge warn">In Progress</span></td>
       </tr>
       <tr>
         <td>AIR v1.3</td>
-        <td>Help teams investigate issues faster</td>
+        <td>AI Investigation &amp; Root Cause Assistant</td>
         <td><span class="badge warn">Planned</span></td>
       </tr>
       <tr>
         <td>AIR v2.0</td>
-        <td>Integrate with the engineering ecosystem</td>
+        <td>Engineering Intelligence Platform</td>
         <td><span class="badge warn">Planned</span></td>
       </tr>
       <tr>
         <td>AIR v2.5</td>
-        <td>Support multiple execution sources</td>
-        <td><span class="badge good">Future</span></td>
+        <td>Multi-framework Support</td>
+        <td><span class="badge warn">Planned</span></td>
       </tr>
       <tr>
         <td>AIR v3.0</td>
-        <td>Unify all quality validations</td>
+        <td>Unified Quality Platform</td>
         <td><span class="badge good">Future</span></td>
       </tr>
       <tr>
         <td>AIR v4.0</td>
-        <td>Scale AIR for enterprise organizations</td>
+        <td>Enterprise Intelligence Platform</td>
         <td><span class="badge good">Future</span></td>
       </tr>
       <tr>
         <td>AIR v5.0</td>
-        <td>Transform AIR into an Engineering Intelligence Platform</td>
+        <td>Autonomous Engineering Intelligence</td>
         <td><span class="badge good">Vision</span></td>
       </tr></tbody>
         </table>
@@ -781,13 +1661,14 @@
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Platform</span>
-        <span>Version 1.0</span>
-        <span>6/30/2026, 11:58:04 PM</span>
-        <strong>Page 9 of 9</strong>
+        <span>AIR Platform v1.1</span>
+        <span>AIR Core Complete</span>
+        <span>7/1/2026, 6:40:55 PM</span>
+        <strong>Page 10 of 10</strong>
       </div>
     </section>
     <footer class="footer">
-      <span>Generated by AIR Platform &bull; Automation Intelligence Platform &bull; Version 1.0</span>
+      <span>Generated by AIR Platform &bull; Automation Intelligence Platform &bull; AIR Platform v1.1 &bull; AIR Core Complete</span>
       <strong>OOLTool / PUAT</strong>
     </footer>
   </main>
@@ -804,7 +1685,7 @@
     <div class="drawer-body">
       <div class="drawer-metrics">
         <div class="drawer-metric"><span>Health Score</span><strong id="drawerHealth">0%</strong></div>
-        <div class="drawer-metric"><span>Coverage</span><strong id="drawerCoverage">0%</strong></div>
+        <div class="drawer-metric"><span>Coverage <i class="metric-help" title="Coverage reflects executed checks mapped to the selected area.">?</i></span><strong id="drawerCoverage">0%</strong></div>
         <div class="drawer-metric"><span>Tests</span><strong id="drawerTests">0</strong></div>
         <div class="drawer-metric"><span>Passed / Failed</span><strong id="drawerPassFail">0 / 0</strong></div>
       </div>
@@ -834,7 +1715,7 @@
           <div class="drawer-metric"><span>API Validation</span><strong id="drawerApi">Planned</strong></div>
           <div class="drawer-metric"><span>DB Validation</span><strong id="drawerDb">Planned</strong></div>
           <div class="drawer-metric"><span>Performance</span><strong id="drawerPerf">Planned</strong></div>
-          <div class="drawer-metric"><span>Risk Level</span><strong id="drawerRisk">Low</strong></div>
+          <div class="drawer-metric"><span>Risk Level <i class="metric-help" title="Release risk from failures, warnings, skipped checks, and configured thresholds.">?</i></span><strong id="drawerRisk">Low</strong></div>
         </div>
       </div>
       <div class="drawer-section insight">
@@ -858,29 +1739,29 @@
       <div>
         <div class="eyebrow">AIR RECOMMENDATIONS</div>
         <h2>Execution Recommendation</h2>
-        <p class="ai-decision-summary">AIR recommends CONDITIONAL GO because the main journeys are mostly stable, but warning signals still need evidence review and targeted rerun before final approval.</p>
+        <p class="ai-decision-summary">AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.</p>
       </div>
       <button class="modal-close" type="button" data-close-panels aria-label="Close recommendations">×</button>
     </div>
     <div class="recommendation-grid">
       <div class="recommendation-card">
         <span>Priority 1</span>
-        <strong>Increase API validation</strong>
-        <p>Add API-level checks for billing, authentication, signup, and password flows so AIR can separate UI issues from backend failures.</p>
+        <strong>Review failed tests</strong>
+        <p>Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.</p>
       </div>
       <div class="recommendation-card">
         <span>Priority 2</span>
-        <strong>Increase DB validation</strong>
-        <p>Add database validation for account status, subscription state, reset tokens, login lockout, and payment records.</p>
+        <strong>Stabilize impacted flows</strong>
+        <p>Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.</p>
       </div>
       <div class="recommendation-card">
         <span>Priority 3</span>
-        <strong>Expand MFA and security coverage</strong>
-        <p>Add negative MFA, session expiry, protected-route, unlock-account, and reset-password expiry scenarios.</p>
+        <strong>Strengthen evidence links</strong>
+        <p>Attach screenshot, video, trace, and environment context to every release-impacting failure.</p>
       </div></div>
     <br>
     <div class="modal-grid">
-      <div class="panel"><h2>Release Risk</h2><div class="risk-banner amber"><div><span>Estimated Risk</span><strong>MEDIUM</strong></div><div class="risk-dots"><i></i><i></i><i></i></div></div></div>
+      <div class="panel"><h2>Release Risk</h2><div class="risk-banner red"><div><span>Estimated Risk</span><strong>HIGH</strong></div><div class="risk-dots"><i></i><i></i><i></i></div></div></div>
       <div class="panel"><h2>Action Checklist</h2><ul class="action-list"><li>Do not approve release until warning or blocker evidence is reviewed.</li><li>Link every failed or warning signal to screenshot, video, trace, or raw Playwright evidence.</li><li>Use module health cards to decide which QA area should receive the next automation investment.</li></ul></div>
     </div>
   </section>
@@ -888,20 +1769,20 @@
     <div class="modal-header">
       <div>
         <div class="eyebrow">RELEASE ANALYSIS</div>
-        <h2>Why <span class="release-status-badge compact warn">CONDITIONAL GO</span>?</h2>
-        <p class="ai-decision-summary">AIR recommends CONDITIONAL GO because the main journeys are mostly stable, but warning signals still need evidence review and targeted rerun before final approval.</p>
+        <h2>Why <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>?</h2>
+        <p class="ai-decision-summary">AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.</p>
       </div>
       <button class="modal-close" type="button" data-close-panels aria-label="Close release analysis">×</button>
     </div>
     <div class="ai-metric-grid">
-      <div class="ai-metric"><span>Business Health</span><strong>100%</strong></div>
-      <div class="ai-metric"><span>Quality Score</span><strong>100%</strong></div>
-      <div class="ai-metric"><span>Critical Failures</span><strong>0</strong></div>
-      <div class="ai-metric"><span>Blockers</span><strong>0</strong></div>
+      <div class="ai-metric"><span>Business Health <i class="metric-help" title="Business health summarizes configured journey and module stability.">?</i></span><strong>100%</strong></div>
+      <div class="ai-metric"><span>Quality Score <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
+      <div class="ai-metric"><span>Critical Failures</span><strong>2</strong></div>
+      <div class="ai-metric"><span>Blockers</span><strong>2</strong></div>
     </div>
     <br>
     <div class="grid two">
-      <div class="panel"><h2>Reason</h2><ul class="ai-reasons"><li>Critical journeys are not blocked</li><li>Warnings require review</li><li>Release can proceed after evidence review</li></ul></div>
+      <div class="panel"><h2>Reason</h2><ul class="ai-reasons"><li>Full regression baseline passed from restored execution history.</li><li>2 confirmed MFA product defect(s) require resolution before approval.</li></ul></div>
       <div class="panel"><h2>Recommendation</h2><p>Proceed to release when this decision is GO. Use conditional approval only after evidence review when warnings are present.</p></div>
     </div>
   </section>
@@ -912,14 +1793,14 @@
         <h2>How AIR Calculated 100%</h2>
         <p class="ai-decision-summary">AIR combines execution stability, business flow health, release risk, and current coverage signals. Future AIR Core engines will make this formula fully configurable.</p>
       </div>
-      <button class="modal-close" type="button" data-close-panels aria-label="Close quality score explainer">Ã—</button>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close quality score explainer">&times;</button>
     </div>
     <table>
       <thead><tr><th>Factor</th><th>Signal</th><th>Explanation</th></tr></thead>
       <tbody>
       <tr>
         <td>Pass Rate</td>
-        <td><span class="badge good">100%</span></td>
+        <td><span class="badge good">97%</span></td>
         <td>Execution pass percentage from the current AIR model.</td>
       </tr>
       <tr>
@@ -939,13 +1820,13 @@
       </tr>
       <tr>
         <td>Risk</td>
-        <td><span class="badge good">Low</span></td>
+        <td><span class="badge good">High</span></td>
         <td>Release risk from failures, warnings, and configured thresholds.</td>
       </tr>
       <tr>
         <td>Execution Stability</td>
-        <td><span class="badge good">Stable</span></td>
-        <td>No failed tests detected in the latest execution.</td>
+        <td><span class="badge good">Review</span></td>
+        <td>Failures require investigation before approval.</td>
       </tr></tbody>
     </table>
   </section>
@@ -956,14 +1837,14 @@
         <h2 id="evidencePreviewTitle">Evidence</h2>
         <p class="ai-decision-summary" id="evidencePreviewMeta">Evidence metadata will appear here.</p>
       </div>
-      <button class="modal-close" type="button" data-close-panels aria-label="Close evidence preview">Ã—</button>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close evidence preview">&times;</button>
     </div>
     <div id="evidencePreviewBody" class="evidence-preview-body"></div>
   </section>
 </div>
 <script>
-  const moduleDrawerData = [{"name":"Accessibility","icon":"A11Y","health":100,"status":"Healthy","risk":"Low","total":6,"passed":6,"failed":0,"coverage":100,"scenarios":["Keyboard navigation","Focus order","Accessible validation states"],"focus":"Keyboard navigation, focus order, and accessible validation behavior.","relatedTests":[{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form exposes accessible email and password fields","status":"passed","duration":18057,"error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form supports Enter key submission without authenticating invalid data","status":"passed","duration":4052,"error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Forgot password form supports Back to login navigation","status":"passed","duration":5911,"error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page keeps form visible after browser refresh","status":"passed","duration":11953,"error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page exposes accessible primary actions","status":"passed","duration":7229,"error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"SessionSecurity.spec.ts \u003e Session Security \u003e Logout prevents browser back and direct dashboard access","status":"passed","duration":13264,"error":"","file":"SessionSecurity.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-accessibility"},{"name":"Authentication","icon":"AUTH","health":100,"status":"Healthy","risk":"Low","total":25,"passed":25,"failed":0,"coverage":100,"scenarios":["Login","Logout","Forgot Password","JWT","Session Timeout"],"focus":"Login, logout, forgot password, JWT/session behavior, and locked-account recovery.","relatedTests":[{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty required fields","status":"passed","duration":2677,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty email only","status":"passed","duration":2492,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty password only","status":"passed","duration":2341,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks invalid email format","status":"passed","duration":2477,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects SQL injection input","status":"passed","duration":6779,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects XSS injection input","status":"passed","duration":2523,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects very long email input","status":"passed","duration":2052,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard redirects unauthenticated user to login","status":"passed","duration":2205,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/profile redirects unauthenticated user to login","status":"passed","duration":2288,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/billing redirects unauthenticated user to login","status":"passed","duration":1901,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /onboarding redirects unauthenticated user to login","status":"passed","duration":2791,"error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/settings redirects unauthenticated user to login","status":"passed","duration":1964,"error":"","file":"AuthNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-authentication"},{"name":"Billing","icon":"BILL","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Billing overview","Plans tab","Transaction history","Invoice page","PDF invoice"],"focus":"Billing overview, plans, transaction history, invoice access, and PDF availability.","relatedTests":[{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Billing page remains available after refresh","status":"passed","duration":22437,"error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Plans tab shows expected Income Builder plan","status":"passed","duration":12030,"error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Transactions tab shows paid transaction status","status":"passed","duration":12202,"error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Invoice link opens invoice page with paid status","status":"passed","duration":17901,"error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e PDF link is available and points to a non-empty URL","status":"passed","duration":12833,"error":"","file":"BillingDeep.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Add API validation next","dashboardTarget":"#module-dashboard-billing"},{"name":"Password","icon":"PASS","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Reset password","Password mismatch","Wrong current password","Weak password validation"],"focus":"Password reset, mismatch handling, current-password validation, and policy enforcement.","relatedTests":[{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Accepts a valid password that satisfies configured policy","status":"passed","duration":5,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects password shorter than configured minimum length","status":"passed","duration":10,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects banned passwords from configured policy","status":"passed","duration":10,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Banned password comparison is case-insensitive","status":"passed","duration":3,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Uppercase rule follows configuration","status":"passed","duration":3,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Lowercase rule follows configuration","status":"passed","duration":5,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Digit rule follows configuration","status":"passed","duration":5,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Symbol rule follows configuration","status":"passed","duration":3,"error":"","file":"PasswordPolicy.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile password change button stays safe with empty password fields","status":"passed","duration":11751,"error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfilePasswordMismatch.spec.ts \u003e Password Mismatch Validation","status":"passed","duration":11648,"error":"","file":"ProfilePasswordMismatch.spec.ts"},{"title":"ProfileWrongCurrentPassword.spec.ts \u003e Wrong Current Password Validation","status":"passed","duration":13190,"error":"","file":"ProfileWrongCurrentPassword.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled without password and confirmation","status":"passed","duration":7494,"error":"","file":"SignupNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Add reset-password expiry checks","dashboardTarget":"#module-dashboard-password"},{"name":"Profile","icon":"PROF","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Profile page access","Profile data loads","Email read-only validation"],"focus":"Profile page access, profile data loading, and read-only email protection.","relatedTests":[{"title":"Profile.spec.ts \u003e Profile Update","status":"passed","duration":12305,"error":"","file":"Profile.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile email field cannot be edited","status":"passed","duration":11255,"error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile first name empty draft is not persisted without saving","status":"passed","duration":15318,"error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile last name empty draft is not persisted without saving","status":"passed","duration":14592,"error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile page keeps data after refresh","status":"passed","duration":14980,"error":"","file":"ProfileNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-profile"},{"name":"Signup","icon":"SIGN","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Required fields","Email validation","Password policy","Mobile number","OTP validation"],"focus":"Registration validation, mobile number handling, OTP flow, and password policy.","relatedTests":[{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks empty required fields","status":"passed","duration":7883,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks invalid email format","status":"passed","duration":7738,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing domain email input","status":"passed","duration":7657,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing @ email input","status":"passed","duration":9398,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks SQL injection email input","status":"passed","duration":7395,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks XSS injection email input","status":"passed","duration":7487,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup email trims leading and trailing spaces","status":"passed","duration":8728,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled without mobile number","status":"passed","duration":7965,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled for short mobile number","status":"passed","duration":8381,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input strips letters and keeps OTP disabled","status":"passed","duration":8168,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input normalizes formatted US number","status":"passed","duration":8207,"error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input limits extra digits to ten digits","status":"passed","duration":7778,"error":"","file":"SignupNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-signup"}];
-  const airSearchIndex = [{"id":"release-decision","type":"release","title":"Release Decision: CONDITIONAL GO","target":"#executive","status":"CONDITIONAL GO","module":"","priority":"MEDIUM","category":"","keywords":["release","decision","go","risk","confidence"],"text":"release Release Decision: CONDITIONAL GO CONDITIONAL GO MEDIUM release decision go risk confidence AIR recommends CONDITIONAL GO because release blockers were not detected, but 3 warning signal(s) or partial execution areas require review before approval. Review warnings and attached evidence before approval. [\"Review warnings and attached evidence before approval.\"] [\"Critical journeys are not blocked\",\"Warnings require review\",\"Release can proceed after evidence review\"] [\"Journey status is Not Executed.\",\"Journey status is Not Executed.\",\"Execution contains skipped, interrupted, not-executed, or no-data release areas.\"] []"},{"id":"quality-explanation","type":"quality","title":"Quality Score: 100","target":"#executive","status":"Excellent","module":"","priority":"100% confidence","category":"","keywords":["quality","score","confidence","grade","explanation"],"text":"quality Quality Score: 100 Excellent 100% confidence quality score confidence grade explanation [\"Quality score is 100 (Excellent).\",\"Pass rate is 100%.\",\"Business health is 100%.\",\"Module health is 100%.\",\"Journey coverage is 75%.\",\"Evidence readiness is 100%.\"] {\"passRate\":100,\"businessHealth\":100,\"moduleHealth\":100,\"journeyCoverage\":75,\"evidenceReadiness\":100,\"failureSeverity\":100} {\"passRate\":0.65,\"businessHealth\":0.35,\"moduleHealth\":0,\"journeyCoverage\":0,\"evidenceReadiness\":0,\"failureSeverity\":0}"},{"id":"module-accessibility","type":"module","title":"Accessibility","target":"#module-dashboard-accessibility","status":"Healthy","module":"Accessibility","priority":"Low","category":"","keywords":["module","health","coverage","Accessibility"],"text":"module Accessibility Healthy Accessibility Low module health coverage Accessibility 6 tests 6 passed 0 failed 100% health Continue monitoring."},{"id":"module-authentication","type":"module","title":"Authentication","target":"#module-dashboard-authentication","status":"Healthy","module":"Authentication","priority":"Low","category":"","keywords":["module","health","coverage","Authentication"],"text":"module Authentication Healthy Authentication Low module health coverage Authentication 25 tests 25 passed 0 failed 100% health Continue monitoring."},{"id":"module-billing","type":"module","title":"Billing","target":"#module-dashboard-billing","status":"Healthy","module":"Billing","priority":"Low","category":"","keywords":["module","health","coverage","Billing"],"text":"module Billing Healthy Billing Low module health coverage Billing 5 tests 5 passed 0 failed 100% health Add API validation next."},{"id":"module-password","type":"module","title":"Password","target":"#module-dashboard-password","status":"Healthy","module":"Password","priority":"Low","category":"","keywords":["module","health","coverage","Password"],"text":"module Password Healthy Password Low module health coverage Password 14 tests 14 passed 0 failed 100% health Add reset-password expiry checks."},{"id":"module-profile","type":"module","title":"Profile","target":"#module-dashboard-profile","status":"Healthy","module":"Profile","priority":"Low","category":"","keywords":["module","health","coverage","Profile"],"text":"module Profile Healthy Profile Low module health coverage Profile 5 tests 5 passed 0 failed 100% health Continue monitoring."},{"id":"module-signup","type":"module","title":"Signup","target":"#module-dashboard-signup","status":"Healthy","module":"Signup","priority":"Low","category":"","keywords":["module","health","coverage","Signup"],"text":"module Signup Healthy Signup Low module health coverage Signup 14 tests 14 passed 0 failed 100% health Continue monitoring."},{"id":"journey-registration","type":"journey","title":"Registration","target":"#journey","status":"Healthy","module":"","priority":"critical","category":"","keywords":["business journey","flow","Registration"],"text":"journey Registration Healthy critical business journey flow Registration 14 tests 14 passed 0 failed 100% health Low Continue monitoring this journey. [\"Signup\"] []"},{"id":"journey-authentication","type":"journey","title":"Authentication","target":"#journey","status":"Healthy","module":"","priority":"critical","category":"","keywords":["business journey","flow","Authentication"],"text":"journey Authentication Healthy critical business journey flow Authentication 25 tests 25 passed 0 failed 100% health Low Continue monitoring this journey. [\"Authentication\"] []"},{"id":"journey-profile-setup","type":"journey","title":"Profile Setup","target":"#journey","status":"Healthy","module":"","priority":"standard","category":"","keywords":["business journey","flow","Profile Setup"],"text":"journey Profile Setup Healthy standard business journey flow Profile Setup 5 tests 5 passed 0 failed 100% health Low Continue monitoring this journey. [\"Profile\"] []"},{"id":"journey-risk-profile","type":"journey","title":"Risk Profile","target":"#journey","status":"Not Executed","module":"","priority":"critical","category":"","keywords":["business journey","flow","Risk Profile"],"text":"journey Risk Profile Not Executed critical business journey flow Risk Profile 0 tests 0 passed 0 failed 0% health No Data Add or run coverage for this business journey before using it for release confidence. [\"Onboarding\"] []"},{"id":"journey-compliance","type":"journey","title":"Compliance","target":"#journey","status":"Not Executed","module":"","priority":"critical","category":"","keywords":["business journey","flow","Compliance"],"text":"journey Compliance Not Executed critical business journey flow Compliance 0 tests 0 passed 0 failed 0% health No Data Add or run coverage for this business journey before using it for release confidence. [\"Onboarding\"] []"},{"id":"journey-subscription","type":"journey","title":"Subscription","target":"#journey","status":"Healthy","module":"","priority":"critical","category":"","keywords":["business journey","flow","Subscription"],"text":"journey Subscription Healthy critical business journey flow Subscription 5 tests 5 passed 0 failed 100% health Low Continue monitoring this journey. [\"Billing\"] []"},{"id":"journey-payment","type":"journey","title":"Payment","target":"#journey","status":"Healthy","module":"","priority":"critical","category":"","keywords":["business journey","flow","Payment"],"text":"journey Payment Healthy critical business journey flow Payment 5 tests 5 passed 0 failed 100% health Low Continue monitoring this journey. [\"Billing\"] []"},{"id":"journey-dashboard","type":"journey","title":"Dashboard","target":"#journey","status":"Healthy","module":"","priority":"critical","category":"","keywords":["business journey","flow","Dashboard"],"text":"journey Dashboard Healthy critical business journey flow Dashboard 25 tests 25 passed 0 failed 100% health Low Continue monitoring this journey. [\"Authentication\"] []"},{"id":"test-accessibilitybrowser-spec-ts-accessibility-and-browser-behavior-login-form-exposes-accessible-email-and-password-fields","type":"test","title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form exposes accessible email and password fields","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form exposes accessible email and password fields passed Accessibility test passed Accessibility AccessibilityBrowser.spec.ts chromium"},{"id":"test-accessibilitybrowser-spec-ts-accessibility-and-browser-behavior-login-form-supports-enter-key-submission-without-authenticating-invalid-data","type":"test","title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form supports Enter key submission without authenticating invalid data","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form supports Enter key submission without authenticating invalid data passed Accessibility test passed Accessibility AccessibilityBrowser.spec.ts chromium"},{"id":"test-accessibilitybrowser-spec-ts-accessibility-and-browser-behavior-forgot-password-form-supports-back-to-login-navigation","type":"test","title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Forgot password form supports Back to login navigation","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Forgot password form supports Back to login navigation passed Accessibility test passed Accessibility AccessibilityBrowser.spec.ts chromium"},{"id":"test-accessibilitybrowser-spec-ts-accessibility-and-browser-behavior-register-page-keeps-form-visible-after-browser-refresh","type":"test","title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page keeps form visible after browser refresh","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page keeps form visible after browser refresh passed Accessibility test passed Accessibility AccessibilityBrowser.spec.ts chromium"},{"id":"test-accessibilitybrowser-spec-ts-accessibility-and-browser-behavior-register-page-exposes-accessible-primary-actions","type":"test","title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page exposes accessible primary actions","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page exposes accessible primary actions passed Accessibility test passed Accessibility AccessibilityBrowser.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-blocks-empty-required-fields","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty required fields","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty required fields passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-blocks-empty-email-only","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty email only","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty email only passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-blocks-empty-password-only","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty password only","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty password only passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-blocks-invalid-email-format","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks invalid email format","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks invalid email format passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-rejects-sql-injection-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects SQL injection input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects SQL injection input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-rejects-xss-injection-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects XSS injection input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects XSS injection input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-login-form-rejects-very-long-email-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects very long email input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects very long email input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-profile-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/profile redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/profile redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-billing-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/billing redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/billing redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-onboarding-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /onboarding redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /onboarding redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-settings-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/settings redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/settings redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-security-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/security redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/security redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-subscription-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/subscription redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/subscription redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-notifications-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/notifications redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/notifications redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-protected-route-dashboard-activity-redirects-unauthenticated-user-to-login","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/activity redirects unauthenticated user to login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/activity redirects unauthenticated user to login passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-forgot-password-form-blocks-empty-email","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password form blocks empty email","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password form blocks empty email passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-forgot-password-form-blocks-invalid-email-format","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password form blocks invalid email format","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password form blocks invalid email format passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-forgot-password-rejects-sql-injection-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects SQL injection input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects SQL injection input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-forgot-password-rejects-xss-injection-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects XSS injection input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects XSS injection input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-authnegative-spec-ts-auth-negative-scenarios-forgot-password-rejects-very-long-email-input","type":"test","title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects very long email input","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Forgot password rejects very long email input passed Authentication test passed Authentication AuthNegative.spec.ts chromium"},{"id":"test-billingdeep-spec-ts-billing-deep-validation-billing-page-remains-available-after-refresh","type":"test","title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Billing page remains available after refresh","target":"#module-dashboard-billing","status":"passed","module":"Billing","priority":"","category":"","keywords":["test","passed","Billing"],"text":"test BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Billing page remains available after refresh passed Billing test passed Billing BillingDeep.spec.ts chromium"},{"id":"test-billingdeep-spec-ts-billing-deep-validation-plans-tab-shows-expected-income-builder-plan","type":"test","title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Plans tab shows expected Income Builder plan","target":"#module-dashboard-billing","status":"passed","module":"Billing","priority":"","category":"","keywords":["test","passed","Billing"],"text":"test BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Plans tab shows expected Income Builder plan passed Billing test passed Billing BillingDeep.spec.ts chromium"},{"id":"test-billingdeep-spec-ts-billing-deep-validation-transactions-tab-shows-paid-transaction-status","type":"test","title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Transactions tab shows paid transaction status","target":"#module-dashboard-billing","status":"passed","module":"Billing","priority":"","category":"","keywords":["test","passed","Billing"],"text":"test BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Transactions tab shows paid transaction status passed Billing test passed Billing BillingDeep.spec.ts chromium"},{"id":"test-billingdeep-spec-ts-billing-deep-validation-invoice-link-opens-invoice-page-with-paid-status","type":"test","title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Invoice link opens invoice page with paid status","target":"#module-dashboard-billing","status":"passed","module":"Billing","priority":"","category":"","keywords":["test","passed","Billing"],"text":"test BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Invoice link opens invoice page with paid status passed Billing test passed Billing BillingDeep.spec.ts chromium"},{"id":"test-billingdeep-spec-ts-billing-deep-validation-pdf-link-is-available-and-points-to-a-non-empty-url","type":"test","title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e PDF link is available and points to a non-empty URL","target":"#module-dashboard-billing","status":"passed","module":"Billing","priority":"","category":"","keywords":["test","passed","Billing"],"text":"test BillingDeep.spec.ts \u003e Billing Deep Validation \u003e PDF link is available and points to a non-empty URL passed Billing test passed Billing BillingDeep.spec.ts chromium"},{"id":"test-onboarding-spec-ts-ooltool-onboarding-flow-register-verify-email-login-risk-compliance","type":"test","title":"onboarding.spec.ts \u003e OOLTool Onboarding Flow \u003e Register -\u003e Verify Email -\u003e Login -\u003e Risk -\u003e Compliance","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test onboarding.spec.ts \u003e OOLTool Onboarding Flow \u003e Register -\u003e Verify Email -\u003e Login -\u003e Risk -\u003e Compliance passed Authentication test passed Authentication onboarding.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-accepts-a-valid-password-that-satisfies-configured-policy","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Accepts a valid password that satisfies configured policy","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Accepts a valid password that satisfies configured policy passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-rejects-password-shorter-than-configured-minimum-length","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects password shorter than configured minimum length","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects password shorter than configured minimum length passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-rejects-banned-passwords-from-configured-policy","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects banned passwords from configured policy","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects banned passwords from configured policy passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-banned-password-comparison-is-case-insensitive","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Banned password comparison is case-insensitive","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Banned password comparison is case-insensitive passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-uppercase-rule-follows-configuration","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Uppercase rule follows configuration","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Uppercase rule follows configuration passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-lowercase-rule-follows-configuration","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Lowercase rule follows configuration","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Lowercase rule follows configuration passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-digit-rule-follows-configuration","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Digit rule follows configuration","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Digit rule follows configuration passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-passwordpolicy-spec-ts-password-policy-symbol-rule-follows-configuration","type":"test","title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Symbol rule follows configuration","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test PasswordPolicy.spec.ts \u003e Password Policy \u003e Symbol rule follows configuration passed Password test passed Password PasswordPolicy.spec.ts chromium"},{"id":"test-profile-spec-ts-profile-update","type":"test","title":"Profile.spec.ts \u003e Profile Update","target":"#module-dashboard-profile","status":"passed","module":"Profile","priority":"","category":"","keywords":["test","passed","Profile"],"text":"test Profile.spec.ts \u003e Profile Update passed Profile test passed Profile Profile.spec.ts chromium"},{"id":"test-profilenegative-spec-ts-profile-negative-scenarios-profile-email-field-cannot-be-edited","type":"test","title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile email field cannot be edited","target":"#module-dashboard-profile","status":"passed","module":"Profile","priority":"","category":"","keywords":["test","passed","Profile"],"text":"test ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile email field cannot be edited passed Profile test passed Profile ProfileNegative.spec.ts chromium"},{"id":"test-profilenegative-spec-ts-profile-negative-scenarios-profile-first-name-empty-draft-is-not-persisted-without-saving","type":"test","title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile first name empty draft is not persisted without saving","target":"#module-dashboard-profile","status":"passed","module":"Profile","priority":"","category":"","keywords":["test","passed","Profile"],"text":"test ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile first name empty draft is not persisted without saving passed Profile test passed Profile ProfileNegative.spec.ts chromium"},{"id":"test-profilenegative-spec-ts-profile-negative-scenarios-profile-last-name-empty-draft-is-not-persisted-without-saving","type":"test","title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile last name empty draft is not persisted without saving","target":"#module-dashboard-profile","status":"passed","module":"Profile","priority":"","category":"","keywords":["test","passed","Profile"],"text":"test ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile last name empty draft is not persisted without saving passed Profile test passed Profile ProfileNegative.spec.ts chromium"},{"id":"test-profilenegative-spec-ts-profile-negative-scenarios-profile-page-keeps-data-after-refresh","type":"test","title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile page keeps data after refresh","target":"#module-dashboard-profile","status":"passed","module":"Profile","priority":"","category":"","keywords":["test","passed","Profile"],"text":"test ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile page keeps data after refresh passed Profile test passed Profile ProfileNegative.spec.ts chromium"},{"id":"test-profilenegative-spec-ts-profile-negative-scenarios-profile-password-change-button-stays-safe-with-empty-password-fields","type":"test","title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile password change button stays safe with empty password fields","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile password change button stays safe with empty password fields passed Password test passed Password ProfileNegative.spec.ts chromium"},{"id":"test-profilepasswordmismatch-spec-ts-password-mismatch-validation","type":"test","title":"ProfilePasswordMismatch.spec.ts \u003e Password Mismatch Validation","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test ProfilePasswordMismatch.spec.ts \u003e Password Mismatch Validation passed Password test passed Password ProfilePasswordMismatch.spec.ts chromium"},{"id":"test-profilewrongcurrentpassword-spec-ts-wrong-current-password-validation","type":"test","title":"ProfileWrongCurrentPassword.spec.ts \u003e Wrong Current Password Validation","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test ProfileWrongCurrentPassword.spec.ts \u003e Wrong Current Password Validation passed Password test passed Password ProfileWrongCurrentPassword.spec.ts chromium"},{"id":"test-sessionsecurity-spec-ts-session-security-logout-prevents-browser-back-and-direct-dashboard-access","type":"test","title":"SessionSecurity.spec.ts \u003e Session Security \u003e Logout prevents browser back and direct dashboard access","target":"#module-dashboard-accessibility","status":"passed","module":"Accessibility","priority":"","category":"","keywords":["test","passed","Accessibility"],"text":"test SessionSecurity.spec.ts \u003e Session Security \u003e Logout prevents browser back and direct dashboard access passed Accessibility test passed Accessibility SessionSecurity.spec.ts chromium"},{"id":"test-sessionsecurity-spec-ts-session-security-logged-out-session-remains-on-login-after-refresh","type":"test","title":"SessionSecurity.spec.ts \u003e Session Security \u003e Logged-out session remains on login after refresh","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test SessionSecurity.spec.ts \u003e Session Security \u003e Logged-out session remains on login after refresh passed Authentication test passed Authentication SessionSecurity.spec.ts chromium"},{"id":"test-sessionsecurity-spec-ts-session-security-authenticated-session-can-open-dashboard-in-a-new-tab","type":"test","title":"SessionSecurity.spec.ts \u003e Session Security \u003e Authenticated session can open dashboard in a new tab","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test SessionSecurity.spec.ts \u003e Session Security \u003e Authenticated session can open dashboard in a new tab passed Authentication test passed Authentication SessionSecurity.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-empty-required-fields","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks empty required fields","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks empty required fields passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-invalid-email-format","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks invalid email format","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks invalid email format passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-missing-domain-email-input","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing domain email input","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing domain email input passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-missing-email-input","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing @ email input","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing @ email input passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-sql-injection-email-input","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks SQL injection email input","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks SQL injection email input passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-blocks-xss-injection-email-input","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks XSS injection email input","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks XSS injection email input passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-email-trims-leading-and-trailing-spaces","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup email trims leading and trailing spaces","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup email trims leading and trailing spaces passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-keeps-submit-disabled-without-password-and-confirmation","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled without password and confirmation","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled without password and confirmation passed Password test passed Password SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-keeps-submit-disabled-when-passwords-do-not-match","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled when passwords do not match","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled when passwords do not match passed Password test passed Password SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-keeps-otp-request-disabled-without-mobile-number","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled without mobile number","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled without mobile number passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-keeps-otp-request-disabled-for-short-mobile-number","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled for short mobile number","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled for short mobile number passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-mobile-input-strips-letters-and-keeps-otp-disabled","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input strips letters and keeps OTP disabled","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input strips letters and keeps OTP disabled passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-mobile-input-normalizes-formatted-us-number","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input normalizes formatted US number","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input normalizes formatted US number passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-mobile-input-limits-extra-digits-to-ten-digits","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input limits extra digits to ten digits","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input limits extra digits to ten digits passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-form-shows-us-mobile-number-guidance-before-otp-request","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form shows US mobile number guidance before OTP request","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form shows US mobile number guidance before OTP request passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-password-visibility-toggles-work-for-both-password-fields","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup password visibility toggles work for both password fields","target":"#module-dashboard-password","status":"passed","module":"Password","priority":"","category":"","keywords":["test","passed","Password"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup password visibility toggles work for both password fields passed Password test passed Password SignupNegative.spec.ts chromium"},{"id":"test-signupnegative-spec-ts-signup-negative-scenarios-signup-submit-stays-disabled-before-mobile-otp-verification","type":"test","title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup submit stays disabled before mobile OTP verification","target":"#module-dashboard-signup","status":"passed","module":"Signup","priority":"","category":"","keywords":["test","passed","Signup"],"text":"test SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup submit stays disabled before mobile OTP verification passed Signup test passed Signup SignupNegative.spec.ts chromium"},{"id":"test-subscriber-spec-ts-subscriber-login","type":"test","title":"Subscriber.spec.ts \u003e Subscriber Login","target":"#module-dashboard-authentication","status":"passed","module":"Authentication","priority":"","category":"","keywords":["test","passed","Authentication"],"text":"test Subscriber.spec.ts \u003e Subscriber Login passed Authentication test passed Authentication Subscriber.spec.ts chromium"},{"id":"evidence-rawReports-playwright-report-index-html","type":"evidence","title":"Automation HTML report","target":"#evidence","status":"html-report","module":"","priority":"","category":"","keywords":["evidence","rawReports","html-report",null],"text":"evidence Automation HTML report html-report evidence rawReports html-report playwright-report/index.html Automation HTML report"},{"id":"evidence-rawReports-test-results-results-json","type":"evidence","title":"Raw automation results","target":"#evidence","status":"raw-results","module":"","priority":"","category":"","keywords":["evidence","rawReports","raw-results",null],"text":"evidence Raw automation results raw-results evidence rawReports raw-results test-results/results.json Raw automation results"},{"id":"recommendation-p1-review-release-warnings","type":"recommendation","title":"Review release warnings","target":"#insight","status":"","module":"","priority":"P1","category":"","keywords":["recommendation","ai insight","next action"],"text":"recommendation Review release warnings P1 recommendation ai insight next action Release can proceed only after warning evidence is reviewed and accepted."},{"id":"recommendation-p2-expand-api-validation","type":"recommendation","title":"Expand API validation","target":"#insight","status":"","module":"","priority":"P2","category":"","keywords":["recommendation","ai insight","next action"],"text":"recommendation Expand API validation P2 recommendation ai insight next action API validation is marked as roadmap data and should be added as an AIR input source."},{"id":"recommendation-p3-expand-database-validation","type":"recommendation","title":"Expand database validation","target":"#insight","status":"","module":"","priority":"P3","category":"","keywords":["recommendation","ai insight","next action"],"text":"recommendation Expand database validation P3 recommendation ai insight next action Database checks are planned and should be mapped to modules when available."},{"id":"roadmap-api","type":"roadmap","title":"api validation","target":"#roadmap","status":"Roadmap","module":"","priority":"","category":"","keywords":["roadmap","future validation","api"],"text":"roadmap api validation Roadmap roadmap future validation api API validation is planned for a future AIR data source."},{"id":"roadmap-database","type":"roadmap","title":"database validation","target":"#roadmap","status":"Roadmap","module":"","priority":"","category":"","keywords":["roadmap","future validation","database"],"text":"roadmap database validation Roadmap roadmap future validation database Database validation is planned for a future AIR data source."},{"id":"roadmap-security","type":"roadmap","title":"security validation","target":"#roadmap","status":"Roadmap","module":"","priority":"","category":"","keywords":["roadmap","future validation","security"],"text":"roadmap security validation Roadmap roadmap future validation security Security scan ingestion is planned for a future AIR data source."},{"id":"roadmap-performance","type":"roadmap","title":"performance validation","target":"#roadmap","status":"Roadmap","module":"","priority":"","category":"","keywords":["roadmap","future validation","performance"],"text":"roadmap performance validation Roadmap roadmap future validation performance Performance metrics ingestion is planned for a future AIR data source."},{"id":"history-2026-06-30t10-27-56-476z","type":"history","title":"6/30/2026, 3:57:56 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 3:57:56 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t10-34-40-539z","type":"history","title":"6/30/2026, 4:04:40 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 4:04:40 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t10-48-47-097z","type":"history","title":"6/30/2026, 4:18:47 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 4:18:47 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t11-07-29-540z","type":"history","title":"6/30/2026, 4:37:29 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 4:37:29 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t11-31-47-436z","type":"history","title":"6/30/2026, 5:01:47 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 5:01:47 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t12-13-39-735z","type":"history","title":"6/30/2026, 5:43:39 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 5:43:39 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t12-43-40-297z","type":"history","title":"6/30/2026, 6:13:40 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:13:40 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t12-50-40-723z","type":"history","title":"6/30/2026, 6:20:40 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:20:40 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t12-55-39-242z","type":"history","title":"6/30/2026, 6:25:39 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:25:39 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t13-01-49-533z","type":"history","title":"6/30/2026, 6:31:49 PM","target":"#roadmap","status":"","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:31:49 PM LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t13-07-38-629z","type":"history","title":"6/30/2026, 6:37:38 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:37:38 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t13-20-59-570z","type":"history","title":"6/30/2026, 6:50:59 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:50:59 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t13-23-14-053z","type":"history","title":"6/30/2026, 6:53:14 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 6:53:14 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t15-41-32-275z","type":"history","title":"6/30/2026, 9:11:32 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 9:11:32 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t15-45-58-008z","type":"history","title":"6/30/2026, 9:15:58 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 9:15:58 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t15-56-43-164z","type":"history","title":"6/30/2026, 9:26:43 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 9:26:43 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t16-05-37-641z","type":"history","title":"6/30/2026, 9:35:37 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 9:35:37 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t16-42-07-597z","type":"history","title":"6/30/2026, 10:12:07 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 10:12:07 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t16-55-35-032z","type":"history","title":"6/30/2026, 10:25:35 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 10:25:35 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t17-01-10-916z","type":"history","title":"6/30/2026, 10:31:10 PM","target":"#roadmap","status":"Passed","module":"","priority":"LOW","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 10:31:10 PM Passed LOW history trend previous execution OOLTool PUAT 69 100 GO"},{"id":"history-2026-06-30t17-18-15-128z","type":"history","title":"6/30/2026, 10:48:15 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 10:48:15 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t17-42-50-033z","type":"history","title":"6/30/2026, 11:12:50 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:12:50 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t17-44-33-836z","type":"history","title":"6/30/2026, 11:14:33 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:14:33 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t17-47-38-359z","type":"history","title":"6/30/2026, 11:17:38 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:17:38 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t17-54-37-364z","type":"history","title":"6/30/2026, 11:24:37 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:24:37 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t18-03-26-578z","type":"history","title":"6/30/2026, 11:33:26 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:33:26 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t18-07-09-844z","type":"history","title":"6/30/2026, 11:37:09 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:37:09 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t18-23-54-289z","type":"history","title":"6/30/2026, 11:53:54 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:53:54 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t18-25-56-951z","type":"history","title":"6/30/2026, 11:55:56 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:55:56 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"},{"id":"history-2026-06-30t18-28-04-525z","type":"history","title":"6/30/2026, 11:58:04 PM","target":"#roadmap","status":"Passed","module":"","priority":"MEDIUM","category":"","keywords":["history","trend","previous execution"],"text":"history 6/30/2026, 11:58:04 PM Passed MEDIUM history trend previous execution OOLTool PUAT 69 100 CONDITIONAL GO"}];
+  const moduleDrawerData = [{"name":"Accessibility","icon":"A11Y","health":100,"status":"Healthy","risk":"Low","total":6,"passed":6,"failed":0,"coverage":100,"scenarios":["Keyboard navigation","Focus order","Accessible validation states"],"focus":"Keyboard navigation, focus order, and accessible validation behavior.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-accessibility"},{"name":"Authentication","icon":"AUTH","health":100,"status":"Healthy","risk":"Low","total":25,"passed":25,"failed":0,"coverage":100,"scenarios":["Login","Logout","Forgot Password","JWT","Session Timeout"],"focus":"Login, logout, forgot password, JWT/session behavior, and locked-account recovery.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-authentication"},{"name":"Billing","icon":"BILL","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Billing overview","Plans tab","Transaction history","Invoice page","PDF invoice"],"focus":"Billing overview, plans, transaction history, invoice access, and PDF availability.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Add API validation next","dashboardTarget":"#module-dashboard-billing"},{"name":"Password","icon":"PASS","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Reset password","Password mismatch","Wrong current password","Weak password validation"],"focus":"Password reset, mismatch handling, current-password validation, and policy enforcement.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Add reset-password expiry checks","dashboardTarget":"#module-dashboard-password"},{"name":"Profile","icon":"PROF","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Profile page access","Profile data loads","Email read-only validation"],"focus":"Profile page access, profile data loading, and read-only email protection.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-profile"},{"name":"Signup","icon":"SIGN","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Required fields","Email validation","Password policy","Mobile number","OTP validation"],"focus":"Registration validation, mobile number handling, OTP flow, and password policy.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-signup"},{"name":"MFA","icon":"MOD","health":0,"status":"Critical","risk":"High","total":2,"passed":0,"failed":2,"coverage":0,"scenarios":["Primary flow","Negative validation","Evidence review"],"focus":"Module-specific UI validation, evidence review, and release readiness.","relatedTests":[{"title":"MFA backup codes generated in incomplete format are rejected during login recovery","status":"failed","duration":0,"error":"Backup codes generated/downloaded in format XXXX-XXXX- are rejected by the MFA challenge that expects XXXX-XXXX-XX.","file":"manual-verification"},{"title":"Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA","status":"failed","duration":0,"error":"Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.","file":"manual-verification"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Needs review"},"recommendation":"Review failed tests and attach evidence","dashboardTarget":"#module-dashboard-mfa"}];
+  const airSearchIndex = [];
   const drawer = document.getElementById('moduleDrawer');
   const drawerBackdrop = document.querySelector('.drawer-backdrop');
   const modalBackdrop = document.querySelector('.modal-backdrop');
