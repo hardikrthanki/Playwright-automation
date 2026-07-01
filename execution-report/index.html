@@ -13,11 +13,18 @@
 <div class="app">
   <style>
     .module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:320px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;text-decoration:none;color:var(--text);box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.14)}.module-health-card.green{border-color:rgba(57,231,95,.45)}.module-health-card.amber{border-color:rgba(245,197,66,.55)}.module-health-card.red{border-color:rgba(255,59,59,.6)}.module-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.module-title{display:flex;align-items:center;gap:12px}.module-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}.module-health-card.amber .module-icon{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.38);color:var(--amber)}.module-health-card.red .module-icon{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.42);color:var(--red)}.module-title strong{font-size:18px}.module-score{font-size:44px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-button{display:inline-flex;align-items:center;justify-content:center;width:max-content;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.10);color:var(--green);font-size:12px;font-weight:900;padding:9px 12px}.module-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.module-dashboard-card{border:1px solid rgba(57,231,95,.34);border-radius:14px;background:rgba(8,16,30,.74);padding:18px;scroll-margin-top:24px}.module-dashboard-card.amber{border-color:rgba(245,197,66,.55)}.module-dashboard-card.red{border-color:rgba(255,59,59,.6)}.module-dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.module-dashboard-metrics span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-dashboard-metrics b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-action{margin-top:12px;color:#d7fbe0;font-weight:800}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}@media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-dashboard-grid,.module-dashboard-metrics{grid-template-columns:1fr}}@media(max-width:760px){.module-card-grid,.module-meta{grid-template-columns:1fr}}@media print{.module-health-card,.module-dashboard-card{break-inside:avoid}}
-    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}
+    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease,background .16s ease}.interactive-card:hover,.interactive-card:focus-visible{transform:translateY(-2px);border-color:rgba(57,231,95,.62)!important;box-shadow:0 18px 42px rgba(57,231,95,.14);outline:none}.interactive-card:focus-visible{box-shadow:0 0 0 3px rgba(57,231,95,.22),0 18px 42px rgba(57,231,95,.14)}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}@media print{.interactive-card{cursor:default}.interactive-card:hover,.interactive-card:focus-visible{transform:none;box-shadow:none}}
     .module-mini-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.module-mini-hero div{border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,rgba(57,231,95,.08),rgba(8,16,30,.76));padding:16px}.module-mini-hero span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.module-mini-hero strong{display:block;color:var(--green);font-size:30px;margin-top:8px}.mini-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;align-items:start;grid-auto-rows:min-content}.mini-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:15px;align-self:start}.mini-section summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;margin:-2px 0 10px}.mini-section summary::-webkit-details-marker{display:none}.mini-section summary:before{content:"▾";color:var(--green);font-weight:900}.mini-section:not([open]) summary{margin-bottom:0}.mini-section:not([open]) summary:before{content:"▸"}.mini-section summary span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-section summary strong{margin-left:auto;color:var(--green);font-size:12px}.mini-section h3{margin:0 0 10px;font-size:15px}.mini-section p{margin:0;line-height:1.5}.mini-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mini-label span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-label strong{color:var(--green)}.scenario-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.scenario-chips span{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:#d7fbe0;font-size:11px;font-weight:800;padding:6px 9px}.mini-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini-evidence span,.validation-stack span{border:1px solid rgba(57,231,95,.22);border-radius:10px;background:rgba(7,16,31,.74);padding:9px;color:white;font-size:12px}.mini-evidence b,.validation-stack b{display:block;color:var(--muted);font-weight:700;margin-top:5px}.mini-evidence-button{display:inline-block;margin-top:10px;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green)!important;font-size:12px;font-weight:900;padding:8px 10px;text-decoration:none!important}.validation-stack{display:grid;gap:8px}.history-chart{height:220px;display:flex;gap:14px;align-items:flex-end;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#091426,#07101f);padding:20px 16px 44px}.trend-bar{flex:1;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}.trend-bar span{width:70%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}.trend-bar small{position:absolute;bottom:-28px;color:var(--muted);font-size:11px}.trend-bar strong{position:absolute;top:-18px;color:white;font-size:11px}.report-search,.global-search{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:12px;margin:14px 0}.global-search{position:sticky;top:12px;z-index:12;display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start;margin:0 0 22px}.report-search label,.global-search label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}.report-search input,.global-search input{width:100%;border:1px solid rgba(57,231,95,.28);border-radius:9px;background:#07101f;color:white;padding:10px 11px;outline:none}.report-search input:focus,.global-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,231,95,.12)}.search-results{display:grid;gap:7px;margin-top:10px}.global-search .search-results{grid-column:2}.search-results a{border:1px solid rgba(57,231,95,.18);border-radius:9px;background:rgba(57,231,95,.07);color:white!important;font-size:12px;line-height:1.35;padding:8px;text-decoration:none!important}.search-results a:hover{border-color:rgba(57,231,95,.45);color:var(--green)!important}.search-empty{color:var(--muted);font-size:12px}.search-hit{outline:2px solid rgba(57,231,95,.75);outline-offset:3px}.evidence-card{color:var(--text)!important;text-decoration:none!important;min-height:150px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.evidence-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.12)}.evidence-card strong{color:white!important;text-decoration:none!important;font-size:18px}.evidence-card span{color:var(--muted)!important;text-decoration:none!important}.evidence-card em{display:inline-block;margin-top:9px;color:var(--green)!important;font-style:normal;font-size:12px;font-weight:900;text-decoration:none!important}.evidence-card *{text-decoration:none!important}.evidence-icon{flex:0 0 58px;min-width:58px;height:58px;overflow:hidden;font-size:13px}.module-dashboard-grid{align-items:start}.module-dashboard-card{align-self:start}.why-release{max-width:460px;margin:24px auto 0;text-align:left}.why-release h3{text-align:center;font-size:24px;margin:0 0 18px}.why-release ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.why-release li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;color:#f8fafc;font-size:18px;line-height:1.35;text-align:left}.why-release li:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.38);color:var(--green);font-size:13px;font-weight:900;line-height:1}@media(max-width:1100px){.module-mini-hero,.mini-dashboard-grid,.mini-evidence,.global-search{grid-template-columns:1fr}.global-search .search-results{grid-column:auto}}
     .nav a.disabled{opacity:.62;cursor:not-allowed}.nav a.disabled:hover{background:transparent;box-shadow:none}.nav a.disabled .nav-icon{color:var(--muted);border-color:rgba(148,163,184,.22);background:rgba(148,163,184,.06)}.nav a em{margin-left:auto;border:1px solid rgba(57,231,95,.24);border-radius:999px;color:var(--muted);font-style:normal;font-size:9px;font-weight:900;padding:3px 6px;text-transform:uppercase;letter-spacing:.04em}.mission-label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}.mission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin:12px 0 14px}.mission-grid div{border:1px solid rgba(57,231,95,.24);border-radius:12px;background:rgba(7,16,31,.7);padding:12px}.mission-grid span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.mission-grid strong{display:block;color:var(--green);font-size:22px;margin-top:6px}.evidence-preview-body{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:18px;min-height:180px}.evidence-preview-body img,.evidence-preview-body video{max-width:100%;border-radius:12px;border:1px solid var(--line2);background:#07101f}.evidence-preview-body .preview-meta{display:grid;gap:10px}.evidence-preview-body .preview-meta a{color:var(--green);font-weight:900}.roadmap-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.roadmap-summary div{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px}.roadmap-summary span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-summary strong{display:block;color:var(--green);font-size:28px;margin-top:8px}.roadmap-progress{height:13px;border-radius:999px;background:#1d2b44;overflow:hidden;margin:16px 0 8px}.roadmap-progress span{display:block;height:100%;width:18%;border-radius:999px;background:linear-gradient(90deg,var(--green),#9af7ad)}.roadmap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.roadmap-card{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px}.roadmap-card.green{border-color:rgba(57,231,95,.48)}.roadmap-card.amber{border-color:rgba(245,197,66,.45)}.roadmap-card.blue{border-color:rgba(139,215,164,.36)}.roadmap-card.purple{border-color:rgba(148,163,184,.36)}.roadmap-card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.roadmap-card-head span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-card-head h2{margin:5px 0 0}.roadmap-card-head strong{border:1px solid rgba(57,231,95,.28);border-radius:999px;color:var(--green);font-size:11px;padding:6px 9px;white-space:nowrap}.roadmap-card p{color:#d7fbe0;line-height:1.55}.roadmap-card ul{columns:2;margin:12px 0 0;padding-left:18px;color:var(--muted);line-height:1.7}.module-filter{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}.module-filter button{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:#07101f;color:white;cursor:pointer;font-weight:900;padding:8px 12px}.module-filter button.active,.module-filter button:hover{border-color:var(--green);background:rgba(57,231,95,.12);color:var(--green)}.success-empty-state{text-align:center;padding:34px 18px}.success-icon{display:grid;place-items:center;width:76px;height:76px;margin:0 auto 18px;border-radius:50%;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-weight:900}.success-empty-state h2{font-size:28px;margin:0 0 10px}.success-empty-state p{max-width:720px;margin:0 auto;color:#d7fbe0;line-height:1.7}.success-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px auto 0;max-width:820px}.success-grid span{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:14px;color:var(--muted)}.success-grid b{display:block;color:var(--green);font-size:24px;margin-bottom:4px}.module-status-card{min-height:148px;gap:12px}.module-status-card p{font-size:18px;color:#d7fbe0;flex:0}.module-status-card em,.module-selector-card em{font-style:normal;color:var(--green);font-size:12px;font-weight:900}.module-selector-card{min-height:250px;display:flex;flex-direction:column;gap:14px}.module-selector-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.module-selector-summary span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-selector-summary b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-selector-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-dashboard-intro{border:1px solid rgba(57,231,95,.28);border-radius:14px;background:linear-gradient(135deg,rgba(57,231,95,.1),rgba(8,16,30,.72));padding:18px;margin-bottom:18px}.module-dashboard-intro h2{margin:0 0 8px}.module-dashboard-intro p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-test-list{display:grid;gap:9px}.drawer-test-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.drawer-test-row strong{display:block;color:white;font-size:13px;line-height:1.35}.drawer-test-row span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.drawer-test-row em{font-style:normal;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900;text-transform:uppercase}.drawer-test-row em.green{background:rgba(57,231,95,.14);color:var(--green);border:1px solid rgba(57,231,95,.35)}.drawer-test-row em.amber{background:rgba(245,197,66,.14);color:var(--amber);border:1px solid rgba(245,197,66,.35)}.drawer-test-row em.red{background:rgba(255,59,59,.14);color:var(--red);border:1px solid rgba(255,59,59,.35)}@media(max-width:1100px){.roadmap-summary,.roadmap-grid{grid-template-columns:1fr}}@media(max-width:760px){.module-selector-summary,.mission-grid,.success-grid{grid-template-columns:1fr}.roadmap-card ul{columns:1}}
     .release-status-badge{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;border-radius:999px;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-size:22px;font-weight:900;letter-spacing:.04em;line-height:1.1;padding:10px 16px;text-transform:uppercase;white-space:normal;text-align:center}.release-status-badge.warn{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--amber)}.release-status-badge.bad{border-color:rgba(255,59,59,.45);background:rgba(255,59,59,.12);color:var(--red)}.release-status-badge.compact{font-size:13px;padding:7px 10px;letter-spacing:.03em}.release-mini .release-status-badge{margin:8px 0 6px}.cover-stat .release-status-badge{margin-top:10px}.release-card{align-content:center;gap:14px;padding:24px}.release-card .release-status-badge{font-size:30px;padding:12px 22px;margin:4px auto 2px}.release-card p{max-width:620px;margin:0 auto;color:#d7fbe0;line-height:1.55}.release-card .decision{font-size:30px}.mission-grid{margin-top:4px}.ai-metric-grid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}.ai-metric{min-width:0;overflow:visible}.ai-metric strong{max-width:100%;font-size:clamp(22px,2.1vw,30px);line-height:1.08;overflow-wrap:anywhere;word-break:normal}.ai-metric .release-status-badge{margin-top:7px;max-width:100%;width:100%;font-size:11px;line-height:1.15;padding:7px 6px;overflow-wrap:anywhere}.metric-help{display:inline-grid;place-items:center;width:16px;height:16px;margin-left:5px;border:1px solid rgba(57,231,95,.36);border-radius:50%;color:var(--green);font-size:10px;font-style:normal;font-weight:900;vertical-align:middle;cursor:help}.core-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.core-status-item{border:1px solid rgba(57,231,95,.24);border-radius:11px;background:rgba(7,16,31,.72);padding:10px}.core-status-item span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.core-status-item strong{display:block;color:var(--green);font-size:13px;margin-top:5px}.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.compare-card{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;min-height:126px}.compare-card span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.compare-card strong{display:block;color:white;font-size:24px;margin:9px 0 5px}.compare-card small{display:block;color:var(--muted);line-height:1.4}.compare-card em{display:inline-block;margin-top:10px;border-radius:999px;border:1px solid rgba(57,231,95,.28);padding:5px 8px;color:var(--green);font-style:normal;font-size:11px;font-weight:900}.compare-card.red em{border-color:rgba(255,59,59,.36);color:var(--red)}.compare-card.amber em{border-color:rgba(245,197,66,.36);color:var(--amber)}.compare-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.compare-list li{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.compare-list strong{font-size:13px}.compare-list span{color:var(--muted);font-size:12px}.modal-header h2 .release-status-badge{vertical-align:middle;margin:0 4px;width:auto;font-size:14px;padding:7px 10px}.modal-header h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}@media(max-width:1100px){.compare-grid,.core-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.release-card .release-status-badge{font-size:22px}.release-status-badge{font-size:18px}.release-status-badge.compact{font-size:12px}.compare-grid,.core-status-grid{grid-template-columns:1fr}}
     :root{--air-success:var(--green);--air-warning:var(--amber);--air-danger:var(--red);--air-info:var(--info);--air-muted:var(--muted);--air-panel:var(--panel);--air-border:var(--line2);--space-xs:6px;--space-sm:10px;--space-md:14px;--space-lg:18px;--space-xl:24px;--type-heading:32px;--type-body:14px;--type-label:11px;--type-metric:30px}
+    .report-search,.global-search{background:#07101f!important;border:1px solid rgba(57,231,95,.38)!important;box-shadow:0 18px 42px rgba(0,0,0,.36);backdrop-filter:none}
+    .report-search input,.global-search input{background:#020817!important;border:1px solid rgba(57,231,95,.46)!important;color:#f8fafc!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+    .report-search input::placeholder,.global-search input::placeholder{color:#7f8fa8}
+    .report-search input:focus,.global-search input:focus{background:#030b16!important;border-color:var(--green)!important;box-shadow:0 0 0 3px rgba(57,231,95,.18),inset 0 0 0 1px rgba(57,231,95,.18)!important}
+    .search-results{position:relative;z-index:30}
+    .search-results a,.search-empty{background:#08111f!important;border:1px solid rgba(57,231,95,.30)!important;box-shadow:0 10px 24px rgba(0,0,0,.28)}
+    .search-results a:hover{background:#0b1a2d!important;border-color:rgba(57,231,95,.58)!important}
     .release-status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:0;width:auto;max-inline-size:100%;border-radius:999px;text-align:center;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.12;font-size:clamp(12px,1.1vw,18px);padding:clamp(6px,.7vw,10px) clamp(9px,1vw,16px)}
     .release-status-badge[data-status="GO"]{border-color:rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--air-success)}
     .release-status-badge[data-status="CONDITIONAL_GO"]{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--air-warning)}
@@ -81,6 +88,27 @@
     #comparison .grid.two,#comparison .grid.three{gap:22px}
     .compare-card{min-height:138px}
     .trend-indicator{display:inline-flex;align-items:center;gap:5px}
+    .history-hero-grid{display:grid;grid-template-columns:minmax(280px,.85fr) 1.15fr;gap:18px;align-items:stretch}
+    .history-narrative{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:rgba(8,16,30,.66);padding:20px;display:flex;flex-direction:column;gap:16px}
+    .history-narrative p{margin:0;color:#d7fbe0;line-height:1.65}
+    .history-change-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .history-change-list li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;color:#f8fafc;line-height:1.45}
+    .history-change-list li:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 16px rgba(57,231,95,.48);margin-top:7px}
+    .history-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .history-trend-card{border:1px solid var(--line2);border-radius:16px;background:rgba(8,16,30,.72);padding:18px;min-height:230px;display:flex;flex-direction:column;gap:18px}
+    .history-trend-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+    .history-trend-head span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .history-trend-head strong{color:var(--green);font-size:clamp(22px,2vw,30px);line-height:1}
+    .history-sparkline{display:flex;gap:10px;align-items:flex-end;min-height:130px;border:1px solid rgba(57,231,95,.18);border-radius:12px;background:linear-gradient(180deg,rgba(7,16,31,.82),rgba(8,16,30,.62));padding:18px 12px 32px}
+    .history-spark{flex:1;position:relative;display:flex;justify-content:center;align-items:flex-end;height:100%}
+    .history-spark span{width:70%;max-width:34px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}
+    .history-spark small{position:absolute;bottom:-23px;color:var(--muted);font-size:10px}
+    .release-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
+    .release-timeline div{border:1px solid rgba(57,231,95,.22);border-radius:12px;background:rgba(7,16,31,.74);padding:10px;display:grid;gap:8px;justify-items:start}
+    .release-timeline small{color:var(--muted);font-size:11px}
+    .history-section-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    @media(max-width:1100px){.history-hero-grid,.history-section-grid{grid-template-columns:1fr}.history-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.history-metric-grid{grid-template-columns:1fr}.history-sparkline{gap:7px;padding-inline:10px}.history-trend-card{min-height:auto}}
     .module-card-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
     .module-card-head{min-width:0}
     .module-title{min-width:0}
@@ -97,6 +125,15 @@
     .compare-card small{overflow-wrap:anywhere}
     .compare-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}
     .compare-list strong,.compare-list span{min-width:0;overflow-wrap:anywhere}
+    .test-change-summary{border:1px solid rgba(57,231,95,.22);border-radius:14px;background:rgba(8,16,30,.62);padding:14px;display:grid;gap:12px;min-height:164px}
+    .test-change-count{display:flex;align-items:baseline;gap:10px}
+    .test-change-count strong{color:var(--green);font-size:34px;line-height:1}
+    .test-change-count span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+    .compact-list{gap:7px}
+    .compact-list li{padding:8px 10px;grid-template-columns:minmax(0,1fr);gap:4px}
+    .compact-list strong{font-size:12px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .compact-list span{font-size:11px}
+    .small-note{font-size:12px;padding:9px 10px}
     .roadmap-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
     .roadmap-summary{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
     .roadmap-card-head{display:grid;grid-template-columns:minmax(0,1fr) auto}
@@ -152,7 +189,7 @@
       <div>Project<br><strong>OOLTool</strong></div><br>
       <div>Environment<br><strong>PUAT</strong></div><br>
       <div>Build<br><strong>Playwright JSON</strong></div><br>
-      <div>Generated<br><strong>7/1/2026, 6:40:55 PM</strong></div>
+      <div>Generated<br><strong>7/1/2026, 10:21:44 PM</strong></div>
     </div>
     <div class="release-mini">
       <span>Release Decision</span>
@@ -181,18 +218,18 @@
           <div class="cover-stat"><span>Build</span><strong>Playwright JSON</strong></div>
           <div class="cover-stat"><span>AIR Platform Version</span><strong>AIR Platform v1.1</strong></div>
           <div class="cover-stat"><span>AIR Core Version</span><strong>AIR Core Complete</strong></div>
-          <div class="cover-stat"><span>Execution Date</span><strong>7/1/2026, 6:40:55 PM</strong></div>
+          <div class="cover-stat"><span>Execution Date</span><strong>7/1/2026, 10:21:44 PM</strong></div>
           <div class="cover-stat"><span>Framework</span><strong>Playwright</strong></div>
           <div class="cover-stat"><span>Parser</span><strong>air-history</strong></div>
           <div class="cover-stat"><span>Generated By</span><strong>AIR Platform</strong></div>
-          <div class="cover-stat"><span>Release Recommendation <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></div>
-          <div class="cover-stat interactive-card" data-open-quality><span>Quality Score <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
+          <div class="cover-stat interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation"><span>Release Recommendation <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></div>
+          <div class="cover-stat interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>Quality Score <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
           <div class="cover-stat"><span>Branch</span><strong>Local</strong></div>
           <div class="cover-stat"><span>Commit</span><strong>Local</strong></div>
         </div>
       </div>
       <div class="grid two">
-        <div class="panel release-card interactive-card" data-open-release>
+        <div class="panel release-card interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
           <span class="mission-label">Release Status</span>
           <span class="release-status-badge bad" data-status="NO_GO">NO GO</span>
           <div class="mission-grid">
@@ -249,7 +286,7 @@
           </div>
           <div>
             <small>Warnings</small>
-            <b>9</b>
+            <b>2</b>
           </div>
       </div>
     </div>
@@ -321,7 +358,7 @@
           </div>
           <div>
             <small>Health</small>
-            <b>Healthy</b>
+            <b>Partial</b>
           </div>
       </div>
     </div>
@@ -393,7 +430,7 @@
         
           <div>
             <small>Items</small>
-            <b>3</b>
+            <b>1</b>
           </div>
           <div>
             <small>Focus</small>
@@ -480,7 +517,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 1 of 10</strong>
       </div>
     </section>
@@ -503,13 +540,13 @@
         <div class="executive-decision-main">
           <span class="mission-label">Release Decision</span>
           <span class="release-status-badge bad" data-status="NO_GO">NO GO</span>
-          <ul class="executive-decision-bullets"><li>71 tests executed in the current run.</li><li>69 passed and 2 failed.</li><li>Healthy business journey status.</li><li>No Evidence Captured evidence readiness.</li></ul>
+          <ul class="executive-decision-bullets"><li>71 tests executed in the current run.</li><li>69 passed and 2 failed.</li><li>Partial business journey status.</li><li>No Evidence Captured evidence readiness.</li></ul>
         </div>
         <div class="executive-decision-metrics">
           <div><span>Confidence</span><strong>50%</strong></div>
-          <div class="interactive-card" data-open-quality><span>Quality</span><strong>100%</strong></div>
+          <div class="interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>Quality</span><strong>100%</strong></div>
           <div><span>Risk</span><strong class="nowrap">HIGH</strong></div>
-          <div><span>Business Journey</span><strong>Healthy</strong></div>
+          <div><span>Business Journey</span><strong>Partial</strong></div>
           <div><span>Evidence</span><strong>No Evidence Captured</strong></div>
           <div><span>Critical Issues</span><strong>2</strong></div>
           <div><span>Warnings</span><strong>0</strong></div>
@@ -530,10 +567,10 @@
         <div class="panel">
           <h2 class="icon-title"><span class="section-icon">RD</span>Decision Summary</h2>
           <div class="ai-metric-grid decision-metrics">
-            <div class="ai-metric"><span>Release <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><strong><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></strong></div>
-            <div class="ai-metric"><span>Confidence</span><strong>50%</strong></div>
-            <div class="ai-metric"><span>Risk <i class="metric-help" title="Release risk from failures, warnings, skipped checks, and configured thresholds.">?</i></span><strong class="nowrap">HIGH</strong></div>
-            <div class="ai-metric interactive-card" data-open-quality><span>Quality <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
+            <div class="ai-metric interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation"><span>Release <i class="metric-help" title="Release decision generated from configured release rules.">?</i></span><strong><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span></strong></div>
+            <div class="ai-metric interactive-card" data-open-confidence role="button" tabindex="0" aria-label="Open confidence explanation"><span>Confidence</span><strong>50%</strong></div>
+            <div class="ai-metric interactive-card" data-open-risk role="button" tabindex="0" aria-label="Open risk explanation"><span>Risk <i class="metric-help" title="Release risk from failures, warnings, skipped checks, and configured thresholds.">?</i></span><strong class="nowrap">HIGH</strong></div>
+            <div class="ai-metric interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>Quality <i class="metric-help" title="Quality score combines execution stability, business flow health, coverage, and risk signals.">?</i></span><strong>100%</strong></div>
           </div>
           <div class="decision-group">
             <h3>Reason</h3>
@@ -550,7 +587,7 @@
   </div>
   <div class="meta-item">
     <span>Business Journey Status <i class="metric-help" title="Business health summarizes configured journey and module stability.">?</i></span>
-    <strong>Healthy</strong>
+    <strong>Partial</strong>
   </div>
   <div class="meta-item">
     <span>Evidence Readiness <i class="metric-help" title="Evidence readiness shows whether execution artifacts are available for review.">?</i></span>
@@ -568,7 +605,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 2 of 10</strong>
       </div>
     </section>
@@ -576,52 +613,52 @@
     <section class="page" id="journey">
       <div class="topbar"><div><div class="eyebrow">PAGE 03</div><h1>Business Journeys</h1><p>Can users complete critical business flows?</p></div><span class="pill demo">Live Data</span></div>
       <div class="panel"><h2>Core Flow Health</h2><div class="journey">
-    <div class="journey-node amber ">
-      <div class="node-icon">NA</div>
+    <div class="journey-node green interactive-card" data-journey="Registration" data-module="Signup" role="button" tabindex="0" aria-label="Open Registration journey details">
+      <div class="node-icon">OK</div>
       <strong>Registration</strong>
-      <span>60%</span>
+      <span>100%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node green interactive-card" data-module="Authentication" role="button" tabindex="0">
+    <div class="journey-node green interactive-card" data-journey="Authentication" data-module="Authentication" role="button" tabindex="0" aria-label="Open Authentication journey details">
       <div class="node-icon">OK</div>
       <strong>Authentication</strong>
       <span>100%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node green interactive-card" data-module="Profile" role="button" tabindex="0">
+    <div class="journey-node green interactive-card" data-journey="Profile Setup" data-module="Profile" role="button" tabindex="0" aria-label="Open Profile Setup journey details">
       <div class="node-icon">OK</div>
       <strong>Profile Setup</strong>
       <span>100%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node green interactive-card" data-module="Profile" role="button" tabindex="0">
-      <div class="node-icon">OK</div>
+    <div class="journey-node amber interactive-card" data-journey="Risk Profile" role="button" tabindex="0" aria-label="Open Risk Profile journey details">
+      <div class="node-icon">NA</div>
       <strong>Risk Profile</strong>
-      <span>100%</span>
+      <span>0%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node amber ">
+    <div class="journey-node amber interactive-card" data-journey="Compliance" role="button" tabindex="0" aria-label="Open Compliance journey details">
       <div class="node-icon">NA</div>
       <strong>Compliance</strong>
-      <span>60%</span>
+      <span>0%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node green interactive-card" data-module="Billing" role="button" tabindex="0">
+    <div class="journey-node green interactive-card" data-journey="Subscription" data-module="Billing" role="button" tabindex="0" aria-label="Open Subscription journey details">
       <div class="node-icon">OK</div>
       <strong>Subscription</strong>
       <span>100%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node green interactive-card" data-module="Billing" role="button" tabindex="0">
+    <div class="journey-node green interactive-card" data-journey="Payment" data-module="Billing" role="button" tabindex="0" aria-label="Open Payment journey details">
       <div class="node-icon">OK</div>
       <strong>Payment</strong>
       <span>100%</span>
     </div>
     <div class="journey-arrow">-&gt;</div>
-    <div class="journey-node amber ">
-      <div class="node-icon">NA</div>
+    <div class="journey-node green interactive-card" data-journey="Dashboard" data-module="Authentication" role="button" tabindex="0" aria-label="Open Dashboard journey details">
+      <div class="node-icon">OK</div>
       <strong>Dashboard</strong>
-      <span>60%</span>
+      <span>100%</span>
     </div>
     </div></div>
       <br>
@@ -635,7 +672,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 3 of 10</strong>
       </div>
     </section>
@@ -753,7 +790,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 4 of 10</strong>
       </div>
     </section>
@@ -911,7 +948,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 5 of 10</strong>
       </div>
     </section>
@@ -923,13 +960,13 @@
       <td>MFA backup codes generated in incomplete format are rejected during login recovery</td>  
       <td>Authentication</td>
       <td><span class="badge bad">High</span></td>
-      <td>Backup codes generated/downloaded in format XXXX-XXXX- are rejected by the MFA challenge that expects XXXX-XXXX-XX.</td>
+      <td>Review Playwright trace</td>
     </tr>
     <tr>
       <td>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</td>  
       <td>Password</td>
       <td><span class="badge bad">High</span></td>
-      <td>Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.</td>
+      <td>Review Playwright trace</td>
     </tr></tbody></table></div>
       
       <div class="page-footer">
@@ -937,7 +974,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 6 of 10</strong>
       </div>
     </section>
@@ -994,7 +1031,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 7 of 10</strong>
       </div>
     </section>
@@ -1041,17 +1078,17 @@
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">P1</span>Priority Recommendations</h2>
         <div class="recommendation-grid">
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Review failed tests" data-recommendation-index="0">
         <span>Priority 1</span>
         <strong>Review failed tests</strong>
         <p>Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.</p>
       </div>
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Stabilize impacted flows" data-recommendation-index="1">
         <span>Priority 2</span>
         <strong>Stabilize impacted flows</strong>
         <p>Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.</p>
       </div>
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Strengthen evidence links" data-recommendation-index="2">
         <span>Priority 3</span>
         <strong>Strengthen evidence links</strong>
         <p>Attach screenshot, video, trace, and environment context to every release-impacting failure.</p>
@@ -1068,7 +1105,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 8 of 10</strong>
       </div>
     </section>
@@ -1084,196 +1121,371 @@
       </div>
       
         <div class="panel insight">
-          <h2 class="icon-title"><span class="section-icon">HI</span>Executive Build Comparison</h2>
-          <div class="compare-grid">
-            <div class="compare-card"><span>Current Build</span><strong>Playwright JSON</strong><small>Current execution baseline</small></div>
-            <div class="compare-card"><span>Previous Build</span><strong>Previous</strong><small>Last recorded execution</small></div>
-            
-    <div class="compare-card amber">
-      <span>Quality Score</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            <div class="compare-card"><span>Release Decision</span><strong>NO_GO -&gt; NO_GO</strong><small>Current vs previous release decision</small></div>
-            
-    <div class="compare-card amber">
-      <span>Pass Rate</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            
-    <div class="compare-card amber">
-      <span>Execution Time</span>
-      <strong>39s</strong>
-      <small>Previous: 39s</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            
-    <div class="compare-card amber">
-      <span>Coverage</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            
-    <div class="compare-card red">
-      <span>Failed Tests</span>
-      <strong>3</strong>
-      <small>Previous: 2</small>
-      <em class="trend-indicator">↓ Worse +1</em>
-    </div>
-            <div class="compare-card"><span>Modules Executed</span><strong>7</strong><small>Previous: 1</small></div>
-            <div class="compare-card"><span>Journeys Executed</span><strong>0</strong><small>Previous: 0</small></div>
+          <h2 class="icon-title"><span class="section-icon">HI</span>Executive What Changed</h2>
+          <div class="history-hero-grid">
+            <div class="history-narrative">
+              <p>AIR compared this execution with the previous stored build. Release is NO GO, quality is stable, failures are stable, and execution duration is stable.</p>
+              <ul class="history-change-list">
+                <li>Release remained NO GO.</li><li>Quality stable by 0 point(s).</li><li>Pass rate stable by 0 point(s).</li><li>Failures stable by 0.</li><li>0 test(s) added, 0 removed, 0 modified.</li><li>0 module regression(s), 0 journey regression(s).</li>
+              </ul>
+            </div>
+            <div class="history-metric-grid">
+              <div class="compare-card"><span>Current Build</span><strong>Playwright JSON</strong><small>Current execution baseline</small></div>
+              <div class="compare-card"><span>Previous Build</span><strong>Previous</strong><small>Last recorded execution</small></div>
+              <div class="compare-card"><span>Release Change</span><span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span><small>Previous: NO GO</small></div>
+              <div class="compare-card"><span>Quality Change</span><strong>Stable: 0%</strong><small>Current: 100%</small></div>
+              <div class="compare-card"><span>Failure Change</span><strong>Stable: 0</strong><small>Current failed tests: 2</small></div>
+              <div class="compare-card"><span>Duration Change</span><strong>Stable</strong><small>Current: 11m 41s</small></div>
+            </div>
           </div>
         </div>
         <br>
         <div class="panel">
-          <h2>Quality Trends</h2>
+          <h2>Build Comparison</h2>
           <div class="compare-grid">
             
     <div class="compare-card amber">
       <span>Quality Score</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            
-    <div class="compare-card amber">
-      <span>Business Health</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
-    </div>
-            
-    <div class="compare-card amber">
-      <span>Coverage</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
+      <strong>100%</strong>
+      <small>Previous: 100%</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
     </div>
             
     <div class="compare-card amber">
       <span>Pass Rate</span>
-      <strong>0%</strong>
-      <small>Previous: 0%</small>
-      <em class="trend-indicator">→ Stable 0</em>
+      <strong>97%</strong>
+      <small>Previous: 97%</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
     </div>
             
     <div class="compare-card amber">
-      <span>Execution Duration</span>
-      <strong>39s</strong>
-      <small>Previous: 39s</small>
-      <em class="trend-indicator">→ Stable 0</em>
+      <span>Execution Time</span>
+      <strong>11m 41s</strong>
+      <small>Previous: 11m 41s</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
     </div>
             
     <div class="compare-card amber">
-      <span>Failure Rate</span>
-      <strong>100%</strong>
-      <small>Previous: 100%</small>
-      <em class="trend-indicator">→ Stable 0</em>
+      <span>Failed Tests</span>
+      <strong>2</strong>
+      <small>Previous: 2</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
     </div>
+            
+    <div class="compare-card amber">
+      <span>Module Coverage</span>
+      <strong>86%</strong>
+      <small>Previous: 86%</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
+    </div>
+            
+    <div class="compare-card amber">
+      <span>Evidence</span>
+      <strong>0 items</strong>
+      <small>Previous: 0 items</small>
+      <em class="trend-indicator">Stable - Stable 0</em>
+    </div>
+              <div class="compare-card"><span>Modules Executed</span><strong>7</strong><small>Previous: 7</small></div>
+              <div class="compare-card"><span>Journeys Executed</span><strong>6</strong><small>Previous: 6</small></div>
+              <div class="compare-card"><span>Tests Added</span><strong>0</strong><small>New tests since previous execution</small></div>
+              <div class="compare-card"><span>Tests Removed</span><strong>0</strong><small>Tests no longer present</small></div>
+              <div class="compare-card"><span>Tests Modified</span><strong>0</strong><small>Status, module, file, or title changed</small></div>
+            </div>
           </div>
+        <br>
+        <div class="history-section-grid">
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Quality Trend</span>
+        <strong>100%</strong>
+      </div>
+      <div class="history-sparkline">
+        
+            <div class="history-spark" title="7/1/2026, 3:48:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>23</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 3:55:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>24</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:15:53 PM: 0%">
+              <span style="height:8%"></span>
+              <small>25</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:17:50 PM: 0%">
+              <span style="height:8%"></span>
+              <small>26</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:02:30 PM: 100%">
+              <span style="height:100%"></span>
+              <small>27</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:09:58 PM: 100%">
+              <span style="height:100%"></span>
+              <small>28</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:12:56 PM: 100%">
+              <span style="height:100%"></span>
+              <small>29</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:21:44 PM: 100%">
+              <span style="height:100%"></span>
+              <small>30</small>
+            </div>
+      </div>
+    </div>
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Release Trend</span>
+        <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+      </div>
+      <div class="release-timeline">
+        
+          <div>
+            <span class="release-status-badge warn compact" data-status="CONDITIONAL_GO">CONDITIONAL GO</span>
+            <small>Run 1</small>
+          </div>
+          <div>
+            <span class="release-status-badge warn compact" data-status="CONDITIONAL_GO">CONDITIONAL GO</span>
+            <small>Run 2</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Run 3</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Run 4</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Run 5</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Run 6</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Run 7</small>
+          </div>
+          <div>
+            <span class="release-status-badge bad compact" data-status="NO_GO">NO GO</span>
+            <small>Current</small>
+          </div>
+      </div>
+    </div>
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Failure Trend</span>
+        <strong>2 failed</strong>
+      </div>
+      <div class="history-sparkline">
+        
+            <div class="history-spark" title="7/1/2026, 3:48:31 PM: 0 failed">
+              <span style="height:8%"></span>
+              <small>23</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 3:55:31 PM: 0 failed">
+              <span style="height:8%"></span>
+              <small>24</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:15:53 PM: 2 failed">
+              <span style="height:40%"></span>
+              <small>25</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:17:50 PM: 3 failed">
+              <span style="height:60%"></span>
+              <small>26</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:02:30 PM: 2 failed">
+              <span style="height:40%"></span>
+              <small>27</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:09:58 PM: 2 failed">
+              <span style="height:40%"></span>
+              <small>28</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:12:56 PM: 2 failed">
+              <span style="height:40%"></span>
+              <small>29</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:21:44 PM: 2 failed">
+              <span style="height:40%"></span>
+              <small>30</small>
+            </div>
+      </div>
+    </div>
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Test Changes</h2>
+          <div class="grid three">
+            <div><h2>Added Tests</h2><div class="empty-note">No added tests</div></div>
+            <div><h2>Removed Tests</h2><div class="empty-note">No removed tests</div></div>
+            <div><h2>Modified Tests</h2><div class="empty-note">No modified tests</div></div>
+          </div>
+        </div>
+        <br>
+        <div class="history-section-grid">
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Pass Rate Trend</span>
+        <strong>97%</strong>
+      </div>
+      <div class="history-sparkline">
+        
+            <div class="history-spark" title="7/1/2026, 3:48:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>23</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 3:55:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>24</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:15:53 PM: 0%">
+              <span style="height:8%"></span>
+              <small>25</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:17:50 PM: 0%">
+              <span style="height:8%"></span>
+              <small>26</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:02:30 PM: 97%">
+              <span style="height:97%"></span>
+              <small>27</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:09:58 PM: 97%">
+              <span style="height:97%"></span>
+              <small>28</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:12:56 PM: 97%">
+              <span style="height:97%"></span>
+              <small>29</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:21:44 PM: 97%">
+              <span style="height:97%"></span>
+              <small>30</small>
+            </div>
+      </div>
+    </div>
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Module Coverage Trend</span>
+        <strong>86%</strong>
+      </div>
+      <div class="history-sparkline">
+        
+            <div class="history-spark" title="7/1/2026, 3:48:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>23</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 3:55:31 PM: 100%">
+              <span style="height:100%"></span>
+              <small>24</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:15:53 PM: 0%">
+              <span style="height:8%"></span>
+              <small>25</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:17:50 PM: 0%">
+              <span style="height:8%"></span>
+              <small>26</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:02:30 PM: 86%">
+              <span style="height:86%"></span>
+              <small>27</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:09:58 PM: 86%">
+              <span style="height:86%"></span>
+              <small>28</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:12:56 PM: 86%">
+              <span style="height:86%"></span>
+              <small>29</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:21:44 PM: 86%">
+              <span style="height:86%"></span>
+              <small>30</small>
+            </div>
+      </div>
+    </div>
+          
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Journey Coverage Trend</span>
+        <strong>75%</strong>
+      </div>
+      <div class="history-sparkline">
+        
+            <div class="history-spark" title="7/1/2026, 3:48:31 PM: 75%">
+              <span style="height:75%"></span>
+              <small>23</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 3:55:31 PM: 75%">
+              <span style="height:75%"></span>
+              <small>24</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:15:53 PM: 0%">
+              <span style="height:8%"></span>
+              <small>25</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 6:17:50 PM: 0%">
+              <span style="height:8%"></span>
+              <small>26</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:02:30 PM: 75%">
+              <span style="height:75%"></span>
+              <small>27</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:09:58 PM: 75%">
+              <span style="height:75%"></span>
+              <small>28</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:12:56 PM: 75%">
+              <span style="height:75%"></span>
+              <small>29</small>
+            </div>
+            <div class="history-spark" title="7/1/2026, 10:21:44 PM: 75%">
+              <span style="height:75%"></span>
+              <small>30</small>
+            </div>
+      </div>
+    </div>
         </div>
         <br>
         <div class="grid two">
           <div class="panel">
-            <h2>Module Trends</h2>
+            <h2>Module Trend</h2>
             <div class="grid two">
               <div><h2>Improved Modules</h2><div class="empty-note">No improved modules</div></div>
-              <div><h2>Declined Modules</h2><div class="empty-note">No declined modules</div></div>
-              <div><h2>Stable Modules</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>MFA</strong>
-          <span>0% -&gt; 0%</span>
-        </li>
-    </ul></div>
-              <div><h2>New Modules</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>Accessibility</strong>
-          <span>Healthy</span>
-        </li>
-        <li>
-          <strong>Authentication</strong>
-          <span>Healthy</span>
-        </li>
-        <li>
-          <strong>Billing</strong>
-          <span>Healthy</span>
-        </li>
-        <li>
-          <strong>Password</strong>
-          <span>Healthy</span>
-        </li>
-        <li>
-          <strong>Profile</strong>
-          <span>Healthy</span>
-        </li>
-        <li>
-          <strong>Signup</strong>
-          <span>Healthy</span>
-        </li>
-    </ul></div>
-              <div><h2>Removed Modules</h2><div class="empty-note">No removed modules</div></div>
-              <div><h2>Risk Changes</h2><div class="empty-note">No module risk changes</div></div>
-              <div><h2>Recommendation Changes</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>MFA</strong>
-          <span>Recommendation changed</span>
-        </li>
-    </ul></div>
+              <div><h2>Regressed Modules</h2><div class="empty-note">No regressed modules</div></div>
+              <div><h2>New Modules</h2><div class="empty-note">No new modules</div></div>
               <div><h2>Not Executed Modules</h2><div class="empty-note">No not-executed modules</div></div>
             </div>
           </div>
           <div class="panel">
-            <h2>Business Journey Trends</h2>
+            <h2>Journey Trend</h2>
             <div class="grid two">
               <div><h2>Journey Improvements</h2><div class="empty-note">No journey improvements</div></div>
               <div><h2>Journey Regressions</h2><div class="empty-note">No journey regressions</div></div>
-              <div><h2>Journey Recovery</h2><div class="empty-note">No journey recoveries</div></div>
-              <div><h2>New Risks</h2><div class="empty-note">No new journey risks</div></div>
-              <div><h2>New Journeys</h2><div class="empty-note">No new journeys</div></div>
+              <div><h2>New Journey Risks</h2><div class="empty-note">No new journey risks</div></div>
               <div><h2>Not Executed Journeys</h2>
     <ul class="compare-list">
       
         <li>
-          <strong>Authentication</strong>
-          <span>No Data Available</span>
+          <strong>Risk Profile</strong>
+          <span>0% -&gt; 0%</span>
         </li>
         <li>
           <strong>Compliance</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Dashboard</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Payment</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Profile Setup</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Registration</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Risk Profile</strong>
-          <span>No Data Available</span>
-        </li>
-        <li>
-          <strong>Subscription</strong>
-          <span>No Data Available</span>
+          <span>0% -&gt; 0%</span>
         </li>
     </ul></div>
             </div>
@@ -1282,24 +1494,10 @@
         <br>
         <div class="grid two">
           <div class="panel">
-            <h2>Failure Intelligence</h2>
-            <div class="grid three">
-              <div><h2>New Failures</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</strong>
-          <span>failed</span>
-        </li>
-    </ul></div>
-              <div><h2>Resolved Failures</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>MfaUserFlow.spec.ts &gt; User-side MFA - Local User &gt; Backup codes &gt; Login using valid backup code</strong>
-          <span>failed</span>
-        </li>
-    </ul></div>
+            <h2>Failure Trend</h2>
+            <div class="grid two">
+              <div><h2>New Failures</h2><div class="empty-note">No new failures</div></div>
+              <div><h2>Resolved Failures</h2><div class="empty-note">No resolved failures</div></div>
               <div><h2>Recurring Failures</h2>
     <ul class="compare-list">
       
@@ -1307,47 +1505,29 @@
           <strong>MFA backup codes generated in incomplete format are rejected during login recovery</strong>
           <span>failed</span>
         </li>
-    </ul></div>
-              <div><h2>Critical Failures</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>MFA backup codes generated in incomplete format are rejected during login recovery</strong>
-          <span>Critical</span>
-        </li>
         <li>
           <strong>Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA</strong>
-          <span>Critical</span>
-        </li>
-    </ul></div>
-              <div><h2>Failure Categories</h2>
-    <ul class="compare-list">
-      
-        <li>
-          <strong>Authentication</strong>
-          <span>2 failures</span>
+          <span>failed</span>
         </li>
     </ul></div>
               <div><h2>Severity Changes</h2><div class="empty-note">No severity changes</div></div>
             </div>
           </div>
           <div class="panel">
-            <h2>Release Intelligence</h2>
-            <p>Current build compared with previous build: quality stable, failures regressed, duration stable.</p>
+            <h2>Release Trend</h2>
+            <p>Current build compared with previous build: quality stable, failures stable, duration stable.</p>
             <div class="compare-grid">
               <div class="compare-card"><span>GO</span><strong>0</strong><small>Recorded GO decisions</small></div>
-              <div class="compare-card"><span>Conditional GO</span><strong>6</strong><small>Recorded conditional decisions</small></div>
-              <div class="compare-card"><span>No GO</span><strong>2</strong><small>Recorded blocked decisions</small></div>
-              <div class="compare-card"><span>Reason Changes</span><strong>5</strong><small>New reason: Full regression baseline passed from restored execution history. | New reason: 2 confirmed MFA product defect(s) require resolution before approval. | Resolved reason: Release thresholds were not met | Resolved reason: Failures or missing critical data require review | Resolved reason: Resolve blockers before release approval</small></div>
+              <div class="compare-card"><span>Conditional GO</span><strong>2</strong><small>Recorded conditional decisions</small></div>
+              <div class="compare-card"><span>No GO</span><strong>6</strong><small>Recorded blocked decisions</small></div>
+              <div class="compare-card"><span>Reason Changes</span><strong>0</strong><small>No release reason changes detected</small></div>
             </div>
-            <br>
-            <ul class="compare-list"><li><strong>7/1/2026, 10:53:02 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 11:32:27 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 11:41:00 AM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:40:53 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:48:31 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 3:55:31 PM</strong><span>CONDITIONAL_GO</span></li><li><strong>7/1/2026, 6:15:53 PM</strong><span>NO_GO</span></li><li><strong>7/1/2026, 6:17:50 PM</strong><span>NO_GO</span></li></ul>
           </div>
         </div>
         <br>
         <div class="panel">
-          <h2>Engineering Insights</h2>
-          <p>AIR uses History Engine comparison data to highlight where the team should focus next.</p>
+          <h2>Executive Focus</h2>
+          <p>AIR uses History Engine comparison data to highlight what changed and where the team should focus next.</p>
           
     <ul class="compare-list">
       
@@ -1369,15 +1549,15 @@
         </li>
         <li>
           <strong>Fastest Growing Failure Area</strong>
-          <span>1 new failure(s)</span>
+          <span>No growing failure area</span>
         </li>
         <li>
           <strong>Most Stable Journey</strong>
-          <span>No stable journey trend yet</span>
+          <span>Registration (100%)</span>
         </li>
         <li>
           <strong>Longest Running Test Area</strong>
-          <span>Accessibility (0s)</span>
+          <span>Authentication (5m 21s)</span>
         </li>
     </ul>
         </div>
@@ -1390,7 +1570,7 @@
     <tr>
       <td>Build 1</td>
       <td>No Data</td>
-      <td>7/1/2026, 10:53:02 AM</td>
+      <td>7/1/2026, 3:48:31 PM</td>
       <td>100%</td>
       <td>CONDITIONAL_GO</td>
       <td>11m 41s</td>
@@ -1399,7 +1579,7 @@
     <tr>
       <td>Build 2</td>
       <td>No Data</td>
-      <td>7/1/2026, 11:32:27 AM</td>
+      <td>7/1/2026, 3:55:31 PM</td>
       <td>100%</td>
       <td>CONDITIONAL_GO</td>
       <td>11m 41s</td>
@@ -1408,42 +1588,6 @@
     <tr>
       <td>Build 3</td>
       <td>No Data</td>
-      <td>7/1/2026, 11:41:00 AM</td>
-      <td>100%</td>
-      <td>CONDITIONAL_GO</td>
-      <td>11m 41s</td>
-      <td>Recorded</td>
-    </tr>
-    <tr>
-      <td>Build 4</td>
-      <td>No Data</td>
-      <td>7/1/2026, 3:40:53 PM</td>
-      <td>100%</td>
-      <td>CONDITIONAL_GO</td>
-      <td>11m 41s</td>
-      <td>Recorded</td>
-    </tr>
-    <tr>
-      <td>Build 5</td>
-      <td>No Data</td>
-      <td>7/1/2026, 3:48:31 PM</td>
-      <td>100%</td>
-      <td>CONDITIONAL_GO</td>
-      <td>11m 41s</td>
-      <td>Recorded</td>
-    </tr>
-    <tr>
-      <td>Build 6</td>
-      <td>No Data</td>
-      <td>7/1/2026, 3:55:31 PM</td>
-      <td>100%</td>
-      <td>CONDITIONAL_GO</td>
-      <td>11m 41s</td>
-      <td>Recorded</td>
-    </tr>
-    <tr>
-      <td>Build 7</td>
-      <td>No Data</td>
       <td>7/1/2026, 6:15:53 PM</td>
       <td>0%</td>
       <td>NO_GO</td>
@@ -1451,25 +1595,51 @@
       <td>Recorded</td>
     </tr>
     <tr>
-      <td>Build 8</td>
+      <td>Build 4</td>
       <td>No Data</td>
       <td>7/1/2026, 6:17:50 PM</td>
       <td>0%</td>
       <td>NO_GO</td>
       <td>39s</td>
       <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 5</td>
+      <td>No Data</td>
+      <td>7/1/2026, 10:02:30 PM</td>
+      <td>100%</td>
+      <td>NO_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 6</td>
+      <td>No Data</td>
+      <td>7/1/2026, 10:09:58 PM</td>
+      <td>100%</td>
+      <td>NO_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 7</td>
+      <td>No Data</td>
+      <td>7/1/2026, 10:12:56 PM</td>
+      <td>100%</td>
+      <td>NO_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
+    </tr>
+    <tr>
+      <td>Build 8</td>
+      <td>No Data</td>
+      <td>7/1/2026, 10:21:44 PM</td>
+      <td>100%</td>
+      <td>NO_GO</td>
+      <td>11m 41s</td>
+      <td>Recorded</td>
     </tr></tbody>
           </table>
-        </div>
-        <br>
-        <div class="panel">
-          <h2>Build Comparison Detail</h2>
-          <div class="compare-grid">
-            <div class="compare-card"><span>Current Release</span><strong>NO_GO</strong><small>AIR recommends NO GO because the restored 69-test regression passed, but 2 confirmed MFA product defect(s) remain open.</small></div>
-            <div class="compare-card"><span>Previous Release</span><strong>NO_GO</strong><small>Previous build decision</small></div>
-            <div class="compare-card"><span>Reason Changes</span><strong>5</strong><small>New reason: Full regression baseline passed from restored execution history. | New reason: 2 confirmed MFA product defect(s) require resolution before approval. | Resolved reason: Release thresholds were not met | Resolved reason: Failures or missing critical data require review | Resolved reason: Resolve blockers before release approval</small></div>
-            <div class="compare-card"><span>Build Comparison</span><strong>Compared</strong><small>Current build compared with previous build: quality stable, failures regressed, duration stable.</small></div>
-          </div>
         </div>
       
       
@@ -1478,7 +1648,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 9 of 10</strong>
       </div>
     </section>
@@ -1505,7 +1675,7 @@
       </div>
       <br>
       <div class="roadmap-grid">
-        <article class="roadmap-card green">
+        <article class="roadmap-card green interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v1.0" data-roadmap-index="0">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.0</span>
@@ -1516,7 +1686,7 @@
           <p>Turn automation execution into executive release visibility.</p>
           <ul><li>Executive Dashboard</li><li>Release Dashboard</li><li>Business Journeys</li><li>Product Health</li><li>Module Details</li><li>Failed Tests</li><li>Evidence</li><li>AI Insights</li><li>PDF Export</li><li>Search</li><li>Responsive UI</li></ul>
         </article>
-        <article class="roadmap-card green">
+        <article class="roadmap-card green interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v1.1" data-roadmap-index="1">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.1</span>
@@ -1527,7 +1697,7 @@
           <p>Build the reusable intelligence engine behind AIR.</p>
           <ul><li>Parser Service</li><li>Schema Validation</li><li>AIR Validator</li><li>Execution Summary Engine</li><li>Failure Engine</li><li>Module Engine</li><li>Journey Engine</li><li>Evidence Engine</li><li>Quality Engine</li><li>Release Engine</li><li>Recommendation Engine</li><li>Search Engine</li><li>History Engine</li><li>Execution Context Engine</li><li>Discovery Engine</li><li>Engine Orchestrator</li></ul>
         </article>
-        <article class="roadmap-card amber">
+        <article class="roadmap-card amber interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v1.2" data-roadmap-index="2">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.2</span>
@@ -1538,7 +1708,7 @@
           <p>Help teams understand what changed between executions.</p>
           <ul><li>Historical Dashboard</li><li>Build Comparison</li><li>Module Trends</li><li>Pass Rate Trends</li><li>Duration Trends</li><li>Coverage Trends</li><li>Quality Trends</li></ul>
         </article>
-        <article class="roadmap-card amber">
+        <article class="roadmap-card amber interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v1.3" data-roadmap-index="3">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v1.3</span>
@@ -1549,7 +1719,7 @@
           <p>Move from reporting to recommendations.</p>
           <ul><li>Root Cause Suggestions</li><li>AI Investigation</li><li>Risk Prediction</li><li>Smart Recommendations</li><li>Automation Gap Analysis</li><li>Test Prioritization</li><li>Release Explanation</li></ul>
         </article>
-        <article class="roadmap-card amber">
+        <article class="roadmap-card amber interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v2.0" data-roadmap-index="4">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v2.0</span>
@@ -1560,7 +1730,7 @@
           <p>Connect AIR to engineering tools.</p>
           <ul><li>GitHub</li><li>Azure DevOps</li><li>Jira</li><li>Slack</li><li>Microsoft Teams</li><li>Email Reports</li><li>Webhooks</li></ul>
         </article>
-        <article class="roadmap-card amber">
+        <article class="roadmap-card amber interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v2.5" data-roadmap-index="5">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v2.5</span>
@@ -1571,7 +1741,7 @@
           <p>Support any automation framework.</p>
           <ul><li>Playwright</li><li>Cypress</li><li>Selenium</li><li>Robot Framework</li><li>Appium</li><li>Postman</li><li>JMeter</li></ul>
         </article>
-        <article class="roadmap-card blue">
+        <article class="roadmap-card blue interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v3.0" data-roadmap-index="6">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v3.0</span>
@@ -1582,7 +1752,7 @@
           <p>Unify all quality validations.</p>
           <ul><li>API Validation</li><li>Database Validation</li><li>Performance Testing</li><li>Security Testing</li><li>Accessibility Testing</li><li>Visual Testing</li></ul>
         </article>
-        <article class="roadmap-card blue">
+        <article class="roadmap-card blue interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v4.0" data-roadmap-index="7">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v4.0</span>
@@ -1593,7 +1763,7 @@
           <p>Scale AIR for enterprise organizations.</p>
           <ul><li>Multi Project</li><li>Multi Team</li><li>Role Management</li><li>Scheduled Reports</li><li>Cloud Deployment</li><li>Team Dashboards</li><li>User Management</li></ul>
         </article>
-        <article class="roadmap-card purple">
+        <article class="roadmap-card purple interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for AIR v5.0" data-roadmap-index="8">
           <div class="roadmap-card-head">
             <div>
               <span>AIR v5.0</span>
@@ -1663,7 +1833,7 @@
         <span>Automation Intelligence Platform</span>
         <span>AIR Platform v1.1</span>
         <span>AIR Core Complete</span>
-        <span>7/1/2026, 6:40:55 PM</span>
+        <span>7/1/2026, 10:21:44 PM</span>
         <strong>Page 10 of 10</strong>
       </div>
     </section>
@@ -1744,17 +1914,17 @@
       <button class="modal-close" type="button" data-close-panels aria-label="Close recommendations">×</button>
     </div>
     <div class="recommendation-grid">
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Review failed tests" data-recommendation-index="0">
         <span>Priority 1</span>
         <strong>Review failed tests</strong>
         <p>Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.</p>
       </div>
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Stabilize impacted flows" data-recommendation-index="1">
         <span>Priority 2</span>
         <strong>Stabilize impacted flows</strong>
         <p>Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.</p>
       </div>
-      <div class="recommendation-card">
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for Strengthen evidence links" data-recommendation-index="2">
         <span>Priority 3</span>
         <strong>Strengthen evidence links</strong>
         <p>Attach screenshot, video, trace, and environment context to every release-impacting failure.</p>
@@ -1830,6 +2000,63 @@
       </tr></tbody>
     </table>
   </section>
+  <section class="modal" id="riskModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">RISK EXPLANATION</div>
+        <h2>Release Risk: HIGH</h2>
+        <p class="ai-decision-summary">AIR derives risk from failed tests, critical modules, warning modules, skipped checks, journey health, and release-rule output.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close risk explanation">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Failed Tests</span><strong>2</strong></div>
+      <div class="ai-metric"><span>Warning Modules</span><strong>0</strong></div>
+      <div class="ai-metric"><span>Critical Modules</span><strong>1</strong></div>
+      <div class="ai-metric"><span>Release Risk</span><strong>HIGH</strong></div>
+    </div>
+    <br>
+    <div class="panel"><h2>Risk Guidance</h2><p>AIR recommends NO GO because the restored 69-test regression passed, but 2 confirmed MFA product defect(s) remain open.</p></div>
+  </section>
+  <section class="modal" id="confidenceModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">CONFIDENCE EXPLANATION</div>
+        <h2>Release Confidence: 50%</h2>
+        <p class="ai-decision-summary">Confidence reflects execution context, pass stability, coverage breadth, evidence readiness, and release-rule confidence.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close confidence explanation">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Execution Context</span><strong>Partial Product Regression</strong></div>
+      <div class="ai-metric"><span>Pass Rate</span><strong>97%</strong></div>
+      <div class="ai-metric"><span>Coverage</span><strong>75%</strong></div>
+      <div class="ai-metric"><span>Evidence</span><strong>No Evidence Captured</strong></div>
+    </div>
+  </section>
+  <section class="modal" id="journeyModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">JOURNEY DETAILS</div>
+        <h2 id="journeyTitle">Journey Details</h2>
+        <p class="ai-decision-summary" id="journeySummary">Journey-level health and impacted modules.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close journey details">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Health</span><strong id="journeyHealth">0%</strong></div>
+      <div class="ai-metric"><span>Status</span><strong id="journeyStatus">No Data</strong></div>
+      <div class="ai-metric"><span>Tests</span><strong id="journeyTests">0</strong></div>
+      <div class="ai-metric"><span>Risk</span><strong id="journeyRisk">No Data</strong></div>
+    </div>
+    <br>
+    <div class="modal-grid">
+      <div class="panel"><h2>Mapped / Affected Modules</h2><ul class="action-list" id="journeyModules"></ul></div>
+      <div class="panel"><h2>Not Executed / Failed Dependencies</h2><ul class="action-list" id="journeyGaps"></ul></div>
+    </div>
+    <br>
+    <div class="panel insight"><h2>Recommendation</h2><p id="journeyRecommendation"></p></div>
+  </section>
   <section class="modal" id="evidenceModal" aria-hidden="true">
     <div class="modal-header">
       <div>
@@ -1841,9 +2068,23 @@
     </div>
     <div id="evidencePreviewBody" class="evidence-preview-body"></div>
   </section>
+  <section class="modal" id="detailModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" id="detailEyebrow">AIR DETAIL</div>
+        <h2 id="detailTitle">Details</h2>
+        <p class="ai-decision-summary" id="detailSummary">Detail information.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close detail view">&times;</button>
+    </div>
+    <div id="detailBody" class="evidence-preview-body"></div>
+  </section>
 </div>
 <script>
-  const moduleDrawerData = [{"name":"Accessibility","icon":"A11Y","health":100,"status":"Healthy","risk":"Low","total":6,"passed":6,"failed":0,"coverage":100,"scenarios":["Keyboard navigation","Focus order","Accessible validation states"],"focus":"Keyboard navigation, focus order, and accessible validation behavior.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-accessibility"},{"name":"Authentication","icon":"AUTH","health":100,"status":"Healthy","risk":"Low","total":25,"passed":25,"failed":0,"coverage":100,"scenarios":["Login","Logout","Forgot Password","JWT","Session Timeout"],"focus":"Login, logout, forgot password, JWT/session behavior, and locked-account recovery.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-authentication"},{"name":"Billing","icon":"BILL","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Billing overview","Plans tab","Transaction history","Invoice page","PDF invoice"],"focus":"Billing overview, plans, transaction history, invoice access, and PDF availability.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Add API validation next","dashboardTarget":"#module-dashboard-billing"},{"name":"Password","icon":"PASS","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Reset password","Password mismatch","Wrong current password","Weak password validation"],"focus":"Password reset, mismatch handling, current-password validation, and policy enforcement.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Add reset-password expiry checks","dashboardTarget":"#module-dashboard-password"},{"name":"Profile","icon":"PROF","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Profile page access","Profile data loads","Email read-only validation"],"focus":"Profile page access, profile data loading, and read-only email protection.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-profile"},{"name":"Signup","icon":"SIGN","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Required fields","Email validation","Password policy","Mobile number","OTP validation"],"focus":"Registration validation, mobile number handling, OTP flow, and password policy.","relatedTests":[],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-signup"},{"name":"MFA","icon":"MOD","health":0,"status":"Critical","risk":"High","total":2,"passed":0,"failed":2,"coverage":0,"scenarios":["Primary flow","Negative validation","Evidence review"],"focus":"Module-specific UI validation, evidence review, and release readiness.","relatedTests":[{"title":"MFA backup codes generated in incomplete format are rejected during login recovery","status":"failed","duration":0,"error":"Backup codes generated/downloaded in format XXXX-XXXX- are rejected by the MFA challenge that expects XXXX-XXXX-XX.","file":"manual-verification"},{"title":"Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA","status":"failed","duration":0,"error":"Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.","file":"manual-verification"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Needs review"},"recommendation":"Review failed tests and attach evidence","dashboardTarget":"#module-dashboard-mfa"}];
+  const moduleDrawerData = [{"name":"Accessibility","icon":"A11Y","health":100,"status":"Healthy","risk":"Low","total":6,"passed":6,"failed":0,"coverage":100,"scenarios":["Keyboard navigation","Focus order","Accessible validation states"],"focus":"Keyboard navigation, focus order, and accessible validation behavior.","relatedTests":[{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form exposes accessible email and password fields","status":"passed","error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Login form supports Enter key submission without authenticating invalid data","status":"passed","error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Forgot password form supports Back to login navigation","status":"passed","error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page keeps form visible after browser refresh","status":"passed","error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"AccessibilityBrowser.spec.ts \u003e Accessibility And Browser Behavior \u003e Register page exposes accessible primary actions","status":"passed","error":"","file":"AccessibilityBrowser.spec.ts"},{"title":"SessionSecurity.spec.ts \u003e Session Security \u003e Logout prevents browser back and direct dashboard access","status":"passed","error":"","file":"SessionSecurity.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-accessibility"},{"name":"Authentication","icon":"AUTH","health":100,"status":"Healthy","risk":"Low","total":25,"passed":25,"failed":0,"coverage":100,"scenarios":["Login","Logout","Forgot Password","JWT","Session Timeout"],"focus":"Login, logout, forgot password, JWT/session behavior, and locked-account recovery.","relatedTests":[{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty required fields","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty email only","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks empty password only","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form blocks invalid email format","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects SQL injection input","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects XSS injection input","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Login form rejects very long email input","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard redirects unauthenticated user to login","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/profile redirects unauthenticated user to login","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/billing redirects unauthenticated user to login","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /onboarding redirects unauthenticated user to login","status":"passed","error":"","file":"AuthNegative.spec.ts"},{"title":"AuthNegative.spec.ts \u003e Auth Negative Scenarios \u003e Protected route /dashboard/settings redirects unauthenticated user to login","status":"passed","error":"","file":"AuthNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-authentication"},{"name":"Billing","icon":"BILL","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Billing overview","Plans tab","Transaction history","Invoice page","PDF invoice"],"focus":"Billing overview, plans, transaction history, invoice access, and PDF availability.","relatedTests":[{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Billing page remains available after refresh","status":"passed","error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Plans tab shows expected Income Builder plan","status":"passed","error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Transactions tab shows paid transaction status","status":"passed","error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e Invoice link opens invoice page with paid status","status":"passed","error":"","file":"BillingDeep.spec.ts"},{"title":"BillingDeep.spec.ts \u003e Billing Deep Validation \u003e PDF link is available and points to a non-empty URL","status":"passed","error":"","file":"BillingDeep.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Recommended next","database":"Planned","performance":"Planned"},"recommendation":"Add API validation next","dashboardTarget":"#module-dashboard-billing"},{"name":"Password","icon":"PASS","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Reset password","Password mismatch","Wrong current password","Weak password validation"],"focus":"Password reset, mismatch handling, current-password validation, and policy enforcement.","relatedTests":[{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Accepts a valid password that satisfies configured policy","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects password shorter than configured minimum length","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Rejects banned passwords from configured policy","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Banned password comparison is case-insensitive","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Uppercase rule follows configuration","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Lowercase rule follows configuration","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Digit rule follows configuration","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"PasswordPolicy.spec.ts \u003e Password Policy \u003e Symbol rule follows configuration","status":"passed","error":"","file":"PasswordPolicy.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile password change button stays safe with empty password fields","status":"passed","error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfilePasswordMismatch.spec.ts \u003e Password Mismatch Validation","status":"passed","error":"","file":"ProfilePasswordMismatch.spec.ts"},{"title":"ProfileWrongCurrentPassword.spec.ts \u003e Wrong Current Password Validation","status":"passed","error":"","file":"ProfileWrongCurrentPassword.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps submit disabled without password and confirmation","status":"passed","error":"","file":"SignupNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Add reset-password expiry checks","dashboardTarget":"#module-dashboard-password"},{"name":"Profile","icon":"PROF","health":100,"status":"Healthy","risk":"Low","total":5,"passed":5,"failed":0,"coverage":100,"scenarios":["Profile page access","Profile data loads","Email read-only validation"],"focus":"Profile page access, profile data loading, and read-only email protection.","relatedTests":[{"title":"Profile.spec.ts \u003e Profile Update","status":"passed","error":"","file":"Profile.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile email field cannot be edited","status":"passed","error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile first name empty draft is not persisted without saving","status":"passed","error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile last name empty draft is not persisted without saving","status":"passed","error":"","file":"ProfileNegative.spec.ts"},{"title":"ProfileNegative.spec.ts \u003e Profile Negative Scenarios \u003e Profile page keeps data after refresh","status":"passed","error":"","file":"ProfileNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Planned"},"recommendation":"No action required","dashboardTarget":"#module-dashboard-profile"},{"name":"Signup","icon":"SIGN","health":100,"status":"Healthy","risk":"Low","total":14,"passed":14,"failed":0,"coverage":100,"scenarios":["Required fields","Email validation","Password policy","Mobile number","OTP validation"],"focus":"Registration validation, mobile number handling, OTP flow, and password policy.","relatedTests":[{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks empty required fields","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks invalid email format","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing domain email input","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks missing @ email input","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks SQL injection email input","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form blocks XSS injection email input","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup email trims leading and trailing spaces","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled without mobile number","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup form keeps OTP request disabled for short mobile number","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input strips letters and keeps OTP disabled","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input normalizes formatted US number","status":"passed","error":"","file":"SignupNegative.spec.ts"},{"title":"SignupNegative.spec.ts \u003e Signup Negative Scenarios \u003e Signup mobile input limits extra digits to ten digits","status":"passed","error":"","file":"SignupNegative.spec.ts"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Recommended next","performance":"Planned"},"recommendation":"Continue monitoring","dashboardTarget":"#module-dashboard-signup"},{"name":"MFA","icon":"MOD","health":0,"status":"Critical","risk":"High","total":2,"passed":0,"failed":2,"coverage":0,"scenarios":["Primary flow","Negative validation","Evidence review"],"focus":"Module-specific UI validation, evidence review, and release readiness.","relatedTests":[{"title":"MFA backup codes generated in incomplete format are rejected during login recovery","status":"failed","error":"","file":"manual-verification"},{"title":"Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA","status":"failed","error":"","file":"manual-verification"}],"evidence":{"screenshots":"Available","videos":"Available","traces":"Available","logs":"Available"},"validation":{"api":"Planned","database":"Planned","performance":"Needs review"},"recommendation":"Review failed tests and attach evidence","dashboardTarget":"#module-dashboard-mfa"}];
+  const journeyDetailData = [{"name":"Registration","status":"Healthy","health":100,"risk":"Low","total":14,"passed":14,"failed":0,"skipped":0,"affectedModules":["Signup"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."},{"name":"Authentication","status":"Healthy","health":100,"risk":"Low","total":25,"passed":25,"failed":0,"skipped":0,"affectedModules":["Authentication"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."},{"name":"Profile Setup","status":"Healthy","health":100,"risk":"Low","total":5,"passed":5,"failed":0,"skipped":0,"affectedModules":["Profile"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."},{"name":"Risk Profile","status":"Not Executed","health":0,"risk":"No Data","total":0,"passed":0,"failed":0,"skipped":0,"affectedModules":["Onboarding"],"failedDependencies":[],"notExecutedSteps":["Onboarding"],"recommendation":"Add or run coverage for this business journey before using it for release confidence."},{"name":"Compliance","status":"Not Executed","health":0,"risk":"No Data","total":0,"passed":0,"failed":0,"skipped":0,"affectedModules":["Onboarding"],"failedDependencies":[],"notExecutedSteps":["Onboarding"],"recommendation":"Add or run coverage for this business journey before using it for release confidence."},{"name":"Subscription","status":"Healthy","health":100,"risk":"Low","total":5,"passed":5,"failed":0,"skipped":0,"affectedModules":["Billing"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."},{"name":"Payment","status":"Healthy","health":100,"risk":"Low","total":5,"passed":5,"failed":0,"skipped":0,"affectedModules":["Billing"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."},{"name":"Dashboard","status":"Healthy","health":100,"risk":"Low","total":25,"passed":25,"failed":0,"skipped":0,"affectedModules":["Authentication"],"failedDependencies":[],"notExecutedSteps":[],"recommendation":"Continue monitoring this journey."}];
+  const recommendationDetailData = [{"source":"AIR Recommendation Engine","priority":"Priority 1","title":"Review failed tests","reason":"Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.","action":"Open each failed test, confirm evidence, identify impacted module, and rerun only the affected area first.","relatedModule":"Current Release","relatedJourney":"Release Readiness"},{"source":"AIR Recommendation Engine","priority":"Priority 2","title":"Stabilize impacted flows","reason":"Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.","action":"Fix or quarantine unstable UI paths, then repeat the business journey that contains the failure.","relatedModule":"Current Release","relatedJourney":"Release Readiness"},{"source":"AIR Recommendation Engine","priority":"Priority 3","title":"Strengthen evidence links","reason":"Attach screenshot, video, trace, and environment context to every release-impacting failure.","action":"Attach screenshot, video, trace, and environment context to every release-impacting failure.","relatedModule":"Current Release","relatedJourney":"Release Readiness"}];
+  const roadmapDetailData = [{"version":"AIR v1.0","title":"Executive Quality Dashboard","status":"Completed","purpose":"Turn automation execution into executive release visibility.","deliverables":["Executive Dashboard","Release Dashboard","Business Journeys","Product Health","Module Details","Failed Tests","Evidence","AI Insights","PDF Export","Search","Responsive UI"],"dependencies":["Current AIR Core and report UI"],"futureValue":"Executive Quality Dashboard"},{"version":"AIR v1.1","title":"Framework-independent AIR Core","status":"Completed","purpose":"Build the reusable intelligence engine behind AIR.","deliverables":["Parser Service","Schema Validation","AIR Validator","Execution Summary Engine","Failure Engine","Module Engine","Journey Engine","Evidence Engine","Quality Engine","Release Engine","Recommendation Engine","Search Engine","History Engine","Execution Context Engine","Discovery Engine","Engine Orchestrator"],"dependencies":["Current AIR Core and report UI"],"futureValue":"Framework-independent AIR Core"},{"version":"AIR v1.2","title":"Historical Analytics \u0026 Build Comparison","status":"In Progress","purpose":"Help teams understand what changed between executions.","deliverables":["Historical Dashboard","Build Comparison","Module Trends","Pass Rate Trends","Duration Trends","Coverage Trends","Quality Trends"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Historical Analytics \u0026 Build Comparison"},{"version":"AIR v1.3","title":"AI Investigation \u0026 Root Cause Assistant","status":"Planned","purpose":"Move from reporting to recommendations.","deliverables":["Root Cause Suggestions","AI Investigation","Risk Prediction","Smart Recommendations","Automation Gap Analysis","Test Prioritization","Release Explanation"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"AI Investigation \u0026 Root Cause Assistant"},{"version":"AIR v2.0","title":"Engineering Intelligence Platform","status":"Planned","purpose":"Connect AIR to engineering tools.","deliverables":["GitHub","Azure DevOps","Jira","Slack","Microsoft Teams","Email Reports","Webhooks"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Engineering Intelligence Platform"},{"version":"AIR v2.5","title":"Multi-framework Support","status":"Planned","purpose":"Support any automation framework.","deliverables":["Playwright","Cypress","Selenium","Robot Framework","Appium","Postman","JMeter"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Multi-framework Support"},{"version":"AIR v3.0","title":"Unified Quality Platform","status":"Future","purpose":"Unify all quality validations.","deliverables":["API Validation","Database Validation","Performance Testing","Security Testing","Accessibility Testing","Visual Testing"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Unified Quality Platform"},{"version":"AIR v4.0","title":"Enterprise Intelligence Platform","status":"Future","purpose":"Scale AIR for enterprise organizations.","deliverables":["Multi Project","Multi Team","Role Management","Scheduled Reports","Cloud Deployment","Team Dashboards","User Management"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Enterprise Intelligence Platform"},{"version":"AIR v5.0","title":"Autonomous Engineering Intelligence","status":"Vision","purpose":"Become an engineering intelligence assistant.","deliverables":["AI Root Cause","AI Code Suggestions","Failure Prediction","Release Prediction","Continuous Learning","Intelligent Automation Recommendations","Engineering Assistant"],"dependencies":["AIR Core data model","Historical execution storage","Evidence mapping"],"futureValue":"Autonomous Engineering Intelligence"}];
   const airSearchIndex = [];
   const drawer = document.getElementById('moduleDrawer');
   const drawerBackdrop = document.querySelector('.drawer-backdrop');
@@ -1851,7 +2092,11 @@
   const recommendationModal = document.getElementById('recommendationModal');
   const releaseModal = document.getElementById('releaseModal');
   const qualityModal = document.getElementById('qualityModal');
+  const riskModal = document.getElementById('riskModal');
+  const confidenceModal = document.getElementById('confidenceModal');
+  const journeyModal = document.getElementById('journeyModal');
   const evidenceModal = document.getElementById('evidenceModal');
+  const detailModal = document.getElementById('detailModal');
 
   function setText(id, value) {
     const element = document.getElementById(id);
@@ -1958,7 +2203,7 @@
       drawer.classList.remove('open');
       drawer.setAttribute('aria-hidden', 'true');
     }
-    [recommendationModal, releaseModal, qualityModal, evidenceModal].forEach(modal => {
+    [recommendationModal, releaseModal, qualityModal, riskModal, confidenceModal, journeyModal, evidenceModal, detailModal].forEach(modal => {
       if (modal) {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
@@ -1980,12 +2225,62 @@
     });
   });
 
-  document.querySelectorAll('.journey-node[data-module]').forEach(node => {
-    node.addEventListener('click', () => openDrawer(node.dataset.module));
+  function openJourneyDetail(journeyName) {
+    if (!journeyModal) {
+      return;
+    }
+
+    const data = journeyDetailData.find(item => item.name === journeyName) || {
+      name: journeyName,
+      status: 'No Data Available',
+      health: 0,
+      risk: 'No Data',
+      total: 0,
+      passed: 0,
+      failed: 0,
+      skipped: 0,
+      affectedModules: [],
+      failedDependencies: [],
+      notExecutedSteps: [],
+      recommendation: 'Run mapped journey tests to generate journey-level recommendations.',
+    };
+
+    setText('journeyTitle', data.name + ' Journey');
+    setText('journeySummary', 'Shows journey health, mapped modules, failed dependencies, not-executed steps, and next action.');
+    setText('journeyHealth', data.health + '%');
+    setText('journeyStatus', data.status);
+    setText('journeyTests', data.passed + '/' + data.total);
+    setText('journeyRisk', data.risk);
+    setText('journeyRecommendation', data.recommendation);
+
+    const modules = document.getElementById('journeyModules');
+    if (modules) {
+      const items = Array.isArray(data.affectedModules) && data.affectedModules.length > 0
+        ? data.affectedModules
+        : ['No mapped module data available in current AIR model.'];
+      modules.innerHTML = items.map(item => '<li>' + item + '</li>').join('');
+    }
+
+    const gaps = document.getElementById('journeyGaps');
+    if (gaps) {
+      const items = [
+        ...(data.failedDependencies || []).map(item => 'Failed dependency: ' + item),
+        ...(data.notExecutedSteps || []).map(item => 'Not executed: ' + item),
+      ];
+      gaps.innerHTML = (items.length ? items : ['No failed or not-executed journey dependencies recorded.'])
+        .map(item => '<li>' + item + '</li>')
+        .join('');
+    }
+
+    openModal(journeyModal);
+  }
+
+  document.querySelectorAll('.journey-node[data-journey]').forEach(node => {
+    node.addEventListener('click', () => openJourneyDetail(node.dataset.journey));
     node.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        openDrawer(node.dataset.module);
+        openJourneyDetail(node.dataset.journey);
       }
     });
   });
@@ -1997,6 +2292,7 @@
   document.querySelectorAll('[data-open-release]').forEach(card => {
     card.addEventListener('click', () => openModal(releaseModal));
   });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-release]'), () => openModal(releaseModal));
 
   document.querySelectorAll('[data-open-quality]').forEach(element => {
     element.addEventListener('click', event => {
@@ -2005,6 +2301,83 @@
       openModal(qualityModal);
     });
   });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-quality]'), () => openModal(qualityModal));
+
+  document.querySelectorAll('[data-open-risk]').forEach(element => {
+    element.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      openModal(riskModal);
+    });
+  });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-risk]'), () => openModal(riskModal));
+
+  document.querySelectorAll('[data-open-confidence]').forEach(element => {
+    element.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      openModal(confidenceModal);
+    });
+  });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-confidence]'), () => openModal(confidenceModal));
+
+  function openDetailModal(config) {
+    if (!detailModal || !config) {
+      return;
+    }
+
+    setText('detailEyebrow', config.eyebrow || 'AIR DETAIL');
+    setText('detailTitle', config.title || 'Details');
+    setText('detailSummary', config.summary || '');
+
+    const body = document.getElementById('detailBody');
+    if (body) {
+      body.innerHTML = config.body || '<p>No additional detail available.</p>';
+    }
+
+    openModal(detailModal);
+  }
+
+  function bindKeyboardOpen(elements, openCallback) {
+    elements.forEach(element => {
+      element.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openCallback(element, event);
+        }
+      });
+    });
+  }
+
+  const recommendationCards = document.querySelectorAll('[data-recommendation-index]');
+  recommendationCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const data = recommendationDetailData[Number(card.dataset.recommendationIndex)];
+      openDetailModal({
+        eyebrow: data?.priority || 'AIR RECOMMENDATION',
+        title: data?.title || 'Recommendation',
+        summary: data?.reason || 'AIR recommendation detail.',
+        body: '<div class="modal-grid"><div class="panel"><h2>Source</h2><p>' + (data?.source || 'AIR Recommendation Engine') + '</p></div><div class="panel"><h2>Related Area</h2><p>' + (data?.relatedModule || 'Current Release') + ' / ' + (data?.relatedJourney || 'Release Readiness') + '</p></div></div><br><div class="panel insight"><h2>Action</h2><p>' + (data?.action || 'Review recommendation and update automation coverage.') + '</p></div>',
+      });
+    });
+  });
+  bindKeyboardOpen(recommendationCards, element => element.click());
+
+  const roadmapCards = document.querySelectorAll('[data-roadmap-index]');
+  roadmapCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const data = roadmapDetailData[Number(card.dataset.roadmapIndex)];
+      const deliverables = (data?.deliverables || []).map(item => '<li>' + item + '</li>').join('');
+      const dependencies = (data?.dependencies || []).map(item => '<li>' + item + '</li>').join('');
+      openDetailModal({
+        eyebrow: data?.status || 'AIR ROADMAP',
+        title: (data?.version || 'AIR') + ' - ' + (data?.title || 'Roadmap'),
+        summary: data?.purpose || 'AIR roadmap detail.',
+        body: '<div class="modal-grid"><div class="panel"><h2>Deliverables</h2><ul class="action-list">' + deliverables + '</ul></div><div class="panel"><h2>Dependencies</h2><ul class="action-list">' + dependencies + '</ul></div></div><br><div class="panel insight"><h2>Future Value</h2><p>' + (data?.futureValue || 'Improves AIR platform value.') + '</p></div>',
+      });
+    });
+  });
+  bindKeyboardOpen(roadmapCards, element => element.click());
 
   function openEvidencePreview(trigger) {
     if (!evidenceModal || !trigger) {

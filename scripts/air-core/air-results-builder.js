@@ -5,6 +5,8 @@ const { loadAirConfig, readJsonIfExists } = require('./config/config-loader');
 const { loadAutomationResults } = require('./services/parser-service');
 const { formatDuration } = require('./services/duration');
 const { runEnginePipeline } = require('./engine/engine-orchestrator');
+const { buildBusinessJourneys } = require('./engine/journey-engine');
+const { buildHistory } = require('./engine/history-engine');
 const { schemaVersion, createFutureValidation } = require('./model/air-results.schema');
 const { validateAirResults } = require('./model/air-results-validator');
 
@@ -170,7 +172,13 @@ function buildManualDefectFailures(config = {}) {
 }
 
 function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
-  const manualFailures = buildManualDefectFailures(config);
+  const existingFailureIds = new Set(
+    (restoredAirResults.failedTests ?? [])
+      .map(failure => failure.testId ?? failure.id)
+      .filter(Boolean)
+  );
+  const manualFailures = buildManualDefectFailures(config)
+    .filter(failure => !existingFailureIds.has(failure.testId));
 
   if (manualFailures.length === 0) {
     return restoredAirResults;
@@ -230,7 +238,7 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     total: (restoredAirResults.summary?.total ?? 0) + manualFailures.length,
     failed: (restoredAirResults.summary?.failed ?? 0) + manualFailures.length,
     passRate: Math.round(((restoredAirResults.summary?.passed ?? 0) / ((restoredAirResults.summary?.total ?? 0) + manualFailures.length)) * 100),
-    failureRate: Math.round((manualFailures.length / ((restoredAirResults.summary?.total ?? 0) + manualFailures.length)) * 100),
+    failureRate: Math.round((((restoredAirResults.summary?.failed ?? 0) + manualFailures.length) / ((restoredAirResults.summary?.total ?? 0) + manualFailures.length)) * 100),
     executionStatus: 'Failed',
     releaseDecision: 'NO GO',
     estimatedReleaseRisk: 'HIGH',
@@ -256,11 +264,21 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     recommendedAction: 'Resolve confirmed MFA defects, then rerun the affected MFA scenarios before release approval.',
     explanation: `AIR recommends NO GO because the restored 69-test regression passed, but ${manualFailures.length} confirmed MFA product defect(s) remain open.`,
   };
+  const businessJourneys = buildBusinessJourneys({
+    modules,
+    failedTests,
+    executionSummary: summary,
+    executionScope: restoredAirResults.executionContext?.type,
+    config,
+    thresholds: config.releaseThresholds,
+  });
 
   return {
     ...restoredAirResults,
     summary,
     modules,
+    businessJourneys,
+    businessJourney: businessJourneys.map(journey => journey.name),
     failedTests,
     failures: failedTests,
     tests: [
@@ -297,6 +315,13 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
   const latestValidSnapshot = [...existingExecutions]
     .filter(item => item?.summary?.total > 0)
     .sort((left, right) => {
+      const leftComplete = (left.tests?.length ?? 0) >= (left.summary?.total ?? 0);
+      const rightComplete = (right.tests?.length ?? 0) >= (right.summary?.total ?? 0);
+
+      if (leftComplete !== rightComplete) {
+        return rightComplete ? 1 : -1;
+      }
+
       const totalDifference = (right.summary.total ?? 0) - (left.summary.total ?? 0);
 
       if (totalDifference !== 0) {
@@ -309,6 +334,25 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
   if (!latestValidSnapshot) {
     return undefined;
   }
+
+  const restoredModules = (latestValidSnapshot.modules ?? []).map(module => ({
+    ...module,
+    coverage: module.coverage ?? module.score ?? 0,
+    testCount: module.testCount ?? module.total ?? 0,
+    failedCount: module.failedCount ?? module.failed ?? 0,
+    durationMs: module.durationMs ?? 0,
+    duration: module.duration ?? '0s',
+    tests: module.tests ?? [],
+  }));
+  const restoredFailedTests = latestValidSnapshot.failedTests ?? latestValidSnapshot.failures ?? [];
+  const restoredBusinessJourneys = buildBusinessJourneys({
+    modules: restoredModules,
+    failedTests: restoredFailedTests,
+    executionSummary: latestValidSnapshot.summary,
+    executionScope: latestValidSnapshot.executionContext?.type,
+    config,
+    thresholds: config.releaseThresholds,
+  });
 
   const restoredAirResults = {
     schemaVersion,
@@ -364,27 +408,12 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       weights: {},
       explanation: ['AIR restored quality data from history. Run the latest execution for full factor details.'],
     },
-    businessJourneys: config.businessJourneys.map(journey => ({
-      name: journey.name,
-      critical: Boolean(journey.critical),
-      total: 0,
-      passed: 0,
-      failed: 0,
-      skipped: 0,
-      score: 0,
-      status: 'No Data Available',
-    })),
-    businessJourney: config.businessJourneys.map(journey => journey.name),
-    modules: (latestValidSnapshot.modules ?? []).map(module => ({
-      ...module,
-      coverage: module.score ?? 0,
-      durationMs: 0,
-      duration: '0s',
-      tests: [],
-    })),
-    tests: [],
-    failedTests: [],
-    failures: [],
+    businessJourneys: restoredBusinessJourneys,
+    businessJourney: restoredBusinessJourneys.map(journey => journey.name),
+    modules: restoredModules,
+    tests: latestValidSnapshot.tests ?? [],
+    failedTests: restoredFailedTests,
+    failures: restoredFailedTests,
     evidence: {
       playwrightReport: '',
       rawReports: [],
@@ -405,6 +434,19 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       },
     ],
     searchIndex: [],
+    discovery: {
+      summary: {
+        status: 'Historical Restore',
+        totalTests: 0,
+        mappedTests: 0,
+        unmappedTests: 0,
+      },
+      newTests: [],
+      mappedTests: [],
+      unmappedTests: [],
+      suggestions: [],
+      configurationIssues: [],
+    },
     history: Array.isArray(existingHistory)
       ? {
           executions: existingHistory,
@@ -420,13 +462,25 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       : existingHistory,
     futureValidation: createFutureValidation(),
     navigation: config.navigation,
+    engineLog: [
+      {
+        engine: 'History Restore',
+        status: 'passed',
+        reason: 'AIR restored the strongest valid historical execution snapshot.',
+      },
+    ],
   };
 
   const restoredWithManualDefects = applyManualDefectsToRestoredResults(restoredAirResults, config);
+  restoredWithManualDefects.history = buildHistory(
+    restoredWithManualDefects,
+    existingHistory,
+    config
+  );
 
   restoredWithManualDefects.validation = validateAirResults(restoredWithManualDefects);
   fs.writeFileSync(outputPath, `${JSON.stringify(restoredWithManualDefects, null, 2)}\n`);
-  fs.writeFileSync(historyPath, `${JSON.stringify(existingHistory, null, 2)}\n`);
+  fs.writeFileSync(historyPath, `${JSON.stringify(restoredWithManualDefects.history, null, 2)}\n`);
 
   return restoredWithManualDefects;
 }

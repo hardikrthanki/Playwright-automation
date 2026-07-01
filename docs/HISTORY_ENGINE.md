@@ -9,6 +9,7 @@ AIR should answer how quality changes over time, not only what happened in the c
 The History Engine supports:
 
 - Build comparison.
+- Added, removed, and modified test detection.
 - Quality trend analysis.
 - Release trend analysis.
 - Module trend analysis.
@@ -32,9 +33,58 @@ Execution history is stored in `execution-report/history/air-history.json` when 
   "history": {
     "executions": [],
     "trends": {},
-    "comparison": {},
+    "comparison": {
+      "status": "First Execution | Compared",
+      "metrics": {},
+      "tests": {
+        "added": [],
+        "removed": [],
+        "modified": [],
+        "summary": {}
+      },
+      "modules": {
+        "added": [],
+        "removed": [],
+        "improved": [],
+        "regressed": [],
+        "stable": [],
+        "notExecuted": [],
+        "summary": {}
+      },
+      "businessJourneys": {
+        "added": [],
+        "removed": [],
+        "improved": [],
+        "regressed": [],
+        "stable": [],
+        "notExecuted": [],
+        "summary": {}
+      },
+      "failures": {
+        "added": [],
+        "resolved": [],
+        "recurring": [],
+        "severityChanges": [],
+        "summary": {}
+      },
+      "release": {
+        "current": "GO",
+        "previous": "GO",
+        "changed": false,
+        "reasonChanges": {
+          "added": [],
+          "removed": []
+        }
+      }
+    },
     "regressions": [],
     "improvements": [],
+    "releaseTimeline": [],
+    "whatChanged": {
+      "status": "First Execution | Compared",
+      "summary": "",
+      "items": []
+    },
     "summary": {
       "status": "First Execution",
       "totalExecutions": 1
@@ -49,6 +99,7 @@ If no previous execution exists, the History Engine returns `First Execution` in
 
 - Pass rate trend.
 - Quality score trend.
+- Test count trend.
 - Business health trend.
 - Module coverage trend.
 - Journey coverage trend.
@@ -58,6 +109,8 @@ If no previous execution exists, the History Engine returns `First Execution` in
 - Failure rate trend.
 - Evidence trend.
 - Release decision trend.
+- Module health trends by module name.
+- Business journey health trends by journey name.
 
 ## Build Comparison
 
@@ -73,6 +126,8 @@ AIR compares:
 - Confidence changes.
 
 The current engine calculates comparison metrics for quality, confidence, pass rate, failures, duration, module coverage, journey coverage, and evidence totals.
+
+The engine also owns structured comparison data for tests, modules, journeys, failures, and release reason changes. The dashboard should prefer these History Engine fields before calculating display-only fallbacks.
 
 The Historical Intelligence dashboard reads from `history.comparison` and must display `This is the first recorded execution` when `history.comparison.status` is `First Execution`.
 

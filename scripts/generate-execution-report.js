@@ -1199,7 +1199,7 @@ function statusTone(status) {
     return 'green';
   }
 
-  if (status === 'At Risk' || status === 'High' || status === 'Missing') {
+  if (status === 'At Risk' || status === 'High' || status === 'Critical' || status === 'Failed' || status === 'Missing') {
     return 'red';
   }
 
@@ -1255,24 +1255,34 @@ const moduleOverviewCards =
     : emptyDataCards();
 
 const journeyCards =
-  businessJourney.map(step => {
-    const matchedModule =
-      moduleHealth.find(module => moduleMatch(module, step));
+  Array.isArray(airResults?.businessJourneys) && airResults.businessJourneys.length > 0
+    ? airResults.businessJourneys.map(journey => [
+      journey.name,
+      journey.status ?? 'No Data Available',
+      statusTone(journey.status),
+      journey.score ?? journey.health ?? 0,
+      journey.modules ?? [],
+    ])
+    : businessJourney.map(step => {
+      const matchedModule =
+        moduleHealth.find(module => moduleMatch(module, step));
 
-    if (!hasResults) {
-      return [step, 'No Data', 'amber'];
-    }
+      if (!hasResults) {
+        return [step, 'No Data', 'amber', 0, []];
+      }
 
-    if (!matchedModule) {
-      return [step, 'Not Executed', 'amber'];
-    }
+      if (!matchedModule) {
+        return [step, 'Not Executed', 'amber', 0, []];
+      }
 
-    return [
-      step,
-      matchedModule.failed > 0 ? 'Review' : matchedModule.skipped > 0 ? 'Controlled' : 'Pass',
-      matchedModule.failed > 0 ? 'red' : matchedModule.skipped > 0 ? 'amber' : 'green',
-    ];
-  });
+      return [
+        step,
+        matchedModule.failed > 0 ? 'Review' : matchedModule.skipped > 0 ? 'Controlled' : 'Pass',
+        matchedModule.failed > 0 ? 'red' : matchedModule.skipped > 0 ? 'amber' : 'green',
+        matchedModule.score ?? 0,
+        [matchedModule.name],
+      ];
+    });
 
 const failedTestCards =
   failedTests.length > 0
@@ -1854,6 +1864,35 @@ const moduleDrawerDataJson =
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
 
+const journeyDetailData =
+  (airResults?.businessJourneys ?? []).map(journey => {
+    const affectedModules =
+      (journey.modules ?? journey.steps ?? [])
+        .map(step => typeof step === 'string' ? step : step.module ?? step.name)
+        .filter(Boolean);
+
+    return {
+      name: journey.name,
+      status: journey.status ?? 'No Data Available',
+      health: journey.score ?? journey.health ?? 0,
+      risk: journey.risk ?? 'No Data',
+      total: journey.total ?? 0,
+      passed: journey.passed ?? 0,
+      failed: journey.failed ?? 0,
+      skipped: journey.skipped ?? 0,
+      affectedModules,
+      failedDependencies: (journey.failedDependencies ?? []).map(item => item.name ?? item.module ?? item),
+      notExecutedSteps: (journey.notExecutedSteps ?? []).map(item => item.name ?? item.module ?? item),
+      recommendation: journey.recommendation ?? 'Run mapped journey tests to generate journey-level recommendations.',
+    };
+  });
+
+const journeyDetailDataJson =
+  JSON.stringify(journeyDetailData)
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
+
 const airSearchIndexJson =
   JSON.stringify(airResults?.searchIndex ?? [])
     .replaceAll('<', '\\u003c')
@@ -1888,21 +1927,27 @@ const journeyHealthRows = (demoMode ? [
   ['Subscription', 'Partial', 88],
   ['Payment', 'Healthy', 94],
   ['Dashboard', 'Healthy', 100],
-] : journeyCards.map(([name, state]) => [
+] : journeyCards.map(([name, state, , score]) => [
   name,
   state === 'Pass' ? 'Healthy' : state === 'Controlled' ? 'Partial' : state,
-  state === 'Pass' ? 100 : state === 'Controlled' ? 82 : 60,
+  score ?? (state === 'Pass' ? 100 : state === 'Controlled' ? 82 : 60),
 ]))
   .map(([name, state, score], index, items) => {
+    const sourceJourney =
+      (airResults?.businessJourneys ?? []).find(journey => journey.name === name);
+    const firstMappedModule =
+      sourceJourney?.modules?.[0];
     const matchedModule =
-      displayModules.find(module => moduleMatch(module, name));
+      firstMappedModule
+        ? displayModules.find(module => module.name === firstMappedModule)
+        : displayModules.find(module => moduleMatch(module, name));
     const moduleAttribute =
       matchedModule
         ? ` data-module="${escapeHtml(matchedModule.name)}"`
         : '';
 
     return `
-    <div class="journey-node ${statusTone(state)} ${matchedModule ? 'interactive-card' : ''}"${moduleAttribute}${matchedModule ? ' role="button" tabindex="0"' : ''}>
+    <div class="journey-node ${statusTone(state)} interactive-card" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
       <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' ? '!' : 'NA'}</div>
       <strong>${escapeHtml(name)}</strong>
       <span>${score}%</span>
@@ -2045,6 +2090,8 @@ const historicalTrendBars =
 const historyComparison = airResults?.history?.comparison ?? {};
 const hasPreviousComparison = historyComparison.status === 'Compared' && historyComparison.previous;
 const comparisonMetrics = historyComparison.metrics ?? {};
+const historyFailureComparison = historyComparison.failures ?? {};
+const historyReleaseComparison = historyComparison.release ?? {};
 
 function formatComparisonValue(metricName, value) {
   if (value === undefined || value === null) {
@@ -2102,7 +2149,7 @@ function renderComparisonMetric(label, metricName) {
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(formatComparisonValue(metricName, metric.current))}</strong>
       <small>Previous: ${escapeHtml(formatComparisonValue(metricName, metric.previous))}</small>
-      <em class="trend-indicator">${trendSymbol} ${escapeHtml(trendLabel)} ${metric.delta > 0 ? '+' : ''}${escapeHtml(metric.delta)}</em>
+      <em class="trend-indicator">${escapeHtml(metric.direction)} - ${escapeHtml(trendLabel)} ${metric.delta > 0 ? '+' : ''}${escapeHtml(metric.delta)}</em>
     </div>`;
 }
 
@@ -2178,28 +2225,64 @@ function renderComparisonList(items = [], emptyText = 'No changes detected') {
     </ul>`;
 }
 
-const moduleComparison = compareNamedCollections(
+function renderTestChangeSummary(title, items = [], emptyText = 'No changes detected') {
+  if (!hasPreviousComparison) {
+    return '<div class="empty-note">No previous execution available.</div>';
+  }
+
+  if (items.length === 0) {
+    return `<div class="empty-note">${escapeHtml(emptyText)}</div>`;
+  }
+
+  const previewItems = items.slice(0, 3);
+  const remainingCount = items.length - previewItems.length;
+
+  return `
+    <div class="test-change-summary">
+      <div class="test-change-count">
+        <strong>${escapeHtml(items.length)}</strong>
+        <span>${escapeHtml(title)}</span>
+      </div>
+      <ul class="compare-list compact-list">
+        ${previewItems.map(item => `
+          <li>
+            <strong>${escapeHtml(item.name ?? item.testName ?? item.title ?? item.id ?? 'Unnamed test')}</strong>
+            <span>${escapeHtml(item.status ?? item.module ?? item.file ?? '')}</span>
+          </li>`).join('')}
+      </ul>
+      ${remainingCount > 0 ? `<div class="empty-note small-note">+${remainingCount} more in air-results.json</div>` : ''}
+    </div>`;
+}
+
+const moduleComparison = historyComparison.modules ?? compareNamedCollections(
   airResults?.modules ?? [],
   historyComparison.previous?.modules ?? [],
   'score'
 );
-const journeyComparison = compareNamedCollections(
+const journeyComparison = historyComparison.businessJourneys ?? compareNamedCollections(
   airResults?.businessJourneys ?? [],
   historyComparison.previous?.businessJourneys ?? [],
   'score'
 );
+const testComparison = historyComparison.tests ?? {};
+const addedTests = testComparison.added ?? [];
+const removedTests = testComparison.removed ?? [];
+const modifiedTests = (testComparison.modified ?? []).map(item => ({
+  name: item.test?.title ?? item.previous?.title ?? item.key,
+  status: (item.changes ?? []).map(change => change.field).join(', ') || 'Modified',
+}));
 const currentFailures = new Map((airResults?.failedTests ?? []).map(failure => [failure.testId ?? failure.testName, failure]));
 const previousFailures = new Map((historyComparison.previous?.failedTests ?? []).map(failure => [failure.testId ?? failure.testName, failure]));
-const newFailures = [...currentFailures.entries()]
+const newFailures = historyFailureComparison.added ?? [...currentFailures.entries()]
   .filter(([id]) => !previousFailures.has(id))
   .map(([, failure]) => failure);
-const resolvedFailures = [...previousFailures.entries()]
+const resolvedFailures = historyFailureComparison.resolved ?? [...previousFailures.entries()]
   .filter(([id]) => !currentFailures.has(id))
   .map(([, failure]) => failure);
-const recurringFailures = [...currentFailures.entries()]
+const recurringFailures = historyFailureComparison.recurring ?? [...currentFailures.entries()]
   .filter(([id]) => previousFailures.has(id))
   .map(([, failure]) => failure);
-const severityChanges = [...currentFailures.entries()]
+const severityChanges = historyFailureComparison.severityChanges ?? [...currentFailures.entries()]
   .filter(([id, failure]) => {
     const previousFailure = previousFailures.get(id);
     return previousFailure && previousFailure.severity !== failure.severity;
@@ -2210,11 +2293,17 @@ const severityChanges = [...currentFailures.entries()]
   }));
 const releaseChange =
   hasPreviousComparison
-    ? `${historyComparison.previous?.release?.decision ?? historyComparison.previous?.release?.status ?? historyComparison.previous?.releaseDecision?.status ?? 'No Data'} -> ${airResults?.release?.decision ?? airResults?.release?.status ?? executiveData.releaseDecision}`
+    ? `${historyReleaseComparison.previous ?? historyComparison.previous?.release?.decision ?? historyComparison.previous?.release?.status ?? historyComparison.previous?.releaseDecision?.status ?? 'No Data'} -> ${historyReleaseComparison.current ?? airResults?.release?.decision ?? airResults?.release?.status ?? executiveData.releaseDecision}`
     : 'No previous execution available';
 const currentReleaseReasons = new Set(airResults?.release?.reasons ?? []);
 const previousReleaseReasons = new Set(historyComparison.previous?.release?.reasons ?? []);
 const reasonChanges = [
+  ...(historyReleaseComparison.reasonChanges?.added ?? [])
+    .map(reason => ({ name: reason, status: 'New reason' })),
+  ...(historyReleaseComparison.reasonChanges?.removed ?? [])
+    .map(reason => ({ name: reason, status: 'Resolved reason' })),
+];
+const fallbackReasonChanges = [
   ...[...currentReleaseReasons]
     .filter(reason => !previousReleaseReasons.has(reason))
     .map(reason => ({ name: reason, status: 'New reason' })),
@@ -2222,6 +2311,7 @@ const reasonChanges = [
     .filter(reason => !currentReleaseReasons.has(reason))
     .map(reason => ({ name: reason, status: 'Resolved reason' })),
 ];
+const effectiveReasonChanges = reasonChanges.length > 0 ? reasonChanges : fallbackReasonChanges;
 
 const currentModulesExecuted = (airResults?.modules ?? []).filter(module => (module.total ?? 0) > 0).length;
 const previousModulesExecuted = (historyComparison.previous?.modules ?? []).filter(module => (module.total ?? 0) > 0).length;
@@ -2242,10 +2332,10 @@ const failureCategoryItems = Object.entries((airResults?.failedTests ?? []).redu
   groups[category] = (groups[category] ?? 0) + 1;
   return groups;
 }, {})).map(([name, count]) => ({ name, status: `${count} failure${count === 1 ? '' : 's'}` }));
-const releaseTimeline = historySnapshots
+const releaseTimeline = (airResults?.history?.releaseTimeline ?? historySnapshots)
   .map((snapshot, index) => ({
-    name: snapshot.project?.build ?? snapshot.execution?.build ?? snapshot.generatedAtDisplay ?? `Build ${index + 1}`,
-    status: snapshot.release?.decision ?? snapshot.release?.status ?? snapshot.releaseDecision?.status ?? snapshot.summary?.releaseDecision ?? 'No Data',
+    name: snapshot.build ?? snapshot.project?.build ?? snapshot.execution?.build ?? snapshot.generatedAtDisplay ?? `Build ${index + 1}`,
+    status: snapshot.decision ?? snapshot.release?.decision ?? snapshot.release?.status ?? snapshot.releaseDecision?.status ?? snapshot.summary?.releaseDecision ?? 'No Data',
   }));
 const mostImprovedModule = moduleComparison.improved
   .sort((left, right) => (right.currentScore - right.previousScore) - (left.currentScore - left.previousScore))[0];
@@ -2280,6 +2370,126 @@ const timelineRows = historySnapshots
       <td>${escapeHtml(index === 0 ? 'Baseline' : 'Recorded')}</td>
     </tr>`)
   .join('');
+
+function getSnapshotRelease(snapshot = {}) {
+  return formatReleaseDecision(
+    snapshot.release?.decision ??
+    snapshot.release?.status ??
+    snapshot.releaseDecision?.status ??
+    snapshot.summary?.releaseDecision
+  );
+}
+
+function getCurrentReleaseValue() {
+  return formatReleaseDecision(
+    airResults?.release?.decision ??
+    airResults?.release?.status ??
+    airResults?.releaseDecision?.status ??
+    executiveData.releaseDecision
+  );
+}
+
+function getComparisonDirection(metricName) {
+  const metric = comparisonMetrics[metricName];
+  return hasPreviousComparison && metric ? metric.direction : 'No previous data';
+}
+
+function getComparisonDeltaLabel(metricName, suffix = '') {
+  const metric = comparisonMetrics[metricName];
+
+  if (!hasPreviousComparison || !metric) {
+    return 'No previous execution available';
+  }
+
+  const sign = metric.delta > 0 ? '+' : '';
+  return `${metric.direction}: ${sign}${metric.delta}${suffix}`;
+}
+
+function renderHistoryTrendCard(title, trendKey, formatter = value => `${value}%`, options = {}) {
+  const points = airResults?.history?.trends?.[trendKey]?.points ?? [];
+  const latestPoints = points.slice(-8);
+
+  if (latestPoints.length < 2) {
+    return renderEmptyState({
+      title: `${title} not available.`,
+      reason: 'AIR needs at least two stored executions to calculate this trend.',
+      action: 'Run another execution and regenerate the AIR report.',
+      icon: 'HI',
+    });
+  }
+
+  const numericValues = latestPoints
+    .map(point => Number(point.value))
+    .filter(value => Number.isFinite(value));
+  const maxValue = Math.max(...numericValues, options.max ?? 100, 1);
+
+  return `
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>${escapeHtml(title)}</span>
+        <strong>${escapeHtml(formatter(latestPoints.at(-1)?.value ?? 0))}</strong>
+      </div>
+      <div class="history-sparkline">
+        ${latestPoints.map(point => {
+          const numericValue = Number(point.value);
+          const height = Number.isFinite(numericValue)
+            ? Math.max(8, Math.min(100, Math.round((numericValue / maxValue) * 100)))
+            : 8;
+
+          return `
+            <div class="history-spark" title="${escapeHtml(point.label)}: ${escapeHtml(formatter(point.value))}">
+              <span style="height:${height}%"></span>
+              <small>${escapeHtml(String(point.index ?? ''))}</small>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function renderReleaseTrendCard() {
+  const snapshots = historySnapshots.slice(-8);
+
+  if (snapshots.length < 2) {
+    return renderEmptyState({
+      title: 'Release trend not available.',
+      reason: 'AIR needs at least two executions to compare release decisions.',
+      action: 'Run another execution and regenerate the AIR report.',
+      icon: 'RT',
+    });
+  }
+
+  return `
+    <div class="history-trend-card">
+      <div class="history-trend-head">
+        <span>Release Trend</span>
+        ${renderReleaseBadge(getCurrentReleaseValue(), { compact: true })}
+      </div>
+      <div class="release-timeline">
+        ${snapshots.map((snapshot, index) => `
+          <div>
+            ${renderReleaseBadge(getSnapshotRelease(snapshot), { compact: true })}
+            <small>${escapeHtml(index === snapshots.length - 1 ? 'Current' : `Run ${index + 1}`)}</small>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+const executiveWhatChangedItems = hasPreviousComparison
+  ? (airResults?.history?.whatChanged?.items ?? [
+    `Release changed from ${getSnapshotRelease(historyComparison.previous)} to ${getCurrentReleaseValue()}.`,
+    `Quality is ${getComparisonDirection('quality').toLowerCase()} compared with the previous execution.`,
+    `Pass rate is ${getComparisonDirection('passRate').toLowerCase()} and currently ${executiveData.passRate}%.`,
+    `Failed tests changed by ${comparisonMetrics.failures?.delta ?? 0}; current failed count is ${executiveData.failed}.`,
+    `Module coverage is ${getComparisonDirection('moduleCoverage').toLowerCase()}.`,
+  ])
+  : [
+    'This is the first recorded execution in AIR history.',
+    'Build comparison will appear after the next stored execution.',
+  ];
+
+const executiveWhatChangedSummary = hasPreviousComparison
+  ? (airResults?.history?.whatChanged?.summary ?? `AIR compared this execution with the previous stored build. Release is ${getCurrentReleaseValue()}, quality is ${getComparisonDirection('quality').toLowerCase()}, failures are ${getComparisonDirection('failures').toLowerCase()}, and execution duration is ${getComparisonDirection('durationMs').toLowerCase()}.`)
+  : 'AIR has recorded the first execution. Historical comparison will become available after the next run.';
 
 const aiWhyItems =
   (Array.isArray(airResults?.releaseDecision?.reasons) && airResults.releaseDecision.reasons.length > 0
@@ -2671,8 +2881,8 @@ const aiRecommendationItems =
 
 const aiPriorityRecommendations =
   aiRecommendationItems
-    .map(item => `
-      <div class="recommendation-card">
+    .map((item, index) => `
+      <div class="recommendation-card interactive-card" role="button" tabindex="0" aria-label="Open recommendation details for ${escapeHtml(item.title)}" data-recommendation-index="${index}">
         <span>${escapeHtml(item.priority)}</span>
         <strong>${escapeHtml(item.title)}</strong>
         <p>${escapeHtml(item.detail)}</p>
@@ -2818,14 +3028,14 @@ const roadmapPlannedCount =
 
 const airRoadmapCards =
   roadmapVersions
-    .map(item => {
+    .map((item, index) => {
       const tone = roadmapStatusTone[item.status] ?? 'amber';
       const features = item.features
         .map(feature => `<li>${escapeHtml(feature)}</li>`)
         .join('');
 
       return `
-        <article class="roadmap-card ${tone}">
+        <article class="roadmap-card ${tone} interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for ${escapeHtml(item.version)}" data-roadmap-index="${index}">
           <div class="roadmap-card-head">
             <div>
               <span>${escapeHtml(item.version)}</span>
@@ -2848,6 +3058,34 @@ const airRoadmapWhyRows =
         <td><span class="badge ${roadmapStatusTone[item.status] === 'green' ? 'good' : roadmapStatusTone[item.status] === 'amber' ? 'warn' : 'good'}">${escapeHtml(item.status)}</span></td>
       </tr>`)
     .join('');
+
+const recommendationDetailDataJson =
+  JSON.stringify(aiRecommendationItems.map(item => ({
+    source: 'AIR Recommendation Engine',
+    priority: item.priority,
+    title: item.title,
+    reason: item.detail,
+    action: item.detail,
+    relatedModule: item.title.toLowerCase().includes('api') ? 'API Validation' : item.title.toLowerCase().includes('db') ? 'Database Validation' : 'Current Release',
+    relatedJourney: 'Release Readiness',
+  })))
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
+
+const roadmapDetailDataJson =
+  JSON.stringify(roadmapVersions.map(item => ({
+    version: item.version,
+    title: item.title,
+    status: item.status,
+    purpose: item.purpose,
+    deliverables: item.features,
+    dependencies: item.status === 'Completed' ? ['Current AIR Core and report UI'] : ['AIR Core data model', 'Historical execution storage', 'Evidence mapping'],
+    futureValue: item.goal,
+  })))
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
 
 function renderPageFooter(pageNumber) {
   return `
@@ -2895,11 +3133,18 @@ const airGoldenDashboardHtml = `<!doctype html>
 <div class="app">
   <style>
     .module-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}.module-health-card{display:flex;flex-direction:column;gap:14px;min-height:320px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;text-decoration:none;color:var(--text);box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.module-health-card:hover{transform:translateY(-3px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.14)}.module-health-card.green{border-color:rgba(57,231,95,.45)}.module-health-card.amber{border-color:rgba(245,197,66,.55)}.module-health-card.red{border-color:rgba(255,59,59,.6)}.module-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.module-title{display:flex;align-items:center;gap:12px}.module-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.32);color:var(--green);font-size:11px;font-weight:900}.module-health-card.amber .module-icon{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.38);color:var(--amber)}.module-health-card.red .module-icon{background:rgba(255,59,59,.12);border-color:rgba(255,59,59,.42);color:var(--red)}.module-title strong{font-size:18px}.module-score{font-size:44px;line-height:1;color:var(--green);font-weight:900}.module-health-card.amber .module-score{color:var(--amber)}.module-health-card.red .module-score{color:var(--red)}.module-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module-meta span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-meta b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.module-progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green),#16a34a)}.module-health-card.amber .module-progress span{background:linear-gradient(90deg,var(--amber),#b7791f)}.module-health-card.red .module-progress span{background:linear-gradient(90deg,var(--red),#991b1b)}.module-health-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-button{display:inline-flex;align-items:center;justify-content:center;width:max-content;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.10);color:var(--green);font-size:12px;font-weight:900;padding:9px 12px}.module-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.module-dashboard-card{border:1px solid rgba(57,231,95,.34);border-radius:14px;background:rgba(8,16,30,.74);padding:18px;scroll-margin-top:24px}.module-dashboard-card.amber{border-color:rgba(245,197,66,.55)}.module-dashboard-card.red{border-color:rgba(255,59,59,.6)}.module-dashboard-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.module-dashboard-metrics span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-dashboard-metrics b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-action{margin-top:12px;color:#d7fbe0;font-weight:800}.badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green)}.badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:var(--amber)}.badge.red{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35);color:var(--red)}@media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-dashboard-grid,.module-dashboard-metrics{grid-template-columns:1fr}}@media(max-width:760px){.module-card-grid,.module-meta{grid-template-columns:1fr}}@media print{.module-health-card,.module-dashboard-card{break-inside:avoid}}
-    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}
+    .ai-decision-panel{min-height:320px}.ai-decision-summary{font-size:15px;line-height:1.7;color:#d7fbe0;margin:0 0 18px}.risk-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;margin:18px 0}.risk-banner span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.risk-banner strong{font-size:32px}.risk-banner.green strong{color:var(--green)}.risk-banner.amber strong{color:var(--amber)}.risk-banner.red strong{color:var(--red)}.risk-dots{display:flex;gap:8px}.risk-dots i{width:12px;height:12px;border-radius:50%;background:#253247}.risk-banner.green .risk-dots i:first-child{background:var(--green);box-shadow:0 0 18px rgba(57,231,95,.55)}.risk-banner.amber .risk-dots i:nth-child(-n+2){background:var(--amber);box-shadow:0 0 18px rgba(245,197,66,.45)}.risk-banner.red .risk-dots i{background:var(--red);box-shadow:0 0 18px rgba(255,59,59,.45)}.recommendation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.recommendation-card{border:1px solid rgba(57,231,95,.32);border-radius:14px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;min-height:190px}.recommendation-card span{display:inline-block;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green);font-size:11px;font-weight:900;padding:6px 9px;margin-bottom:14px}.recommendation-card strong{display:block;font-size:18px;margin-bottom:10px}.recommendation-card p{margin:0;color:var(--muted);line-height:1.55}.action-list{margin:0;padding-left:19px;color:#d7fbe0;line-height:1.9}.ai-metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.ai-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.66);padding:14px}.ai-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ai-metric strong{display:block;font-size:22px;color:var(--green);margin-top:8px}.interactive-card{cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease,background .16s ease}.interactive-card:hover,.interactive-card:focus-visible{transform:translateY(-2px);border-color:rgba(57,231,95,.62)!important;box-shadow:0 18px 42px rgba(57,231,95,.14);outline:none}.interactive-card:focus-visible{box-shadow:0 0 0 3px rgba(57,231,95,.22),0 18px 42px rgba(57,231,95,.14)}.drawer-backdrop,.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:20}.drawer-backdrop.open,.modal-backdrop.open{opacity:1;pointer-events:auto}.module-drawer{position:fixed;top:0;right:0;width:min(560px,100vw);height:100vh;background:linear-gradient(180deg,#07101f,#0b1728);border-left:1px solid rgba(57,231,95,.38);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;z-index:21;display:flex;flex-direction:column}.module-drawer.open{transform:translateX(0)}.drawer-header{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:24px;border-bottom:1px solid var(--line2)}.drawer-header h2{font-size:28px;margin:4px 0}.drawer-close,.modal-close{border:1px solid var(--line2);background:#07101f;color:white;border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:20px}.drawer-body{padding:22px;overflow:auto}.drawer-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}.drawer-metric{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:14px}.drawer-metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em}.drawer-metric strong{display:block;color:var(--green);font-size:24px;margin-top:7px}.drawer-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:16px;margin-bottom:14px}.drawer-section h3{margin:0 0 12px;font-size:16px}.drawer-focus{border-color:rgba(57,231,95,.38);background:linear-gradient(135deg,rgba(57,231,95,.11),rgba(8,16,30,.72))}.drawer-focus p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}.drawer-list li{display:flex;gap:9px;align-items:center;color:#d7fbe0}.drawer-list li:before{content:"✓";color:var(--green);font-weight:900}.evidence-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.evidence-chip{border:1px solid rgba(57,231,95,.32);border-radius:11px;background:rgba(57,231,95,.08);padding:11px;color:white;text-decoration:none}.evidence-chip strong{display:block}.evidence-chip span{display:block;color:var(--muted);font-size:12px;margin-top:4px}.drawer-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.modal{position:fixed;left:50%;top:50%;width:min(780px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.96);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:22;border:1px solid rgba(57,231,95,.38);border-radius:18px;background:linear-gradient(180deg,#07101f,#0b1728);box-shadow:0 32px 90px rgba(0,0,0,.5);padding:24px}.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.modal-header h2{margin:4px 0;font-size:28px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:1100px){.recommendation-grid,.ai-metric-grid,.drawer-metrics,.evidence-links,.modal-grid{grid-template-columns:1fr}}@media print{.interactive-card{cursor:default}.interactive-card:hover,.interactive-card:focus-visible{transform:none;box-shadow:none}}
     .module-mini-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.module-mini-hero div{border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,rgba(57,231,95,.08),rgba(8,16,30,.76));padding:16px}.module-mini-hero span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.module-mini-hero strong{display:block;color:var(--green);font-size:30px;margin-top:8px}.mini-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;align-items:start;grid-auto-rows:min-content}.mini-section{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.62);padding:15px;align-self:start}.mini-section summary{display:flex;justify-content:space-between;gap:12px;align-items:center;cursor:pointer;list-style:none;margin:-2px 0 10px}.mini-section summary::-webkit-details-marker{display:none}.mini-section summary:before{content:"▾";color:var(--green);font-weight:900}.mini-section:not([open]) summary{margin-bottom:0}.mini-section:not([open]) summary:before{content:"▸"}.mini-section summary span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-section summary strong{margin-left:auto;color:var(--green);font-size:12px}.mini-section h3{margin:0 0 10px;font-size:15px}.mini-section p{margin:0;line-height:1.5}.mini-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.mini-label span{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.mini-label strong{color:var(--green)}.scenario-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.scenario-chips span{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.08);color:#d7fbe0;font-size:11px;font-weight:800;padding:6px 9px}.mini-evidence{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini-evidence span,.validation-stack span{border:1px solid rgba(57,231,95,.22);border-radius:10px;background:rgba(7,16,31,.74);padding:9px;color:white;font-size:12px}.mini-evidence b,.validation-stack b{display:block;color:var(--muted);font-weight:700;margin-top:5px}.mini-evidence-button{display:inline-block;margin-top:10px;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.1);color:var(--green)!important;font-size:12px;font-weight:900;padding:8px 10px;text-decoration:none!important}.validation-stack{display:grid;gap:8px}.history-chart{height:220px;display:flex;gap:14px;align-items:flex-end;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(180deg,#091426,#07101f);padding:20px 16px 44px}.trend-bar{flex:1;position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center}.trend-bar span{width:70%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}.trend-bar small{position:absolute;bottom:-28px;color:var(--muted);font-size:11px}.trend-bar strong{position:absolute;top:-18px;color:white;font-size:11px}.report-search,.global-search{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:12px;margin:14px 0}.global-search{position:sticky;top:12px;z-index:12;display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start;margin:0 0 22px}.report-search label,.global-search label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}.report-search input,.global-search input{width:100%;border:1px solid rgba(57,231,95,.28);border-radius:9px;background:#07101f;color:white;padding:10px 11px;outline:none}.report-search input:focus,.global-search input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(57,231,95,.12)}.search-results{display:grid;gap:7px;margin-top:10px}.global-search .search-results{grid-column:2}.search-results a{border:1px solid rgba(57,231,95,.18);border-radius:9px;background:rgba(57,231,95,.07);color:white!important;font-size:12px;line-height:1.35;padding:8px;text-decoration:none!important}.search-results a:hover{border-color:rgba(57,231,95,.45);color:var(--green)!important}.search-empty{color:var(--muted);font-size:12px}.search-hit{outline:2px solid rgba(57,231,95,.75);outline-offset:3px}.evidence-card{color:var(--text)!important;text-decoration:none!important;min-height:150px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}.evidence-card:hover{transform:translateY(-2px);border-color:var(--green);box-shadow:0 18px 42px rgba(57,231,95,.12)}.evidence-card strong{color:white!important;text-decoration:none!important;font-size:18px}.evidence-card span{color:var(--muted)!important;text-decoration:none!important}.evidence-card em{display:inline-block;margin-top:9px;color:var(--green)!important;font-style:normal;font-size:12px;font-weight:900;text-decoration:none!important}.evidence-card *{text-decoration:none!important}.evidence-icon{flex:0 0 58px;min-width:58px;height:58px;overflow:hidden;font-size:13px}.module-dashboard-grid{align-items:start}.module-dashboard-card{align-self:start}.why-release{max-width:460px;margin:24px auto 0;text-align:left}.why-release h3{text-align:center;font-size:24px;margin:0 0 18px}.why-release ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}.why-release li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:12px;align-items:start;color:#f8fafc;font-size:18px;line-height:1.35;text-align:left}.why-release li:before{content:"✓";display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.38);color:var(--green);font-size:13px;font-weight:900;line-height:1}@media(max-width:1100px){.module-mini-hero,.mini-dashboard-grid,.mini-evidence,.global-search{grid-template-columns:1fr}.global-search .search-results{grid-column:auto}}
     .nav a.disabled{opacity:.62;cursor:not-allowed}.nav a.disabled:hover{background:transparent;box-shadow:none}.nav a.disabled .nav-icon{color:var(--muted);border-color:rgba(148,163,184,.22);background:rgba(148,163,184,.06)}.nav a em{margin-left:auto;border:1px solid rgba(57,231,95,.24);border-radius:999px;color:var(--muted);font-style:normal;font-size:9px;font-weight:900;padding:3px 6px;text-transform:uppercase;letter-spacing:.04em}.mission-label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}.mission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin:12px 0 14px}.mission-grid div{border:1px solid rgba(57,231,95,.24);border-radius:12px;background:rgba(7,16,31,.7);padding:12px}.mission-grid span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.mission-grid strong{display:block;color:var(--green);font-size:22px;margin-top:6px}.evidence-preview-body{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:18px;min-height:180px}.evidence-preview-body img,.evidence-preview-body video{max-width:100%;border-radius:12px;border:1px solid var(--line2);background:#07101f}.evidence-preview-body .preview-meta{display:grid;gap:10px}.evidence-preview-body .preview-meta a{color:var(--green);font-weight:900}.roadmap-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.roadmap-summary div{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px}.roadmap-summary span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-summary strong{display:block;color:var(--green);font-size:28px;margin-top:8px}.roadmap-progress{height:13px;border-radius:999px;background:#1d2b44;overflow:hidden;margin:16px 0 8px}.roadmap-progress span{display:block;height:100%;width:18%;border-radius:999px;background:linear-gradient(90deg,var(--green),#9af7ad)}.roadmap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.roadmap-card{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px}.roadmap-card.green{border-color:rgba(57,231,95,.48)}.roadmap-card.amber{border-color:rgba(245,197,66,.45)}.roadmap-card.blue{border-color:rgba(139,215,164,.36)}.roadmap-card.purple{border-color:rgba(148,163,184,.36)}.roadmap-card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.roadmap-card-head span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.roadmap-card-head h2{margin:5px 0 0}.roadmap-card-head strong{border:1px solid rgba(57,231,95,.28);border-radius:999px;color:var(--green);font-size:11px;padding:6px 9px;white-space:nowrap}.roadmap-card p{color:#d7fbe0;line-height:1.55}.roadmap-card ul{columns:2;margin:12px 0 0;padding-left:18px;color:var(--muted);line-height:1.7}.module-filter{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px}.module-filter button{border:1px solid rgba(57,231,95,.28);border-radius:999px;background:#07101f;color:white;cursor:pointer;font-weight:900;padding:8px 12px}.module-filter button.active,.module-filter button:hover{border-color:var(--green);background:rgba(57,231,95,.12);color:var(--green)}.success-empty-state{text-align:center;padding:34px 18px}.success-icon{display:grid;place-items:center;width:76px;height:76px;margin:0 auto 18px;border-radius:50%;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-weight:900}.success-empty-state h2{font-size:28px;margin:0 0 10px}.success-empty-state p{max-width:720px;margin:0 auto;color:#d7fbe0;line-height:1.7}.success-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px auto 0;max-width:820px}.success-grid span{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:14px;color:var(--muted)}.success-grid b{display:block;color:var(--green);font-size:24px;margin-bottom:4px}.module-status-card{min-height:148px;gap:12px}.module-status-card p{font-size:18px;color:#d7fbe0;flex:0}.module-status-card em,.module-selector-card em{font-style:normal;color:var(--green);font-size:12px;font-weight:900}.module-selector-card{min-height:250px;display:flex;flex-direction:column;gap:14px}.module-selector-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.module-selector-summary span{border:1px solid var(--line2);border-radius:10px;background:rgba(8,16,30,.64);padding:10px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.module-selector-summary b{display:block;color:white;font-size:15px;margin-top:5px;text-transform:none;letter-spacing:0}.module-selector-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}.module-dashboard-intro{border:1px solid rgba(57,231,95,.28);border-radius:14px;background:linear-gradient(135deg,rgba(57,231,95,.1),rgba(8,16,30,.72));padding:18px;margin-bottom:18px}.module-dashboard-intro h2{margin:0 0 8px}.module-dashboard-intro p{margin:0;color:#d7fbe0;line-height:1.55}.drawer-test-list{display:grid;gap:9px}.drawer-test-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.drawer-test-row strong{display:block;color:white;font-size:13px;line-height:1.35}.drawer-test-row span{display:block;color:var(--muted);font-size:11px;margin-top:5px}.drawer-test-row em{font-style:normal;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900;text-transform:uppercase}.drawer-test-row em.green{background:rgba(57,231,95,.14);color:var(--green);border:1px solid rgba(57,231,95,.35)}.drawer-test-row em.amber{background:rgba(245,197,66,.14);color:var(--amber);border:1px solid rgba(245,197,66,.35)}.drawer-test-row em.red{background:rgba(255,59,59,.14);color:var(--red);border:1px solid rgba(255,59,59,.35)}@media(max-width:1100px){.roadmap-summary,.roadmap-grid{grid-template-columns:1fr}}@media(max-width:760px){.module-selector-summary,.mission-grid,.success-grid{grid-template-columns:1fr}.roadmap-card ul{columns:1}}
     .release-status-badge{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;border-radius:999px;border:1px solid rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--green);font-size:22px;font-weight:900;letter-spacing:.04em;line-height:1.1;padding:10px 16px;text-transform:uppercase;white-space:normal;text-align:center}.release-status-badge.warn{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--amber)}.release-status-badge.bad{border-color:rgba(255,59,59,.45);background:rgba(255,59,59,.12);color:var(--red)}.release-status-badge.compact{font-size:13px;padding:7px 10px;letter-spacing:.03em}.release-mini .release-status-badge{margin:8px 0 6px}.cover-stat .release-status-badge{margin-top:10px}.release-card{align-content:center;gap:14px;padding:24px}.release-card .release-status-badge{font-size:30px;padding:12px 22px;margin:4px auto 2px}.release-card p{max-width:620px;margin:0 auto;color:#d7fbe0;line-height:1.55}.release-card .decision{font-size:30px}.mission-grid{margin-top:4px}.ai-metric-grid{grid-template-columns:repeat(auto-fit,minmax(132px,1fr))}.ai-metric{min-width:0;overflow:visible}.ai-metric strong{max-width:100%;font-size:clamp(22px,2.1vw,30px);line-height:1.08;overflow-wrap:anywhere;word-break:normal}.ai-metric .release-status-badge{margin-top:7px;max-width:100%;width:100%;font-size:11px;line-height:1.15;padding:7px 6px;overflow-wrap:anywhere}.metric-help{display:inline-grid;place-items:center;width:16px;height:16px;margin-left:5px;border:1px solid rgba(57,231,95,.36);border-radius:50%;color:var(--green);font-size:10px;font-style:normal;font-weight:900;vertical-align:middle;cursor:help}.core-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.core-status-item{border:1px solid rgba(57,231,95,.24);border-radius:11px;background:rgba(7,16,31,.72);padding:10px}.core-status-item span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em}.core-status-item strong{display:block;color:var(--green);font-size:13px;margin-top:5px}.compare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.compare-card{border:1px solid var(--line2);border-radius:14px;background:rgba(8,16,30,.72);padding:16px;min-height:126px}.compare-card span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.compare-card strong{display:block;color:white;font-size:24px;margin:9px 0 5px}.compare-card small{display:block;color:var(--muted);line-height:1.4}.compare-card em{display:inline-block;margin-top:10px;border-radius:999px;border:1px solid rgba(57,231,95,.28);padding:5px 8px;color:var(--green);font-style:normal;font-size:11px;font-weight:900}.compare-card.red em{border-color:rgba(255,59,59,.36);color:var(--red)}.compare-card.amber em{border-color:rgba(245,197,66,.36);color:var(--amber)}.compare-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.compare-list li{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(57,231,95,.22);border-radius:11px;background:rgba(7,16,31,.74);padding:11px}.compare-list strong{font-size:13px}.compare-list span{color:var(--muted);font-size:12px}.modal-header h2 .release-status-badge{vertical-align:middle;margin:0 4px;width:auto;font-size:14px;padding:7px 10px}.modal-header h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}@media(max-width:1100px){.compare-grid,.core-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.release-card .release-status-badge{font-size:22px}.release-status-badge{font-size:18px}.release-status-badge.compact{font-size:12px}.compare-grid,.core-status-grid{grid-template-columns:1fr}}
     :root{--air-success:var(--green);--air-warning:var(--amber);--air-danger:var(--red);--air-info:var(--info);--air-muted:var(--muted);--air-panel:var(--panel);--air-border:var(--line2);--space-xs:6px;--space-sm:10px;--space-md:14px;--space-lg:18px;--space-xl:24px;--type-heading:32px;--type-body:14px;--type-label:11px;--type-metric:30px}
+    .report-search,.global-search{background:#07101f!important;border:1px solid rgba(57,231,95,.38)!important;box-shadow:0 18px 42px rgba(0,0,0,.36);backdrop-filter:none}
+    .report-search input,.global-search input{background:#020817!important;border:1px solid rgba(57,231,95,.46)!important;color:#f8fafc!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+    .report-search input::placeholder,.global-search input::placeholder{color:#7f8fa8}
+    .report-search input:focus,.global-search input:focus{background:#030b16!important;border-color:var(--green)!important;box-shadow:0 0 0 3px rgba(57,231,95,.18),inset 0 0 0 1px rgba(57,231,95,.18)!important}
+    .search-results{position:relative;z-index:30}
+    .search-results a,.search-empty{background:#08111f!important;border:1px solid rgba(57,231,95,.30)!important;box-shadow:0 10px 24px rgba(0,0,0,.28)}
+    .search-results a:hover{background:#0b1a2d!important;border-color:rgba(57,231,95,.58)!important}
     .release-status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:0;width:auto;max-inline-size:100%;border-radius:999px;text-align:center;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.12;font-size:clamp(12px,1.1vw,18px);padding:clamp(6px,.7vw,10px) clamp(9px,1vw,16px)}
     .release-status-badge[data-status="GO"]{border-color:rgba(57,231,95,.42);background:rgba(57,231,95,.12);color:var(--air-success)}
     .release-status-badge[data-status="CONDITIONAL_GO"]{border-color:rgba(245,197,66,.45);background:rgba(245,197,66,.12);color:var(--air-warning)}
@@ -2963,6 +3208,27 @@ const airGoldenDashboardHtml = `<!doctype html>
     #comparison .grid.two,#comparison .grid.three{gap:22px}
     .compare-card{min-height:138px}
     .trend-indicator{display:inline-flex;align-items:center;gap:5px}
+    .history-hero-grid{display:grid;grid-template-columns:minmax(280px,.85fr) 1.15fr;gap:18px;align-items:stretch}
+    .history-narrative{border:1px solid rgba(57,231,95,.28);border-radius:16px;background:rgba(8,16,30,.66);padding:20px;display:flex;flex-direction:column;gap:16px}
+    .history-narrative p{margin:0;color:#d7fbe0;line-height:1.65}
+    .history-change-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+    .history-change-list li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;color:#f8fafc;line-height:1.45}
+    .history-change-list li:before{content:"";width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 16px rgba(57,231,95,.48);margin-top:7px}
+    .history-metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .history-trend-card{border:1px solid var(--line2);border-radius:16px;background:rgba(8,16,30,.72);padding:18px;min-height:230px;display:flex;flex-direction:column;gap:18px}
+    .history-trend-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+    .history-trend-head span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .history-trend-head strong{color:var(--green);font-size:clamp(22px,2vw,30px);line-height:1}
+    .history-sparkline{display:flex;gap:10px;align-items:flex-end;min-height:130px;border:1px solid rgba(57,231,95,.18);border-radius:12px;background:linear-gradient(180deg,rgba(7,16,31,.82),rgba(8,16,30,.62));padding:18px 12px 32px}
+    .history-spark{flex:1;position:relative;display:flex;justify-content:center;align-items:flex-end;height:100%}
+    .history-spark span{width:70%;max-width:34px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}
+    .history-spark small{position:absolute;bottom:-23px;color:var(--muted);font-size:10px}
+    .release-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
+    .release-timeline div{border:1px solid rgba(57,231,95,.22);border-radius:12px;background:rgba(7,16,31,.74);padding:10px;display:grid;gap:8px;justify-items:start}
+    .release-timeline small{color:var(--muted);font-size:11px}
+    .history-section-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    @media(max-width:1100px){.history-hero-grid,.history-section-grid{grid-template-columns:1fr}.history-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.history-metric-grid{grid-template-columns:1fr}.history-sparkline{gap:7px;padding-inline:10px}.history-trend-card{min-height:auto}}
     .module-card-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
     .module-card-head{min-width:0}
     .module-title{min-width:0}
@@ -2979,6 +3245,15 @@ const airGoldenDashboardHtml = `<!doctype html>
     .compare-card small{overflow-wrap:anywhere}
     .compare-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}
     .compare-list strong,.compare-list span{min-width:0;overflow-wrap:anywhere}
+    .test-change-summary{border:1px solid rgba(57,231,95,.22);border-radius:14px;background:rgba(8,16,30,.62);padding:14px;display:grid;gap:12px;min-height:164px}
+    .test-change-count{display:flex;align-items:baseline;gap:10px}
+    .test-change-count strong{color:var(--green);font-size:34px;line-height:1}
+    .test-change-count span{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+    .compact-list{gap:7px}
+    .compact-list li{padding:8px 10px;grid-template-columns:minmax(0,1fr);gap:4px}
+    .compact-list strong{font-size:12px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .compact-list span{font-size:11px}
+    .small-note{font-size:12px;padding:9px 10px}
     .roadmap-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
     .roadmap-summary{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
     .roadmap-card-head{display:grid;grid-template-columns:minmax(0,1fr) auto}
@@ -3067,14 +3342,14 @@ const airGoldenDashboardHtml = `<!doctype html>
           <div class="cover-stat"><span>Framework</span><strong>${escapeHtml(airResults?.source?.framework ?? 'Playwright')}</strong></div>
           <div class="cover-stat"><span>Parser</span><strong>${escapeHtml(parserName)}</strong></div>
           <div class="cover-stat"><span>Generated By</span><strong>AIR Platform</strong></div>
-          <div class="cover-stat"><span>${helpLabel('Release Recommendation', 'releaseDecision')}</span>${releaseStatusCompact}</div>
-          <div class="cover-stat interactive-card" data-open-quality><span>${helpLabel('Quality Score', 'qualityScore')}</span><strong>${executiveData.qualityScore}%</strong></div>
+          <div class="cover-stat interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation"><span>${helpLabel('Release Recommendation', 'releaseDecision')}</span>${releaseStatusCompact}</div>
+          <div class="cover-stat interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>${helpLabel('Quality Score', 'qualityScore')}</span><strong>${executiveData.qualityScore}%</strong></div>
           <div class="cover-stat"><span>Branch</span><strong>${escapeHtml(currentBranch)}</strong></div>
           <div class="cover-stat"><span>Commit</span><strong>${escapeHtml(currentCommit)}</strong></div>
         </div>
       </div>
       <div class="grid two">
-        <div class="panel release-card interactive-card" data-open-release>
+        <div class="panel release-card interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
           <span class="mission-label">Release Status</span>
           ${releaseStatusBadge}
           <div class="mission-grid">
@@ -3125,7 +3400,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <div class="executive-decision-metrics">
           <div><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
-          <div class="interactive-card" data-open-quality><span>Quality</span><strong>${executiveData.qualityScore}%</strong></div>
+          <div class="interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong></div>
           <div><span>Risk</span><strong class="nowrap">${escapeHtml(estimatedReleaseRisk)}</strong></div>
           <div><span>Business Journey</span><strong>${escapeHtml(businessJourneyStatus)}</strong></div>
           <div><span>Evidence</span><strong>${escapeHtml(evidenceReadiness)}</strong></div>
@@ -3148,10 +3423,10 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div class="panel">
           <h2 class="icon-title"><span class="section-icon">RD</span>Decision Summary</h2>
           <div class="ai-metric-grid decision-metrics">
-            <div class="ai-metric"><span>${helpLabel('Release', 'releaseDecision')}</span><strong>${releaseStatusCompact}</strong></div>
-            <div class="ai-metric"><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
-            <div class="ai-metric"><span>${helpLabel('Risk', 'risk')}</span><strong class="nowrap">${escapeHtml(estimatedReleaseRisk)}</strong></div>
-            <div class="ai-metric interactive-card" data-open-quality><span>${helpLabel('Quality', 'qualityScore')}</span><strong>${executiveData.qualityScore}%</strong></div>
+            <div class="ai-metric interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation"><span>${helpLabel('Release', 'releaseDecision')}</span><strong>${releaseStatusCompact}</strong></div>
+            <div class="ai-metric interactive-card" data-open-confidence role="button" tabindex="0" aria-label="Open confidence explanation"><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
+            <div class="ai-metric interactive-card" data-open-risk role="button" tabindex="0" aria-label="Open risk explanation"><span>${helpLabel('Risk', 'risk')}</span><strong class="nowrap">${escapeHtml(estimatedReleaseRisk)}</strong></div>
+            <div class="ai-metric interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>${helpLabel('Quality', 'qualityScore')}</span><strong>${executiveData.qualityScore}%</strong></div>
           </div>
           <div class="decision-group">
             <h3>Reason</h3>
@@ -3282,55 +3557,79 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       ${hasPreviousComparison ? `
         <div class="panel insight">
-          <h2 class="icon-title"><span class="section-icon">HI</span>Executive Build Comparison</h2>
-          <div class="compare-grid">
-            <div class="compare-card"><span>Current Build</span><strong>${escapeHtml(buildVersion)}</strong><small>Current execution baseline</small></div>
-            <div class="compare-card"><span>Previous Build</span><strong>${escapeHtml(historyComparison.previous?.project?.build ?? historyComparison.previous?.execution?.build ?? 'Previous')}</strong><small>Last recorded execution</small></div>
-            ${renderComparisonMetric('Quality Score', 'quality')}
-            <div class="compare-card"><span>Release Decision</span><strong>${escapeHtml(releaseChange)}</strong><small>Current vs previous release decision</small></div>
-            ${renderComparisonMetric('Pass Rate', 'passRate')}
-            ${renderComparisonMetric('Execution Time', 'durationMs')}
-            ${renderComparisonMetric('Coverage', 'moduleCoverage')}
-            ${renderComparisonMetric('Failed Tests', 'failures')}
-            <div class="compare-card"><span>Modules Executed</span><strong>${currentModulesExecuted}</strong><small>Previous: ${previousModulesExecuted}</small></div>
-            <div class="compare-card"><span>Journeys Executed</span><strong>${currentJourneysExecuted}</strong><small>Previous: ${previousJourneysExecuted}</small></div>
+          <h2 class="icon-title"><span class="section-icon">HI</span>Executive What Changed</h2>
+          <div class="history-hero-grid">
+            <div class="history-narrative">
+              <p>${escapeHtml(executiveWhatChangedSummary)}</p>
+              <ul class="history-change-list">
+                ${executiveWhatChangedItems.map(item => `<li>${escapeHtml(item)}</li>`).join('')}
+              </ul>
+            </div>
+            <div class="history-metric-grid">
+              <div class="compare-card"><span>Current Build</span><strong>${escapeHtml(buildVersion)}</strong><small>Current execution baseline</small></div>
+              <div class="compare-card"><span>Previous Build</span><strong>${escapeHtml(historyComparison.previous?.project?.build ?? historyComparison.previous?.execution?.build ?? 'Previous')}</strong><small>Last recorded execution</small></div>
+              <div class="compare-card"><span>Release Change</span>${renderReleaseBadge(getCurrentReleaseValue(), { compact: true })}<small>Previous: ${escapeHtml(getSnapshotRelease(historyComparison.previous))}</small></div>
+              <div class="compare-card"><span>Quality Change</span><strong>${escapeHtml(getComparisonDeltaLabel('quality', '%'))}</strong><small>Current: ${executiveData.qualityScore}%</small></div>
+              <div class="compare-card"><span>Failure Change</span><strong>${escapeHtml(getComparisonDeltaLabel('failures'))}</strong><small>Current failed tests: ${executiveData.failed}</small></div>
+              <div class="compare-card"><span>Duration Change</span><strong>${escapeHtml(getComparisonDirection('durationMs'))}</strong><small>Current: ${escapeHtml(executiveData.duration)}</small></div>
+            </div>
           </div>
         </div>
         <br>
         <div class="panel">
-          <h2>Quality Trends</h2>
+          <h2>Build Comparison</h2>
           <div class="compare-grid">
             ${renderComparisonMetric('Quality Score', 'quality')}
-            ${renderComparisonMetric('Business Health', 'businessHealth')}
-            ${renderComparisonMetric('Coverage', 'moduleCoverage')}
             ${renderComparisonMetric('Pass Rate', 'passRate')}
-            ${renderComparisonMetric('Execution Duration', 'durationMs')}
-            ${renderComparisonMetric('Failure Rate', 'failureRate')}
+            ${renderComparisonMetric('Execution Time', 'durationMs')}
+            ${renderComparisonMetric('Failed Tests', 'failures')}
+            ${renderComparisonMetric('Module Coverage', 'moduleCoverage')}
+            ${renderComparisonMetric('Evidence', 'evidence')}
+              <div class="compare-card"><span>Modules Executed</span><strong>${currentModulesExecuted}</strong><small>Previous: ${previousModulesExecuted}</small></div>
+              <div class="compare-card"><span>Journeys Executed</span><strong>${currentJourneysExecuted}</strong><small>Previous: ${previousJourneysExecuted}</small></div>
+              <div class="compare-card"><span>Tests Added</span><strong>${historyComparison.tests?.summary?.added ?? 0}</strong><small>New tests since previous execution</small></div>
+              <div class="compare-card"><span>Tests Removed</span><strong>${historyComparison.tests?.summary?.removed ?? 0}</strong><small>Tests no longer present</small></div>
+              <div class="compare-card"><span>Tests Modified</span><strong>${historyComparison.tests?.summary?.modified ?? 0}</strong><small>Status, module, file, or title changed</small></div>
+            </div>
           </div>
+        <br>
+        <div class="history-section-grid">
+          ${renderHistoryTrendCard('Quality Trend', 'quality')}
+          ${renderReleaseTrendCard()}
+          ${renderHistoryTrendCard('Failure Trend', 'failures', value => `${value} failed`, { max: Math.max(5, ...(airResults?.history?.trends?.failures?.points ?? []).map(point => Number(point.value) || 0)) })}
+        </div>
+        <br>
+        <div class="panel">
+          <h2>Test Changes</h2>
+          <div class="grid three">
+            <div><h2>Added Tests</h2>${renderTestChangeSummary('added test(s)', addedTests, 'No added tests')}</div>
+            <div><h2>Removed Tests</h2>${renderTestChangeSummary('removed test(s)', removedTests, 'No removed tests')}</div>
+            <div><h2>Modified Tests</h2>${renderTestChangeSummary('modified test(s)', modifiedTests, 'No modified tests')}</div>
+          </div>
+        </div>
+        <br>
+        <div class="history-section-grid">
+          ${renderHistoryTrendCard('Pass Rate Trend', 'passRate')}
+          ${renderHistoryTrendCard('Module Coverage Trend', 'moduleCoverage')}
+          ${renderHistoryTrendCard('Journey Coverage Trend', 'journeyCoverage')}
         </div>
         <br>
         <div class="grid two">
           <div class="panel">
-            <h2>Module Trends</h2>
+            <h2>Module Trend</h2>
             <div class="grid two">
               <div><h2>Improved Modules</h2>${renderComparisonList(moduleComparison.improved, 'No improved modules')}</div>
-              <div><h2>Declined Modules</h2>${renderComparisonList(moduleComparison.regressed, 'No declined modules')}</div>
-              <div><h2>Stable Modules</h2>${renderComparisonList(stableModules, 'No stable module comparison')}</div>
+              <div><h2>Regressed Modules</h2>${renderComparisonList(moduleComparison.regressed, 'No regressed modules')}</div>
               <div><h2>New Modules</h2>${renderComparisonList(moduleComparison.added, 'No new modules')}</div>
-              <div><h2>Removed Modules</h2>${renderComparisonList(removedModules, 'No removed modules')}</div>
-              <div><h2>Risk Changes</h2>${renderComparisonList(moduleComparison.riskChanged, 'No module risk changes')}</div>
-              <div><h2>Recommendation Changes</h2>${renderComparisonList(moduleComparison.recommendationChanged, 'No recommendation changes')}</div>
               <div><h2>Not Executed Modules</h2>${renderComparisonList(moduleComparison.notExecuted, 'No not-executed modules')}</div>
             </div>
           </div>
           <div class="panel">
-            <h2>Business Journey Trends</h2>
+            <h2>Journey Trend</h2>
             <div class="grid two">
               <div><h2>Journey Improvements</h2>${renderComparisonList(journeyComparison.improved, 'No journey improvements')}</div>
               <div><h2>Journey Regressions</h2>${renderComparisonList(journeyRegressions, 'No journey regressions')}</div>
-              <div><h2>Journey Recovery</h2>${renderComparisonList(journeyRecoveries, 'No journey recoveries')}</div>
-              <div><h2>New Risks</h2>${renderComparisonList(newJourneyRisks, 'No new journey risks')}</div>
-              <div><h2>New Journeys</h2>${renderComparisonList(journeyComparison.added, 'No new journeys')}</div>
+              <div><h2>New Journey Risks</h2>${renderComparisonList(newJourneyRisks, 'No new journey risks')}</div>
               <div><h2>Not Executed Journeys</h2>${renderComparisonList(journeyComparison.notExecuted, 'No not-executed journeys')}</div>
             </div>
           </div>
@@ -3338,33 +3637,29 @@ const airGoldenDashboardHtml = `<!doctype html>
         <br>
         <div class="grid two">
           <div class="panel">
-            <h2>Failure Intelligence</h2>
-            <div class="grid three">
+            <h2>Failure Trend</h2>
+            <div class="grid two">
               <div><h2>New Failures</h2>${renderComparisonList(newFailures, 'No new failures')}</div>
               <div><h2>Resolved Failures</h2>${renderComparisonList(resolvedFailures, 'No resolved failures')}</div>
               <div><h2>Recurring Failures</h2>${renderComparisonList(recurringFailures, 'No recurring failures')}</div>
-              <div><h2>Critical Failures</h2>${renderComparisonList(criticalFailures, 'No critical failures')}</div>
-              <div><h2>Failure Categories</h2>${renderComparisonList(failureCategoryItems, 'No failure categories')}</div>
               <div><h2>Severity Changes</h2>${renderComparisonList(severityChanges, 'No severity changes')}</div>
             </div>
           </div>
           <div class="panel">
-            <h2>Release Intelligence</h2>
+            <h2>Release Trend</h2>
             <p>${escapeHtml(historyComparison.summary ?? 'AIR compared the current execution with the previous execution using History Engine data.')}</p>
             <div class="compare-grid">
-              <div class="compare-card"><span>GO</span><strong>${historySnapshots.filter(snapshot => (snapshot.release?.decision ?? snapshot.release?.status ?? snapshot.releaseDecision?.status) === 'GO').length}</strong><small>Recorded GO decisions</small></div>
-              <div class="compare-card"><span>Conditional GO</span><strong>${historySnapshots.filter(snapshot => ['CONDITIONAL_GO', 'CONDITIONAL GO'].includes(snapshot.release?.decision ?? snapshot.release?.status ?? snapshot.releaseDecision?.status)).length}</strong><small>Recorded conditional decisions</small></div>
-              <div class="compare-card"><span>No GO</span><strong>${historySnapshots.filter(snapshot => ['NO_GO', 'NO GO'].includes(snapshot.release?.decision ?? snapshot.release?.status ?? snapshot.releaseDecision?.status)).length}</strong><small>Recorded blocked decisions</small></div>
-              <div class="compare-card"><span>Reason Changes</span><strong>${escapeHtml(reasonChanges.length)}</strong><small>${reasonChanges.length ? escapeHtml(reasonChanges.map(item => `${item.status}: ${item.name}`).join(' | ')) : 'No release reason changes detected'}</small></div>
+              <div class="compare-card"><span>GO</span><strong>${historySnapshots.filter(snapshot => getSnapshotRelease(snapshot) === 'GO').length}</strong><small>Recorded GO decisions</small></div>
+              <div class="compare-card"><span>Conditional GO</span><strong>${historySnapshots.filter(snapshot => getSnapshotRelease(snapshot) === 'CONDITIONAL GO').length}</strong><small>Recorded conditional decisions</small></div>
+              <div class="compare-card"><span>No GO</span><strong>${historySnapshots.filter(snapshot => getSnapshotRelease(snapshot) === 'NO GO').length}</strong><small>Recorded blocked decisions</small></div>
+              <div class="compare-card"><span>Reason Changes</span><strong>${escapeHtml(effectiveReasonChanges.length)}</strong><small>${effectiveReasonChanges.length ? escapeHtml(effectiveReasonChanges.map(item => `${item.status}: ${item.name}`).join(' | ')) : 'No release reason changes detected'}</small></div>
             </div>
-            <br>
-            <ul class="compare-list">${releaseTimeline.map(item => `<li><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.status)}</span></li>`).join('')}</ul>
           </div>
         </div>
         <br>
         <div class="panel">
-          <h2>Engineering Insights</h2>
-          <p>AIR uses History Engine comparison data to highlight where the team should focus next.</p>
+          <h2>Executive Focus</h2>
+          <p>AIR uses History Engine comparison data to highlight what changed and where the team should focus next.</p>
           ${renderComparisonList(engineeringInsightItems, 'No historical insights yet')}
         </div>
         <br>
@@ -3374,16 +3669,6 @@ const airGoldenDashboardHtml = `<!doctype html>
             <thead><tr><th>Build</th><th>Version</th><th>Date</th><th>Quality</th><th>Release</th><th>Duration</th><th>Trend</th></tr></thead>
             <tbody>${timelineRows}</tbody>
           </table>
-        </div>
-        <br>
-        <div class="panel">
-          <h2>Build Comparison Detail</h2>
-          <div class="compare-grid">
-            <div class="compare-card"><span>Current Release</span><strong>${escapeHtml(airResults?.release?.decision ?? airResults?.release?.status ?? executiveData.releaseDecision)}</strong><small>${escapeHtml(airResults?.release?.explanation ?? '')}</small></div>
-            <div class="compare-card"><span>Previous Release</span><strong>${escapeHtml(historyComparison.previous?.release?.decision ?? historyComparison.previous?.release?.status ?? historyComparison.previous?.releaseDecision?.status ?? 'No Data')}</strong><small>Previous build decision</small></div>
-            <div class="compare-card"><span>Reason Changes</span><strong>${escapeHtml(reasonChanges.length)}</strong><small>${reasonChanges.length ? escapeHtml(reasonChanges.map(item => `${item.status}: ${item.name}`).join(' | ')) : 'No release reason changes detected'}</small></div>
-            <div class="compare-card"><span>Build Comparison</span><strong>${escapeHtml(historyComparison.status)}</strong><small>${escapeHtml(historyComparison.summary ?? '')}</small></div>
-          </div>
         </div>
       ` : `
         ${renderEmptyState({
@@ -3545,6 +3830,63 @@ const airGoldenDashboardHtml = `<!doctype html>
       <tbody>${qualityFactorRows}</tbody>
     </table>
   </section>
+  <section class="modal" id="riskModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">RISK EXPLANATION</div>
+        <h2>Release Risk: ${escapeHtml(estimatedReleaseRisk)}</h2>
+        <p class="ai-decision-summary">AIR derives risk from failed tests, critical modules, warning modules, skipped checks, journey health, and release-rule output.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close risk explanation">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Failed Tests</span><strong>${executiveData.failed}</strong></div>
+      <div class="ai-metric"><span>Warning Modules</span><strong>${warningModules}</strong></div>
+      <div class="ai-metric"><span>Critical Modules</span><strong>${criticalModules}</strong></div>
+      <div class="ai-metric"><span>Release Risk</span><strong>${escapeHtml(estimatedReleaseRisk)}</strong></div>
+    </div>
+    <br>
+    <div class="panel"><h2>Risk Guidance</h2><p>${escapeHtml(airResults?.release?.explanation ?? aiDecisionSummary)}</p></div>
+  </section>
+  <section class="modal" id="confidenceModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">CONFIDENCE EXPLANATION</div>
+        <h2>Release Confidence: ${executiveConfidence}%</h2>
+        <p class="ai-decision-summary">Confidence reflects execution context, pass stability, coverage breadth, evidence readiness, and release-rule confidence.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close confidence explanation">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Execution Context</span><strong>${escapeHtml(airResults?.executionContext?.validationLevel ?? airResults?.executionContext?.type ?? 'No Data')}</strong></div>
+      <div class="ai-metric"><span>Pass Rate</span><strong>${executiveData.passRate}%</strong></div>
+      <div class="ai-metric"><span>Coverage</span><strong>${escapeHtml(String(airResults?.executionContext?.coverage ?? 'No Data'))}${airResults?.executionContext?.coverage !== undefined ? '%' : ''}</strong></div>
+      <div class="ai-metric"><span>Evidence</span><strong>${escapeHtml(evidenceReadiness)}</strong></div>
+    </div>
+  </section>
+  <section class="modal" id="journeyModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow">JOURNEY DETAILS</div>
+        <h2 id="journeyTitle">Journey Details</h2>
+        <p class="ai-decision-summary" id="journeySummary">Journey-level health and impacted modules.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close journey details">&times;</button>
+    </div>
+    <div class="ai-metric-grid">
+      <div class="ai-metric"><span>Health</span><strong id="journeyHealth">0%</strong></div>
+      <div class="ai-metric"><span>Status</span><strong id="journeyStatus">No Data</strong></div>
+      <div class="ai-metric"><span>Tests</span><strong id="journeyTests">0</strong></div>
+      <div class="ai-metric"><span>Risk</span><strong id="journeyRisk">No Data</strong></div>
+    </div>
+    <br>
+    <div class="modal-grid">
+      <div class="panel"><h2>Mapped / Affected Modules</h2><ul class="action-list" id="journeyModules"></ul></div>
+      <div class="panel"><h2>Not Executed / Failed Dependencies</h2><ul class="action-list" id="journeyGaps"></ul></div>
+    </div>
+    <br>
+    <div class="panel insight"><h2>Recommendation</h2><p id="journeyRecommendation"></p></div>
+  </section>
   <section class="modal" id="evidenceModal" aria-hidden="true">
     <div class="modal-header">
       <div>
@@ -3556,9 +3898,23 @@ const airGoldenDashboardHtml = `<!doctype html>
     </div>
     <div id="evidencePreviewBody" class="evidence-preview-body"></div>
   </section>
+  <section class="modal" id="detailModal" aria-hidden="true">
+    <div class="modal-header">
+      <div>
+        <div class="eyebrow" id="detailEyebrow">AIR DETAIL</div>
+        <h2 id="detailTitle">Details</h2>
+        <p class="ai-decision-summary" id="detailSummary">Detail information.</p>
+      </div>
+      <button class="modal-close" type="button" data-close-panels aria-label="Close detail view">&times;</button>
+    </div>
+    <div id="detailBody" class="evidence-preview-body"></div>
+  </section>
 </div>
 <script>
   const moduleDrawerData = ${moduleDrawerDataJson};
+  const journeyDetailData = ${journeyDetailDataJson};
+  const recommendationDetailData = ${recommendationDetailDataJson};
+  const roadmapDetailData = ${roadmapDetailDataJson};
   const airSearchIndex = ${airSearchIndexJson};
   const drawer = document.getElementById('moduleDrawer');
   const drawerBackdrop = document.querySelector('.drawer-backdrop');
@@ -3566,7 +3922,11 @@ const airGoldenDashboardHtml = `<!doctype html>
   const recommendationModal = document.getElementById('recommendationModal');
   const releaseModal = document.getElementById('releaseModal');
   const qualityModal = document.getElementById('qualityModal');
+  const riskModal = document.getElementById('riskModal');
+  const confidenceModal = document.getElementById('confidenceModal');
+  const journeyModal = document.getElementById('journeyModal');
   const evidenceModal = document.getElementById('evidenceModal');
+  const detailModal = document.getElementById('detailModal');
 
   function setText(id, value) {
     const element = document.getElementById(id);
@@ -3673,7 +4033,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       drawer.classList.remove('open');
       drawer.setAttribute('aria-hidden', 'true');
     }
-    [recommendationModal, releaseModal, qualityModal, evidenceModal].forEach(modal => {
+    [recommendationModal, releaseModal, qualityModal, riskModal, confidenceModal, journeyModal, evidenceModal, detailModal].forEach(modal => {
       if (modal) {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
@@ -3695,12 +4055,62 @@ const airGoldenDashboardHtml = `<!doctype html>
     });
   });
 
-  document.querySelectorAll('.journey-node[data-module]').forEach(node => {
-    node.addEventListener('click', () => openDrawer(node.dataset.module));
+  function openJourneyDetail(journeyName) {
+    if (!journeyModal) {
+      return;
+    }
+
+    const data = journeyDetailData.find(item => item.name === journeyName) || {
+      name: journeyName,
+      status: 'No Data Available',
+      health: 0,
+      risk: 'No Data',
+      total: 0,
+      passed: 0,
+      failed: 0,
+      skipped: 0,
+      affectedModules: [],
+      failedDependencies: [],
+      notExecutedSteps: [],
+      recommendation: 'Run mapped journey tests to generate journey-level recommendations.',
+    };
+
+    setText('journeyTitle', data.name + ' Journey');
+    setText('journeySummary', 'Shows journey health, mapped modules, failed dependencies, not-executed steps, and next action.');
+    setText('journeyHealth', data.health + '%');
+    setText('journeyStatus', data.status);
+    setText('journeyTests', data.passed + '/' + data.total);
+    setText('journeyRisk', data.risk);
+    setText('journeyRecommendation', data.recommendation);
+
+    const modules = document.getElementById('journeyModules');
+    if (modules) {
+      const items = Array.isArray(data.affectedModules) && data.affectedModules.length > 0
+        ? data.affectedModules
+        : ['No mapped module data available in current AIR model.'];
+      modules.innerHTML = items.map(item => '<li>' + item + '</li>').join('');
+    }
+
+    const gaps = document.getElementById('journeyGaps');
+    if (gaps) {
+      const items = [
+        ...(data.failedDependencies || []).map(item => 'Failed dependency: ' + item),
+        ...(data.notExecutedSteps || []).map(item => 'Not executed: ' + item),
+      ];
+      gaps.innerHTML = (items.length ? items : ['No failed or not-executed journey dependencies recorded.'])
+        .map(item => '<li>' + item + '</li>')
+        .join('');
+    }
+
+    openModal(journeyModal);
+  }
+
+  document.querySelectorAll('.journey-node[data-journey]').forEach(node => {
+    node.addEventListener('click', () => openJourneyDetail(node.dataset.journey));
     node.addEventListener('keydown', event => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        openDrawer(node.dataset.module);
+        openJourneyDetail(node.dataset.journey);
       }
     });
   });
@@ -3712,6 +4122,7 @@ const airGoldenDashboardHtml = `<!doctype html>
   document.querySelectorAll('[data-open-release]').forEach(card => {
     card.addEventListener('click', () => openModal(releaseModal));
   });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-release]'), () => openModal(releaseModal));
 
   document.querySelectorAll('[data-open-quality]').forEach(element => {
     element.addEventListener('click', event => {
@@ -3720,6 +4131,83 @@ const airGoldenDashboardHtml = `<!doctype html>
       openModal(qualityModal);
     });
   });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-quality]'), () => openModal(qualityModal));
+
+  document.querySelectorAll('[data-open-risk]').forEach(element => {
+    element.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      openModal(riskModal);
+    });
+  });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-risk]'), () => openModal(riskModal));
+
+  document.querySelectorAll('[data-open-confidence]').forEach(element => {
+    element.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      openModal(confidenceModal);
+    });
+  });
+  bindKeyboardOpen(document.querySelectorAll('[data-open-confidence]'), () => openModal(confidenceModal));
+
+  function openDetailModal(config) {
+    if (!detailModal || !config) {
+      return;
+    }
+
+    setText('detailEyebrow', config.eyebrow || 'AIR DETAIL');
+    setText('detailTitle', config.title || 'Details');
+    setText('detailSummary', config.summary || '');
+
+    const body = document.getElementById('detailBody');
+    if (body) {
+      body.innerHTML = config.body || '<p>No additional detail available.</p>';
+    }
+
+    openModal(detailModal);
+  }
+
+  function bindKeyboardOpen(elements, openCallback) {
+    elements.forEach(element => {
+      element.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openCallback(element, event);
+        }
+      });
+    });
+  }
+
+  const recommendationCards = document.querySelectorAll('[data-recommendation-index]');
+  recommendationCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const data = recommendationDetailData[Number(card.dataset.recommendationIndex)];
+      openDetailModal({
+        eyebrow: data?.priority || 'AIR RECOMMENDATION',
+        title: data?.title || 'Recommendation',
+        summary: data?.reason || 'AIR recommendation detail.',
+        body: '<div class="modal-grid"><div class="panel"><h2>Source</h2><p>' + (data?.source || 'AIR Recommendation Engine') + '</p></div><div class="panel"><h2>Related Area</h2><p>' + (data?.relatedModule || 'Current Release') + ' / ' + (data?.relatedJourney || 'Release Readiness') + '</p></div></div><br><div class="panel insight"><h2>Action</h2><p>' + (data?.action || 'Review recommendation and update automation coverage.') + '</p></div>',
+      });
+    });
+  });
+  bindKeyboardOpen(recommendationCards, element => element.click());
+
+  const roadmapCards = document.querySelectorAll('[data-roadmap-index]');
+  roadmapCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const data = roadmapDetailData[Number(card.dataset.roadmapIndex)];
+      const deliverables = (data?.deliverables || []).map(item => '<li>' + item + '</li>').join('');
+      const dependencies = (data?.dependencies || []).map(item => '<li>' + item + '</li>').join('');
+      openDetailModal({
+        eyebrow: data?.status || 'AIR ROADMAP',
+        title: (data?.version || 'AIR') + ' - ' + (data?.title || 'Roadmap'),
+        summary: data?.purpose || 'AIR roadmap detail.',
+        body: '<div class="modal-grid"><div class="panel"><h2>Deliverables</h2><ul class="action-list">' + deliverables + '</ul></div><div class="panel"><h2>Dependencies</h2><ul class="action-list">' + dependencies + '</ul></div></div><br><div class="panel insight"><h2>Future Value</h2><p>' + (data?.futureValue || 'Improves AIR platform value.') + '</p></div>',
+      });
+    });
+  });
+  bindKeyboardOpen(roadmapCards, element => element.click());
 
   function openEvidencePreview(trigger) {
     if (!evidenceModal || !trigger) {

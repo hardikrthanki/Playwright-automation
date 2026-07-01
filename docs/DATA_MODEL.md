@@ -341,10 +341,56 @@ The History Engine owns `history`.
         "moduleCoverage": {},
         "journeyCoverage": {},
         "evidence": {}
+      },
+      "tests": {
+        "added": [],
+        "removed": [],
+        "modified": [],
+        "summary": {}
+      },
+      "modules": {
+        "added": [],
+        "removed": [],
+        "improved": [],
+        "regressed": [],
+        "stable": [],
+        "notExecuted": [],
+        "summary": {}
+      },
+      "businessJourneys": {
+        "added": [],
+        "removed": [],
+        "improved": [],
+        "regressed": [],
+        "stable": [],
+        "notExecuted": [],
+        "summary": {}
+      },
+      "failures": {
+        "added": [],
+        "resolved": [],
+        "recurring": [],
+        "severityChanges": [],
+        "summary": {}
+      },
+      "release": {
+        "current": "GO",
+        "previous": "GO",
+        "changed": false,
+        "reasonChanges": {
+          "added": [],
+          "removed": []
+        }
       }
     },
     "regressions": [],
     "improvements": [],
+    "releaseTimeline": [],
+    "whatChanged": {
+      "status": "First Execution",
+      "summary": "",
+      "items": []
+    },
     "summary": {
       "status": "First Execution",
       "totalExecutions": 1
