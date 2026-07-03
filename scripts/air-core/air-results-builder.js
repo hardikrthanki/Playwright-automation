@@ -181,13 +181,25 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     .filter(failure => !existingFailureIds.has(failure.testId));
 
   if (manualFailures.length === 0) {
-    return restoredAirResults;
+    const normalizedFailedTests = (restoredAirResults.failedTests ?? []).map(failure => ({
+      ...failure,
+      evidence: Array.isArray(failure.evidence) ? failure.evidence : [],
+    }));
+
+    return {
+      ...restoredAirResults,
+      failedTests: normalizedFailedTests,
+      failures: normalizedFailedTests,
+    };
   }
 
   const failedTests = [
     ...(restoredAirResults.failedTests ?? []),
     ...manualFailures,
-  ];
+  ].map(failure => ({
+    ...failure,
+    evidence: Array.isArray(failure.evidence) ? failure.evidence : [],
+  }));
   const modules = [...(restoredAirResults.modules ?? [])];
 
   for (const failure of manualFailures) {

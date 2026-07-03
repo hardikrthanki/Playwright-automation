@@ -327,7 +327,23 @@ The History Engine owns `history`.
 {
   "history": {
     "executions": [],
-    "trends": {},
+    "trends": {
+      "quality": {
+        "name": "Quality Trend",
+        "points": [
+          {
+            "index": 1,
+            "build": "2026.07.02.001",
+            "generatedAt": "2026-07-02T10:00:00.000Z",
+            "generatedAtDisplay": "02 Jul 2026, 10:00",
+            "releaseDecision": "GO",
+            "qualityScore": 98,
+            "label": "02 Jul 2026, 10:00",
+            "value": 98
+          }
+        ]
+      }
+    },
     "comparison": {
       "status": "First Execution",
       "current": {},

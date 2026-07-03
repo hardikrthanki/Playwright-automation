@@ -112,6 +112,19 @@ If no previous execution exists, the History Engine returns `First Execution` in
 - Module health trends by module name.
 - Business journey health trends by journey name.
 
+Each trend point should include explicit execution context so the UI never has to show ambiguous numeric labels:
+
+- `index`
+- `build`
+- `generatedAt`
+- `generatedAtDisplay`
+- `releaseDecision`
+- `qualityScore`
+- `label`
+- `value`
+
+The dashboard should display `Build <value>` or compact `B<value>` when build metadata exists. If build metadata is unavailable, display `Execution <index>` or compact `E<index>`. Hover tooltips should include build/execution label, execution date/time, quality score, and release decision.
+
 ## Build Comparison
 
 AIR compares:

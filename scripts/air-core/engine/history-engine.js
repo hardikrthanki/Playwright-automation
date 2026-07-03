@@ -127,7 +127,11 @@ function buildTrend(executions = [], name, reader) {
     name,
     points: sortExecutions(executions).map((execution, index) => ({
       index: index + 1,
+      build: execution.project?.build ?? execution.execution?.build,
       generatedAt: execution.generatedAt,
+      generatedAtDisplay: execution.generatedAtDisplay,
+      releaseDecision: getReleaseStatus(execution),
+      qualityScore: getQualityScore(execution),
       label: execution.generatedAtDisplay ?? execution.generatedAt ?? `Execution ${index + 1}`,
       value: reader(execution),
     })),
@@ -488,7 +492,11 @@ function buildNamedHealthTrends(executions = [], collectionName) {
 
       return {
         index: index + 1,
+        build: execution.project?.build ?? execution.execution?.build,
         generatedAt: execution.generatedAt,
+        generatedAtDisplay: execution.generatedAtDisplay,
+        releaseDecision: getReleaseStatus(execution),
+        qualityScore: getQualityScore(execution),
         label: execution.generatedAtDisplay ?? execution.generatedAt ?? `Execution ${index + 1}`,
         score: item?.score ?? item?.coverage ?? 0,
         status: item?.status ?? 'Not Executed',

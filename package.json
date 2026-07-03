@@ -18,7 +18,7 @@
     "test:headed": "playwright test --headed",
     "report": "playwright show-report",
     "air:parse": "node scripts/generate-air-results.js",
-    "report:execution": "npm run air:parse && node scripts/generate-execution-report.js",
+    "report:execution": "npm run air:parse && node scripts/generate-execution-report.js && start execution-report/index.html",
     "report:pdf": "node scripts/export-execution-pdf.js",
     "report:execution:pdf": "npm run report:execution && npm run report:pdf",
     "typecheck": "tsc -p tsconfig.json --noEmit"
