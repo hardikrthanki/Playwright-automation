@@ -33,7 +33,7 @@ function decodeBase32(
 
     if (index === -1) {
       throw new Error(
-        'MFA secret must be base32 encoded.'
+        'MFA_LOCAL_TOTP_SECRET must be the authenticator setup secret in base32 format. Do not use a 6-digit OTP or backup code.'
       );
     }
 

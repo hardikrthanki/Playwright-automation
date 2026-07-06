@@ -3272,27 +3272,30 @@ const engineStatusItems = [
     metrics: [['Engines', 14], ['Pipeline', 'Operational']],
   },
 ];
-const airCoreStatusCards = engineStatusItems
-  .map((item, index) => {
-    const group =
-      index <= 1
-        ? 'Input'
-        : index <= 6
-          ? 'Processing'
-          : index <= 8
-            ? 'Intelligence'
-            : index <= 9
-              ? 'Decision'
-            : 'Platform';
-    const groupClass = group.toLowerCase();
+function getAirCoreEngineGroup(index) {
+  return index <= 1
+    ? 'Input'
+    : index <= 6
+      ? 'Processing'
+      : index <= 8
+        ? 'Intelligence'
+        : index <= 9
+          ? 'Decision'
+          : 'Platform';
+}
 
-    return `
+function renderAirCoreEngineCard(item, index, group = getAirCoreEngineGroup(index)) {
+  const groupClass = group.toLowerCase();
+
+  return `
     <div class="core-status-item engine-card engine-${groupClass}">
       <div class="engine-head">
-        <span>${escapeHtml(item.name)}</span>
+        <div>
+          <span>${escapeHtml(group)}</span>
+          <h3>${escapeHtml(item.name)}</h3>
+        </div>
         <strong>Operational</strong>
       </div>
-      <em class="engine-group">${escapeHtml(group)}</em>
       <p>${escapeHtml(item.purpose)}</p>
       <div class="engine-metrics">
         ${item.metrics.map(([label, value]) => `
@@ -3302,7 +3305,10 @@ const airCoreStatusCards = engineStatusItems
           </div>`).join('')}
       </div>
     </div>`;
-  })
+}
+
+const airCoreStatusCards = engineStatusItems
+  .map((item, index) => renderAirCoreEngineCard(item, index))
   .join('');
 
 const airCoreLayerDefinitions = [
@@ -3339,14 +3345,15 @@ const airCoreLayerDefinitions = [
 ];
 
 const airCoreLayerHtml = airCoreLayerDefinitions
-  .map(layer => `
+  .map((layer, index) => `
     <div class="air-core-layer layer-${layer.className}">
       <div class="air-core-layer-head">
         <div>
           <span>${escapeHtml(layer.name)}</span>
           <p>${escapeHtml(layer.description)}</p>
+          <small>${layer.engines.length} engine${layer.engines.length === 1 ? '' : 's'}</small>
         </div>
-        <strong>${layer.engines.length}</strong>
+        <strong>${String(index + 1).padStart(2, '0')}</strong>
       </div>
       <div class="air-core-layer-engines">
         ${layer.engines.map(engine => `
@@ -3356,11 +3363,28 @@ const airCoreLayerHtml = airCoreLayerDefinitions
     </div>`)
   .join('');
 
+const airCoreEngineGroupsHtml = airCoreLayerDefinitions
+  .map(layer => `
+    <div class="engine-output-group engine-output-${layer.className}">
+      <div class="engine-output-group-head">
+        <div>
+          <span>${escapeHtml(layer.name)}</span>
+          <p>${escapeHtml(layer.description)}</p>
+        </div>
+        <strong>${layer.engines.length} engine${layer.engines.length === 1 ? '' : 's'}</strong>
+      </div>
+      <div class="engine-output-cards">
+        ${layer.engines.map(engine => renderAirCoreEngineCard(engine, engineStatusItems.indexOf(engine), layer.name.replace(' Layer', ''))).join('')}
+      </div>
+    </div>`)
+  .join('');
+
 const airCorePipelineHtml = engineStatusItems
   .map((item, index) => `
     <span title="${escapeHtml(item.purpose)}">
       <b>${String(index + 1).padStart(2, '0')}</b>
-      ${escapeHtml(item.name)}
+      <i>${escapeHtml(item.name)}</i>
+      <small>${escapeHtml(item.purpose)}</small>
     </span>`)
   .join('');
 
@@ -3857,6 +3881,10 @@ const airRoadmapCards =
             <strong>${escapeHtml(item.status)}</strong>
           </div>
           <p>${escapeHtml(item.purpose)}</p>
+          <div class="roadmap-card-meta">
+            <span>${item.features.length} deliverables</span>
+            <span>${escapeHtml(item.goal)}</span>
+          </div>
           <ul>${features}</ul>
         </article>`;
     })
@@ -3870,6 +3898,58 @@ const airRoadmapWhyRows =
         <td>${escapeHtml(item.goal)}</td>
         <td><span class="badge ${roadmapStatusTone[item.status] === 'green' ? 'good' : roadmapStatusTone[item.status] === 'amber' ? 'warn' : 'good'}">${escapeHtml(item.status)}</span></td>
       </tr>`)
+    .join('');
+
+const futurePlatformVision = [
+  {
+    version: 'AIR v2.0',
+    title: 'Enterprise Platform',
+    status: 'Future Vision',
+    purpose: 'Evolve AIR from a generated execution report into a secure, multi-user SaaS platform for quality operations.',
+    groups: [
+      ['Access & Roles', ['User Authentication', 'Role-Based Access Control (RBAC)', 'User permissions']],
+      ['Role Dashboards', ['Executive', 'QA Lead', 'Tester', 'Developer', 'Administrator']],
+      ['Platform Storage', ['Database-backed execution storage', 'Workspace / Project management', 'Multi-project support']],
+      ['Collaboration', ['Team collaboration', 'Report sharing', 'REST API', 'External integrations']],
+      ['Framework Coverage', ['Playwright', 'Selenium', 'Cypress', 'Robot Framework', 'API Testing', 'Database Validation']],
+    ],
+  },
+  {
+    version: 'AIR v3.0',
+    title: 'Quality Intelligence Platform',
+    status: 'Future Vision',
+    purpose: 'Move beyond reporting into predictive quality intelligence across projects, teams, releases, and engineering systems.',
+    groups: [
+      ['AI Intelligence', ['AI-powered Release Intelligence', 'Root Cause Analysis Assistance', 'Predictive Quality Analytics']],
+      ['Forecasting', ['Release Forecasting', 'Historical Trend Intelligence', 'Cross-project quality analytics']],
+      ['Executive Visibility', ['Executive Portfolio Dashboard', 'Organization-wide reporting']],
+      ['Ecosystem', ['CI/CD integrations', 'Plugin / Extension architecture']],
+    ],
+  },
+];
+
+const futurePlatformVisionHtml =
+  futurePlatformVision
+    .map(item => `
+      <article class="future-vision-card">
+        <div class="future-vision-head">
+          <div>
+            <span>${escapeHtml(item.version)}</span>
+            <h3>${escapeHtml(item.title)}</h3>
+          </div>
+          <strong>${escapeHtml(item.status)}</strong>
+        </div>
+        <p>${escapeHtml(item.purpose)}</p>
+        <div class="future-vision-groups">
+          ${item.groups.map(([groupName, features]) => `
+            <div>
+              <h4>${escapeHtml(groupName)}</h4>
+              <ul>
+                ${features.map(feature => `<li>${escapeHtml(feature)}</li>`).join('')}
+              </ul>
+            </div>`).join('')}
+        </div>
+      </article>`)
     .join('');
 
 const recommendationDetailDataJson =
@@ -4433,8 +4513,44 @@ const airGoldenDashboardHtml = `<!doctype html>
     .compare-card{padding:18px!important}
     .test-change-summary{padding:18px!important}
     #roadmap .roadmap-summary{margin-bottom:22px}
-    .roadmap-card{padding:22px!important;min-height:auto}
-    .roadmap-card ul{display:grid;gap:8px;margin-top:16px}
+    #roadmap .topbar h1{font-size:clamp(34px,4.2vw,56px)!important}
+    #roadmap .roadmap-summary{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))!important;gap:14px!important}
+    #roadmap .roadmap-summary div{min-height:112px!important;padding:18px!important;border-radius:22px!important}
+    #roadmap .roadmap-summary strong{font-size:clamp(22px,1.9vw,30px)!important;line-height:1.12!important;white-space:normal!important;overflow-wrap:break-word!important}
+    #roadmap .panel{padding:22px!important}
+    #roadmap .panel h2{font-size:clamp(20px,1.8vw,28px)!important}
+    #roadmap .roadmap-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))!important;gap:16px!important}
+    .roadmap-card{padding:20px!important;min-height:auto;display:flex!important;flex-direction:column!important;gap:14px!important}
+    .roadmap-card-head{align-items:start!important;gap:14px!important}
+    .roadmap-card-head div{min-width:0!important}
+    .roadmap-card-head span{display:block;color:#8fa2b6;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .roadmap-card-head h2{margin:7px 0 0!important;font-size:clamp(18px,1.35vw,23px)!important;line-height:1.15!important;letter-spacing:-.025em!important;overflow-wrap:normal!important;word-break:normal!important}
+    .roadmap-card-head strong{align-self:start!important;max-width:120px!important;padding:7px 10px!important;font-size:10.5px!important;line-height:1.15!important;white-space:normal!important}
+    .roadmap-card p{margin:0!important;color:#b7c6d8!important;font-size:13px!important;line-height:1.48!important}
+    .roadmap-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:0}
+    .roadmap-card-meta span{display:inline-flex;align-items:center;max-width:100%;border:1px solid rgba(57,231,95,.16);border-radius:999px;background:rgba(57,231,95,.07);color:#9affac;font-size:10.5px;font-weight:850;padding:6px 8px;line-height:1.2}
+    .roadmap-card ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin:0!important;padding:0!important;list-style:none}
+    .roadmap-card li{border:1px solid rgba(148,163,184,.10);border-radius:12px;background:rgba(3,10,18,.45);padding:8px 9px;color:#d8e3ee;font-size:11.5px;line-height:1.28;min-width:0;overflow-wrap:normal!important;word-break:normal!important}
+    .future-vision-panel{margin-top:var(--air-gap-section)!important;background:radial-gradient(circle at 88% 0%,rgba(96,165,250,.12),transparent 30%),linear-gradient(180deg,rgba(10,24,39,.82),rgba(5,13,22,.82))!important}
+    .future-vision-intro{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+    .future-vision-intro h2{margin:6px 0 8px!important;font-size:clamp(24px,2vw,34px)!important}
+    .future-vision-intro p{max-width:980px!important;color:#b7c6d8!important}
+    .future-vision-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .future-vision-card{border:1px solid rgba(57,231,95,.16);border-radius:24px;background:linear-gradient(180deg,rgba(13,27,42,.86),rgba(7,16,28,.86));padding:20px;min-width:0}
+    .future-vision-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+    .future-vision-head span{display:block;color:#8fa2b6;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .future-vision-head h3{margin:7px 0 0;color:#f8fafc;font-size:clamp(20px,1.55vw,27px);line-height:1.12;letter-spacing:-.035em}
+    .future-vision-head strong{flex:0 0 auto;border:1px solid rgba(96,165,250,.24);border-radius:999px;background:rgba(96,165,250,.10);color:#9bd5ff;font-size:10.5px;font-weight:900;padding:7px 10px;white-space:nowrap}
+    .future-vision-card>p{margin:0 0 16px!important;color:#b7c6d8!important;font-size:13.5px!important;line-height:1.5!important}
+    .future-vision-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+    .future-vision-groups div{border:1px solid rgba(148,163,184,.10);border-radius:16px;background:rgba(3,10,18,.46);padding:12px;min-width:0}
+    .future-vision-groups h4{margin:0 0 9px;color:#9affac;font-size:12px;font-weight:950;letter-spacing:.02em}
+    .future-vision-groups ul{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+    .future-vision-groups li{color:#d8e3ee;font-size:11.5px;line-height:1.3}
+    .future-vision-priority{margin-top:16px;border:1px solid rgba(57,231,95,.20);border-radius:18px;background:rgba(57,231,95,.08);padding:15px 16px}
+    .future-vision-priority span{display:block;color:#8fa2b6;font-size:10.5px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .future-vision-priority strong{display:block;margin-top:6px;color:#dfffea;font-size:14px;line-height:1.35}
+    @media(max-width:1100px){.future-vision-grid{grid-template-columns:1fr}.future-vision-intro{flex-direction:column}}
     .roadmap-progress{height:12px;background:rgba(148,163,184,.12);border-radius:999px}
     .air-core-pipeline{background:rgba(8,14,24,.52)!important;border:1px solid var(--air-line)!important;border-radius:18px}
     .core-status-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}
@@ -4824,6 +4940,57 @@ const airGoldenDashboardHtml = `<!doctype html>
     .engine-metrics b{font-size:clamp(13px,1.1vw,18px)!important;overflow-wrap:break-word!important}
     .air-core-pipeline{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(138px,1fr))!important;gap:8px!important}
     .air-core-pipeline span{white-space:normal!important;min-width:0!important}
+    /* AIR Core: present engines as a pipeline dashboard instead of repeated status tiles. */
+    #air-core .topbar h1{font-size:clamp(36px,4.4vw,58px)!important}
+    #air-core .panel{margin-bottom:22px!important}
+    .air-core-hero{display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(340px,.85fr)!important;gap:22px!important;align-items:stretch!important;padding:26px!important;background:radial-gradient(circle at 14% 0%,rgba(57,231,95,.14),transparent 34%),linear-gradient(135deg,rgba(7,25,18,.94),rgba(6,14,24,.94))!important}
+    .air-core-hero-copy{display:flex;gap:16px;align-items:flex-start;min-width:0}
+    .air-core-hero-copy .section-icon{flex:0 0 auto}
+    .air-core-hero-copy h2{margin:0;color:#f8fafc;font-size:clamp(24px,2.25vw,34px);letter-spacing:-.035em}
+    .air-core-hero-copy p{margin:10px 0 0;max-width:860px;color:#bdd0df;font-size:clamp(15px,1.08vw,18px);line-height:1.55}
+    .air-core-hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;min-width:0}
+    .air-core-hero-stats div{min-width:0;border:1px solid rgba(57,231,95,.16);border-radius:18px;background:rgba(4,12,22,.56);padding:16px}
+    .air-core-hero-stats span{display:block;color:#91a4b8;font-size:11px;font-weight:850;letter-spacing:.10em;text-transform:uppercase}
+    .air-core-hero-stats strong{display:block;margin-top:10px;color:#39e75f;font-size:clamp(18px,1.65vw,28px);line-height:1.05;white-space:normal;overflow-wrap:break-word}
+    .air-core-map,.air-core-engines{padding:24px!important}
+    #air-core .section-heading-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
+    #air-core .section-heading-row h2{margin:0;font-size:clamp(20px,1.8vw,28px)!important}
+    #air-core .section-heading-row p{margin:8px 0 0;color:#91a4b8;line-height:1.45}
+    #air-core .air-core-layer-grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))!important;gap:12px!important;margin:0 0 18px!important}
+    #air-core .air-core-layer{padding:16px!important;border-color:rgba(57,231,95,.12)!important;background:linear-gradient(180deg,rgba(11,25,38,.76),rgba(5,14,24,.70))!important}
+    #air-core .air-core-layer-head span{font-size:14px!important}
+    #air-core .air-core-layer-head p{font-size:11.5px!important;color:#8fa2b6!important}
+    #air-core .air-core-layer-head small{display:inline-flex;margin-top:10px;color:#39e75f;font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}
+    #air-core .air-core-layer-head strong{font-size:15px!important}
+    #air-core .air-core-layer-engines span{font-size:10.5px!important;padding:5px 7px!important;color:#d8e3ee!important}
+    #air-core .air-core-pipeline{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important;gap:10px!important;margin:0!important;padding:14px!important;border-radius:20px!important;background:linear-gradient(90deg,rgba(57,231,95,.10),rgba(5,14,24,.76))!important}
+    #air-core .air-core-pipeline span{display:grid!important;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"step name" "step purpose";column-gap:10px;row-gap:2px;align-items:center;border-color:rgba(57,231,95,.14)!important;background:rgba(5,14,24,.72)!important;padding:11px!important;min-height:72px}
+    #air-core .air-core-pipeline b{grid-area:step}
+    #air-core .air-core-pipeline i{grid-area:name;font-style:normal;color:#f8fafc;font-weight:900;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #air-core .air-core-pipeline small{grid-area:purpose;color:#8fa2b6;font-size:10.5px;line-height:1.25;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    #air-core .core-status-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important;gap:14px!important}
+    #air-core .engine-output-stack{display:grid;gap:18px}
+    #air-core .engine-output-group{border:1px solid rgba(57,231,95,.16);border-radius:22px;background:linear-gradient(180deg,rgba(10,24,39,.82),rgba(5,13,22,.82));padding:18px}
+    #air-core .engine-output-group-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+    #air-core .engine-output-group-head span{display:block;color:#f8fafc;font-size:18px;font-weight:950;letter-spacing:-.025em}
+    #air-core .engine-output-group-head p{margin:6px 0 0;color:#9fb0c5;font-size:12px;line-height:1.45}
+    #air-core .engine-output-group-head strong{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(57,231,95,.24);border-radius:999px;background:rgba(57,231,95,.10);color:#9affac;font-size:11px;font-weight:900;padding:7px 10px;white-space:nowrap}
+    #air-core .engine-output-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}
+    #air-core .engine-output-group .engine-card{min-height:176px!important;border:1px solid rgba(57,231,95,.15)!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(12,24,39,.82),rgba(5,13,22,.82))!important;box-shadow:none!important}
+    #air-core .engine-output-group .engine-card:hover{border-color:rgba(57,231,95,.34)!important;background:linear-gradient(180deg,rgba(14,31,45,.90),rgba(6,16,28,.86))!important;transform:translateY(-1px)}
+    #air-core .engine-card{min-height:198px!important;padding:16px!important;border-color:rgba(57,231,95,.12)!important;background:linear-gradient(180deg,rgba(11,25,38,.70),rgba(5,14,24,.76))!important}
+    #air-core .engine-head{align-items:flex-start!important}
+    #air-core .engine-head div{min-width:0}
+    #air-core .engine-head span{display:block;color:#8fa2b6!important;font-size:10px!important;letter-spacing:.12em!important;text-transform:uppercase;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #air-core .engine-head h3{margin:6px 0 0;color:#f8fafc;font-size:18px;line-height:1.15;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #air-core .engine-head strong{flex:0 0 auto;font-size:10px!important;padding:6px 8px!important;background:rgba(57,231,95,.10)!important}
+    #air-core .engine-card p{min-height:42px!important;color:#b7c6d8!important;font-size:13px!important;line-height:1.45!important}
+    #air-core .engine-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-top:auto}
+    #air-core .engine-metrics div{min-height:58px!important;border-color:rgba(148,163,184,.12)!important;background:rgba(3,10,18,.58)!important}
+    #air-core .engine-metrics small{font-size:9.5px!important}
+    #air-core .engine-metrics b{font-size:clamp(13px,1.15vw,18px)!important;line-height:1.15!important;color:#e8fff0!important}
+    @media(max-width:1100px){.air-core-hero{grid-template-columns:1fr!important}.air-core-hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:720px){.air-core-hero-stats{grid-template-columns:1fr!important}#air-core .air-core-pipeline{grid-template-columns:1fr!important}#air-core .engine-metrics{grid-template-columns:1fr!important}}
     .chart-explainer,.history-trend-head small{color:#b7c6d8!important}
     .history-trend-head span:after{content:"Recent executions";display:block;margin-top:4px;color:#6f8095;font-size:9px;font-weight:800;letter-spacing:.04em}
     .history-trend-head div{overflow:hidden!important}
@@ -5200,8 +5367,49 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .thumb span{color:#d8e6f3!important;font-size:13px!important;font-weight:800!important}
     #evidence .thumb-grid .empty-state{border-radius:22px!important;border:1px dashed rgba(57,231,95,.30)!important;background:rgba(57,231,95,.06)!important;padding:34px!important}
     #evidence .panel:last-of-type p{color:#d8e6f3!important;line-height:1.65!important}
+    #evidence span,#evidence strong,#evidence small,#evidence p{overflow-wrap:anywhere!important}
     @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}}
     @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}}
+    /* Final Engineering Mode polish: unify spacing, cards, typography, chart surfaces, and controls. */
+    :root{--air-gap-section:clamp(22px,2.4vw,34px);--air-gap-card:clamp(12px,1.25vw,18px);--air-card-radius:22px;--air-panel-radius:28px}
+    .page{padding:clamp(24px,2.6vw,38px)!important}
+    .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:var(--air-gap-section)!important;min-width:0}
+    .topbar>div{min-width:0;max-width:980px}
+    .topbar .eyebrow{margin-bottom:8px}
+    .topbar p{max-width:860px;margin:0!important;color:#9fb0c5!important;font-size:clamp(14px,1.05vw,17px)!important;line-height:1.5!important}
+    .panel,.card,.kpi,.cover-stat,.wow-card,.health-card,.journey-node,.evidence-card,.compare-card,.roadmap-card,.module-health-card,.module-selector-card,.module-dashboard-card,.ai-metric,.health-stat,.failure-summary-card,.failure-investigation-card,.engine-card,.air-core-layer,.engine-output-group{border-radius:var(--air-card-radius)!important}
+    .panel{border-radius:var(--air-panel-radius)!important;padding:clamp(20px,2vw,28px)!important}
+    .panel+.panel,.panel+br+.panel,.grid+.panel,.kpis+.panel,.roadmap-grid+.panel,.history-section-grid+.panel{margin-top:var(--air-gap-section)!important}
+    .grid,.grid.two,.grid.three,.kpis,.compare-grid,.history-section-grid,.module-card-grid,.module-dashboard-grid,.role-recommendation-grid,.ai-metric-grid,.roadmap-grid,.core-status-grid{gap:var(--air-gap-card)!important}
+    .section-icon,.nav-icon,.module-icon,.health-icon,.evidence-icon{display:inline-grid!important;place-items:center!important;width:32px!important;height:32px!important;min-width:32px!important;border-radius:11px!important;font-size:11px!important;line-height:1!important}
+    .icon-title{display:flex!important;align-items:center!important;gap:10px!important;min-width:0}
+    .icon-title .section-icon{margin-right:0!important}
+    .panel h2,.card h2{line-height:1.12!important;margin-top:0!important}
+    .panel p,.card p,.module-health-card p,.module-dashboard-card p,.roadmap-card p,.engine-card p{font-size:13.5px!important;line-height:1.5!important}
+    .badge,.mini-badge,.pill,.btn,.release-status-badge,.module-button,.module-filter button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-width:0!important;line-height:1.15!important}
+    .badge,.mini-badge,.pill,.release-status-badge{font-size:clamp(10px,.72vw,12px)!important;font-weight:900!important;letter-spacing:.01em!important}
+    .btn,.module-button,.module-filter button{min-height:38px!important;font-size:12px!important}
+    .chart,.history-sparkline,.history-chart,.history-chart-card,.history-trend-card svg,.chart-box{border-radius:18px!important;background:linear-gradient(180deg,rgba(4,14,24,.82),rgba(6,15,27,.62))!important}
+    .chart-explainer{margin:4px 0 12px!important;color:#9fb0c5!important;font-size:12px!important;line-height:1.45!important}
+    .bar-chart,.history-sparkline,.trend-chart{min-height:112px}
+    .history-trend-head span,.chart-title,.panel h3{color:#f8fafc!important;font-size:clamp(14px,1.05vw,18px)!important;font-weight:900!important;letter-spacing:-.02em!important}
+    table{border-collapse:separate!important;border-spacing:0 6px!important}
+    th{color:#8fa4bb!important;font-size:10.5px!important;letter-spacing:.10em!important;text-transform:uppercase!important}
+    td{line-height:1.4!important}
+    tr:hover td{background-color:rgba(57,231,95,.045)!important}
+    .interactive-card,.module-health-card,.roadmap-card,.executive-module-pill,.evidence-card,.recommendation-card{transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+    .interactive-card:hover,.module-health-card:hover,.roadmap-card:hover,.executive-module-pill:hover,.evidence-card:hover,.recommendation-card:hover{transform:translateY(-2px);box-shadow:0 24px 72px rgba(0,0,0,.18)}
+    #comparison{background:radial-gradient(circle at 80% 0%,rgba(96,165,250,.10),transparent 28%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
+    #evidence{background:radial-gradient(circle at 84% 10%,rgba(56,189,248,.12),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
+    #air-core{background:radial-gradient(circle at 18% 0%,rgba(167,139,250,.08),transparent 28%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
+    #roadmap{background:radial-gradient(circle at 90% 4%,rgba(56,189,248,.08),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
+    .history-trend-card:nth-child(2n),#evidence .evidence-card:nth-child(2n),#air-core .engine-output-group:nth-child(2n),#roadmap .roadmap-card:nth-child(2n){border-color:rgba(96,165,250,.16)!important}
+    .history-trend-card:nth-child(3n),#evidence .evidence-card:nth-child(3n),#roadmap .roadmap-card:nth-child(3n){border-color:rgba(167,139,250,.14)!important}
+    .module-card-stats span,.module-meta span,.module-selector-summary span,.module-dashboard-metrics span,.drawer-metric,.engine-metrics div,.roadmap-card li,.compare-card,.health-stat{overflow:hidden!important}
+    .module-card-stats b,.module-meta b,.module-dashboard-metrics b,.drawer-metric strong,.engine-metrics b,.compare-card strong,.health-stat strong{line-height:1.12!important}
+    .page *{min-width:0}
+    #evidence .evidence-card span{display:block!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+    @media(max-width:900px){.topbar{align-items:flex-start!important;flex-direction:column!important}.topbar .pill,.topbar .btn{align-self:flex-start}.page{padding:20px!important}.panel{padding:18px!important}}
     /* Global identity and typography refinement: Automation Intelligence Report. */
     .brand-lockup{display:flex;align-items:center;gap:12px;margin-bottom:10px}
     .brand-mark{display:grid;place-items:center;width:52px;height:52px;min-width:52px;border-radius:18px;background:radial-gradient(circle at 30% 20%,rgba(141,255,158,.30),transparent 44%),linear-gradient(145deg,rgba(57,231,95,.20),rgba(56,189,248,.10));border:1px solid rgba(57,231,95,.38);box-shadow:0 0 34px rgba(57,231,95,.16)}
@@ -5680,17 +5888,49 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <span class="pill demo">Platform Core</span>
       </div>
-      <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">CORE</span>AIR Core Pipeline</h2>
-        <p>AIR Core converts raw execution data into summary, failures, module health, journey health, evidence, quality, release decision, recommendations, search, and history. All ${engineStatusItems.length} engines are loaded in the current pipeline.</p>
+      <div class="air-core-hero panel">
+        <div class="air-core-hero-copy">
+          <span class="section-icon">CORE</span>
+          <div>
+            <h2>AIR Core Pipeline</h2>
+            <p>AIR Core converts raw execution data into summary, failures, module health, journey health, evidence, quality, release decision, recommendations, search, and history.</p>
+          </div>
+        </div>
+        <div class="air-core-hero-stats">
+          <div>
+            <span>Engines Loaded</span>
+            <strong>${engineStatusItems.length}</strong>
+          </div>
+          <div>
+            <span>Pipeline Status</span>
+            <strong>Operational</strong>
+          </div>
+          <div>
+            <span>Output Model</span>
+            <strong>air-results.json</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="air-core-map panel">
+        <div class="section-heading-row">
+          <div>
+            <h2 class="icon-title"><span class="section-icon">MAP</span>Core Layers</h2>
+            <p>Each layer enriches the AIR model within its own responsibility.</p>
+          </div>
+        </div>
         <div class="air-core-layer-grid">${airCoreLayerHtml}</div>
-        <br>
         <div class="air-core-pipeline">${airCorePipelineHtml}</div>
       </div>
-      <br>
-      <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">ENG</span>Engine Status</h2>
-        <div class="core-status-grid">${airCoreStatusCards}</div>
+
+      <div class="air-core-engines panel">
+        <div class="section-heading-row">
+          <div>
+            <h2 class="icon-title"><span class="section-icon">ENG</span>Engine Output Dashboard</h2>
+            <p>Operational status plus the useful output each engine generated for this report.</p>
+          </div>
+        </div>
+        <div class="engine-output-stack">${airCoreEngineGroupsHtml}</div>
       </div>
       ${renderPageFooter(10)}
     </section>
@@ -5724,6 +5964,21 @@ const airGoldenDashboardHtml = `<!doctype html>
           <thead><tr><th>Version</th><th>Goal</th><th>Status</th></tr></thead>
           <tbody>${airRoadmapWhyRows}</tbody>
         </table>
+      </div>
+      <div class="panel future-vision-panel">
+        <div class="future-vision-intro">
+          <div>
+            <div class="eyebrow">FUTURE PLATFORM VISION</div>
+            <h2>Beyond AIR v1.x</h2>
+            <p>These milestones describe AIR's long-term product direction after the current Engineering Mode UI, Dynamic Data Model, and Dynamic Intelligence Engine phases are complete. They are roadmap items only, not active implementation scope.</p>
+          </div>
+          <span class="pill demo">Strategic Vision</span>
+        </div>
+        <div class="future-vision-grid">${futurePlatformVisionHtml}</div>
+        <div class="future-vision-priority">
+          <span>Current Priority</span>
+          <strong>Final Engineering Mode UI → Dynamic Data Model → Dynamic Intelligence Engine</strong>
+        </div>
       </div>
       ${renderPageFooter(11)}
     </section>

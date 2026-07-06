@@ -1,0 +1,941 @@
+OOLTool Subscription Management Journey
+Functional Requirement Document (FRD)
+Version 1.0 - Client Review
+Introduction
+This document defines the subscription lifecycle, billing behaviour, trial experience,
+plan upgrades, downgrades, billing frequency changes, cancellations, refunds and payment failure handling.
+Global Business Rules
+• Trial available once per lifetime.
+• Trial duration: 30 days.
+• All subscriptions auto-renew by default.
+• Upgrades are immediate and use Stripe proration.
+• Downgrades are effective on next renewal date.
+• Monthly→Annual is immediate.
+• Annual→Monthly is effective on next renewal date.
+• Refunds are manual and admin approved only.
+• Trial expiry deletes portfolio data immediately.
+• Cancellation expiry deletes portfolio data immediately.
+• Failed payment expiry deletes portfolio data immediately.
+• Email notifications are mandatory for all key subscription events.
+• One-time retention offer may be shown during downgrade/cancellation journeys.
+Subscription Journey – Use Case 1
+Overlay Strategists Trial Experience
+Objective
+Promote the Overlay Strategists ($79/month) plan by allowing users to experience its premium features before subscribing.
+Entry Point
+When a user clicks “Try It Out”, they will be presented with two onboarding options for the Overlay Strategists Trial.
+Option A – Start Trial Without Card
+Users can start the trial without providing payment details.
+Access Limits
+Broker Integration: 1
+Linked Accounts: 5
+Positions: 100
+All other Overlay Strategists features available during the trial period
+Option B – Start Trial With Card
+Users provide a valid payment card and a $0.01 authorization charge is processed to verify the payment method.
+Access Limits
+Full Overlay Strategists Plan access
+No feature restrictions
+Trial Duration
+Trial Period: 30 Days
+Trial is available only once per user lifetime.
+Existing paid subscribers are not eligible for the trial.
+Users who have already consumed a trial cannot activate another trial using the same email, payment method, or other identifiable account information.
+Reminder Journey
+Option A – No Card Added
+The system will encourage users to add a payment method before trial expiry.
+Day
+Action
+Day 25
+Email and In-App Reminder
+Day 28
+Email and In-App Reminder
+Day 29
+Final Reminder
+CTA Message:
+“Add Your Payment Method and Continue Without Interruption.”
+Option B – Card Already Added
+Day
+Action
+Day 29
+Final Reminder Before Subscription Activation
+Trial Expiry
+Option A – No Card Added
+At the end of the 30-day trial:
+User is automatically downgraded to the Curious Explorer (Free) plan.
+All linked broker accounts are disconnected.
+Imported portfolio positions are removed.
+Premium features are disabled.
+User is prompted to subscribe to continue using premium functionality.
+Option B – Card Added
+At the end of the 30-day trial:
+User is automatically converted to the Overlay Strategists ($79/month) plan.
+Monthly billing begins automatically using the saved payment method.
+Subscription During Trial
+Users may subscribe to any paid plan at any time during the trial period.
+When a user subscribes:
+The trial ends immediately.
+The selected paid plan becomes active immediately.
+Billing starts immediately for the selected plan.
+A new billing cycle is created based on the subscription activation date.
+Examples
+Trial → Income Builder
+Trial → Overlay Strategists
+Trial → Portfolio Hedger
+Trial → Marketplace
+In all cases, the billing cycle starts from the date of subscription activation.
+Failed Payment Handling
+For users enrolled through Option B:
+If the first subscription payment fails after trial expiry:
+User enters a payment grace period.
+Payment reminder notifications are sent.
+Access may be restricted or suspended if payment is not updated within the configured grace period.
+(Duration to be finalized with business team.)
+Cancellation During Trial
+If a user starts the trial with a valid card and later removes or cancels the payment method:
+Trial remains active until the end of the 30-day period.
+If no valid payment method exists on the trial expiry date, the user is downgraded to the Curious Explorer (Free) plan.
+Important Business Rules
+Overlay Strategists Trial can only be activated once per user lifetime.
+Trial eligibility should be validated using available identifiers such as:
+Email Address
+Payment Method Fingerprint
+Other platform-specific identifiers
+At trial expiry (Option A), all imported portfolio positions and portfolio-related data will be permanently deleted and cannot be restored.
+Users may subscribe to any paid plan at any time during the trial period.
+Any plan selected during the trial becomes the active subscription immediately and starts a new billing cycle.
+All trial activities, reminders, upgrades, downgrades, payment events, and conversions must be tracked for reporting and analytics.
+Users must accept the Terms of Service and Subscription Terms before activating the trial.
+Reminder emails and in-app notifications should be configurable by administrators.
+Subscription Journey – Use Case 2
+New Subscription Purchase
+Objective
+Allow users to purchase a subscription plan directly without using the trial.
+Entry Points
+A user can purchase a subscription from:
+Pricing Page
+Subscription Upgrade Prompt
+Trial Expiry Screen
+Account Subscription Settings
+Plan Selection
+The user selects:
+Income Builder
+Overlay Strategists
+Portfolio Hedger
+Marketplace
+The user must also select:
+Monthly Billing
+Annual Billing
+Subscription Summary
+Before payment, the system displays:
+Selected Plan
+Billing Frequency (Monthly/Annual)
+Subscription Price
+Applicable Taxes
+Total Amount Payable
+Renewal Date
+Auto-Renewal Information
+The user must accept:
+Terms of Service
+Subscription Terms
+Payment
+The user enters payment details and completes payment through Stripe.
+Payment Success
+Upon successful payment:
+Subscription becomes active immediately.
+Selected plan features become available immediately.
+Billing cycle starts from the payment date.
+Subscription status is marked as Active.
+Confirmation email is sent to the user.
+Payment receipt is sent to the user.
+Payment Failure
+If payment fails:
+Subscription is not activated.
+User remains on their current plan.
+Failure message is displayed.
+User may retry payment using the same or a different payment method.
+Auto Renewal
+All subscriptions are configured for automatic renewal.
+Renewal Reminders
+Prior to renewal, the system sends:
+7 Days Before Renewal
+3 Days Before Renewal
+1 Day Before Renewal
+Notifications are sent via:
+Email
+In-App Notification
+Cancellation
+Users may cancel auto-renewal at any time from Subscription Settings.
+When cancellation is requested:
+Subscription remains active until the end of the current billing period.
+No immediate downgrade occurs.
+No refund is generated.
+Access continues until the subscription expiry date.
+Plan Changes
+After subscription activation, users may:
+Upgrade to a higher plan
+Downgrade to a lower plan
+Switch between Monthly and Annual billing
+These scenarios are covered in separate use cases.
+Important Business Rules
+Subscription starts immediately after successful payment.
+Billing cycle begins from the payment date.
+Auto-renewal is enabled by default.
+Renewal reminders are mandatory before charging the customer.
+Failed payments do not activate subscriptions.
+Users can manage subscriptions from the Account Settings page.
+All payment transactions and subscription events must be logged for audit purposes.
+A confirmation email and invoice must be generated for every successful payment.
+Subscription Journey – Use Case 3
+Upgrade Subscription
+Objective
+Allow users to upgrade from a lower subscription plan to a higher subscription plan while ensuring immediate access to additional features and fair billing using Stripe’s standard proration model.
+Eligible Upgrade Paths
+Examples:
+Income Builder → Overlay Strategists
+Overlay Strategists → Portfolio Hedger
+Portfolio Hedger → Marketplace
+Income Builder → Portfolio Hedger
+Income Builder → Marketplace
+Overlay Strategists → Marketplace
+Users may upgrade at any time during an active subscription.
+Upgrade Request
+The user navigates to:
+Subscription Settings
+Pricing Page
+Upgrade Prompt
+The system displays:
+Current Plan
+New Plan
+Amount Due Today
+New Recurring Amount
+Next Billing Date
+The user must confirm the upgrade before payment is processed.
+Billing Logic
+The platform will follow Stripe’s standard proration model.
+When an upgrade occurs:
+The unused portion of the current subscription is credited.
+The remaining value is applied toward the new subscription.
+Stripe calculates the prorated amount automatically.
+The user is charged only the applicable difference.
+Upgrade Activation
+Upon successful payment:
+New plan becomes active immediately.
+New plan features become available immediately.
+Previous plan limitations are removed immediately.
+Subscription record is updated.
+Business Example 1
+Income Builder → Overlay Strategists
+Current Subscription
+Plan: Income Builder
+Price: $29/month
+Billing Date: 01-Jan-2026
+Upgrade Request
+Upgrade Date: 15-Jan-2026
+New Plan: Overlay Strategists ($79/month)
+Billing
+Remaining value of Income Builder is credited.
+Stripe calculates the prorated amount automatically.
+User is charged only the difference.
+Example Outcome
+Amount Due Today: Approximately $25.00
+New Plan Activated: Immediately
+Next Renewal Date: 01-Feb-2026
+Next Recurring Charge: $79/month
+Business Example 2
+Overlay Strategists → Portfolio Hedger
+Current Subscription
+Plan: Overlay Strategists
+Price: $79/month
+Billing Date: 01-Jan-2026
+Upgrade Request
+Upgrade Date: 20-Jan-2026
+New Plan: Portfolio Hedger ($149/month)
+Billing
+Remaining value of Overlay Strategists is credited.
+Stripe calculates the prorated amount automatically.
+User pays only the prorated difference.
+Example Outcome
+Amount Due Today: Calculated by Stripe
+New Plan Activated: Immediately
+Next Renewal Date: 01-Feb-2026
+Next Recurring Charge: $149/month
+Business Example 3
+Overlay Strategists Monthly → Overlay Strategists Annual
+Current Subscription
+Plan: Overlay Strategists Monthly
+Price: $79/month
+Billing Date: 01-Jan-2026
+Upgrade Request
+Upgrade Date: 15-Jan-2026
+New Plan: Overlay Strategists Annual ($790/year)
+Billing
+Remaining value of the monthly plan is credited.
+Stripe applies the credit toward the annual subscription.
+User is charged the annual amount minus applicable credit.
+Example Outcome
+Amount Due Today: Annual Price - Remaining Monthly Credit
+Annual Plan Activated: Immediately
+Next Renewal Date: 15-Jan-2027
+Next Recurring Charge: $790/year
+Failed Payment
+If payment fails:
+Upgrade is not completed.
+Current subscription remains unchanged.
+Existing access remains active.
+User may retry payment.
+Notifications
+Before Confirmation
+The user must be shown:
+Current Plan
+New Plan
+Amount Due Today
+Next Billing Date
+New Recurring Amount
+After Upgrade
+The system sends:
+Upgrade Confirmation Email
+Payment Receipt / Invoice
+In-App Confirmation Notification
+Important Business Rules
+Upgrades are effective immediately after successful payment.
+Additional features become available immediately.
+Stripe proration is used for all upgrade calculations.
+Users must see the amount due before confirming the upgrade.
+Failed payments do not change the current subscription.
+Upgrade confirmation and payment receipt must be sent to the user.
+All upgrade activities must be logged for audit and reporting purposes.
+Monthly to Annual changes are treated as upgrades and become effective immediately.
+The next billing date and recurring amount must be displayed before the user confirms the upgrade.
+Subscription Journey – Use Case 4
+Downgrade Subscription
+Objective
+Allow users to downgrade from a higher subscription plan to a lower subscription plan while ensuring transparent communication regarding feature limitations, data loss, retention offers, and the effective downgrade date.
+Eligible Downgrade Paths
+Examples:
+Marketplace → Portfolio Hedger
+Portfolio Hedger → Overlay Strategists
+Overlay Strategists → Income Builder
+Marketplace → Income Builder
+Users may request a downgrade at any time during an active subscription.
+Monthly Subscription Retention Offer
+Before processing a monthly subscription downgrade, the system must present a retention offer to encourage the user to remain on their current plan.
+Retention Offer Rules
+Applicable only for Monthly-to-Monthly downgrades.
+The user is offered a discount on their current subscription plan for the next 3 billing cycles.
+The retention offer can be used only once per account lifetime.
+If the user accepts the offer, the downgrade request is canceled and the current subscription continues with the discounted pricing for the next 3 months.
+If the user declines the offer, the downgrade process continues.
+The system must track whether the retention offer has already been used by the account.
+Example
+Current Subscription
+Portfolio Hedger Monthly
+Price: $149/month
+Retention Offer
+20% discount for the next 3 months (example percentage)
+Discount applies to the current plan only
+Result if Accepted
+Downgrade request is canceled.
+User remains on Portfolio Hedger.
+Discount is applied for the next 3 monthly billing cycles.
+Retention offer is marked as used and cannot be offered again for the account.
+Downgrade Request
+The user navigates to:
+Subscription Settings
+Billing & Subscription Page
+The system displays:
+Current Plan
+New Plan
+Effective Downgrade Date
+Features That Will Be Lost
+Account Limits of New Plan
+Data Impact Warning
+For eligible monthly subscriptions, the retention offer must be displayed before the downgrade confirmation step.
+The user must confirm the downgrade request before it is scheduled.
+Billing Logic
+The platform follows a customer-friendly and dispute-free downgrade policy.
+When a downgrade is requested:
+No refund is issued.
+No credit is issued.
+No wallet balance is created.
+Current subscription remains active until the end of the current billing period.
+Downgrade becomes effective on the next renewal date.
+For monthly subscriptions:
+The retention offer is presented before scheduling the downgrade if it has not previously been used by the account.
+If the retention offer is accepted, no downgrade is scheduled.
+Business Example
+Portfolio Hedger Monthly → Overlay Strategists Monthly
+Current Subscription
+Plan: Portfolio Hedger
+Price: $149/month
+Billing Date: 01-Jan-2026
+Downgrade Request
+Request Date: 15-Jan-2026
+New Plan: Overlay Strategists ($79/month)
+Retention Offer
+Discount on Portfolio Hedger for the next 3 months
+Available only if not previously used by the account
+If User Declines Offer
+Portfolio Hedger remains active until 31-Jan-2026.
+User continues to access all Portfolio Hedger features during the remaining billing period.
+Overlay Strategists becomes active on 01-Feb-2026.
+New recurring charge from 01-Feb-2026: $79/month.
+No refund or credit is issued.
+If User Accepts Offer
+Downgrade request is canceled.
+User remains on Portfolio Hedger.
+Discount is applied for the next 3 monthly billing cycles.
+Retention offer cannot be used again for the account.
+Data Impact Assessment
+Before confirming the downgrade, the system must compare:
+Broker Accounts
+Linked Accounts
+Positions
+Any other plan-specific limits
+against the limits of the target plan.
+Data Loss Warning
+If the user exceeds the limits of the new plan, a warning must be displayed before confirmation.
+Example Warning
+Your current usage exceeds the limits of the selected plan.
+The following data will be permanently deleted when the downgrade becomes effective:
+2 Broker Accounts
+4 Linked Accounts
+250 Positions
+This action cannot be undone.
+The user must explicitly acknowledge the warning before scheduling the downgrade.
+Downgrade Activation
+On the effective downgrade date:
+New plan becomes active.
+New plan pricing becomes effective.
+New feature limits are enforced.
+Excess data beyond the new plan limits is permanently deleted.
+User access is updated according to the new plan.
+Annual Subscription Downgrade
+Example
+Current Subscription
+Marketplace Annual
+Renewal Date: 31-Dec-2026
+Downgrade Request
+Request Date: 01-Mar-2026
+New Plan: Portfolio Hedger Annual
+Result
+Marketplace remains active until 31-Dec-2026.
+Portfolio Hedger Annual starts on 01-Jan-2027.
+No refund is issued.v
+No credit is issued.
+Annual Subscription Rule
+Retention offers are not applicable to annual subscription downgrades unless explicitly configured by the business.
+Standard next-renewal downgrade processing applies.
+Notifications
+After Downgrade Request
+The system sends:
+Downgrade Confirmation Email
+Effective Downgrade Date
+Summary of Data Impact
+After Retention Offer Acceptance
+The system sends:
+Retention Offer Confirmation Email
+Discount Details
+Discount Duration (3 Months)
+Updated Billing Summary
+Before Downgrade Activation
+Reminder notifications:
+7 Days Before Effective Date
+3 Days Before Effective Date
+1 Day Before Effective Date
+These reminders must include any data that will be permanently deleted.
+Important Business Rules
+Downgrades become effective on the next renewal date.
+No refunds are issued for downgrades.
+No credits or wallet balances are created.
+Current subscription benefits remain available until the current billing period ends.
+For monthly subscription downgrades, a retention discount offer for the next 3 months must be presented before scheduling the downgrade if the account has not previously used the offer.
+The retention offer can be used only once per account lifetime.
+If the retention offer is accepted, the downgrade request is canceled and the user remains on the current plan.
+Excess data beyond the limits of the new plan is permanently deleted when the downgrade becomes effective.
+Users must acknowledge the data deletion warning before confirming the downgrade.
+Data deletion actions must be logged for audit purposes.
+Confirmation emails and reminder notifications are mandatory.
+Annual-to-Annual and Monthly-to-Monthly downgrades follow the same next-renewal activation process, except for the monthly retention offer flow.
+Subscription Journey – Use Case 5
+Monthly to Annual Billing Change
+Objective
+Allow users to switch from a Monthly subscription to an Annual subscription while receiving immediate benefits and fair billing through Stripe’s standard proration process.
+Eligible Scenarios
+Examples:
+Income Builder Monthly → Income Builder Annual
+Overlay Strategists Monthly → Overlay Strategists Annual
+Portfolio Hedger Monthly → Portfolio Hedger Annual
+Marketplace Monthly → Marketplace Annual
+Users may request this change at any time during an active monthly subscription.
+Billing Logic
+The platform follows Stripe’s standard proration model.
+When a user switches from Monthly to Annual:
+The unused portion of the monthly subscription is credited.
+The credit is applied toward the annual subscription cost.
+Stripe calculates the final amount automatically.
+The annual subscription becomes active immediately.
+Billing Cycle Reset
+Monthly to Annual is treated as an upgrade.
+When the change is completed:
+The annual plan becomes active immediately.
+A new annual billing cycle starts on the change date.
+The next renewal date is one year from the activation date.
+Business Example
+Overlay Strategists Monthly → Overlay Strategists Annual
+Current Subscription
+Plan: Overlay Strategists Monthly
+Price: $79/month
+Billing Date: 01-Jan-2026
+Change Request
+Request Date: 15-Jan-2026
+New Plan: Overlay Strategists Annual
+Annual Price: $790/year
+Billing
+Remaining monthly value is credited.
+Stripe applies the credit toward the annual subscription.
+User pays the annual price minus the applicable credit.
+Example Outcome
+Amount Due Today: Annual Price – Remaining Monthly Credit
+Annual Plan Activated: Immediately
+New Billing Date: 15-Jan-2026
+Next Renewal Date: 15-Jan-2027
+Future Billing: $790/year
+User Confirmation Screen
+Before confirmation, the user must see:
+Current Plan
+Current Billing Frequency
+New Billing Frequency
+Amount Due Today
+Annual Savings (if applicable)
+New Renewal Date
+Future Recurring Amount
+The user must explicitly confirm the change before payment is processed.
+Activation
+Upon successful payment:
+Annual subscription becomes active immediately.
+Billing cycle is reset.
+New renewal date is established.
+Subscription record is updated.
+Failed Payment
+If payment fails:
+Billing change is not completed.
+Existing monthly subscription remains active.
+User retains current access.
+User may retry payment.
+Notifications
+After Successful Change
+The system sends:
+Billing Change Confirmation Email
+Payment Receipt / Invoice
+Updated Renewal Date Notification
+Important Business Rules
+Monthly to Annual changes take effect immediately.
+Stripe proration is used for all billing calculations.
+The annual billing cycle starts from the date of change.
+Users must see the amount due before confirming the change.
+Failed payments do not change the existing subscription.
+Confirmation email and invoice must be generated after successful payment.
+All billing frequency changes must be logged for audit purposes.
+Subscription Journey – Use Case 6
+Annual to Monthly Billing Change
+Objective
+Allow users to switch from an Annual subscription to a Monthly subscription while avoiding billing disputes, refunds, credits, and complex financial adjustments.
+Eligible Scenarios
+Examples:
+Income Builder Annual → Income Builder Monthly
+Overlay Strategists Annual → Overlay Strategists Monthly
+Portfolio Hedger Annual → Portfolio Hedger Monthly
+Marketplace Annual → Marketplace Monthly
+Users may request this change at any time during an active annual subscription.
+Billing Logic
+The platform follows a customer-friendly and dispute-free billing policy.
+When a user requests a change from Annual to Monthly:
+No refund is issued.
+No credit is issued.
+No wallet balance is created.
+Current annual subscription remains active until the end of the current annual billing period.
+Monthly billing starts only after the annual subscription expires.
+Business Example
+Overlay Strategists Annual → Overlay Strategists Monthly
+Current Subscription
+Plan: Overlay Strategists Annual
+Price: $790/year
+Billing Date: 01-Jan-2026
+Renewal Date: 01-Jan-2027
+Change Request
+Request Date: 01-Mar-2026
+New Plan: Overlay Strategists Monthly ($79/month)
+Result
+Overlay Strategists Annual remains active until 01-Jan-2027.
+User continues to receive all annual plan benefits.
+No refund is issued.
+No credit is issued.
+Overlay Strategists Monthly becomes active on 01-Jan-2027.
+Monthly billing begins from 01-Jan-2027.
+User Confirmation Screen
+Before confirmation, the user must see:
+Current Plan
+Current Billing Frequency
+New Billing Frequency
+Effective Change Date
+Current Renewal Date
+New Monthly Price
+Confirmation that no refund or credit will be issued
+Example Message
+Your Annual subscription will remain active until 01-Jan-2027. Monthly billing will begin on 01-Jan-2027. No refund or credit will be issued for the remaining annual subscription period.
+Scheduled Billing Change
+After confirmation:
+Billing change request is saved.
+Subscription remains unchanged until renewal.
+A pending billing change record is created.
+User can view the scheduled change in Subscription Settings.
+Cancellation of Scheduled Change
+The user may cancel the scheduled billing change at any time before the annual renewal date.
+If canceled:
+The pending change is removed.
+Annual subscription continues as normal.
+No billing changes occur.
+Activation
+On the annual renewal date:
+Annual subscription expires.
+Monthly subscription becomes active automatically.
+Monthly billing cycle starts.
+New monthly renewal date is established.
+Notifications
+After Request
+The system sends:
+Billing Change Confirmation Email
+Effective Change Date
+Updated Subscription Summary
+Before Activation
+Reminder notifications are sent:
+30 Days Before Renewal
+7 Days Before Renewal
+1 Day Before Renewal
+These reminders must clearly state:
+Current plan
+New monthly plan
+Effective change date
+Monthly recurring amount
+Important Business Rules
+Annual to Monthly changes become effective only on the next renewal date.
+No refunds are issued.
+No credits or wallet balances are created.
+Annual subscription benefits remain available until expiry.
+Users may cancel the scheduled billing change before the effective date.
+The effective change date must be clearly displayed before confirmation.
+Confirmation emails and reminder notifications are mandatory.
+All billing frequency changes must be logged for audit and reporting purposes.
+Subscription Journey – Use Case 7
+Subscription Cancellation
+Objective
+Allow users to cancel their subscription while maintaining a customer-friendly experience, preventing unexpected charges, and minimizing billing disputes.
+Cancellation Request
+The user navigates to:
+Subscription Settings
+Billing & Subscription Page
+The user selects:
+Cancel Subscription
+The system displays:
+Current Plan
+Current Billing Frequency (Monthly or Yearly)
+Subscription Expiry Date
+Next Renewal Date
+Impact of Cancellation
+The user must confirm the cancellation request.
+Cancellation Options by Billing Frequency
+Monthly Subscription
+For monthly subscriptions, users can only cancel at the end of the current billing period.
+When the user cancels:
+Auto-renewal is disabled immediately.
+No future recurring charges will be processed.
+Subscription remains active until the current billing period ends.
+No refund is issued.
+Access continues until the subscription expiry date.
+Yearly Subscription
+For yearly subscriptions, users are provided with two cancellation options:
+Option 1: Cancel at Expiry
+When selected:
+Auto-renewal is disabled immediately.
+Subscription remains active until the annual subscription expiry date.
+No refund is issued.
+No future recurring charges will be processed.
+Option 2: Cancel and Refund
+When selected:
+Subscription is canceled immediately.
+User receives a refund for the unused remaining months of the annual subscription.
+Refund amount is calculated based on the remaining subscription period.
+Access to paid features is removed once the cancellation and refund are processed.
+User is moved to the Free Plan.
+Billing Logic
+Monthly Subscription
+When a monthly subscription is canceled:
+Auto-renewal is disabled immediately.
+No future recurring charges will be processed.
+Current subscription remains active until the end of the current billing period.
+No refund is issued.
+Yearly Subscription – Cancel at Expiry
+When a yearly subscription is canceled at expiry:
+Auto-renewal is disabled immediately.
+No future recurring charges will be processed.
+Current subscription remains active until the annual expiry date.
+No refund is issued.
+Yearly Subscription – Cancel and Refund
+When a yearly subscription is canceled with a refund request:
+Subscription is terminated immediately after refund approval and processing.
+Refund is calculated based on the unused remaining months.
+User loses access to paid features after cancellation is completed.
+User is moved to the Free Plan.
+Business Examples
+Monthly Subscription Example
+Current Subscription
+Plan: Overlay Strategists
+Price: $79/month
+Billing Date: 01-Jan-2026
+Next Renewal Date: 01-Feb-2026
+Cancellation Request
+Request Date: 15-Jan-2026
+Result
+Subscription remains active until 31-Jan-2026.
+User continues to access all Overlay Strategists features.
+No refund is issued.
+No additional charges are processed.
+Subscription expires on 01-Feb-2026.
+Yearly Subscription Example – Cancel at Expiry
+Current Subscription
+Plan: Overlay Strategists
+Price: $790/year
+Subscription Start Date: 01-Jan-2026
+Subscription Expiry Date: 31-Dec-2026
+Cancellation Request
+Request Date: 15-Jun-2026
+Result
+Subscription remains active until 31-Dec-2026.
+User continues to access all paid features.
+No refund is issued.
+No additional charges are processed.
+Subscription expires on 01-Jan-2027.
+Yearly Subscription Example – Cancel and Refund
+Current Subscription
+Plan: Overlay Strategists
+Price: $790/year
+Subscription Start Date: 01-Jan-2026
+Subscription Expiry Date: 31-Dec-2026
+Cancellation Request
+Request Date: 01-Jul-2026
+Result
+Six months remain in the subscription period.
+Refund is calculated for the remaining six unused months.
+Subscription is canceled after refund processing.
+User is moved to the Free Plan.
+Paid features become unavailable.
+User Confirmation Screen
+Before confirmation, the user must see:
+Current Plan
+Billing Frequency
+Subscription Expiry Date
+Confirmation that access will continue until expiry (where applicable)
+Confirmation that future renewals will stop
+Refund information (for yearly refund requests)
+Monthly Subscription Example Message
+Your subscription will remain active until 01-Feb-2026. After this date, your subscription will not renew and your account will be moved to the Free Plan.
+Yearly Subscription – Cancel at Expiry Example Message
+Your annual subscription will remain active until 01-Jan-2027. After this date, your subscription will not renew and your account will be moved to the Free Plan.
+Yearly Subscription – Cancel and Refund Example Message
+Your subscription will be canceled and a refund will be processed for the remaining unused months of your annual subscription. Once the refund is completed, your account will be moved to the Free Plan and paid features will no longer be available.
+Cancellation Reversal
+Users may reactivate their subscription at any time before the expiry date when using the Cancel at Expiry option.
+If cancellation is reversed:
+Auto-renewal is restored.
+Subscription remains active.
+No interruption in service occurs.
+Cancellation reversal is not available after a refund has been processed.
+Subscription Expiry
+When the billing period ends:
+Paid subscription expires.
+User is moved to the Curious Explorer (Free) plan.
+Paid plan features are removed.
+Free plan limits are enforced.
+For yearly subscriptions canceled with a refund, this transition occurs immediately after cancellation and refund processing.
+Data Impact
+If the user’s data exceeds Free Plan limits:
+User is notified before subscription expiry.
+User receives reminder notifications explaining the impact.
+Reminder Schedule
+7 Days Before Expiry
+3 Days Before Expiry
+1 Day Before Expiry
+Notifications must include:
+Expiry date
+Features being lost
+Data impact (if applicable)
+Reactivation option
+Data Retention
+Upon conversion to the Free Plan:
+Broker integrations are disconnected.
+Portfolio positions and portfolio-related data are permanently deleted.
+Paid-only features become unavailable.
+Users must be informed of this impact before cancellation is finalized.
+Refund Management
+Annual Subscription Refunds
+Users with yearly subscriptions may request a refund for the unused remaining months when selecting Cancel and Refund.
+The system must:
+Calculate the remaining unused subscription period.
+Calculate the refund amount based on the remaining months.
+Record the refund request and processing details.
+Update the subscription status after refund completion.
+Refund Controls
+The system must capture:
+Refund Amount
+Refund Reason
+Approved By
+Approval Date
+Stripe Refund Reference
+All refund actions must be logged for audit purposes.
+Notifications
+After Cancellation Request
+The system sends:
+Cancellation Confirmation Email
+Subscription Expiry Date
+Reactivation Instructions (where applicable)
+After Refund Processing
+The system sends:
+Refund Confirmation Email
+Refund Amount
+Refund Reference Number
+Effective Cancellation Date
+Before Expiry
+Reminder notifications:
+7 Days Before Expiry
+3 Days Before Expiry
+1 Day Before Expiry
+Important Business Rules
+Monthly subscriptions can only be canceled at the end of the current billing period.
+Monthly subscription cancellations do not qualify for refunds.
+Yearly subscriptions provide two options: Cancel at Expiry or Cancel and Refund.
+Cancel at Expiry disables future renewals only and keeps access active until expiry.
+Cancel and Refund terminates the subscription and refunds the unused remaining months.
+Users may reverse cancellation before expiry only when a refund has not been processed.
+Reminder notifications must be sent before subscription expiry.
+Users must be informed about data deletion and feature loss.
+After expiry, the user is moved to the Free Plan.
+Portfolio positions and portfolio-related data are permanently deleted after conversion to the Free Plan.
+Refund calculations for annual subscriptions must be based on the remaining unused months.
+All cancellation and refund activities must be logged for audit and reporting purposes.
+Subscription Journey – Use Case 8
+Failed Payment & Dunning Management
+Objective
+Manage failed subscription payments while providing customers sufficient opportunity to update their payment method, recover their subscription, and avoid unexpected service interruptions.
+Applicable Scenarios
+Monthly Subscription Renewal Failure
+Annual Subscription Renewal Failure
+Failed Upgrade Payment
+Failed Billing Frequency Change Payment
+Initial Payment Failure
+When Stripe attempts to process a subscription renewal and payment fails:
+System Actions
+Subscription remains active.
+User retains access to all paid features.
+Payment failure is logged.
+Email notification is sent.
+In-app notification is displayed.
+User is prompted to update their payment method.
+Retry Schedule
+The platform will automatically retry payment collection.
+Retry Attempts
+Attempt
+Schedule
+Initial Attempt
+Renewal Date
+Retry 1
+After 3 Days
+Retry 2
+After 5 Days
+Retry 3
+After 7 Days
+The retry schedule may be adjusted based on Stripe billing configuration.
+Grace Period
+During the retry period:
+Subscription remains active.
+User retains access to all premium features.
+User may update their payment method at any time.
+Outstanding invoices remain payable.
+Business Example
+Overlay Strategists Monthly Subscription
+Current Subscription
+Plan: Overlay Strategists
+Price: $79/month
+Renewal Date: 01-Feb-2026
+Payment Failure
+01-Feb-2026
+Renewal payment fails.
+System Actions
+01-Feb-2026
+Failure notification sent.
+User prompted to update payment method.
+04-Feb-2026
+Retry Attempt 1
+Final Outcome
+If all retry attempts fail:
+Subscription is marked as Expired.
+User is automatically moved to the Curious Explorer (Free) plan.
+Premium features are disabled.
+Portfolio data removed and send email notification to user
+Subscription Recovery
+The user may recover the subscription at any time during the retention period.
+Recovery Process
+User:
+Updates payment method.
+Pays outstanding invoice.
+Reactivates subscription.
+Result
+Subscription becomes active.
+Premium features are restored.
+Existing portfolio data remains available.
+Portfolio Retention Policy
+When a subscription expires due to payment failure:
+Day 0
+User is moved to the Free Plan.
+Portfolio data is retained.
+Day 3
+Final reminder email sent.
+Portfolio deletion warning displayed.
+Day 7
+Portfolio positions and portfolio-related data are permanently deleted.
+Broker integrations are disconnected.
+Portfolio recovery is no longer possible.
+User Notifications
+Payment Failure
+Email Subject Example:
+Payment Failed – Action Required
+Retry Reminder
+Email Subject Example:
+Update Your Payment Method to Avoid Service Interruption
+Final Deletion Warning
+Email Subject Example:
+Final Notice – Portfolio Data Will Be Deleted Tomorrow
+Admin Management
+Administrators can view:
+Failed Payments
+Outstanding Invoices
+Retry Attempts
+Subscription Status
+Portfolio Retention Status
+Administrators may:
+Resend Payment Requests
+Extend Retention Period
+Manually Reactivate Subscription
+Process Refunds (if required)
+All actions must be logged.
+Important Business Rules
+Users retain premium access during the payment retry period.
+Multiple payment retry attempts must be performed automatically.
+Email notifications are mandatory at every payment failure stage.
+Users are automatically moved to the Free Plan after final payment failure.
+Portfolio data is retained for 30 days after subscription expiry.
+Users may reactivate their subscription during the retention period.
+Portfolio data is permanently deleted after the retention period expires.
+Broker integrations are disconnected when portfolio data is deleted.
+All payment and recovery events must be logged for audit purposes.
+Administrators may extend the retention period in exceptional cases.

@@ -45,15 +45,7 @@ export class RiskProfilePage
   super(page);
   }
 
-  async fill() {
-    Logger.info(
-  'Filling Risk Profile'
-);
-
-  Logger.step(
-  'Open Experience Dropdown'
-);
-
+  async selectInvestingExperience() {
     const experienceDropdown =
       this.page.locator('[role="combobox"]').nth(0);
 
@@ -68,46 +60,36 @@ export class RiskProfilePage
       }),
       'Select 3-5 years'
     );
-    console.log(
-  ' Options Experience  Beginner'
-);
+  }
 
-await safeClick(
-  this.page.getByRole('button', {
-    name: /^beginner$/i,
-  }),
-  'Select Beginner'
-);
+  async selectOptionsExperience() {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: /^beginner$/i,
+      }),
+      'Select Beginner'
+    );
+  }
 
-console.log(
-  ' Multi-leg Strategies  No'
-);
+  async selectMultiLegNo() {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: /^no$/i,
+      }),
+      'Select No'
+    );
+  }
 
-await safeClick(
-  this.page.getByRole('button', {
-    name: /^no$/i,
-  }),
-  'Select No'
-);
-
-/*
-  
-*/    console.log(' Risk Tolerance  Moderate');
-
+  async selectRiskToleranceModerate() {
     await safeClick(
       this.page.getByRole('button', {
         name: /^moderate$/i,
       }),
       'Select Moderate'
     );
-    console.log(
-      ' Portfolio Loss  Keeping default 10%'
-    );
+  }
 
-    console.log(
-      ' Preferred Duration  30-60 days'
-    );
-
+  async selectPreferredDuration() {
     const durationCheckboxes =
       this.page.locator('[role="checkbox"]');
 
@@ -138,69 +120,152 @@ await safeClick(
         break;
       }
     }
+  }
 
-    console.log(
-      ' Allowed Strategy  Covered Calls'
+  async selectAllowedStrategies() {
+    await this.selectCheckboxByLabel(
+      'Covered Calls'
     );
 
     await this.selectCheckboxByLabel(
-      'Covered Calls'
+      'Cash Secured Puts'
+    );
+  }
+
+  async selectCashAccountType() {
+    const cashText =
+      this.page.getByText(/^Cash$/).last();
+
+    await cashText.scrollIntoViewIfNeeded();
+
+    await cashText.click({
+      force: true
+    });
+
+    await this.page.waitForTimeout(1000);
+
+    const accountCheckboxes =
+      this.page.locator('[role="checkbox"]');
+
+    let accountSelected = false;
+
+    for (
+      let i = 0;
+      i < await accountCheckboxes.count();
+      i++
+    ) {
+      const checked =
+        await accountCheckboxes
+          .nth(i)
+          .getAttribute('aria-checked');
+
+      if (checked === 'true') {
+        accountSelected = true;
+        break;
+      }
+    }
+
+    if (!accountSelected) {
+      throw new Error(
+        'Cash Account Type was not selected.'
+      );
+    }
+  }
+
+  async saveRiskProfile(
+    label = 'Save Risk Profile'
+  ) {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: /save risk profile/i,
+      }),
+      label
+    );
+  }
+
+  async expectRiskProfileStillActive() {
+    await expect(
+      this.page
+    ).toHaveURL(
+      /onboarding/,
+      {
+        timeout: 10000
+      }
+    );
+
+    await expect(
+      this.page.getByRole('button', {
+        name: /save risk profile/i,
+      })
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await expect(
+      this.page.getByText(
+        /read disclosure/i
+      ).first()
+    ).toBeHidden({
+      timeout: 5000
+    });
+  }
+
+  async fill() {
+    Logger.info(
+  'Filling Risk Profile'
+);
+
+  Logger.step(
+  'Open Experience Dropdown'
+);
+
+    await this.selectInvestingExperience();
+
+    console.log(
+  ' Options Experience  Beginner'
+);
+
+await this.selectOptionsExperience();
+
+console.log(
+  ' Multi-leg Strategies  No'
+);
+
+await this.selectMultiLegNo();
+
+/*
+  
+*/    console.log(' Risk Tolerance  Moderate');
+
+    await this.selectRiskToleranceModerate();
+    console.log(
+      ' Portfolio Loss  Keeping default 10%'
+    );
+
+    console.log(
+      ' Preferred Duration  30-60 days'
+    );
+
+    await this.selectPreferredDuration();
+
+    console.log(
+      ' Allowed Strategy  Covered Calls'
     );
 
     console.log(
       ' Allowed Strategy  Cash Secured Puts'
     );
 
-    await this.selectCheckboxByLabel(
-      'Cash Secured Puts'
-    );
+    await this.selectAllowedStrategies();
 
   console.log(' Account Type  Cash');
 
-const cashText = this.page.getByText(/^Cash$/).last();
-
-await cashText.scrollIntoViewIfNeeded();
-
-await cashText.click({ force: true });
-
-await this.page.waitForTimeout(1000);
-
-const accountCheckboxes =
-  this.page.locator('[role="checkbox"]');
-
-let accountSelected = false;
-
-for (
-  let i = 0;
-  i < await accountCheckboxes.count();
-  i++
-) {
-  const checked =
-    await accountCheckboxes
-      .nth(i)
-      .getAttribute('aria-checked');
-
-  if (checked === 'true') {
-    accountSelected = true;
-    break;
-  }
-}
-
-if (!accountSelected) {
-  throw new Error(
-    'Cash Account Type was not selected.'
-  );
-}
+await this.selectCashAccountType();
 
 console.log(
   ' Cash Account Type selected'
 );
-    await safeClick(
-      this.page.getByRole('button', {
-        name: /save risk profile/i,
-      }),
-      'Save Risk Profile'
-    );
+    await this.saveRiskProfile();
 
 await expect(
   this.page.getByText(
@@ -228,6 +293,86 @@ console.log(
   ' Compliance tab opened successfully'
 );
   }
+
+  async validateRequiredFieldsBlockSave() {
+    Logger.info(
+      'Validating Risk Profile required fields'
+    );
+
+    await this.saveRiskProfile(
+      'Save Risk Profile Without Required Fields'
+    );
+
+    await this.expectRiskProfileStillActive();
+
+    Logger.success(
+      'Risk Profile required fields block progress'
+    );
+  }
+
+  async validateMissingExperienceBlocksSave() {
+    Logger.info(
+      'Validating Risk Profile investing experience is required'
+    );
+
+    await this.selectOptionsExperience();
+    await this.selectMultiLegNo();
+    await this.selectRiskToleranceModerate();
+    await this.selectPreferredDuration();
+    await this.selectAllowedStrategies();
+    await this.selectCashAccountType();
+    await this.saveRiskProfile(
+      'Save Risk Profile Without Investing Experience'
+    );
+    await this.expectRiskProfileStillActive();
+
+    Logger.success(
+      'Risk Profile investing experience is required'
+    );
+  }
+
+  async validateMissingStrategyBlocksSave() {
+    Logger.info(
+      'Validating Risk Profile strategy selection is required'
+    );
+
+    await this.selectInvestingExperience();
+    await this.selectOptionsExperience();
+    await this.selectMultiLegNo();
+    await this.selectRiskToleranceModerate();
+    await this.selectPreferredDuration();
+    await this.selectCashAccountType();
+    await this.saveRiskProfile(
+      'Save Risk Profile Without Allowed Strategy'
+    );
+    await this.expectRiskProfileStillActive();
+
+    Logger.success(
+      'Risk Profile strategy selection is required'
+    );
+  }
+
+  async validateMissingAccountTypeBlocksSave() {
+    Logger.info(
+      'Validating Risk Profile account type is required'
+    );
+
+    await this.selectInvestingExperience();
+    await this.selectOptionsExperience();
+    await this.selectMultiLegNo();
+    await this.selectRiskToleranceModerate();
+    await this.selectPreferredDuration();
+    await this.selectAllowedStrategies();
+    await this.saveRiskProfile(
+      'Save Risk Profile Without Account Type'
+    );
+    await this.expectRiskProfileStillActive();
+
+    Logger.success(
+      'Risk Profile account type is required'
+    );
+  }
+
   async selectCheckboxByLabel(
     label: string
   ) {

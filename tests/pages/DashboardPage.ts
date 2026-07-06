@@ -16,11 +16,13 @@ Validates that the user reaches the dashboard and remains there after refresh.
 ============================================================================ */
 export class DashboardPage
   extends BasePage {
-  async validate() {
+
+  async validateLoaded() {
 
 Logger.info(
   'Validating Dashboard'
 );
+
     await expect(this.page)
       .toHaveURL(
         /dashboard/,
@@ -32,6 +34,12 @@ Logger.info(
   Logger.success(
   'Dashboard Loaded'
 );
+  }
+
+  async validate() {
+
+await this.validateLoaded();
+
     Logger.step(
   'Refreshing Dashboard'
 );

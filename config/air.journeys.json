@@ -32,13 +32,25 @@
     },
     {
       "name": "Subscription",
-      "patterns": ["subscriber", "subscription", "plans"],
+      "patterns": [
+        "subscriber",
+        "subscription",
+        "plans",
+        "overlay strategists",
+        "trial"
+      ],
       "modules": ["Billing"],
       "critical": true
     },
     {
       "name": "Payment",
-      "patterns": ["payment", "stripe", "billing"],
+      "patterns": [
+        "payment",
+        "stripe",
+        "checkout",
+        "billing",
+        "with card"
+      ],
       "modules": ["Billing"],
       "critical": true
     },

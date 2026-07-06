@@ -1,0 +1,841 @@
+Test Plan – OOLTool Subscription Management Journey
+Document Version: 1.0
+Source: Subscription Management Journey FRD – Client Review
+Module: Subscription, Billing, Stripe, Entitlements, Portfolio Retention, Notifications, and Admin Management
+Test Type: Functional, Integration, Database, API/Webhooks, Negative, Regression, Audit, and Data-Lifecycle Validation
+1. Test Objective
+Validate that the complete subscription lifecycle works correctly for all supported plans and billing frequencies, including:
+Overlay Strategists trial with and without a saved card
+Direct subscription purchase
+Automatic renewal
+Plan upgrade and Stripe proration
+Plan downgrade and scheduled downgrade activation
+Monthly-to-Annual and Annual-to-Monthly billing changes
+Subscription cancellation and cancellation reversal
+Annual refund processing
+Failed payment retries, grace period, recovery, and expiry
+Portfolio data retention and deletion
+Email and in-app notifications
+Stripe, database, audit-log, and admin-management behaviour
+The primary QA goal is to ensure users receive the correct plan access, billing outcome, notifications, and data treatment without incorrect charges, premature data loss, duplicate subscriptions, or missing audit records.
+2. Scope
+In Scope
+Area
+Coverage
+Trial
+Option A: Trial without card; Option B: Trial with card; eligibility; expiry; reminders; conversion; trial-to-paid conversion
+Purchase
+Monthly and annual purchase of all plans; Stripe payment success/failure; invoice; receipt; auto-renewal
+Upgrade
+Immediate plan upgrade; Stripe proration; feature activation; failed upgrade payment
+Downgrade
+Next-renewal downgrade; retention offer; limit comparison; data-deletion warning; scheduled activation
+Billing Frequency
+Monthly-to-Annual immediate conversion; Annual-to-Monthly scheduled conversion
+Cancellation
+Monthly cancel at expiry; annual cancel at expiry; annual cancel and refund; cancellation reversal
+Failed Payment
+Retry schedule; grace period; payment-method update; recovery; expiry; portfolio deletion
+Notifications
+Email and in-app reminders, confirmations, renewal reminders, data-loss warnings
+Admin
+Failed-payment view, retry history, refund controls, retention-extension controls, manual reactivation
+Backend
+Stripe webhooks, subscription status, invoice/payment status, audit events, scheduler jobs
+Data Lifecycle
+Broker disconnection, portfolio deletion, plan entitlement enforcement, retention recovery
+Out of Scope
+Stripe production settlement or actual bank-card charges
+Tax-calculation accuracy unless tax rules are separately defined
+Legal wording review of Terms of Service and Subscription Terms
+Performance/load testing of Stripe or notification systems
+Visual/UI design review except where incorrect UI affects functionality
+Third-party broker behaviour outside OOLTool’s own integration and disconnection handling
+3. Critical Requirement Clarifications Required Before Execution
+The following items conflict or remain incomplete in the FRD. These should be confirmed by the business team before destructive test execution.
+ID
+Requirement Conflict / Gap
+Impact
+Required Decision
+CL-01
+Failed-payment expiry is stated as immediate portfolio deletion in Global Business Rules, deletion on Day 7 in the Failed Payment journey, and retention for 30 days in the Important Business Rules.
+High risk of incorrect data deletion.
+Confirm the exact retention duration: immediate, 7 days, or 30 days.
+CL-02
+Global rules state refunds are manual and admin-approved only, while annual cancellation describes a user selecting “Cancel and Refund.”
+Refunds could be processed without approval.
+Confirm whether the user submits a refund request or receives an automatic refund.
+CL-03
+A one-time retention offer may be shown during downgrade and cancellation journeys, but detailed rules describe it only for monthly downgrades.
+Inconsistent customer journey.
+Confirm whether retention offers apply to cancellation flows.
+CL-04
+Trial Option B failed payment mentions a configurable grace period, but no duration or retry schedule is finalized.
+Trial conversion failure cannot be validated accurately.
+Confirm grace period and retry schedule for first paid charge after trial.
+CL-05
+Annual refund calculation is based on “remaining unused months.” Partial months, taxes, discounts, credits, and Stripe fees are not defined.
+Incorrect refund amount.
+Confirm refund formula and rounding rule.
+CL-06
+Reminder emails are mandatory, but email trigger time zone, retry handling, and duplicate prevention are not defined.
+Duplicate or missed reminders.
+Confirm scheduler time zone and idempotency rules.
+CL-07
+Trial eligibility includes “other identifiable account information,” but identifiers are not defined.
+Trial-abuse control cannot be fully tested.
+Confirm supported identifiers: email, card fingerprint, device, account ID, phone, IP, etc.
+CL-08
+“Portfolio-related data” is not precisely defined.
+Some related records may remain after deletion.
+Confirm whether positions, option positions, broker links, portfolios, uploaded files, reports, and analytics history must be deleted.
+QA Recommendation: Do not execute irreversible portfolio-deletion cases in a shared environment until CL-01 and CL-08 are approved.
+4. Test Approach
+Testing will be performed across five layers.
+Layer
+Validation Focus
+UI Validation
+Plan selection, pricing, billing frequency, warnings, confirmation screens, user messages, subscription settings
+API / Backend Validation
+Subscription creation, Stripe calls, Stripe webhooks, status transitions, entitlement decisions, retry logic
+Database Validation
+Subscription status, plan mapping, billing dates, scheduled changes, payment events, audit logs, portfolio deletion
+Stripe Validation
+Customer, payment method, subscription, invoice, payment intent, proration, refund, webhook event
+Scheduler / Notification Validation
+Trial reminders, renewal reminders, downgrade reminders, retry notifications, expiry warnings, data deletion jobs
+5. Test Environment and Dependencies
+Required Environment
+Dependency
+Required for Testing
+UAT environment
+Separate from production and connected to Stripe Test Mode
+Stripe Test Account
+Access to customers, subscriptions, invoices, payment intents, refunds, webhook events
+Email Test Inbox
+Mailinator, test mailbox, or application email-capture tool
+Test Scheduler Control
+Ability to trigger reminder, expiry, retry, and retention jobs without waiting real days
+Database Access
+Read-only access preferred for validation; controlled write access only when approved
+Admin User
+Required for failed-payment, refund, retention, and manual-reactivation validation
+Broker Test Data
+Broker connections, linked accounts, positions, and option positions for limit/deletion scenarios
+Notification Logs
+Email and in-app notification event/status validation
+API / Webhook Logs
+Stripe request/response and webhook processing validation
+Required Test Data
+Data ID
+Test User Type
+Purpose
+TD-01
+New user with no trial history
+Trial Option A and direct purchase
+TD-02
+New user with valid Stripe test card
+Trial Option B and successful payment
+TD-03
+User who already consumed a trial
+Repeat-trial rejection
+TD-04
+User with active Income Builder Monthly
+Upgrade and Monthly-to-Annual cases
+TD-05
+User with active Overlay Strategists Monthly
+Upgrade, downgrade, cancellation, renewal
+TD-06
+User with active Portfolio Hedger Monthly
+Retention-offer and downgrade cases
+TD-07
+User with active Marketplace Annual
+Annual downgrade, Annual-to-Monthly, cancellation/refund
+TD-08
+User exceeding lower-plan limits
+Data-impact warning and deletion cases
+TD-09
+User with a failed renewal payment
+Dunning, retry, recovery, expiry
+TD-10
+Admin user
+Refund approval, retention extension, manual reactivation
+TD-11
+User with previously used retention offer
+Ensure offer is not shown again
+TD-12
+User with scheduled downgrade or billing change
+Cancellation of pending request
+6. Database and Backend Validation Checklist
+Validate actual table and column names against the implementation. The following entities should be checked after every major subscription action.
+Area
+Expected Validation
+User Subscription
+Active plan, billing interval, subscription status, start date, renewal date, expiry date, auto-renew status, cancel-at-period-end flag
+Subscription Plan
+Plan name, Stripe price ID, monthly/annual pricing, entitlements, account limits
+Stripe Customer Mapping
+Correct OOLTool user mapped to the correct Stripe customer
+Stripe Subscription
+Correct product/price, status, billing cycle anchor, cancellation setting, trial end date
+Invoice / Payment
+Invoice amount, proration amount, payment status, invoice reference, receipt availability
+Scheduled Change
+Pending downgrade, pending billing-frequency change, effective date, cancellation of pending request
+Trial History
+Trial-used flag, trial start/end dates, trial option, card status, eligibility decision
+Retention Offer
+Offer shown, accepted/declined status, discount amount, duration, one-time usage flag
+Refund Record
+Refund amount, reason, approval status, approved by, approval date, Stripe refund reference
+Portfolio Data
+Broker links, linked accounts, positions, option positions, portfolio records, data-deletion status
+Audit Logs
+Trial started, paid subscription, upgrade, downgrade, cancellation, refund, payment failure, retry, recovery, deletion
+Notification History
+Event type, recipient, channel, delivery status, scheduled date, duplicate prevention
+Jobs / Scheduler
+Renewal job, reminder job, payment retry job, retention/deletion job, exception handling
+7. Functional Test Scenarios
+A. Global Subscription Rules
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-GEN-001
+Verify all subscriptions have auto-renew enabled by default.
+Auto-renew is enabled after successful purchase or trial conversion.
+P0
+SUB-GEN-002
+Verify a user cannot hold duplicate active paid subscriptions for the same account.
+Only one active subscription is maintained unless business rules explicitly allow multiple.
+P0
+SUB-GEN-003
+Verify plan entitlements match the currently active plan.
+User gets only the features and limits of the active plan.
+P0
+SUB-GEN-004
+Verify subscription status is consistent across UI, API, database, and Stripe.
+Status values match across all layers.
+P0
+SUB-GEN-005
+Verify failed payment does not incorrectly activate or upgrade a subscription.
+Existing plan remains unchanged.
+P0
+SUB-GEN-006
+Verify Terms of Service and Subscription Terms acceptance is mandatory where required.
+User cannot start trial or purchase without acceptance.
+P0
+SUB-GEN-007
+Verify audit records are generated for all major subscription actions.
+Event is logged with user, date/time, old/new status, and relevant metadata.
+P0
+B. Overlay Strategists Trial – Option A: Without Card
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-TRIAL-001
+Start trial without payment card.
+Trial starts successfully for 30 days.
+P0
+SUB-TRIAL-002
+Verify restricted limits during Option A trial.
+Maximum 1 broker integration, 5 linked accounts, and 100 positions are enforced.
+P0
+SUB-TRIAL-003
+Verify all permitted Overlay Strategists premium features are available during Option A trial.
+Premium features work except defined restricted limits.
+P0
+SUB-TRIAL-004
+Attempt to add a second broker integration.
+User is blocked and receives clear limit message.
+P0
+SUB-TRIAL-005
+Attempt to exceed five linked accounts.
+User is blocked and limit is enforced.
+P0
+SUB-TRIAL-006
+Attempt to exceed 100 positions.
+User is blocked or excess positions are handled according to requirements.
+P0
+SUB-TRIAL-007
+Verify Day 25 reminder.
+Email and in-app reminder are generated once.
+P1
+SUB-TRIAL-008
+Verify Day 28 reminder.
+Email and in-app reminder are generated once.
+P1
+SUB-TRIAL-009
+Verify Day 29 final reminder.
+Final email and in-app reminder are generated once.
+P1
+SUB-TRIAL-010
+Allow user to add a valid card during trial.
+Payment method is saved; trial remains active until expiry.
+P0
+SUB-TRIAL-011
+Trial expires without a card.
+User moves to Curious Explorer Free plan.
+P0
+SUB-TRIAL-012
+Verify broker integrations are disconnected on Option A expiry.
+Broker connections are disabled or removed as approved.
+P0
+SUB-TRIAL-013
+Verify portfolio positions and related data are deleted on Option A expiry.
+Defined data is permanently deleted and logged.
+P0
+SUB-TRIAL-014
+Verify premium entitlements are removed after expiry.
+Paid/trial features are inaccessible and Free plan limits apply.
+P0
+C. Overlay Strategists Trial – Option B: With Card
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-TRIAL-015
+Start trial with valid payment card.
+Trial starts and $0.01 authorization is processed successfully.
+P0
+SUB-TRIAL-016
+Verify authorization failure handling.
+Trial does not start if card verification fails.
+P0
+SUB-TRIAL-017
+Verify full Overlay Strategists access during Option B trial.
+No trial-specific feature limits are applied.
+P0
+SUB-TRIAL-018
+Verify final Day 29 reminder.
+Final notification is sent before subscription activation.
+P1
+SUB-TRIAL-019
+Trial expires with valid card.
+User converts to Overlay Strategists Monthly at $79/month.
+P0
+SUB-TRIAL-020
+Verify first subscription invoice and payment after trial conversion.
+Correct monthly invoice is created and payment is successful.
+P0
+SUB-TRIAL-021
+Remove payment method before trial expiry.
+Trial remains active until expiry; user moves to Free plan if no valid card exists.
+P0
+SUB-TRIAL-022
+First paid charge after trial fails.
+Configured grace-period and dunning flow starts; user is not incorrectly charged.
+P0
+D. Trial Eligibility and Trial-to-Paid Conversion
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-TRIAL-023
+Attempt a second trial using same email.
+Trial is rejected.
+P0
+SUB-TRIAL-024
+Attempt a second trial using same payment-method fingerprint.
+Trial is rejected.
+P0
+SUB-TRIAL-025
+Existing paid user attempts to start trial.
+Trial is rejected.
+P0
+SUB-TRIAL-026
+Trial user subscribes to Income Builder.
+Trial ends immediately; Income Builder becomes active; billing starts immediately.
+P0
+SUB-TRIAL-027
+Trial user subscribes to Overlay Strategists.
+Trial ends immediately; paid plan becomes active with new billing cycle.
+P0
+SUB-TRIAL-028
+Trial user subscribes to Portfolio Hedger or Marketplace.
+Trial ends immediately; selected plan becomes active immediately.
+P0
+SUB-TRIAL-029
+Payment fails while subscribing during trial.
+Trial remains active until its original expiry date.
+P0
+SUB-TRIAL-030
+Verify trial history, conversion, and payment events are auditable.
+Complete history is recorded.
+P1
+E. Direct Subscription Purchase
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-PUR-001
+Purchase each plan using monthly billing.
+Correct plan is activated with correct monthly price.
+P0
+SUB-PUR-002
+Purchase each plan using annual billing.
+Correct plan is activated with correct annual price.
+P0
+SUB-PUR-003
+Verify subscription summary before payment.
+Plan, frequency, price, taxes, total, renewal date, and auto-renew information are correct.
+P0
+SUB-PUR-004
+Purchase with valid payment details.
+Subscription becomes Active immediately.
+P0
+SUB-PUR-005
+Purchase with declined payment method.
+Subscription is not activated; failure message is displayed.
+P0
+SUB-PUR-006
+Retry failed payment with another card.
+Successful retry activates only one subscription.
+P0
+SUB-PUR-007
+Verify confirmation email and payment receipt.
+Both are generated and contain correct plan/amount/date.
+P1
+SUB-PUR-008
+Verify billing cycle starts on successful payment date.
+Renewal date is calculated correctly.
+P0
+SUB-PUR-009
+Verify user remains on existing plan after failed purchase.
+Existing access remains unchanged.
+P0
+SUB-PUR-010
+Verify invoice, payment, Stripe subscription, and local record mapping.
+All references are linked correctly.
+P0
+F. Upgrade Subscription
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-UPG-001
+Upgrade Income Builder Monthly to Overlay Strategists Monthly.
+New plan activates immediately after successful payment.
+P0
+SUB-UPG-002
+Upgrade Overlay Strategists Monthly to Portfolio Hedger Monthly.
+New plan activates immediately after successful payment.
+P0
+SUB-UPG-003
+Upgrade any lower plan to Marketplace.
+Marketplace entitlements become available immediately.
+P0
+SUB-UPG-004
+Verify upgrade confirmation page.
+Current plan, new plan, amount due today, recurring amount, and next billing date are accurate.
+P0
+SUB-UPG-005
+Verify Stripe proration calculation.
+Unused current-plan value is credited and correct prorated amount is charged.
+P0
+SUB-UPG-006
+Verify failed upgrade payment.
+Upgrade is not completed; old plan remains active.
+P0
+SUB-UPG-007
+Verify previous plan limits are removed immediately after upgrade.
+Increased entitlements are available without delay.
+P0
+SUB-UPG-008
+Verify upgrade confirmation email, receipt, notification, and audit event.
+All are generated with correct details.
+P1
+G. Monthly-to-Annual Billing Change
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-MTA-001
+Change Income Builder Monthly to Annual.
+Annual plan activates immediately.
+P0
+SUB-MTA-002
+Change Overlay Strategists Monthly to Annual.
+Annual plan activates immediately.
+P0
+SUB-MTA-003
+Verify unused monthly credit is applied.
+Stripe proration is correct.
+P0
+SUB-MTA-004
+Verify annual billing cycle resets from conversion date.
+New annual renewal date is exactly one year after activation.
+P0
+SUB-MTA-005
+Verify amount due, annual savings, future recurring amount, and renewal date before confirmation.
+All values are correct and visible.
+P0
+SUB-MTA-006
+Payment fails during Monthly-to-Annual change.
+Existing monthly subscription remains active.
+P0
+SUB-MTA-007
+Verify email, invoice, notification, and audit record.
+All records are created correctly.
+P1
+H. Downgrade Subscription and Retention Offer
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-DWN-001
+Request Marketplace Monthly to Portfolio Hedger Monthly downgrade.
+Downgrade is scheduled for next renewal date.
+P0
+SUB-DWN-002
+Request Portfolio Hedger Monthly to Overlay Strategists Monthly downgrade.
+Downgrade is scheduled for next renewal date.
+P0
+SUB-DWN-003
+Request Overlay Strategists Monthly to Income Builder Monthly downgrade.
+Downgrade is scheduled for next renewal date.
+P0
+SUB-DWN-004
+Verify retention offer appears for eligible monthly downgrade.
+Offer appears before downgrade confirmation.
+P0
+SUB-DWN-005
+Accept retention offer.
+Downgrade is cancelled; current plan remains; discount applies for three billing cycles.
+P0
+SUB-DWN-006
+Decline retention offer.
+Downgrade confirmation journey continues.
+P0
+SUB-DWN-007
+User who already used retention offer requests another downgrade.
+Offer is not shown again.
+P0
+SUB-DWN-008
+Verify no refund, credit, or wallet balance after downgrade request.
+No immediate financial adjustment occurs.
+P0
+SUB-DWN-009
+Verify current-plan access remains until expiry.
+Current entitlements remain active until effective date.
+P0
+SUB-DWN-010
+Downgrade to a plan with lower broker, linked-account, or position limits.
+Accurate data-impact warning is shown.
+P0
+SUB-DWN-011
+Attempt to confirm downgrade without acknowledging deletion warning.
+Confirmation is blocked.
+P0
+SUB-DWN-012
+On effective downgrade date, validate lower plan activation and excess-data deletion.
+New plan activates; only excess defined data is deleted; audit is created.
+P0
+SUB-DWN-013
+Verify 7-day, 3-day, and 1-day data-impact reminders.
+Notifications are sent once at each configured stage.
+P1
+SUB-DWN-014
+Cancel scheduled downgrade before effective date.
+Pending downgrade is removed and current plan continues normally.
+P1
+I. Annual-to-Monthly Billing Change
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-ATM-001
+Request Overlay Strategists Annual to Monthly.
+Change is scheduled for annual renewal date.
+P0
+SUB-ATM-002
+Verify no refund, credit, or wallet balance.
+No financial adjustment occurs.
+P0
+SUB-ATM-003
+Verify current annual benefits remain until expiry.
+No feature reduction occurs before renewal date.
+P0
+SUB-ATM-004
+Verify pending billing-change record appears in Subscription Settings.
+Scheduled change and effective date are displayed.
+P0
+SUB-ATM-005
+Cancel scheduled Annual-to-Monthly change.
+Pending change is removed; annual subscription continues.
+P1
+SUB-ATM-006
+Annual renewal date arrives.
+Monthly plan activates and monthly billing cycle begins.
+P0
+SUB-ATM-007
+Verify 30-day, 7-day, and 1-day reminders before conversion.
+Correct notification content and schedule.
+P1
+J. Subscription Cancellation and Refunds
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-CAN-001
+Cancel monthly subscription.
+Auto-renew turns off; access continues until expiry; no refund.
+P0
+SUB-CAN-002
+Reverse monthly cancellation before expiry.
+Auto-renew is restored without service interruption.
+P0
+SUB-CAN-003
+Cancel annual subscription at expiry.
+Auto-renew turns off; annual access continues until expiry.
+P0
+SUB-CAN-004
+Reverse annual Cancel-at-Expiry request before expiry.
+Auto-renew is restored.
+P0
+SUB-CAN-005
+Request annual Cancel and Refund.
+Refund request follows approved workflow and does not bypass admin controls.
+P0
+SUB-CAN-006
+Approve annual refund as admin.
+Refund amount, approver, reason, date, and Stripe refund reference are recorded.
+P0
+SUB-CAN-007
+Reject annual refund request.
+Subscription remains active or follows approved rejection rule; no refund occurs.
+P1
+SUB-CAN-008
+Process successful annual refund.
+Subscription ends, paid features are removed, user moves to Free plan.
+P0
+SUB-CAN-009
+Attempt cancellation reversal after refund.
+Reversal is blocked.
+P0
+SUB-CAN-010
+Verify cancellation confirmation email.
+Correct expiry date and reactivation information are included.
+P1
+SUB-CAN-011
+Verify 7-day, 3-day, and 1-day cancellation-expiry reminders.
+Correct notifications are sent.
+P1
+SUB-CAN-012
+Verify Free plan conversion after cancellation expiry.
+Paid features are removed and Free plan limits are applied.
+P0
+SUB-CAN-013
+Verify broker disconnection and portfolio deletion after conversion to Free plan.
+Defined portfolio data is deleted and action is logged.
+P0
+K. Failed Payment and Dunning Management
+Test ID
+Scenario
+Expected Result
+Priority
+SUB-DUN-001
+Simulate failed monthly renewal payment.
+Subscription remains active during configured retry period.
+P0
+SUB-DUN-002
+Simulate failed annual renewal payment.
+Subscription remains active during configured retry period.
+P0
+SUB-DUN-003
+Validate initial payment-failure email and in-app notification.
+User receives actionable payment-update instructions.
+P0
+SUB-DUN-004
+Validate Retry 1 after three days.
+Retry is attempted and recorded.
+P0
+SUB-DUN-005
+Validate Retry 2 after five days.
+Retry is attempted and recorded.
+P0
+SUB-DUN-006
+Validate Retry 3 after seven days.
+Retry is attempted and recorded.
+P0
+SUB-DUN-007
+Update payment method during grace period.
+Outstanding invoice is paid and subscription remains/reverts to Active.
+P0
+SUB-DUN-008
+Recover subscription before retention expiry.
+Paid access is restored and existing portfolio data remains available.
+P0
+SUB-DUN-009
+All retries fail.
+Subscription changes to Expired and user moves to Free plan.
+P0
+SUB-DUN-010
+Validate portfolio retention immediately after failed-payment expiry.
+Must follow the final approved retention rule.
+P0
+SUB-DUN-011
+Validate final deletion warning.
+Warning is sent before permanent deletion.
+P0
+SUB-DUN-012
+Validate portfolio deletion after retention period.
+Positions and broker links are deleted; recovery is not possible.
+P0
+SUB-DUN-013
+Admin extends retention period.
+Deletion schedule changes only for approved account; event is auditable.
+P1
+SUB-DUN-014
+Admin manually reactivates subscription.
+Correct status, access, billing, and audit outcome are applied.
+P1
+SUB-DUN-015
+Verify duplicate retry/webhook handling.
+Same invoice is not charged, retried, or logged multiple times incorrectly.
+P0
+8. Notification Validation Matrix
+Event
+Expected Channel
+Validation
+Trial Day 25 reminder
+Email and In-App
+Correct user, message, CTA, no duplicates
+Trial Day 28 reminder
+Email and In-App
+Correct schedule and content
+Trial Day 29 final reminder
+Email and In-App
+Correct expiry/conversion details
+Purchase confirmation
+Email
+Correct plan, amount, billing interval, renewal date
+Payment receipt / invoice
+Email
+Correct invoice and Stripe reference
+Upgrade confirmation
+Email and In-App
+Correct old/new plan, amount due, next billing date
+Downgrade confirmation
+Email
+Correct effective date, plan, data impact
+Retention offer accepted
+Email
+Discount amount, duration, billing summary
+Downgrade reminders
+Email and In-App
+Seven-day, three-day, one-day reminders
+Annual-to-Monthly reminders
+Email and In-App
+Thirty-day, seven-day, one-day reminders
+Cancellation confirmation
+Email
+Expiry date and reactivation instructions
+Refund confirmation
+Email
+Refund amount, reference, effective cancellation date
+Payment failure
+Email and In-App
+Action required and payment-update link
+Retry reminder
+Email and In-App
+Correct retry stage and outstanding amount
+Portfolio deletion warning
+Email and In-App
+Exact deletion date and data impact
+9. Negative and Edge Case Coverage
+Test Area
+Negative / Edge Scenario
+Trial
+Repeated trial attempt using same email, same card, different email with same card, already-paid user
+Payment
+Declined card, expired card, insufficient funds, Stripe timeout, duplicate payment click
+Webhooks
+Duplicate webhook, delayed webhook, out-of-order webhook, invalid webhook signature
+Upgrade
+Payment failure after confirmation, page refresh during payment, upgrade twice rapidly
+Downgrade
+User exceeds limits, does not accept deletion warning, scheduled downgrade date changes
+Retention
+Discount applied more than three cycles, offer shown more than once, downgrade still scheduled after offer accepted
+Billing Change
+Multiple pending billing changes, switch Annual-to-Monthly then cancel, convert Monthly-to-Annual twice
+Cancellation
+Cancel after pending downgrade, cancel after billing-frequency change, reversal after expiry, reversal after refund
+Refund
+Refund request for monthly plan, duplicate refund, partial refund, refund failure in Stripe
+Dunning
+Payment succeeds after retry, retry occurs twice, wrong invoice retried, deletion job runs early
+Data Deletion
+Incorrect user’s data deleted, only partial data deleted, broker link remains active, deleted data still visible through API
+Security
+User tries to modify another user’s subscription ID, refund endpoint without admin role, replayed Stripe webhook
+10. Evidence Requirements
+For every P0 scenario, collect the following evidence:
+Evidence Type
+Required Proof
+UI Evidence
+Screenshot of confirmation, warning, status, plan, and effective date
+Stripe Evidence
+Subscription, invoice, payment intent, refund, and webhook event screenshots or IDs
+API Evidence
+Request/response for subscription, entitlement, payment, and webhook processing
+Database Evidence
+Before/after query result for subscription, scheduled change, audit, portfolio, and notification data
+Email Evidence
+Received email with correct subject, recipient, content, amount, date, and CTA
+Job Evidence
+Scheduler/job execution log for reminders, retries, expiry, and deletion
+Audit Evidence
+Event type, actor, target user, timestamp, old/new values, reference IDs
+11. Entry Criteria
+Testing can begin when:
+Subscription plans and Stripe price IDs are configured in UAT.
+Stripe Test Mode access is available.
+Test users and admin user are available.
+Trial, renewal, retry, and deletion jobs can be triggered or time-shifted.
+Email-capture method is available.
+Database/API access is available for validation.
+Critical requirement clarifications are approved, especially payment-failure retention and refund approval flow.
+Free-plan limits and plan-specific limits are documented.
+12. Exit Criteria
+Testing can be closed when:
+All P0 scenarios are executed.
+No open Critical or High severity defect remains.
+Subscription, payment, Stripe, entitlement, and database records are consistent.
+No duplicate charges, duplicate subscriptions, or duplicate notifications are found.
+Data deletion is validated only against approved retention rules.
+Audit logs are available for all major lifecycle actions.
+Required emails and in-app notifications are delivered successfully.
+Regression testing is completed after fixes.
+13. Recommended Execution Order
+Validate plan configuration, prices, Stripe mapping, entitlements, and Free plan limits.
+Execute direct purchase success and failure scenarios.
+Execute Trial Option A and Option B scenarios.
+Execute trial-to-paid conversion scenarios.
+Execute upgrade and Monthly-to-Annual scenarios.
+Execute downgrade, retention offer, and data-impact scenarios.
+Execute Annual-to-Monthly scheduled-change scenarios.
+Execute cancellation, reversal, and annual refund scenarios.
+Execute failed-payment retries, recovery, retention, and expiry.
+Execute notification, audit, webhook, admin, and regression scenarios.
+14. QA Closure Comment Template
+Subscription Management Journey – QA Closure
+Subscription Management functionality was validated across trial activation, direct purchase, upgrades, downgrades, billing frequency changes, cancellations, refunds, failed payment recovery, notifications, Stripe integration, entitlement enforcement, and audit logging.
+Validated Successfully
+[List completed and passed areas]
+Observations / Defects
+[Defect ID, severity, summary, current status]
+Not Validated
+[Items blocked by environment, Stripe configuration, scheduler control, or pending business decision]
+Important Business Decisions Pending
+Failed-payment portfolio retention duration
+Annual refund approval and calculation process
+Retention offer applicability during cancellation
+Trial Option B grace-period duration
+Exact list of portfolio-related data to delete
+QA Status: Pending / Passed with Observations / Blocked
+Prepared By: Hardik Thanki
+Date: [Execution Date]

@@ -277,6 +277,41 @@ extends BasePage {
         'Send Code via SMS'
       );
 
+      for (
+        let attempt = 1;
+        attempt <= 3;
+        attempt++
+      ) {
+        const otpVisible =
+          await this.otpInput
+            .first()
+            .isVisible({
+              timeout: 10000
+            })
+            .catch(
+              () => false
+            );
+
+        if (otpVisible) {
+          break;
+        }
+
+        if (attempt === 3) {
+          throw new Error(
+            'Registration OTP input did not appear after requesting SMS code.'
+          );
+        }
+
+        Logger.info(
+          `OTP input not visible after SMS request. Retrying send code (${attempt + 1}/3).`
+        );
+
+        await safeClick(
+          this.sendCodeButton,
+          'Retry Send Code via SMS'
+        );
+      }
+
 
       Logger.info(
         'Entering OTP'

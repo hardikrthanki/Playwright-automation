@@ -14,7 +14,8 @@ import { Logger }
   from '../utils/logger';
 
 import {
-  BASE_URL
+  BASE_URL,
+  MFA_SETTINGS
 } from '../config/testData';
 
 /* =============================================================================
@@ -131,6 +132,50 @@ export class MfaPage
     );
   }
 
+  async expectMfaSetupScreenVisible() {
+
+    const setupSignal =
+      this.page.getByText(
+        /scan|qr|authenticator app|verification code|verify\s*&\s*enable|verify and enable|setup key|secret/i
+      ).first();
+
+    await expect(
+      setupSignal
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'MFA setup screen is visible'
+    );
+  }
+
+  async expectMfaDisabledBeforeEnable() {
+
+    await expect(
+      this.page.getByRole(
+        'button',
+        {
+          name: /enable.*authenticator|enable.*authenticator app|enable.*mfa|enable.*2fa|enable.*two-factor|set up.*authenticator|setup.*authenticator/i
+        }
+      ).or(
+        this.page.getByText(
+          /enable.*authenticator|enable.*authenticator app|enable.*mfa|enable.*2fa|set up.*authenticator/i
+        )
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.getByText(
+        /current method:\s*authenticator app|disable 2fa|regenerate backup codes/i
+      ).first()
+    ).not.toBeVisible({
+      timeout: 3000
+    });
+  }
+
   async assertMfaChallengeVisible() {
 
     await expect(
@@ -217,12 +262,9 @@ export class MfaPage
     );
 
     if (
-      options.rememberDevice &&
-      await this.rememberDeviceCheckbox.isVisible().catch(() => false)
+      options.rememberDevice
     ) {
-      await this.rememberDeviceCheckbox.check({
-        force: true
-      });
+      await this.selectTrustThisDevice();
     }
 
     await safeClick(
@@ -290,6 +332,55 @@ export class MfaPage
     );
   }
 
+  async selectTrustThisDevice() {
+
+    const trustDeviceControl =
+      this.page.getByRole(
+        'checkbox',
+        {
+          name: /trust this device|remember.*device|don't ask again/i
+        }
+      ).or(
+        this.rememberDeviceCheckbox
+      ).first();
+
+    const isVisible =
+      await trustDeviceControl.isVisible().catch(
+        () => false
+      );
+
+    if (!isVisible) {
+      Logger.warning(
+        'Trust this device checkbox was not visible on MFA challenge.'
+      );
+
+      return;
+    }
+
+    const isChecked =
+      await trustDeviceControl.isChecked().catch(
+        async () =>
+          (
+            await trustDeviceControl.getAttribute(
+              'aria-checked'
+            )
+          ) === 'true'
+      );
+
+    if (isChecked) {
+      Logger.info(
+        'Trust this device checkbox is already selected'
+      );
+
+      return;
+    }
+
+    await safeClick(
+      trustDeviceControl,
+      'Trust This Device'
+    );
+  }
+
   validateBackupCode(
     code: string
   ) {
@@ -298,12 +389,22 @@ export class MfaPage
       code.trim().toUpperCase();
 
     if (
-      !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{2}$/.test(normalizedCode)
+      !this.isCompleteBackupCode(
+        normalizedCode
+      )
     ) {
       throw new Error(
         `Backup code "${code}" is incomplete. Expected format is XXXX-XXXX-XX. Use the Copy or Download button from the backup-code modal to get the full code.`
       );
     }
+  }
+
+  isCompleteBackupCode(
+    code: string
+  ) {
+    return /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{2}$/.test(
+      code.trim().toUpperCase()
+    );
   }
 
   async collectBackupCodes() {
@@ -313,11 +414,78 @@ export class MfaPage
 
     return Array.from(
       new Set(
-        bodyText.match(
-          /\b[A-Z0-9]{4,}[-\s]?[A-Z0-9]{4,}\b/g
-        ) ?? []
+        bodyText
+          .split(/\r?\n/)
+          .map(line =>
+            line.trim().toUpperCase()
+          )
+          .filter(line =>
+            /^[A-Z0-9]{4}-[A-Z0-9]{3,4}-?[A-Z0-9]{0,4}$/.test(line)
+          )
       )
     );
+  }
+
+  async expectBackupCodesGeneratedAndValid() {
+
+    await expect(
+      this.page.getByText(
+        /backup codes|save your.*codes|new backup codes|recovery codes/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    const backupCodes =
+      await this.collectBackupCodes();
+
+    expect(
+      backupCodes.length,
+      'Backup-code modal should show generated recovery codes.'
+    ).toBeGreaterThan(0);
+
+    expect(
+      backupCodes.length,
+      `Expected ${MFA_SETTINGS.recoveryCodesPerUser} generated backup code(s).`
+    ).toBe(
+      MFA_SETTINGS.recoveryCodesPerUser
+    );
+
+    const incompleteCodes =
+      backupCodes.filter(code =>
+        !this.isCompleteBackupCode(code)
+      );
+
+    expect(
+      incompleteCodes,
+      `Generated backup code(s) are incomplete or unusable: ${incompleteCodes.join(', ')}. Expected format: XXXX-XXXX-XX.`
+    ).toEqual([]);
+
+    Logger.success(
+      'Generated backup codes are visible and complete'
+    );
+
+    return backupCodes;
+  }
+
+  async acknowledgeBackupCodesSaved() {
+
+    const savedButton =
+      this.page.getByRole(
+        'button',
+        {
+          name: /i'?ve saved my codes|saved my codes|done|continue|close/i
+        }
+      ).first();
+
+    if (
+      await savedButton.isVisible().catch(() => false)
+    ) {
+      await safeClick(
+        savedButton,
+        'Confirm Backup Codes Saved'
+      );
+    }
   }
 
   async expectMfaEnabled() {
@@ -480,5 +648,105 @@ export class MfaPage
       window.localStorage.clear();
       window.sessionStorage.clear();
     });
+  }
+
+  async expectTrustedDeviceRegistered() {
+
+    await this.openSecuritySettings();
+
+    await expect(
+      this.page.getByRole(
+        'heading',
+        {
+          name: /trusted devices/i
+        }
+      ).or(
+        this.page.getByText(
+          /trusted devices/i
+        ).first()
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.getByText(
+        /no trusted devices/i
+      )
+    ).not.toBeVisible({
+      timeout: 10000
+    });
+
+    Logger.success(
+      'Trusted device is registered in profile security'
+    );
+  }
+
+  async revokeAllTrustedDevices() {
+
+    await this.openSecuritySettings();
+
+    await expect(
+      this.page.getByText(
+        /trusted devices/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    const revokeButton =
+      this.page.getByRole(
+        'button',
+        {
+          name: /revoke all|remove all|delete all|clear trusted devices/i
+        }
+      ).or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /revoke|remove|delete/i
+          }
+        )
+      ).first();
+
+    await expect(
+      revokeButton
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      revokeButton,
+      'Revoke Trusted Device'
+    );
+
+    const confirmButton =
+      this.page.getByRole(
+        'button',
+        {
+          name: /confirm|revoke|remove|delete|yes/i
+        }
+      ).last();
+
+    if (
+      await confirmButton.isVisible().catch(() => false)
+    ) {
+      await safeClick(
+        confirmButton,
+        'Confirm Revoke Trusted Device'
+      );
+    }
+
+    await expect(
+      this.page.getByText(
+        /no trusted devices|trusted device removed|revoked|removed/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Trusted device revoked from profile security'
+    );
   }
 }

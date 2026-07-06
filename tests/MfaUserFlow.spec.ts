@@ -65,7 +65,18 @@ function hasLocalMfaUser() {
 function hasLocalMfaSecret() {
   return Boolean(
     hasLocalMfaUser() &&
-    localMfaUser.secret
+    localMfaUser.secret &&
+    isBase32TotpSecret(
+      localMfaUser.secret
+    )
+  );
+}
+
+function isBase32TotpSecret(
+  secret: string
+) {
+  return /^[A-Z2-7=\s]{16,}$/i.test(
+    secret.trim()
   );
 }
 
@@ -80,6 +91,12 @@ function hasReuseBackupCode() {
   return Boolean(
     hasLocalMfaUser() &&
     localMfaUser.reuseBackupCode
+  );
+}
+
+function manualEnableMfaEnabled() {
+  return Boolean(
+    MFA_SETTINGS.manualOtpFlowEnabled
   );
 }
 
@@ -211,7 +228,7 @@ test.describe(
         await mfa.expectMfaEnabled();
 
         const backupCodes =
-          await mfa.collectBackupCodes();
+          await mfa.expectBackupCodesGeneratedAndValid();
 
         Logger.info(
           `Backup codes observed: ${backupCodes.length}`
@@ -243,6 +260,296 @@ test.describe(
           '000000'
         );
         await mfa.expectMfaError();
+      }
+    );
+
+    test(
+      'Complete MFA lifecycle enable backup trusted revoke disable',
+      async ({ page }) => {
+        test.skip(
+          !MFA_SETTINGS.allowDestructiveUserFlow || !manualEnableMfaEnabled(),
+          'Set MFA_ALLOW_DESTRUCTIVE_USER_FLOW=true and MFA_MANUAL_OTP_FLOW_ENABLED=true to run the manual-assisted full MFA lifecycle. Start with a user that has 2FA disabled.'
+        );
+
+        test.setTimeout(
+          420000
+        );
+
+        const login =
+          new LoginPage(page);
+
+        await login.login(
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        let mfa =
+          new MfaPage(page);
+
+        await mfa.openSecuritySettings();
+        await mfa.expectMfaDisabledBeforeEnable();
+        await mfa.startEnableMfa();
+        await mfa.expectMfaSetupScreenVisible();
+
+        Logger.info(
+          'Manual step: scan the QR code or open your authenticator app, enter the OTP, click Verify & Enable, then resume Playwright.'
+        );
+
+        await page.pause();
+
+        await expect(
+          page.getByText(
+            /backup codes|save your.*codes|new backup codes|recovery codes|enabled/i
+          ).first()
+        ).toBeVisible({
+          timeout: 30000
+        });
+
+        const backupCodes =
+          await mfa.expectBackupCodesGeneratedAndValid();
+
+        await mfa.acknowledgeBackupCodesSaved();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        await mfa.completeBackupCode(
+          backupCodes[0]
+        );
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        Logger.info(
+          'Manual step: enter authenticator OTP, check Trust this device, click Verify, then resume Playwright.'
+        );
+
+        await mfa.assertMfaChallengeVisible();
+
+        await page.pause();
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard/,
+          {
+            timeout: 30000
+          }
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        await mfa.expectTrustedDeviceRegistered();
+        await mfa.revokeAllTrustedDevices();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        await mfa.assertMfaChallengeVisible();
+
+        Logger.info(
+          'Manual step: trusted device was revoked. Enter authenticator OTP, click Verify, then resume Playwright.'
+        );
+
+        await page.pause();
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await mfa.openSecuritySettings();
+
+        Logger.info(
+          'Manual step: click Disable 2FA, provide required password/OTP if prompted, confirm disable, then resume Playwright.'
+        );
+
+        await page.pause();
+
+        await expect(
+          page.getByText(
+            /mfa disabled|2fa disabled|two-factor disabled|enable.*mfa|enable.*2fa|enable authenticator app/i
+          ).first()
+        ).toBeVisible({
+          timeout: 30000
+        });
+      }
+    );
+
+    test(
+      'Complete MFA lifecycle automatic when setup secret is available',
+      async ({ page }) => {
+        test.skip(
+          !MFA_SETTINGS.allowDestructiveUserFlow,
+          'Set MFA_ALLOW_DESTRUCTIVE_USER_FLOW=true to run the full MFA lifecycle. Start with a user that has 2FA disabled.'
+        );
+
+        test.setTimeout(
+          420000
+        );
+
+        const login =
+          new LoginPage(page);
+
+        await login.login(
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        let mfa =
+          new MfaPage(page);
+
+        await mfa.openSecuritySettings();
+        await mfa.expectMfaDisabledBeforeEnable();
+        await mfa.startEnableMfa();
+
+        const setupSecret =
+          await mfa.readVisibleSecret();
+
+        test.skip(
+          !setupSecret,
+          'MFA setup secret is not visible in the UI for automation.'
+        );
+
+        await mfa.completeChallenge(
+          generateTotp(
+            setupSecret!
+          )
+        );
+
+        await mfa.expectMfaEnabled();
+
+        const backupCodes =
+          await mfa.expectBackupCodesGeneratedAndValid();
+
+        await mfa.acknowledgeBackupCodesSaved();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        await mfa.completeBackupCode(
+          backupCodes[0]
+        );
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        await mfa.completeChallenge(
+          generateTotp(
+            setupSecret!
+          ),
+          {
+            rememberDevice: true
+          }
+        );
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard/,
+          {
+            timeout: 30000
+          }
+        );
+
+        mfa =
+          new MfaPage(page);
+
+        await mfa.expectTrustedDeviceRegistered();
+        await mfa.revokeAllTrustedDevices();
+
+        await login.logout();
+
+        await submitLoginCredentials(
+          page,
+          localMfaUser.email!,
+          localMfaUser.password!
+        );
+
+        await mfa.assertMfaChallengeVisible();
+
+        await mfa.completeChallenge(
+          generateTotp(
+            setupSecret!
+          )
+        );
+
+        await mfa.waitForSuccessfulChallenge();
+
+        await mfa.openSecuritySettings();
+        await mfa.disableMfa(
+          localMfaUser.password!,
+          generateTotp(
+            setupSecret!
+          )
+        );
+
+        await expect(
+          page.getByText(
+            /mfa disabled|2fa disabled|two-factor disabled|enable.*mfa|enable.*2fa|enable authenticator app/i
+          ).first()
+        ).toBeVisible({
+          timeout: 15000
+        });
       }
     );
 
@@ -562,6 +869,11 @@ test.describe(
                 timeout: 30000
               }
             );
+
+            const mfa =
+              new MfaPage(page);
+
+            await mfa.expectTrustedDeviceRegistered();
           }
         );
 
@@ -665,6 +977,47 @@ test.describe(
             await mfa.assertMfaChallengeVisible();
           }
         );
+
+        test(
+          'Revoking trusted device requires MFA again on next login',
+          async ({ page }) => {
+            test.skip(
+              !MFA_SETTINGS.allowDestructiveUserFlow,
+              'Set MFA_ALLOW_DESTRUCTIVE_USER_FLOW=true to revoke trusted devices.'
+            );
+
+            test.setTimeout(
+              240000
+            );
+
+            await loginWithMfa(
+              page,
+              {
+                rememberDevice: true
+              }
+            );
+
+            const mfa =
+              new MfaPage(page);
+
+            await mfa.expectTrustedDeviceRegistered();
+
+            await mfa.revokeAllTrustedDevices();
+
+            const login =
+              new LoginPage(page);
+
+            await login.logout();
+
+            await submitLoginCredentials(
+              page,
+              localMfaUser.email!,
+              localMfaUser.password!
+            );
+
+            await mfa.assertMfaChallengeVisible();
+          }
+        );
       }
     );
 
@@ -756,19 +1109,13 @@ test.describe(
 
         await mfa.openSecuritySettings();
         await mfa.regenerateBackupCodes(
-          localMfaUser.password,
+          localMfaUser.password!,
           generateTotp(
             localMfaUser.secret!
           )
         );
 
-        await expect(
-          page.getByText(
-            /backup codes|new codes|regenerated|success/i
-          ).first()
-        ).toBeVisible({
-          timeout: 15000
-        });
+        await mfa.expectBackupCodesGeneratedAndValid();
       }
     );
 
@@ -793,7 +1140,7 @@ test.describe(
 
         await mfa.openSecuritySettings();
         await mfa.disableMfa(
-          localMfaUser.password,
+          localMfaUser.password!,
           generateTotp(
             localMfaUser.secret!
           )

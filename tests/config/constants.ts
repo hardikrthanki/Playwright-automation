@@ -36,6 +36,6 @@ export const URLS = {
 
   ONBOARDING: '/onboarding',
 
-  BILLING: '/billing'
+  BILLING: '/dashboard/billing'
 
 };

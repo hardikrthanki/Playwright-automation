@@ -17,7 +17,25 @@
     },
     {
       "name": "Billing",
-      "patterns": ["billing", "subscriber", "invoice", "transaction", "plans"],
+      "patterns": [
+        "billing",
+        "subscriber",
+        "invoice",
+        "transaction",
+        "plan selection",
+        "plan cards",
+        "plans",
+        "subscription",
+        "overlay strategists",
+        "trial",
+        "annual",
+        "monthly",
+        "with card",
+        "without card",
+        "terms acceptance",
+        "stripe checkout",
+        "payment"
+      ],
       "critical": true
     },
     {
@@ -32,7 +50,7 @@
     },
     {
       "name": "Profile",
-      "patterns": ["profile"],
+      "patterns": ["profile", "profile mobile", "change number", "change mobile", "mobile change"],
       "critical": false
     },
     {

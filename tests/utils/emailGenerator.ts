@@ -11,7 +11,28 @@ Generates unique emails for onboarding tests.
 
 ============================================================================= */
 
-export function generateEmail(): string {
+function normalizeEmailTag(
+  scenarioTag?: string
+) {
+  if (!scenarioTag) {
+    return '';
+  }
+
+  return scenarioTag
+    .toLowerCase()
+    .replace(
+      /[^a-z0-9]+/g,
+      '-'
+    )
+    .replace(
+      /^-+|-+$/g,
+      ''
+    );
+}
+
+export function generateEmail(
+  scenarioTag?: string
+): string {
 
   const exactEmail =
     TEST_USERS.onboarding.email;
@@ -48,7 +69,17 @@ export function generateEmail(): string {
   const cleanLocalPart =
     localPart.split('+')[0];
 
-  return `${cleanLocalPart}+${Date.now()}@${domain}`;
+  const normalizedTag =
+    normalizeEmailTag(
+      scenarioTag
+    );
+
+  const uniqueSuffix =
+    normalizedTag
+      ? `${normalizedTag}-${Date.now()}`
+      : `${Date.now()}`;
+
+  return `${cleanLocalPart}+${uniqueSuffix}@${domain}`;
 
 }
 
