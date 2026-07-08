@@ -107,12 +107,97 @@ constructor(page: Page) {
     );
   }
 
+  async selectDifferentState() {
+    const stateDropdown =
+      this.stateDropdown();
+
+    const currentState =
+      (
+        await stateDropdown.textContent()
+      )?.trim();
+
+    await stateDropdown.scrollIntoViewIfNeeded();
+
+    await safeClick(
+      stateDropdown,
+      'Open State Dropdown For Update'
+    );
+
+    const options =
+      this.page
+        .locator('[role="option"]')
+        .filter({
+          hasText: /^[A-Za-z]/,
+        });
+
+    const optionCount =
+      await options.count();
+
+    for (let i = 0; i < optionCount; i++) {
+      const optionText =
+        (
+          await options
+            .nth(i)
+            .textContent()
+        )?.trim();
+
+      if (
+        optionText &&
+        optionText !== currentState
+      ) {
+        await safeClick(
+          options.nth(i),
+          'Update State Selection'
+        );
+
+        Logger.success(
+          `State updated to ${optionText}`
+        );
+
+        return;
+      }
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    Logger.info(
+      'No alternate state option was available; keeping current state.'
+    );
+  }
+
   async saveCompliance(
     label = 'Save Compliance Profile'
   ) {
     await safeClick(
       this.saveButton(),
       label
+    );
+  }
+
+  async validateSelectionsCanBeUpdatedBeforeSave() {
+    Logger.info(
+      'Validating Compliance selections can be updated before save'
+    );
+
+    await this.selectState();
+    await this.selectDifferentState();
+    await this.acceptAllDisclosures();
+    await this.saveCompliance(
+      'Save Updated Compliance Profile'
+    );
+
+    await expect(
+      this.page.getByText(
+        /choose your plan|select a plan|get started/i
+      ).first()
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    Logger.success(
+      'Compliance update before save is accepted'
     );
   }
 

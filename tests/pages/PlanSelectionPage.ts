@@ -325,6 +325,52 @@ hasText:/complete setup|continue to payment/i
 
 
 
+  async validatePlanCatalog() {
+
+    Logger.info(
+      'Validating plan catalog and feature summary'
+    );
+
+    const expectedPlans = [
+      'Curious Explorer',
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger',
+      'Marketplace'
+    ];
+
+    for (const planName of expectedPlans) {
+      await this.validatePlanVisible(
+        planName
+      );
+    }
+
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    expect(
+      bodyText
+    ).toMatch(
+      /free forever|manual upload|broker integration|account linked/i
+    );
+
+    expect(
+      bodyText
+    ).toMatch(
+      /covered calls|protective puts|portfolio analytics|marketplace access/i
+    );
+
+    Logger.success(
+      'Plan catalog and feature summary validated'
+    );
+  }
+
+
+
   async validateTrialPresentation(
     planName: string
   ) {
@@ -409,6 +455,13 @@ hasText:/complete setup|continue to payment/i
       'Annual Toggle'
     );
 
+    const annualText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
     await expect(
       this.page.locator(
         'body'
@@ -425,6 +478,13 @@ hasText:/complete setup|continue to payment/i
       'Monthly Toggle'
     );
 
+    const monthlyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
     await expect(
       this.page.locator(
         'body'
@@ -434,6 +494,12 @@ hasText:/complete setup|continue to payment/i
       {
         timeout: 10000
       }
+    );
+
+    expect(
+      monthlyText
+    ).not.toEqual(
+      annualText
     );
 
     Logger.success(

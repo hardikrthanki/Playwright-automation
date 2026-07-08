@@ -15,6 +15,8 @@ import {
 } from './utils/emailGenerator';
 import { CompliancePage }
   from './pages/CompliancePage';
+import { DashboardPage }
+  from './pages/DashboardPage';
 import { LoginPage }
   from './pages/LoginPage';
 import { MobileVerificationPage }
@@ -87,10 +89,15 @@ function getExistingPlanSelectionUser() {
 
 async function openPlanSelection(
   page: Page,
-  scenario: string
+  scenario: string,
+  options: {
+    useExistingUser?: boolean;
+  } = {}
 ) {
   const existingUser =
-    getExistingPlanSelectionUser();
+    options.useExistingUser === false
+      ? undefined
+      : getExistingPlanSelectionUser();
 
   if (existingUser) {
     console.log(
@@ -236,7 +243,7 @@ test.describe(
     );
 
     test(
-      'Plan cards and monthly annual toggle are visible',
+      'Plan catalog, feature summary, and billing toggle are visible',
       async ({ page }) => {
         await openPlanSelection(
           page,
@@ -245,22 +252,29 @@ test.describe(
 
         const planPage =
           new PlanSelectionPage(
+          page
+        );
+
+        await planPage.validatePlanCatalog();
+
+        await planPage.validateBillingToggle();
+      }
+    );
+
+    test(
+      'Complete Setup is guarded before selecting a plan',
+      async ({ page }) => {
+        await openPlanSelection(
+          page,
+          'plan-complete-setup-guard'
+        );
+
+        const planPage =
+          new PlanSelectionPage(
             page
           );
 
-        await planPage.validatePlanVisible(
-          'Curious Explorer'
-        );
-
-        await planPage.validatePlanVisible(
-          'Income Builder'
-        );
-
-        await planPage.validatePlanVisible(
-          'Overlay Strategists'
-        );
-
-        await planPage.validateBillingToggle();
+        await planPage.validateCompleteSetupRequiresPlanSelection();
       }
     );
 
@@ -334,6 +348,60 @@ test.describe(
         await planPage.openOverlayStrategistsTrialWithoutCardModal();
 
         await planPage.validateTrialTermsRequired();
+      }
+    );
+
+    test(
+      'Curious Explorer free plan completes onboarding without Stripe',
+      async ({ page }) => {
+        test.skip(
+          !envEnabled(
+            'PLAN_SELECTION_FREE_ACTIVATION_ENABLED'
+          ),
+          'Skipped because PLAN_SELECTION_FREE_ACTIVATION_ENABLED is not configured.'
+        );
+
+        try {
+          await openPlanSelection(
+            page,
+            'plan-free-activation'
+          );
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : String(
+                error
+              );
+
+          test.skip(
+            /Registration OTP input did not appear/i.test(
+              message
+            ),
+            'Skipped because registration SMS OTP was not available for the fresh free-plan activation user. Use PLAN_SELECTION_EXISTING_EMAIL/PASSWORD with a prepared user on plan selection.'
+          );
+
+          throw error;
+        }
+
+        const planPage =
+          new PlanSelectionPage(
+            page
+          );
+
+        await planPage.selectPlan(
+          'Curious Explorer'
+        );
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /checkout\.stripe\.com/
+        );
+
+        await new DashboardPage(
+          page
+        ).validateLoaded();
       }
     );
   }

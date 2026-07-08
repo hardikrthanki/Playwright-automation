@@ -6,6 +6,11 @@ import {
 import { RegistrationPage }
   from './pages/RegistrationPage';
 
+import {
+  AUTH_SETTINGS,
+  TEST_USERS
+} from './config/testData';
+
 const invalidEmailInputs = [
   {
     name: 'missing domain',
@@ -24,6 +29,109 @@ const invalidEmailInputs = [
     value: '<script>alert(1)</script>'
   }
 ];
+
+const duplicateEmailValidationEnabled =
+  process.env.SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED ===
+  'true';
+
+const otpLengthValidationEnabled =
+  process.env.SIGNUP_OTP_LENGTH_VALIDATION_ENABLED ===
+  'true';
+
+const otpResendValidationEnabled =
+  process.env.SIGNUP_OTP_RESEND_VALIDATION_ENABLED ===
+  'true';
+
+const duplicateSignupEmail =
+  process.env.SIGNUP_DUPLICATE_EMAIL ??
+  TEST_USERS.subscriber.email;
+
+const duplicateSignupMobile =
+  process.env.SIGNUP_DUPLICATE_MOBILE ??
+  TEST_USERS.onboarding.mobile;
+
+async function fillRequiredSignupFields(
+  registration: RegistrationPage,
+  email: string,
+  mobile: string
+) {
+  await registration.firstNameInput.fill(
+    TEST_USERS.onboarding.firstName
+  );
+
+  await registration.lastNameInput.fill(
+    TEST_USERS.onboarding.lastName
+  );
+
+  await registration.emailInput.fill(
+    email
+  );
+
+  await registration.mobileInput.fill(
+    mobile
+  );
+
+  await registration.passwordInput.fill(
+    TEST_USERS.onboarding.password
+  );
+
+  await registration.confirmPasswordInput.fill(
+    TEST_USERS.onboarding.password
+  );
+}
+
+async function requestSignupOtpIfAvailable(
+  registration: RegistrationPage
+) {
+  if (
+    !AUTH_SETTINGS.registrationMobileOtpEnabled
+  ) {
+    return false;
+  }
+
+  await expect(
+    registration.sendCodeButton
+  ).toBeEnabled({
+    timeout: 15000
+  });
+
+  await registration.sendCodeButton.click();
+
+  const otpVisible =
+    await registration.otpInput
+      .first()
+      .isVisible({
+        timeout: 20000
+      })
+      .catch(
+        () => false
+      );
+
+  return otpVisible;
+}
+
+async function openSignupOtpInput(
+  registration: RegistrationPage,
+  scenario: string
+) {
+  await registration.open();
+
+  await fillRequiredSignupFields(
+    registration,
+    `imhardikthanki+${scenario}-${Date.now()}@gmail.com`,
+    duplicateSignupMobile
+  );
+
+  const otpVisible =
+    await requestSignupOtpIfAvailable(
+      registration
+    );
+
+  test.skip(
+    !otpVisible,
+    'Skipped because signup OTP input did not appear after requesting SMS code.'
+  );
+}
 
 /* =============================================================================
 TEST SUITE: Signup Negative Scenarios
@@ -349,6 +457,248 @@ test.describe(
             /US mobile numbers only/i
           )
         ).toBeVisible();
+      }
+    );
+
+    test(
+      'Signup OTP input limits entry to six digits',
+      async ({ page }) => {
+        test.skip(
+          !otpLengthValidationEnabled,
+          'Skipped because SIGNUP_OTP_LENGTH_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await openSignupOtpInput(
+          registration,
+          'otp-length'
+        );
+
+        await registration.otpInput.first().fill(
+          '1234567'
+        );
+
+        await expect
+          .poll(
+            async () =>
+              (
+                await registration.otpInput
+                  .first()
+                  .inputValue()
+              ).length,
+            {
+              timeout: 5000
+            }
+          )
+          .toBeLessThanOrEqual(
+            6
+          );
+      }
+    );
+
+    test(
+      'Signup OTP input trims pasted value to six digits',
+      async ({ page }) => {
+        test.skip(
+          !otpLengthValidationEnabled,
+          'Skipped because SIGNUP_OTP_LENGTH_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await openSignupOtpInput(
+          registration,
+          'otp-paste'
+        );
+
+        await registration.otpInput.first().fill(
+          '1234567890'
+        );
+
+        await expect(
+          registration.otpInput.first()
+        ).toHaveValue(
+          '123456',
+          {
+            timeout: 5000
+          }
+        );
+      }
+    );
+
+    test(
+      'Signup OTP input accepts digits only',
+      async ({ page }) => {
+        test.skip(
+          !otpLengthValidationEnabled,
+          'Skipped because SIGNUP_OTP_LENGTH_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await openSignupOtpInput(
+          registration,
+          'otp-numeric'
+        );
+
+        await registration.otpInput.first().fill(
+          '12ab 34!@'
+        );
+
+        await expect(
+          registration.otpInput.first()
+        ).toHaveValue(
+          '1234',
+          {
+            timeout: 5000
+          }
+        );
+      }
+    );
+
+    test(
+      'Signup OTP verify button is enabled only for six digits',
+      async ({ page }) => {
+        test.skip(
+          !otpLengthValidationEnabled,
+          'Skipped because SIGNUP_OTP_LENGTH_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await openSignupOtpInput(
+          registration,
+          'otp-button-state'
+        );
+
+        await registration.otpInput.first().fill(
+          '12345'
+        );
+
+        await expect(
+          registration.verifyOtpButton
+        ).toBeDisabled({
+          timeout: 5000
+        });
+
+        await registration.otpInput.first().fill(
+          '123456'
+        );
+
+        await expect(
+          registration.verifyOtpButton
+        ).toBeEnabled({
+          timeout: 5000
+        });
+
+        await registration.otpInput.first().fill(
+          '123'
+        );
+
+        await expect(
+          registration.verifyOtpButton
+        ).toBeDisabled({
+          timeout: 5000
+        });
+      }
+    );
+
+    test(
+      'Signup OTP resend or cooldown state is visible after code request',
+      async ({ page }) => {
+        test.skip(
+          !otpResendValidationEnabled,
+          'Skipped because SIGNUP_OTP_RESEND_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await openSignupOtpInput(
+          registration,
+          'otp-resend-state'
+        );
+
+        const resendOrCooldown =
+          page
+            .locator(
+              'button, [role="button"], p, span, div'
+            )
+            .filter({
+              hasText:
+                /resend|send code|send again|code sent|wait|seconds|too many|rate|try again/i
+            })
+            .first();
+
+        await expect(
+          resendOrCooldown
+        ).toBeVisible({
+          timeout: 10000
+        });
+      }
+    );
+
+    test(
+      'Signup blocks already registered email address',
+      async ({ page }) => {
+        test.skip(
+          !duplicateEmailValidationEnabled,
+          'Skipped because SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED is not configured.'
+        );
+
+        const registration =
+          new RegistrationPage(page);
+
+        await registration.open();
+
+        await fillRequiredSignupFields(
+          registration,
+          duplicateSignupEmail,
+          duplicateSignupMobile
+        );
+
+        const otpVisible =
+          await requestSignupOtpIfAvailable(
+            registration
+          );
+
+        test.skip(
+          !otpVisible,
+          'Skipped because signup OTP input did not appear after requesting SMS code.'
+        );
+
+        await registration.otpInput.first().fill(
+          AUTH_SETTINGS.otpCode
+        );
+
+        await registration.verifyOtpButton.click();
+
+        await expect(
+          registration.submitButton
+        ).toBeEnabled({
+          timeout: 15000
+        });
+
+        await registration.submitButton.click();
+
+        await expect(
+          page.getByText(
+            /email.*already|already.*email|already registered|account already exists|email.*exists/i
+          ).first()
+        ).toBeVisible({
+          timeout: 15000
+        });
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /\/dashboard/
+        );
       }
     );
 

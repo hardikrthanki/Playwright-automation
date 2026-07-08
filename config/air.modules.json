@@ -11,8 +11,13 @@
       "critical": true
     },
     {
+      "name": "Access Control",
+      "patterns": ["permission", "permissions", "access control", "rbac", "role", "restricted user", "allowed user"],
+      "critical": true
+    },
+    {
       "name": "Authentication",
-      "patterns": ["auth", "login", "forgot", "unlock account"],
+      "patterns": ["auth", "login", "forgot", "unlock account", "lockout", "rate limit", "configuration limits", "password reset email"],
       "critical": true
     },
     {
@@ -34,8 +39,25 @@
         "without card",
         "terms acceptance",
         "stripe checkout",
-        "payment"
+        "payment",
+        "customer portal",
+        "billing portal",
+        "payment method",
+        "invoice history",
+        "cancel subscription",
+        "upgrade",
+        "downgrade",
+        "proration",
+        "renewal",
+        "dunning",
+        "checkout session",
+        "declined card"
       ],
+      "critical": true
+    },
+    {
+      "name": "Dashboard",
+      "patterns": ["dashboard", "dashboard health", "dashboard navigation", "top navigation", "destination content", "usable content", "profile-menu navigation", "profile menu navigation", "notification", "theme", "fullscreen", "load-error"],
       "critical": true
     },
     {

@@ -27,6 +27,20 @@
       "errorMessage": "Google-authenticated user cannot regenerate backup codes or disable 2FA because the flow asks for a password the user does not have.",
       "businessImpact": "Google-authenticated users may be unable to manage or recover MFA settings without admin/support intervention.",
       "recommendedInvestigationAction": "Update MFA management confirmation for OAuth users to use an OAuth-safe verification method, such as recent login, TOTP confirmation, email verification, or step-up authentication."
+    },
+    {
+      "id": "SIGNUP-OTP-LENGTH-001",
+      "enabled": true,
+      "title": "Signup OTP input accepts more than six digits",
+      "module": "Signup",
+      "severity": "High",
+      "critical": false,
+      "category": "Validation",
+      "source": "manual-verification",
+      "description": "Signup verification code input allows users to enter more than the expected six digits.",
+      "errorMessage": "Signup OTP field does not enforce the six-digit maximum length.",
+      "businessImpact": "Users can enter invalid OTP values beyond the supported code length, creating confusion and weakening front-end validation quality.",
+      "recommendedInvestigationAction": "Add a six-digit max-length guard to the signup OTP input and keep submit behavior aligned with the backend OTP validation rules."
     }
   ]
 }

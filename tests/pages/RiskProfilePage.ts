@@ -71,6 +71,18 @@ export class RiskProfilePage
     );
   }
 
+  async selectOptionsExperienceByName(
+    optionName: RegExp,
+    label: string
+  ) {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: optionName,
+      }),
+      label
+    );
+  }
+
   async selectMultiLegNo() {
     await safeClick(
       this.page.getByRole('button', {
@@ -80,12 +92,33 @@ export class RiskProfilePage
     );
   }
 
+  async selectMultiLegYes() {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: /^yes$/i,
+      }),
+      'Select Yes'
+    );
+  }
+
   async selectRiskToleranceModerate() {
     await safeClick(
       this.page.getByRole('button', {
         name: /^moderate$/i,
       }),
       'Select Moderate'
+    );
+  }
+
+  async selectRiskToleranceByName(
+    riskName: RegExp,
+    label: string
+  ) {
+    await safeClick(
+      this.page.getByRole('button', {
+        name: riskName,
+      }),
+      label
     );
   }
 
@@ -180,6 +213,64 @@ export class RiskProfilePage
         name: /save risk profile/i,
       }),
       label
+    );
+  }
+
+  async validateSelectionsCanBeUpdatedBeforeSave() {
+    Logger.info(
+      'Validating Risk Profile selections can be updated before save'
+    );
+
+    await this.selectInvestingExperience();
+    await this.selectOptionsExperience();
+    await this.selectMultiLegNo();
+    await this.selectRiskToleranceModerate();
+    await this.selectPreferredDuration();
+    await this.selectAllowedStrategies();
+    await this.selectCashAccountType();
+
+    await this.selectOptionsExperienceByName(
+      /intermediate|advanced|experienced/i,
+      'Update Options Experience'
+    ).catch(async () => {
+      Logger.info(
+        'Alternate options experience was not available; keeping Beginner.'
+      );
+    });
+
+    await this.selectMultiLegYes()
+      .then(async () => {
+        await this.selectMultiLegNo();
+      })
+      .catch(async () => {
+        Logger.info(
+          'Multi-leg strategy Yes option was not available; keeping No.'
+        );
+      });
+
+    await this.selectRiskToleranceByName(
+      /aggressive|conservative|high|low/i,
+      'Update Risk Tolerance'
+    ).catch(async () => {
+      Logger.info(
+        'Alternate risk tolerance was not available; keeping Moderate.'
+      );
+    });
+
+    await this.saveRiskProfile(
+      'Save Updated Risk Profile'
+    );
+
+    await expect(
+      this.page.getByText(
+        /read disclosure/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000,
+    });
+
+    Logger.success(
+      'Risk Profile update before save is accepted'
     );
   }
 

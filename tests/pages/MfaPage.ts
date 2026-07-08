@@ -499,6 +499,154 @@ export class MfaPage
     });
   }
 
+  async validateSecurityOverviewReadOnly() {
+
+    Logger.info(
+      'Validating MFA Security Overview'
+    );
+
+    await this.openSecuritySettings();
+
+    await expect(
+      this.page.getByText(
+        /two-factor authentication|mfa|2fa|multi-factor authentication/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    const enabledSignal =
+      this.page.getByText(
+        /enabled|current method:\s*authenticator app|regenerate backup codes|disable 2fa/i
+      ).first();
+
+    const disabledSignal =
+      this.page.getByRole(
+        'button',
+        {
+          name: /enable.*authenticator|enable.*authenticator app|enable.*mfa|enable.*2fa|set up.*authenticator/i
+        }
+      ).or(
+        this.page.getByText(
+          /enable.*authenticator|set up.*authenticator|not enabled|disabled/i
+        )
+      ).first();
+
+    const mfaStateVisible =
+      await enabledSignal.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      ) ||
+      await disabledSignal.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      );
+
+    expect(
+      mfaStateVisible,
+      'Profile security should show enabled or disabled MFA state.'
+    ).toBe(
+      true
+    );
+
+    Logger.success(
+      'MFA Security Overview Visible'
+    );
+  }
+
+  async validateBackupCodeControlsReadOnly() {
+
+    Logger.info(
+      'Validating Backup Code Controls'
+    );
+
+    await this.openSecuritySettings();
+
+    const enabledSignal =
+      this.page.getByText(
+        /regenerate backup codes|backup codes remaining|disable 2fa|current method:\s*authenticator app/i
+      ).first();
+
+    if (
+      !await enabledSignal.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      )
+    ) {
+      Logger.info(
+        'MFA is not enabled; backup-code controls are not expected.'
+      );
+
+      return;
+    }
+
+    await expect(
+      this.page.getByText(
+        /backup codes remaining|regenerate backup codes/i
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await expect(
+      this.page.getByRole(
+        'button',
+        {
+          name: /regenerate.*backup/i
+        }
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await expect(
+      this.page.getByRole(
+        'button',
+        {
+          name: /disable 2fa|disable.*mfa/i
+        }
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    Logger.success(
+      'Backup Code Controls Visible'
+    );
+  }
+
+  async validateTrustedDevicesReadOnly() {
+
+    Logger.info(
+      'Validating Trusted Devices Section'
+    );
+
+    await this.openSecuritySettings();
+
+    await expect(
+      this.page.getByText(
+        /trusted devices/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.getByText(
+        /devices that skip|no trusted devices|revoke|remove|delete|trusted device/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Trusted Devices Section Visible'
+    );
+  }
+
   async expectMfaError() {
 
     await expect(

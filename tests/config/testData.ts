@@ -203,6 +203,31 @@ export const AUTH_SETTINGS = {
 };
 
 /* ============================================================================
+   AUTH LOCKOUT SETTINGS
+============================================================================ */
+
+export const AUTH_LOCKOUT_SETTINGS = {
+
+  maxFailedLoginAttempts:
+    getNumberEnv(
+      'AUTH_MAX_FAILED_LOGIN_ATTEMPTS',
+      5
+    ),
+
+  lockoutDurationMinutes:
+    getNumberEnv(
+      'AUTH_LOCKOUT_DURATION_MINUTES',
+      15
+    ),
+
+  failureCountingWindowMinutes:
+    getNumberEnv(
+      'AUTH_FAILURE_COUNTING_WINDOW_MINUTES',
+      15
+    )
+};
+
+/* ============================================================================
    PASSWORD POLICY
 ============================================================================ */
 
@@ -592,6 +617,10 @@ export function validatePasswordPolicy(
 export const STRIPE_CARD =
   process.env.STRIPE_CARD ??
   '4242424242424242';
+
+export const STRIPE_DECLINED_CARD =
+  process.env.STRIPE_DECLINED_CARD ??
+  '4000000000000002';
 
 export const STRIPE_EXPIRY =
   process.env.STRIPE_EXPIRY ??

@@ -129,6 +129,54 @@ test.describe(
     );
 
     test(
+      'Logout blocks direct access to key protected routes',
+      async ({ page }) => {
+        test.setTimeout(
+          120000
+        );
+
+        const login =
+          new LoginPage(page);
+
+        const protectedRoutes = [
+          '/dashboard/profile',
+          '/dashboard/billing',
+          '/dashboard/risk-compliance',
+          '/dashboard/security',
+          '/dashboard/notifications',
+          '/dashboard/activity',
+          '/dashboard/settings',
+          '/dashboard/subscription'
+        ];
+
+        await login.login(
+          TEST_USERS.subscriber.email,
+          TEST_USERS.subscriber.password
+        );
+
+        await login.logout();
+
+        for (const route of protectedRoutes) {
+          await page.goto(
+            `${BASE_URL}${route}`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            page
+          ).toHaveURL(
+            /\/login/,
+            {
+              timeout: 30000
+            }
+          );
+        }
+      }
+    );
+
+    test(
       'Authenticated session can open dashboard in a new tab',
       async ({ page, context }) => {
         test.setTimeout(

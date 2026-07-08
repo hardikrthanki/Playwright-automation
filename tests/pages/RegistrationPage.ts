@@ -109,8 +109,8 @@ extends BasePage {
 
     this.mobileInput =
       page.locator(
-        'input[type="tel"]'
-      );
+        'input[type="tel"], input[inputmode="tel"], input[autocomplete="tel-national"], input[autocomplete="tel"]'
+      ).first();
 
 
     this.sendCodeButton =
@@ -124,7 +124,7 @@ extends BasePage {
 
     this.otpInput =
       page.locator(
-        'input[inputmode="numeric"]'
+        'input[autocomplete="one-time-code"], input[inputmode="numeric"], input[name*="otp" i], input[name*="code" i], input[id*="otp" i], input[id*="code" i]'
       );
       this.verifyOtpButton =
   page.getByRole(
@@ -163,6 +163,186 @@ extends BasePage {
         })
       );
 
+  }
+
+
+
+  private envEnabled(
+    name: string
+  ) {
+    return [
+      '1',
+      'true',
+      'yes',
+      'on'
+    ].includes(
+      (
+        process.env[name] ??
+        ''
+      ).toLowerCase()
+    );
+  }
+
+
+
+  private async collectOtpRequestDiagnostics() {
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    const relevantLines =
+      bodyText
+        .split(
+          /\r?\n/
+        )
+        .map(
+          line =>
+            line.trim()
+        )
+        .filter(Boolean)
+        .filter(
+          line =>
+            /otp|code|sms|mobile|phone|too many|rate|request|invalid|error|try again|wait/i.test(
+              line
+            )
+        )
+        .slice(
+          0,
+          8
+        );
+
+    return relevantLines.length > 0
+      ? relevantLines.join(
+        ' | '
+      )
+      : 'No visible OTP/SMS error text found.';
+  }
+
+
+
+  private async waitForRegistrationOtpInput() {
+    const manualFallback =
+      this.envEnabled(
+        'REGISTRATION_OTP_MANUAL_FALLBACK'
+      );
+
+    for (
+      let attempt = 1;
+      attempt <= 3;
+      attempt++
+    ) {
+      const otpVisible =
+        await this.otpInput
+          .first()
+          .isVisible({
+            timeout: 20000
+          })
+          .catch(
+            () => false
+          );
+
+      if (otpVisible) {
+        return;
+      }
+
+      const diagnostics =
+        await this.collectOtpRequestDiagnostics();
+
+      Logger.info(
+        `OTP input not visible after SMS request. Attempt ${attempt}/3. Visible diagnostics: ${diagnostics}`
+      );
+
+      if (
+        attempt === 3
+      ) {
+        if (manualFallback) {
+          Logger.info(
+            'Manual OTP fallback enabled. Complete the OTP request manually, then resume Playwright.'
+          );
+
+          await this.page.pause();
+
+          await expect(
+            this.otpInput.first()
+          ).toBeVisible({
+            timeout: 30000
+          });
+
+          return;
+        }
+
+        throw new Error(
+          `Registration OTP input did not appear after requesting SMS code. Visible diagnostics: ${diagnostics}`
+        );
+      }
+
+      await safeClick(
+        this.sendCodeButton,
+        `Retry Send Code via SMS (${attempt + 1}/3)`
+      );
+    }
+  }
+
+
+
+  private async fillMobileNumber(
+    mobileNumber: string
+  ) {
+    await this.mobileInput.fill(
+      ''
+    );
+
+    await this.mobileInput.click();
+
+    await this.mobileInput.type(
+      mobileNumber,
+      {
+        delay: 35
+      }
+    );
+
+    await this.mobileInput.blur();
+
+    await this.page.waitForTimeout(
+      700
+    );
+  }
+
+
+
+  private async waitForSendCodeEnabled() {
+    const enabled =
+      await this.sendCodeButton
+        .isEnabled({
+          timeout: 15000
+        })
+        .catch(
+          () => false
+        );
+
+    if (enabled) {
+      return;
+    }
+
+    const mobileValue =
+      await this.mobileInput
+        .inputValue()
+        .catch(
+          () => ''
+        );
+
+    const diagnostics =
+      await this.collectOtpRequestDiagnostics();
+
+    throw new Error(
+      `Send code via SMS button stayed disabled after entering mobile number "${mobileValue}". Visible diagnostics: ${diagnostics}`
+    );
   }
 
 
@@ -256,7 +436,7 @@ extends BasePage {
     );
 
 
-    await this.mobileInput.fill(
+    await this.fillMobileNumber(
       mobileNumber
     );
 
@@ -264,12 +444,7 @@ extends BasePage {
     if (
       AUTH_SETTINGS.registrationMobileOtpEnabled
     ) {
-      await expect(
-        this.sendCodeButton
-      )
-      .toBeEnabled({
-        timeout:10000
-      });
+      await this.waitForSendCodeEnabled();
 
 
       await safeClick(
@@ -277,40 +452,7 @@ extends BasePage {
         'Send Code via SMS'
       );
 
-      for (
-        let attempt = 1;
-        attempt <= 3;
-        attempt++
-      ) {
-        const otpVisible =
-          await this.otpInput
-            .first()
-            .isVisible({
-              timeout: 10000
-            })
-            .catch(
-              () => false
-            );
-
-        if (otpVisible) {
-          break;
-        }
-
-        if (attempt === 3) {
-          throw new Error(
-            'Registration OTP input did not appear after requesting SMS code.'
-          );
-        }
-
-        Logger.info(
-          `OTP input not visible after SMS request. Retrying send code (${attempt + 1}/3).`
-        );
-
-        await safeClick(
-          this.sendCodeButton,
-          'Retry Send Code via SMS'
-        );
-      }
+      await this.waitForRegistrationOtpInput();
 
 
       Logger.info(

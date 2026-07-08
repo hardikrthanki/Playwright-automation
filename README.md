@@ -33,6 +33,7 @@ locked account, or one-time Stripe checkout URL:
 ```text
 onboarding.spec.ts
 AuthNegative.spec.ts
+AuthUiValidation.spec.ts
 SignupNegative.spec.ts
 PasswordPolicy.spec.ts
 SessionSecurity.spec.ts
@@ -41,6 +42,8 @@ Profile.spec.ts
 ProfileNegative.spec.ts
 ProfilePasswordMismatch.spec.ts
 ProfileWrongCurrentPassword.spec.ts
+DashboardHealth.spec.ts
+DashboardNavigation.spec.ts
 BillingDeep.spec.ts
 BillingEdgeValidation.spec.ts
 Subscriber.spec.ts
@@ -103,6 +106,24 @@ Run billing edge validation without Stripe checkout or plan changes:
 
 ```powershell
 npm run test:controlled:billing-edge -- --headed
+```
+
+Run dashboard navigation validation:
+
+```powershell
+npm run test:controlled:dashboard-navigation -- --headed
+```
+
+Run dashboard health/load-error validation:
+
+```powershell
+npm run test:controlled:dashboard-health -- --headed
+```
+
+Run auth UI validation:
+
+```powershell
+npm run test:controlled:auth-ui -- --headed
 ```
 
 Run profile mobile number validation:

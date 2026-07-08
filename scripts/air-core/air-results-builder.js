@@ -264,7 +264,7 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     riskLevel: 'HIGH',
     reasons: [
       'Full regression baseline passed from restored execution history.',
-      `${manualFailures.length} confirmed MFA product defect(s) require resolution before approval.`,
+      `${manualFailures.length} confirmed product defect(s) require resolution before approval.`,
     ],
     warnings: [],
     blockers: manualFailures.map(failure => ({
@@ -273,8 +273,8 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
       reason: failure.businessImpact,
     })),
     requiredActions: manualFailures.map(failure => failure.recommendedInvestigationAction),
-    recommendedAction: 'Resolve confirmed MFA defects, then rerun the affected MFA scenarios before release approval.',
-    explanation: `AIR recommends NO GO because the restored 69-test regression passed, but ${manualFailures.length} confirmed MFA product defect(s) remain open.`,
+    recommendedAction: 'Resolve confirmed product defects, then rerun the affected scenarios before release approval.',
+    explanation: `AIR recommends NO GO because the restored regression passed, but ${manualFailures.length} confirmed product defect(s) remain open.`,
   };
   const businessJourneys = buildBusinessJourneys({
     modules,
@@ -321,7 +321,65 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
   };
 }
 
-function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHistory) {
+function emptyEvidence() {
+  return {
+    playwrightReport: '',
+    rawReports: [],
+    screenshots: [],
+    videos: [],
+    traces: [],
+    logs: [],
+    attachments: [],
+    byTest: {},
+    byModule: {},
+    summary: {},
+  };
+}
+
+function normalizeEvidenceForRestore(evidence = {}) {
+  const normalized = {
+    ...emptyEvidence(),
+    ...evidence,
+    rawReports: Array.isArray(evidence.rawReports) ? evidence.rawReports : [],
+    screenshots: Array.isArray(evidence.screenshots) ? evidence.screenshots : [],
+    videos: Array.isArray(evidence.videos) ? evidence.videos : [],
+    traces: Array.isArray(evidence.traces) ? evidence.traces : [],
+    logs: Array.isArray(evidence.logs) ? evidence.logs : [],
+    attachments: Array.isArray(evidence.attachments) ? evidence.attachments : [],
+    byTest: evidence.byTest ?? {},
+    byModule: evidence.byModule ?? {},
+  };
+
+  const summary = evidence.summary ?? {};
+  normalized.summary = {
+    screenshots: summary.screenshots ?? normalized.screenshots.length,
+    videos: summary.videos ?? normalized.videos.length,
+    traces: summary.traces ?? normalized.traces.length,
+    logs: summary.logs ?? normalized.logs.length,
+    attachments: summary.attachments ?? normalized.attachments.length,
+    rawReports: summary.rawReports ?? normalized.rawReports.length,
+  };
+
+  normalized.summary.total =
+    summary.total ??
+    (
+      normalized.summary.screenshots +
+      normalized.summary.videos +
+      normalized.summary.traces +
+      normalized.summary.logs +
+      normalized.summary.attachments +
+      normalized.summary.rawReports
+    );
+
+  normalized.playwrightReport =
+    evidence.playwrightReport ??
+    normalized.rawReports.find(report => report.type === 'html-report')?.path ??
+    '';
+
+  return normalized;
+}
+
+function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHistory, currentEvidence = {}) {
   const config = loadAirConfig(projectRoot);
   const existingExecutions = getStoredExecutions(existingHistory);
   const latestValidSnapshot = [...existingExecutions]
@@ -426,18 +484,7 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
     tests: latestValidSnapshot.tests ?? [],
     failedTests: restoredFailedTests,
     failures: restoredFailedTests,
-    evidence: {
-      playwrightReport: '',
-      rawReports: [],
-      screenshots: [],
-      videos: [],
-      traces: [],
-      logs: [],
-      attachments: [],
-      byTest: {},
-      byModule: {},
-      summary: {},
-    },
+    evidence: normalizeEvidenceForRestore(currentEvidence),
     recommendations: [
       {
         priority: 'P2',
@@ -511,8 +558,16 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
     existingHistory,
   });
   const bestHistoryTotal = Math.max(0, ...existingExecutions.map(item => item?.summary?.total ?? 0));
+  const reportScope = (
+    process.env.AIR_REPORT_SCOPE ??
+    ''
+  ).toLowerCase();
+  const useLatestRunOnly =
+    reportScope === 'latest' ||
+    process.env.AIR_USE_LATEST_RUN === 'true';
 
   if (
+    !useLatestRunOnly &&
     existingExecutions.length > 0 &&
     (
       !airResults.source.hasResults ||
@@ -522,7 +577,13 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
       )
     )
   ) {
-    const restoredAirResults = restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHistory);
+    const restoredAirResults = restoreFromBestHistory(
+      projectRoot,
+      outputPath,
+      historyPath,
+      existingHistory,
+      airResults.evidence
+    );
 
     if (restoredAirResults) {
       return {

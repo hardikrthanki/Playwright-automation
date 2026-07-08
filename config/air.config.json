@@ -13,6 +13,7 @@
     "conditionalGoBusinessHealth": 80
   },
   "modules": [
+    "Access Control",
     "Accessibility",
     "Authentication",
     "Billing",
@@ -23,6 +24,7 @@
     "Signup"
   ],
   "moduleMappings": {
+    "Access Control": ["permission", "permissions", "access control", "rbac", "role", "restricted user", "allowed user"],
     "Accessibility": ["accessibility", "browser", "keyboard", "tab order"],
     "Authentication": ["auth", "login", "forgot", "unlock account"],
     "Billing": ["billing", "subscriber", "invoice", "transaction", "plans"],
@@ -35,6 +37,7 @@
   "businessJourney": [
     "Registration",
     "Authentication",
+    "Access Control",
     "Profile Setup",
     "Risk Profile",
     "Compliance",

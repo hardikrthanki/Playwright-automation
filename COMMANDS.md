@@ -69,6 +69,47 @@ npx playwright test --headed
 npm run report:execution
 ```
 
+Run the broadest practical suite with safe controlled gates enabled:
+
+```powershell
+.\scripts\run-all-executable-tests.ps1 -Headed
+```
+
+Run the broadest practical suite and generate AIR:
+
+```powershell
+.\scripts\run-all-executable-tests.ps1 -Headed -GenerateAir
+```
+
+This enables non-destructive controlled validations such as onboarding field
+validation, Risk & Compliance update checks, plan-selection validation, profile
+mobile display checks, billing management display checks, profile security
+display checks, signup OTP length/resend checks, and duplicate-email validation.
+
+Some tests will still skip until their one-time/manual data is provided:
+
+```text
+RESET_URL
+STRIPE_CHECKOUT_URL
+MFA_LOCAL_TOTP_SECRET
+MFA_LOCAL_BACKUP_CODE
+PERMISSION_ALLOWED_EMAIL / PERMISSION_ALLOWED_PASSWORD
+PERMISSION_RESTRICTED_EMAIL / PERMISSION_RESTRICTED_PASSWORD
+locked-account credentials for unlock flow
+```
+
+Run tests with full AIR evidence capture:
+
+```powershell
+$env:RECORD_ALL_ARTIFACTS="true"
+npx playwright test --headed
+npm run report:execution
+```
+
+Use this when the AIR Evidence page should include screenshots, videos, and
+traces for passed tests. Without this flag, Playwright keeps rich artifacts only
+for failures by default, but AIR still links the raw Playwright HTML/JSON report.
+
 Run the configured stable suite only:
 
 ```powershell
@@ -89,13 +130,15 @@ Stable user journey with AIR report:
 npm run user-journey:report
 ```
 
-Controlled user journey for forgot-password and MFA:
+Controlled user journey for forgot-password, account unlock, auth
+configuration limits, and MFA:
 
 ```powershell
 npm run test:user-journey:controlled -- --headed
 ```
 
-Full user journey, including controlled/manual-gated tests:
+Full core user journey, including controlled/manual-gated tests but excluding
+Stripe checkout/customer-portal lifecycle:
 
 ```powershell
 npm run test:user-journey:full -- --headed
@@ -105,9 +148,12 @@ Current user journey map:
 
 ```text
 Register -> Email Verification -> Login -> Risk Profile -> Compliance ->
-Plan Selection -> Stripe Payment -> Dashboard -> Profile -> Billing ->
-Logout -> Forgot Password -> MFA / Trusted Device
+Plan Selection -> Dashboard -> Profile -> Billing -> Logout ->
+Forgot Password -> MFA / Trusted Device
 ```
+
+Stripe checkout, trial purchase, customer portal, upgrade, downgrade, and
+cancellation lifecycle tests are kept in the Stripe phase commands.
 
 ## Generate AIR Report From Last Run
 
@@ -120,6 +166,13 @@ npm run report:execution
 For a smaller controlled run, such as Overlay Strategists or Stripe-only tests,
 force AIR to use the latest Playwright result instead of restoring the larger
 historical regression snapshot:
+
+```powershell
+$env:AIR_REPORT_SCOPE="latest"
+npm run report:execution
+```
+
+Legacy equivalent:
 
 ```powershell
 $env:AIR_ALLOW_STALE_REPORT="true"
@@ -151,6 +204,26 @@ AIR normalized data file:
 execution-report\air-results.json
 ```
 
+## Generate Test Inventory Report Without Running Tests
+
+Use this when you want a full test-case inventory and coverage map without
+executing the automation suite:
+
+```powershell
+npm run report:inventory
+start inventory-report\index.html
+```
+
+Generate and open it in one command:
+
+```powershell
+npm run report:inventory:open
+```
+
+This report shows discovered test cases, spec files, AIR module mapping,
+business journey mapping, coverage type, and suite membership. It does not show
+pass/fail status because no tests are executed.
+
 ## Open Playwright HTML Report
 
 ```powershell
@@ -177,6 +250,30 @@ Subscriber billing:
 npx playwright test tests/Subscriber.spec.ts --headed
 ```
 
+Dashboard navigation:
+
+```powershell
+npx playwright test tests/DashboardNavigation.spec.ts --headed
+```
+
+Run through npm script:
+
+```powershell
+npm run test:controlled:dashboard-navigation -- --headed
+```
+
+Dashboard health / load-error validation:
+
+```powershell
+npx playwright test tests/DashboardHealth.spec.ts --headed
+```
+
+Run through npm script:
+
+```powershell
+npm run test:controlled:dashboard-health -- --headed
+```
+
 Billing edge validation:
 
 ```powershell
@@ -189,10 +286,48 @@ Run through npm script:
 npm run test:controlled:billing-edge -- --headed
 ```
 
+Billing subscription management portal validation:
+
+```powershell
+$env:BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED="true"
+npx playwright test tests/BillingSubscriptionManagement.spec.ts --headed
+```
+
+Billing subscription management with a prepared account:
+
+```powershell
+$env:BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED="true"
+$env:BILLING_MANAGEMENT_EMAIL="imhardikthanki+completejourney@gmail.com"
+$env:BILLING_MANAGEMENT_PASSWORD="H@rdik9944"
+npx playwright test tests/BillingSubscriptionManagement.spec.ts --headed
+```
+
+Optional stricter Stripe portal expectations:
+
+```powershell
+$env:BILLING_EXPECTED_PLAN="3-Advanced"
+$env:BILLING_EXPECTED_FREQUENCY="per year"
+$env:BILLING_EXPECTED_CARD_LAST4="4242"
+```
+
+Run through npm script:
+
+```powershell
+$env:BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED="true"
+npm run test:controlled:billing-management -- --headed
+```
+
 Profile:
 
 ```powershell
 npx playwright test tests/Profile.spec.ts --headed
+```
+
+Profile name update and restore validation:
+
+```powershell
+$env:PROFILE_UPDATE_VALIDATION_ENABLED="true"
+npx playwright test tests/Profile.spec.ts -g "Profile name update" --headed
 ```
 
 Profile password mismatch:
@@ -250,6 +385,9 @@ npx playwright test tests/forgotpassword.spec.ts --headed
 Unlock locked account:
 
 ```powershell
+$env:RUN_UNLOCK_ACCOUNT_TEST="true"
+$env:UNLOCK_ACCOUNT_EMAIL="imhardikthanki+8@gmail.com"
+$env:UNLOCK_ACCOUNT_PASSWORD="H@rdik9944"
 npx playwright test tests/UnlockAccount.spec.ts --headed
 ```
 
@@ -259,10 +397,100 @@ Auth negative scenarios:
 npx playwright test tests/AuthNegative.spec.ts --headed
 ```
 
+Auth UI validation:
+
+```powershell
+npx playwright test tests/AuthUiValidation.spec.ts --headed
+```
+
+Run through npm script:
+
+```powershell
+npm run test:controlled:auth-ui -- --headed
+```
+
+Controlled auth configuration limit validation:
+
+These tests intentionally exercise lockout and rate-limit behavior. Use a
+dedicated account, then unlock it afterward if needed.
+
+Login lockout after configured failed attempts:
+
+```powershell
+$env:AUTH_CONFIGURATION_LIMITS_ENABLED="true"
+$env:AUTH_LOCKOUT_LIMIT_VALIDATION_ENABLED="true"
+$env:AUTH_LOCKOUT_EMAIL="imhardikthanki+lockout-test@gmail.com"
+$env:AUTH_LOCKOUT_PASSWORD="H@rdik9944"
+$env:AUTH_MAX_FAILED_LOGIN_ATTEMPTS="5"
+npm run test:controlled:auth-limits -- --headed -g "login lockout"
+```
+
+Password reset email rate limit:
+
+```powershell
+$env:AUTH_CONFIGURATION_LIMITS_ENABLED="true"
+$env:AUTH_PASSWORD_RESET_RATE_LIMIT_VALIDATION_ENABLED="true"
+$env:AUTH_RATE_LIMIT_EMAIL="imhardikthanki+rate-limit-test@gmail.com"
+$env:RATE_PASSWORD_RESETS_PER_WINDOW="5"
+npm run test:controlled:auth-limits -- --headed -g "password reset"
+```
+
+Permission access validation:
+
+```powershell
+$env:PERMISSION_TEST_ENABLED="true"
+$env:PERMISSION_ALLOWED_EMAIL="allowed@example.com"
+$env:PERMISSION_ALLOWED_PASSWORD="password"
+$env:PERMISSION_RESTRICTED_EMAIL="restricted@example.com"
+$env:PERMISSION_RESTRICTED_PASSWORD="password"
+npm run test:controlled:permissions -- --headed
+```
+
 Signup negative scenarios:
 
 ```powershell
 npx playwright test tests/SignupNegative.spec.ts --headed
+```
+
+Signup duplicate email validation:
+
+```powershell
+$env:SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED="true"
+$env:SIGNUP_DUPLICATE_EMAIL="imhardikthanki+09@gmail.com"
+$env:SIGNUP_DUPLICATE_MOBILE="2015550123"
+npx playwright test tests/SignupNegative.spec.ts --headed -g "already registered email"
+```
+
+Signup OTP length validation:
+
+```powershell
+$env:SIGNUP_OTP_LENGTH_VALIDATION_ENABLED="true"
+$env:SIGNUP_DUPLICATE_MOBILE="2015550123"
+npx playwright test tests/SignupNegative.spec.ts --headed -g "OTP input limits"
+```
+
+Signup OTP input boundary validation:
+
+```powershell
+$env:SIGNUP_OTP_LENGTH_VALIDATION_ENABLED="true"
+$env:SIGNUP_DUPLICATE_MOBILE="2015550123"
+npx playwright test tests/SignupNegative.spec.ts --headed -g "OTP input"
+```
+
+Signup OTP verify button state validation:
+
+```powershell
+$env:SIGNUP_OTP_LENGTH_VALIDATION_ENABLED="true"
+$env:SIGNUP_DUPLICATE_MOBILE="2015550123"
+npx playwright test tests/SignupNegative.spec.ts --headed -g "verify button"
+```
+
+Signup OTP resend or cooldown state validation:
+
+```powershell
+$env:SIGNUP_OTP_RESEND_VALIDATION_ENABLED="true"
+$env:SIGNUP_DUPLICATE_MOBILE="2015550123"
+npx playwright test tests/SignupNegative.spec.ts --headed -g "resend or cooldown"
 ```
 
 Onboarding Risk Profile and Compliance fast field validation:
@@ -291,6 +519,38 @@ $env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
 npx playwright test tests/OnboardingFieldValidation.spec.ts --headed
 ```
 
+Risk Profile and Compliance update-before-save validation:
+
+```powershell
+$env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"
+$env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
+npx playwright test tests/OnboardingFieldValidation.spec.ts -g "Risk Profile and Compliance selections can be updated before save" --headed
+```
+
+Authenticated Risk & Compliance page validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+npx playwright test tests/RiskComplianceUpdate.spec.ts --headed
+```
+
+Authenticated Risk & Compliance page validation with a prepared user:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+$env:RISK_COMPLIANCE_EMAIL="imhardikthanki+prepared-risk-compliance@gmail.com"
+$env:RISK_COMPLIANCE_PASSWORD="Test@123456"
+npx playwright test tests/RiskComplianceUpdate.spec.ts --headed
+```
+
+Authenticated Risk & Compliance update validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+$env:RISK_COMPLIANCE_UPDATE_ENABLED="true"
+npx playwright test tests/RiskComplianceUpdate.spec.ts --headed
+```
+
 Plan selection validation without Stripe:
 
 ```powershell
@@ -306,6 +566,35 @@ $env:PLAN_SELECTION_EXISTING_EMAIL="imhardikthanki+prepared-plan-selection@gmail
 $env:PLAN_SELECTION_EXISTING_PASSWORD="Test@123456"
 $env:PLAN_SELECTION_EXISTING_MOBILE="2015550123"
 npx playwright test tests/PlanSelectionValidation.spec.ts --headed
+```
+
+Plan selection free-plan activation with a fresh user:
+
+```powershell
+$env:PLAN_SELECTION_VALIDATION_ENABLED="true"
+$env:PLAN_SELECTION_FREE_ACTIVATION_ENABLED="true"
+npx playwright test tests/PlanSelectionValidation.spec.ts -g "Curious Explorer free plan" --headed
+```
+
+Plan selection free-plan activation with manual registration OTP fallback:
+
+```powershell
+$env:PLAN_SELECTION_VALIDATION_ENABLED="true"
+$env:PLAN_SELECTION_FREE_ACTIVATION_ENABLED="true"
+$env:REGISTRATION_OTP_MANUAL_FALLBACK="true"
+npx playwright test tests/PlanSelectionValidation.spec.ts -g "Curious Explorer free plan" --headed
+```
+
+If registration SMS is throttled, use a prepared user that is already on the
+plan-selection step:
+
+```powershell
+$env:PLAN_SELECTION_VALIDATION_ENABLED="true"
+$env:PLAN_SELECTION_FREE_ACTIVATION_ENABLED="true"
+$env:PLAN_SELECTION_EXISTING_EMAIL="PASTE_REAL_PREPARED_PLAN_USER_EMAIL"
+$env:PLAN_SELECTION_EXISTING_PASSWORD="PASTE_REAL_PREPARED_PLAN_USER_PASSWORD"
+$env:PLAN_SELECTION_EXISTING_MOBILE="PASTE_REAL_PREPARED_PLAN_USER_MOBILE"
+npx playwright test tests/PlanSelectionValidation.spec.ts -g "Curious Explorer free plan" --headed
 ```
 
 Reset password negative scenarios:
@@ -407,6 +696,16 @@ Controlled payment flows:
 npm run test:controlled:payment -- --headed
 ```
 
+Controlled Stripe Checkout negative validation with a fresh checkout URL:
+
+```powershell
+$env:STRIPE_CHECKOUT_URL="https://checkout.stripe.com/c/pay/PASTE_FRESH_SESSION"
+npm run test:controlled:payment -- --headed
+```
+
+This validates incomplete card, expired card, invalid CVC, and declined-card
+behavior without activating a subscription.
+
 Controlled onboarding fast field validation:
 
 ```powershell
@@ -430,6 +729,29 @@ Controlled onboarding full field-level regression:
 $env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"
 $env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
 npm run test:controlled:onboarding-fields -- --headed
+```
+
+Controlled Risk Profile and Compliance update-before-save validation:
+
+```powershell
+$env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"
+$env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
+npm run test:controlled:onboarding-fields -- --headed -g "Risk Profile and Compliance selections can be updated before save"
+```
+
+Controlled authenticated Risk & Compliance validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+npm run test:controlled:risk-compliance -- --headed
+```
+
+Controlled authenticated Risk & Compliance update validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+$env:RISK_COMPLIANCE_UPDATE_ENABLED="true"
+npm run test:controlled:risk-compliance -- --headed
 ```
 
 Controlled plan-selection validation without Stripe:

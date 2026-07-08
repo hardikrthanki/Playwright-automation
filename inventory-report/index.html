@@ -1,0 +1,2836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIR Test Inventory Report</title>
+<style>
+:root{
+  --bg:#07101f;
+  --panel:#0b1728;
+  --panel2:#0f1d32;
+  --line:rgba(116,139,171,.24);
+  --green:#39e75f;
+  --text:#eef6ff;
+  --muted:#9fb0c6;
+  --blue:#55a7ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,rgba(57,231,95,.12),transparent 32%),var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+main{max-width:1480px;margin:0 auto;padding:34px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch;margin-bottom:24px}
+.hero-card,.panel{border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,rgba(15,29,50,.94),rgba(7,16,31,.96));box-shadow:0 24px 60px rgba(0,0,0,.22)}
+.hero-card{padding:34px}
+.brand{color:var(--green);font-weight:900;letter-spacing:.08em;font-size:13px;text-transform:uppercase}
+h1{font-size:42px;letter-spacing:-.04em;line-height:1.05;margin:12px 0}
+p{color:var(--muted);font-size:16px;line-height:1.55;margin:0}
+.hero-side{padding:24px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.metric{border:1px solid rgba(57,231,95,.18);border-radius:16px;background:rgba(7,16,31,.72);padding:18px}
+.metric span{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+.metric strong{display:block;margin-top:8px;font-size:30px;color:var(--green)}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:24px}
+.panel{padding:22px}
+h2{font-size:20px;margin:0 0 14px;letter-spacing:-.02em}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line);padding:10px}
+td{border-bottom:1px solid rgba(116,139,171,.12);padding:11px 10px;vertical-align:top}
+td strong{display:block}
+td span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.pill,.type{display:inline-block;margin:2px 4px 2px 0;padding:4px 8px;border-radius:999px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);color:#bfffd0;font-size:11px;font-weight:800}
+.pill.muted{background:rgba(159,176,198,.10);border-color:rgba(159,176,198,.22);color:var(--muted)}
+.type{background:rgba(85,167,255,.12);border-color:rgba(85,167,255,.25);color:#b8ddff}
+code{color:#cfe0f5;font-size:12px}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:0 0 14px}
+input{width:min(460px,100%);border:1px solid var(--line);border-radius:12px;background:#07101f;color:var(--text);padding:12px 14px;font:inherit}
+.full{margin-top:24px}
+.note{margin-top:12px;color:var(--muted);font-size:13px}
+@media(max-width:1000px){main{padding:18px}.hero,.grid{grid-template-columns:1fr}.hero-side{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.hero-side{grid-template-columns:1fr}h1{font-size:32px}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="hero-card">
+      <div class="brand">AIR • Automation Intelligence Report</div>
+      <h1>Test Inventory Report</h1>
+      <p>This report lists every Playwright test discovered in the automation project without executing the suite. Use it for QA coverage review, planning, and client-facing test inventory discussions.</p>
+      <p class="note">Generated 7/8/2026, 6:27:03 PM. This is an inventory report, not an execution result report.</p>
+    </div>
+    <div class="hero-side hero-card">
+      <div class="metric"><span>Total Tests</span><strong>188</strong></div>
+      <div class="metric"><span>Spec Files</span><strong>31</strong></div>
+      <div class="metric"><span>Regression Mapped</span><strong>0</strong></div>
+      <div class="metric"><span>Controlled Mapped</span><strong>0</strong></div>
+      <div class="metric"><span>Stable Mapped</span><strong>0</strong></div>
+      <div class="metric"><span>Modules</span><strong>11</strong></div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel"><h2>Tests By Module</h2><table><tbody>
+      <tr>
+        <td>Authentication</td>
+        <td>40</td>
+      </tr>
+      <tr>
+        <td>Billing</td>
+        <td>30</td>
+      </tr>
+      <tr>
+        <td>MFA</td>
+        <td>23</td>
+      </tr>
+      <tr>
+        <td>Signup</td>
+        <td>19</td>
+      </tr>
+      <tr>
+        <td>Password</td>
+        <td>18</td>
+      </tr>
+      <tr>
+        <td>Dashboard</td>
+        <td>17</td>
+      </tr>
+      <tr>
+        <td>Onboarding</td>
+        <td>14</td>
+      </tr>
+      <tr>
+        <td>Accessibility</td>
+        <td>11</td>
+      </tr>
+      <tr>
+        <td>Profile</td>
+        <td>9</td>
+      </tr>
+      <tr>
+        <td>Access Control</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Session Security</td>
+        <td>1</td>
+      </tr></tbody></table></div>
+    <div class="panel"><h2>Tests By Journey</h2><table><tbody>
+      <tr>
+        <td>Authentication</td>
+        <td>50</td>
+      </tr>
+      <tr>
+        <td>Registration</td>
+        <td>44</td>
+      </tr>
+      <tr>
+        <td>Unmapped</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Profile Setup</td>
+        <td>22</td>
+      </tr>
+      <tr>
+        <td>Subscription</td>
+        <td>19</td>
+      </tr>
+      <tr>
+        <td>Payment</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Dashboard</td>
+        <td>9</td>
+      </tr>
+      <tr>
+        <td>Access Control</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Risk Profile</td>
+        <td>3</td>
+      </tr></tbody></table></div>
+    <div class="panel"><h2>Coverage Type</h2><table><tbody>
+      <tr>
+        <td>Security</td>
+        <td>65</td>
+      </tr>
+      <tr>
+        <td>Negative</td>
+        <td>61</td>
+      </tr>
+      <tr>
+        <td>Positive</td>
+        <td>41</td>
+      </tr>
+      <tr>
+        <td>Boundary</td>
+        <td>21</td>
+      </tr></tbody></table></div>
+  </section>
+
+  <section class="panel full">
+    <div class="toolbar">
+      <h2>Complete Test Inventory</h2>
+      <input id="search" type="search" placeholder="Search tests, modules, journeys, files...">
+    </div>
+    <table id="inventory">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Test</th>
+          <th>Module</th>
+          <th>Journey</th>
+          <th>Type</th>
+          <th>Suites</th>
+          <th>File</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>
+            <strong>Login form exposes accessible email and password fields</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:32</code>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>
+            <strong>Login form supports Enter key submission without authenticating invalid data</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:74</code>
+          </td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>
+            <strong>Forgot password form supports Back to login navigation</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Authentication</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:109</code>
+          </td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>
+            <strong>Forgot password form exposes accessible email and submit controls</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:130</code>
+          </td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>
+            <strong>Register page keeps form visible after browser refresh</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Registration</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:153</code>
+          </td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>
+            <strong>Register page exposes accessible primary actions</strong>
+            <span>Accessibility And Browser Behavior</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AccessibilityBrowser.spec.ts:189</code>
+          </td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>
+            <strong>Configured failed login attempts trigger account lockout</strong>
+            <span>Auth Configuration Limits</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthConfigurationLimits.spec.ts:137</code>
+          </td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>
+            <strong>Configured password reset email request limit is enforced</strong>
+            <span>Auth Configuration Limits</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthConfigurationLimits.spec.ts:211</code>
+          </td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>
+            <strong>Login form blocks empty required fields</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:56</code>
+          </td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>
+            <strong>Login form blocks empty email only</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:107</code>
+          </td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>
+            <strong>Login form blocks empty password only</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:154</code>
+          </td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>
+            <strong>Login form blocks invalid email format</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:201</code>
+          </td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>
+            <strong>Login form rejects SQL injection input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:260</code>
+          </td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>
+            <strong>Login form rejects XSS injection input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:260</code>
+          </td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>
+            <strong>Login form rejects very long email input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:260</code>
+          </td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>
+            <strong>Login form does not authenticate email with leading and trailing spaces</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:311</code>
+          </td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>
+            <strong>Protected route /dashboard redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>
+            <strong>Protected route /dashboard/profile redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>
+            <strong>Protected route /dashboard/billing redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>
+            <strong>Protected route /onboarding redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td>
+            <strong>Protected route /dashboard/settings redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td>
+            <strong>Protected route /dashboard/security redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td>
+            <strong>Protected route /dashboard/subscription redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td>
+            <strong>Protected route /dashboard/notifications redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td>
+            <strong>Protected route /dashboard/activity redirects unauthenticated user to login</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:362</code>
+          </td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>
+            <strong>Forgot password form blocks empty email</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:391</code>
+          </td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td>
+            <strong>Forgot password form blocks invalid email format</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:417</code>
+          </td>
+        </tr>
+        <tr>
+          <td>28</td>
+          <td>
+            <strong>Forgot password rejects SQL injection input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:440</code>
+          </td>
+        </tr>
+        <tr>
+          <td>29</td>
+          <td>
+            <strong>Forgot password rejects XSS injection input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:440</code>
+          </td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>
+            <strong>Forgot password rejects very long email input</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:440</code>
+          </td>
+        </tr>
+        <tr>
+          <td>31</td>
+          <td>
+            <strong>Forgot password keeps user on reset page for email with surrounding spaces</strong>
+            <span>Auth Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthNegative.spec.ts:464</code>
+          </td>
+        </tr>
+        <tr>
+          <td>32</td>
+          <td>
+            <strong>Login screen navigates to forgot password and back</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:65</code>
+          </td>
+        </tr>
+        <tr>
+          <td>33</td>
+          <td>
+            <strong>Login screen navigates to create account</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:84</code>
+          </td>
+        </tr>
+        <tr>
+          <td>34</td>
+          <td>
+            <strong>Login password visibility toggle changes password field type</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:120</code>
+          </td>
+        </tr>
+        <tr>
+          <td>35</td>
+          <td>
+            <strong>Register screen exposes required public form controls</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:176</code>
+          </td>
+        </tr>
+        <tr>
+          <td>36</td>
+          <td>
+            <strong>Register screen password visibility toggle changes password field type</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Registration</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:211</code>
+          </td>
+        </tr>
+        <tr>
+          <td>37</td>
+          <td>
+            <strong>Register screen navigates back to login</strong>
+            <span>Auth UI Validation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Registration</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>AuthUiValidation.spec.ts:260</code>
+          </td>
+        </tr>
+        <tr>
+          <td>38</td>
+          <td>
+            <strong>Billing page remains available after refresh</strong>
+            <span>Billing Deep Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingDeep.spec.ts:53</code>
+          </td>
+        </tr>
+        <tr>
+          <td>39</td>
+          <td>
+            <strong>Plans tab shows expected Income Builder plan</strong>
+            <span>Billing Deep Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingDeep.spec.ts:87</code>
+          </td>
+        </tr>
+        <tr>
+          <td>40</td>
+          <td>
+            <strong>Transactions tab shows paid transaction status</strong>
+            <span>Billing Deep Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingDeep.spec.ts:104</code>
+          </td>
+        </tr>
+        <tr>
+          <td>41</td>
+          <td>
+            <strong>Invoice link opens invoice page with paid status</strong>
+            <span>Billing Deep Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingDeep.spec.ts:121</code>
+          </td>
+        </tr>
+        <tr>
+          <td>42</td>
+          <td>
+            <strong>PDF link is available and points to a non-empty URL</strong>
+            <span>Billing Deep Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingDeep.spec.ts:174</code>
+          </td>
+        </tr>
+        <tr>
+          <td>43</td>
+          <td>
+            <strong>Billing plans tab remains stable without launching checkout</strong>
+            <span>Billing Edge Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingEdgeValidation.spec.ts:54</code>
+          </td>
+        </tr>
+        <tr>
+          <td>44</td>
+          <td>
+            <strong>Billing history and transactions remain stable after refresh</strong>
+            <span>Billing Edge Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingEdgeValidation.spec.ts:71</code>
+          </td>
+        </tr>
+        <tr>
+          <td>45</td>
+          <td>
+            <strong>Billing invoice and PDF links have usable targets</strong>
+            <span>Billing Edge Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingEdgeValidation.spec.ts:88</code>
+          </td>
+        </tr>
+        <tr>
+          <td>46</td>
+          <td>
+            <strong>Manage subscription opens Stripe portal with subscription details</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:72</code>
+          </td>
+        </tr>
+        <tr>
+          <td>47</td>
+          <td>
+            <strong>Billing plans show plan action or status controls</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:81</code>
+          </td>
+        </tr>
+        <tr>
+          <td>48</td>
+          <td>
+            <strong>Stripe portal shows paid invoice history</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:90</code>
+          </td>
+        </tr>
+        <tr>
+          <td>49</td>
+          <td>
+            <strong>Stripe add payment method screen opens without saving</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:99</code>
+          </td>
+        </tr>
+        <tr>
+          <td>50</td>
+          <td>
+            <strong>Stripe billing information update screen opens without saving</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:108</code>
+          </td>
+        </tr>
+        <tr>
+          <td>51</td>
+          <td>
+            <strong>Cancel subscription form accepts reason and feedback without cancelling</strong>
+            <span>Billing Subscription Management</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>BillingSubscriptionManagement.spec.ts:117</code>
+          </td>
+        </tr>
+        <tr>
+          <td>52</td>
+          <td>
+            <strong>Dashboard direct route does not show load-error screen</strong>
+            <span>Dashboard Health</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardHealth.spec.ts:49</code>
+          </td>
+        </tr>
+        <tr>
+          <td>53</td>
+          <td>
+            <strong>Dashboard refresh does not show load-error screen</strong>
+            <span>Dashboard Health</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardHealth.spec.ts:67</code>
+          </td>
+        </tr>
+        <tr>
+          <td>54</td>
+          <td>
+            <strong>Authenticated user can open dashboard profile billing and compliance routes</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:67</code>
+          </td>
+        </tr>
+        <tr>
+          <td>55</td>
+          <td>
+            <strong>Profile menu exposes billing risk compliance and sign out actions</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Billing</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:124</code>
+          </td>
+        </tr>
+        <tr>
+          <td>56</td>
+          <td>
+            <strong>Profile menu navigation actions open the expected pages</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:164</code>
+          </td>
+        </tr>
+        <tr>
+          <td>57</td>
+          <td>
+            <strong>Dashboard top navigation tabs are visible</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:175</code>
+          </td>
+        </tr>
+        <tr>
+          <td>58</td>
+          <td>
+            <strong>Dashboard top navigation links open without load errors</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:207</code>
+          </td>
+        </tr>
+        <tr>
+          <td>59</td>
+          <td>
+            <strong>Dashboard top navigation destinations render usable content</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:218</code>
+          </td>
+        </tr>
+        <tr>
+          <td>60</td>
+          <td>
+            <strong>Dashboard top navigation destinations stay usable after refresh</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:229</code>
+          </td>
+        </tr>
+        <tr>
+          <td>61</td>
+          <td>
+            <strong>Dashboard header notification theme and fullscreen controls are healthy</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:240</code>
+          </td>
+        </tr>
+        <tr>
+          <td>62</td>
+          <td>
+            <strong>Notification panel opens and closes without disrupting dashboard</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Dashboard</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:251</code>
+          </td>
+        </tr>
+        <tr>
+          <td>63</td>
+          <td>
+            <strong>Key authenticated routes stay usable after refresh</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:262</code>
+          </td>
+        </tr>
+        <tr>
+          <td>64</td>
+          <td>
+            <strong>Browser back returns from billing to dashboard without ending session</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Payment</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:273</code>
+          </td>
+        </tr>
+        <tr>
+          <td>65</td>
+          <td>
+            <strong>Profile menu sign out blocks direct dashboard access</strong>
+            <span>Dashboard Navigation</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>DashboardNavigation.spec.ts:312</code>
+          </td>
+        </tr>
+        <tr>
+          <td>66</td>
+          <td>
+            <strong>Forgot Password Flow</strong>
+            <span></span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>forgotpassword.spec.ts:34</code>
+          </td>
+        </tr>
+        <tr>
+          <td>67</td>
+          <td>
+            <strong>Local user enables MFA successfully</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:195</code>
+          </td>
+        </tr>
+        <tr>
+          <td>68</td>
+          <td>
+            <strong>Enable MFA with invalid OTP is rejected</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:239</code>
+          </td>
+        </tr>
+        <tr>
+          <td>69</td>
+          <td>
+            <strong>Complete MFA lifecycle enable backup trusted revoke disable</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:266</code>
+          </td>
+        </tr>
+        <tr>
+          <td>70</td>
+          <td>
+            <strong>Complete MFA lifecycle automatic when setup secret is available</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:410</code>
+          </td>
+        </tr>
+        <tr>
+          <td>71</td>
+          <td>
+            <strong>Login with MFA enabled user using valid OTP</strong>
+            <span>User-side MFA - Local User &gt; MFA challenge login</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:567</code>
+          </td>
+        </tr>
+        <tr>
+          <td>72</td>
+          <td>
+            <strong>Login with invalid OTP is blocked</strong>
+            <span>User-side MFA - Local User &gt; MFA challenge login</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:585</code>
+          </td>
+        </tr>
+        <tr>
+          <td>73</td>
+          <td>
+            <strong>OTP retry behavior is observed without hardcoded attempt count</strong>
+            <span>User-side MFA - Local User &gt; MFA challenge login</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:614</code>
+          </td>
+        </tr>
+        <tr>
+          <td>74</td>
+          <td>
+            <strong>Expired OTP is rejected</strong>
+            <span>User-side MFA - Local User &gt; MFA challenge login</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:659</code>
+          </td>
+        </tr>
+        <tr>
+          <td>75</td>
+          <td>
+            <strong>Future OTP is rejected</strong>
+            <span>User-side MFA - Local User &gt; MFA challenge login</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:688</code>
+          </td>
+        </tr>
+        <tr>
+          <td>76</td>
+          <td>
+            <strong>Login using valid backup code</strong>
+            <span>User-side MFA - Local User &gt; Backup codes</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:730</code>
+          </td>
+        </tr>
+        <tr>
+          <td>77</td>
+          <td>
+            <strong>Invalid backup code is rejected</strong>
+            <span>User-side MFA - Local User &gt; Backup codes</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:754</code>
+          </td>
+        </tr>
+        <tr>
+          <td>78</td>
+          <td>
+            <strong>Reuse same backup code is rejected</strong>
+            <span>User-side MFA - Local User &gt; Backup codes</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:777</code>
+          </td>
+        </tr>
+        <tr>
+          <td>79</td>
+          <td>
+            <strong>Remember this device skips OTP in same browser context</strong>
+            <span>User-side MFA - Local User &gt; Remember this device</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:839</code>
+          </td>
+        </tr>
+        <tr>
+          <td>80</td>
+          <td>
+            <strong>Without remember this device OTP is requested again</strong>
+            <span>User-side MFA - Local User &gt; Remember this device</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:880</code>
+          </td>
+        </tr>
+        <tr>
+          <td>81</td>
+          <td>
+            <strong>Remembered device is browser-context specific</strong>
+            <span>User-side MFA - Local User &gt; Remember this device</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:912</code>
+          </td>
+        </tr>
+        <tr>
+          <td>82</td>
+          <td>
+            <strong>Clearing browser storage removes trusted device</strong>
+            <span>User-side MFA - Local User &gt; Remember this device</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:947</code>
+          </td>
+        </tr>
+        <tr>
+          <td>83</td>
+          <td>
+            <strong>Revoking trusted device requires MFA again on next login</strong>
+            <span>User-side MFA - Local User &gt; Remember this device</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:981</code>
+          </td>
+        </tr>
+        <tr>
+          <td>84</td>
+          <td>
+            <strong>Manual headed MFA login fallback</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1024</code>
+          </td>
+        </tr>
+        <tr>
+          <td>85</td>
+          <td>
+            <strong>Regenerate backup codes for local user</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1091</code>
+          </td>
+        </tr>
+        <tr>
+          <td>86</td>
+          <td>
+            <strong>Disable MFA for local user</strong>
+            <span>User-side MFA - Local User</span>
+          </td>
+          <td>MFA</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1122</code>
+          </td>
+        </tr>
+        <tr>
+          <td>87</td>
+          <td>
+            <strong>Google user regenerate backup codes does not require application password</strong>
+            <span>User-side MFA - Google OAuth</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1172</code>
+          </td>
+        </tr>
+        <tr>
+          <td>88</td>
+          <td>
+            <strong>Google user disable MFA does not require application password</strong>
+            <span>User-side MFA - Google OAuth</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1180</code>
+          </td>
+        </tr>
+        <tr>
+          <td>89</td>
+          <td>
+            <strong>Google user enables and completes MFA challenge</strong>
+            <span>User-side MFA - Google OAuth</span>
+          </td>
+          <td>MFA</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>MfaUserFlow.spec.ts:1188</code>
+          </td>
+        </tr>
+        <tr>
+          <td>90</td>
+          <td>
+            <strong>Register -&gt; Verify Email -&gt; Login -&gt; Risk -&gt; Compliance</strong>
+            <span>OOLTool Onboarding Flow</span>
+          </td>
+          <td>Authentication</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>onboarding.spec.ts:127</code>
+          </td>
+        </tr>
+        <tr>
+          <td>91</td>
+          <td>
+            <strong>Fast Risk and Compliance field validation</strong>
+            <span>Onboarding Field Validation</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:250</code>
+          </td>
+        </tr>
+        <tr>
+          <td>92</td>
+          <td>
+            <strong>Risk Profile required fields block onboarding progress</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:313</code>
+          </td>
+        </tr>
+        <tr>
+          <td>93</td>
+          <td>
+            <strong>Compliance required fields and disclosures block onboarding progress</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:340</code>
+          </td>
+        </tr>
+        <tr>
+          <td>94</td>
+          <td>
+            <strong>Risk Profile investing experience field is required</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:374</code>
+          </td>
+        </tr>
+        <tr>
+          <td>95</td>
+          <td>
+            <strong>Risk Profile strategy selection is required</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:388</code>
+          </td>
+        </tr>
+        <tr>
+          <td>96</td>
+          <td>
+            <strong>Risk Profile account type selection is required</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:402</code>
+          </td>
+        </tr>
+        <tr>
+          <td>97</td>
+          <td>
+            <strong>Risk Profile saved progress persists after refresh</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:416</code>
+          </td>
+        </tr>
+        <tr>
+          <td>98</td>
+          <td>
+            <strong>Risk Profile and Compliance selections can be updated before save</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:442</code>
+          </td>
+        </tr>
+        <tr>
+          <td>99</td>
+          <td>
+            <strong>Compliance state field is required</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:460</code>
+          </td>
+        </tr>
+        <tr>
+          <td>100</td>
+          <td>
+            <strong>Compliance disclosures are required</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:474</code>
+          </td>
+        </tr>
+        <tr>
+          <td>101</td>
+          <td>
+            <strong>Every Compliance disclosure must be accepted</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:488</code>
+          </td>
+        </tr>
+        <tr>
+          <td>102</td>
+          <td>
+            <strong>Compliance disclosure cancel does not accept disclosure</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:502</code>
+          </td>
+        </tr>
+        <tr>
+          <td>103</td>
+          <td>
+            <strong>Compliance saved progress persists after refresh</strong>
+            <span>Onboarding Field Validation &gt; Full field-level regression</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OnboardingFieldValidation.spec.ts:516</code>
+          </td>
+        </tr>
+        <tr>
+          <td>104</td>
+          <td>
+            <strong>New user can reach Overlay Strategists trial option</strong>
+            <span>Overlay Strategists Trial Experience</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OverlayStrategistsTrial.spec.ts:79</code>
+          </td>
+        </tr>
+        <tr>
+          <td>105</td>
+          <td>
+            <strong>New user can start Overlay Strategists trial with card</strong>
+            <span>Overlay Strategists Trial Experience</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OverlayStrategistsTrial.spec.ts:191</code>
+          </td>
+        </tr>
+        <tr>
+          <td>106</td>
+          <td>
+            <strong>Overlay Strategists with-card trial blocks missing Stripe card details</strong>
+            <span>Overlay Strategists Trial Experience</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OverlayStrategistsTrial.spec.ts:328</code>
+          </td>
+        </tr>
+        <tr>
+          <td>107</td>
+          <td>
+            <strong>New user can start Overlay Strategists trial without card</strong>
+            <span>Overlay Strategists Trial Experience</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OverlayStrategistsTrial.spec.ts:453</code>
+          </td>
+        </tr>
+        <tr>
+          <td>108</td>
+          <td>
+            <strong>Overlay Strategists trial requires terms acceptance</strong>
+            <span>Overlay Strategists Trial Experience</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>OverlayStrategistsTrial.spec.ts:594</code>
+          </td>
+        </tr>
+        <tr>
+          <td>109</td>
+          <td>
+            <strong>Accepts a valid password that satisfies configured policy</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:27</code>
+          </td>
+        </tr>
+        <tr>
+          <td>110</td>
+          <td>
+            <strong>Rejects password shorter than configured minimum length</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:39</code>
+          </td>
+        </tr>
+        <tr>
+          <td>111</td>
+          <td>
+            <strong>Rejects banned passwords from configured policy</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:61</code>
+          </td>
+        </tr>
+        <tr>
+          <td>112</td>
+          <td>
+            <strong>Banned password comparison is case-insensitive</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:82</code>
+          </td>
+        </tr>
+        <tr>
+          <td>113</td>
+          <td>
+            <strong>Uppercase rule follows configuration</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:99</code>
+          </td>
+        </tr>
+        <tr>
+          <td>114</td>
+          <td>
+            <strong>Lowercase rule follows configuration</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:126</code>
+          </td>
+        </tr>
+        <tr>
+          <td>115</td>
+          <td>
+            <strong>Digit rule follows configuration</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:153</code>
+          </td>
+        </tr>
+        <tr>
+          <td>116</td>
+          <td>
+            <strong>Symbol rule follows configuration</strong>
+            <span>Password Policy</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PasswordPolicy.spec.ts:180</code>
+          </td>
+        </tr>
+        <tr>
+          <td>117</td>
+          <td>
+            <strong>Stripe Checkout blocks incomplete card number</strong>
+            <span>Payment Negative Scenarios</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PaymentNegative.spec.ts:108</code>
+          </td>
+        </tr>
+        <tr>
+          <td>118</td>
+          <td>
+            <strong>Stripe Checkout blocks expired card date</strong>
+            <span>Payment Negative Scenarios</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PaymentNegative.spec.ts:148</code>
+          </td>
+        </tr>
+        <tr>
+          <td>119</td>
+          <td>
+            <strong>Stripe Checkout blocks invalid CVC</strong>
+            <span>Payment Negative Scenarios</span>
+          </td>
+          <td>Billing</td>
+          <td>Payment</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PaymentNegative.spec.ts:188</code>
+          </td>
+        </tr>
+        <tr>
+          <td>120</td>
+          <td>
+            <strong>Stripe Checkout rejects declined card without activating subscription</strong>
+            <span>Payment Negative Scenarios</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PaymentNegative.spec.ts:228</code>
+          </td>
+        </tr>
+        <tr>
+          <td>121</td>
+          <td>
+            <strong>Allowed user can access Billing access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:175</code>
+          </td>
+        </tr>
+        <tr>
+          <td>122</td>
+          <td>
+            <strong>Restricted user cannot access Billing access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:213</code>
+          </td>
+        </tr>
+        <tr>
+          <td>123</td>
+          <td>
+            <strong>Allowed user can access Risk and Compliance access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:175</code>
+          </td>
+        </tr>
+        <tr>
+          <td>124</td>
+          <td>
+            <strong>Restricted user cannot access Risk and Compliance access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:213</code>
+          </td>
+        </tr>
+        <tr>
+          <td>125</td>
+          <td>
+            <strong>Allowed user can access Profile access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:175</code>
+          </td>
+        </tr>
+        <tr>
+          <td>126</td>
+          <td>
+            <strong>Restricted user cannot access Profile access</strong>
+            <span>Permission Access</span>
+          </td>
+          <td>Access Control</td>
+          <td>Access Control</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PermissionAccess.spec.ts:213</code>
+          </td>
+        </tr>
+        <tr>
+          <td>127</td>
+          <td>
+            <strong>Plan catalog, feature summary, and billing toggle are visible</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:245</code>
+          </td>
+        </tr>
+        <tr>
+          <td>128</td>
+          <td>
+            <strong>Complete Setup is guarded before selecting a plan</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:264</code>
+          </td>
+        </tr>
+        <tr>
+          <td>129</td>
+          <td>
+            <strong>Overlay Strategists with-card trial modal content and cancel behavior</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:281</code>
+          </td>
+        </tr>
+        <tr>
+          <td>130</td>
+          <td>
+            <strong>Overlay Strategists without-card trial modal content and close behavior</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:308</code>
+          </td>
+        </tr>
+        <tr>
+          <td>131</td>
+          <td>
+            <strong>Overlay Strategists trial start requires terms acceptance</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Subscription</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:335</code>
+          </td>
+        </tr>
+        <tr>
+          <td>132</td>
+          <td>
+            <strong>Curious Explorer free plan completes onboarding without Stripe</strong>
+            <span>Plan Selection Validation</span>
+          </td>
+          <td>Billing</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>PlanSelectionValidation.spec.ts:354</code>
+          </td>
+        </tr>
+        <tr>
+          <td>133</td>
+          <td>
+            <strong>Profile Update</strong>
+            <span></span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>Profile.spec.ts:26</code>
+          </td>
+        </tr>
+        <tr>
+          <td>134</td>
+          <td>
+            <strong>Profile name update persists and can be restored</strong>
+            <span></span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>Profile.spec.ts:51</code>
+          </td>
+        </tr>
+        <tr>
+          <td>135</td>
+          <td>
+            <strong>Profile mobile number section is visible</strong>
+            <span>Profile Mobile Number Validation</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileMobileValidation.spec.ts:97</code>
+          </td>
+        </tr>
+        <tr>
+          <td>136</td>
+          <td>
+            <strong>Profile mobile change blocks invalid mobile number</strong>
+            <span>Profile Mobile Number Validation</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileMobileValidation.spec.ts:110</code>
+          </td>
+        </tr>
+        <tr>
+          <td>137</td>
+          <td>
+            <strong>Profile mobile change can request OTP for valid mobile number</strong>
+            <span>Profile Mobile Number Validation</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileMobileValidation.spec.ts:123</code>
+          </td>
+        </tr>
+        <tr>
+          <td>138</td>
+          <td>
+            <strong>Profile email field cannot be edited</strong>
+            <span>Profile Negative Scenarios</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileNegative.spec.ts:52</code>
+          </td>
+        </tr>
+        <tr>
+          <td>139</td>
+          <td>
+            <strong>Profile first name empty draft is not persisted without saving</strong>
+            <span>Profile Negative Scenarios</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileNegative.spec.ts:74</code>
+          </td>
+        </tr>
+        <tr>
+          <td>140</td>
+          <td>
+            <strong>Profile last name empty draft is not persisted without saving</strong>
+            <span>Profile Negative Scenarios</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileNegative.spec.ts:102</code>
+          </td>
+        </tr>
+        <tr>
+          <td>141</td>
+          <td>
+            <strong>Profile page keeps data after refresh</strong>
+            <span>Profile Negative Scenarios</span>
+          </td>
+          <td>Profile</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileNegative.spec.ts:130</code>
+          </td>
+        </tr>
+        <tr>
+          <td>142</td>
+          <td>
+            <strong>Profile password change button stays safe with empty password fields</strong>
+            <span>Profile Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileNegative.spec.ts:172</code>
+          </td>
+        </tr>
+        <tr>
+          <td>143</td>
+          <td>
+            <strong>Password Mismatch Validation</strong>
+            <span></span>
+          </td>
+          <td>Password</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfilePasswordMismatch.spec.ts:26</code>
+          </td>
+        </tr>
+        <tr>
+          <td>144</td>
+          <td>
+            <strong>Profile security page shows MFA overview state</strong>
+            <span>Profile Security Display</span>
+          </td>
+          <td>MFA</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileSecurityDisplay.spec.ts:68</code>
+          </td>
+        </tr>
+        <tr>
+          <td>145</td>
+          <td>
+            <strong>Profile security page shows backup-code controls when MFA is enabled</strong>
+            <span>Profile Security Display</span>
+          </td>
+          <td>MFA</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileSecurityDisplay.spec.ts:79</code>
+          </td>
+        </tr>
+        <tr>
+          <td>146</td>
+          <td>
+            <strong>Profile security page shows trusted devices section</strong>
+            <span>Profile Security Display</span>
+          </td>
+          <td>MFA</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileSecurityDisplay.spec.ts:90</code>
+          </td>
+        </tr>
+        <tr>
+          <td>147</td>
+          <td>
+            <strong>Wrong Current Password Validation</strong>
+            <span></span>
+          </td>
+          <td>Password</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ProfileWrongCurrentPassword.spec.ts:27</code>
+          </td>
+        </tr>
+        <tr>
+          <td>148</td>
+          <td>
+            <strong>Reset Password</strong>
+            <span></span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ResetPassword.spec.ts:30</code>
+          </td>
+        </tr>
+        <tr>
+          <td>149</td>
+          <td>
+            <strong>Reset password form blocks empty password fields</strong>
+            <span>Reset Password Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ResetPasswordNegative.spec.ts:49</code>
+          </td>
+        </tr>
+        <tr>
+          <td>150</td>
+          <td>
+            <strong>Reset password form blocks password mismatch</strong>
+            <span>Reset Password Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ResetPasswordNegative.spec.ts:75</code>
+          </td>
+        </tr>
+        <tr>
+          <td>151</td>
+          <td>
+            <strong>Reset password form keeps weak password on reset page</strong>
+            <span>Reset Password Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Unmapped</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ResetPasswordNegative.spec.ts:104</code>
+          </td>
+        </tr>
+        <tr>
+          <td>152</td>
+          <td>
+            <strong>Back to login works from reset password page</strong>
+            <span>Reset Password Negative Scenarios</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>ResetPasswordNegative.spec.ts:135</code>
+          </td>
+        </tr>
+        <tr>
+          <td>153</td>
+          <td>
+            <strong>Saved Risk Profile and Compliance details load</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:112</code>
+          </td>
+        </tr>
+        <tr>
+          <td>154</td>
+          <td>
+            <strong>Risk Profile editable controls are available</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:125</code>
+          </td>
+        </tr>
+        <tr>
+          <td>155</td>
+          <td>
+            <strong>Compliance editable controls are available</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Risk Profile</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:137</code>
+          </td>
+        </tr>
+        <tr>
+          <td>156</td>
+          <td>
+            <strong>Risk Profile can be updated from dashboard</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:149</code>
+          </td>
+        </tr>
+        <tr>
+          <td>157</td>
+          <td>
+            <strong>Compliance can be updated from dashboard</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Risk Profile</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:168</code>
+          </td>
+        </tr>
+        <tr>
+          <td>158</td>
+          <td>
+            <strong>Risk Profile additional editable fields persist after update</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Profile Setup</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:187</code>
+          </td>
+        </tr>
+        <tr>
+          <td>159</td>
+          <td>
+            <strong>Compliance additional editable fields persist after update</strong>
+            <span>Risk &amp; Compliance Dashboard Update</span>
+          </td>
+          <td>Dashboard</td>
+          <td>Risk Profile</td>
+          <td><span class="type">Boundary</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>RiskComplianceUpdate.spec.ts:206</code>
+          </td>
+        </tr>
+        <tr>
+          <td>160</td>
+          <td>
+            <strong>Logout prevents browser back and direct dashboard access</strong>
+            <span>Session Security</span>
+          </td>
+          <td>Accessibility</td>
+          <td>Dashboard</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SessionSecurity.spec.ts:30</code>
+          </td>
+        </tr>
+        <tr>
+          <td>161</td>
+          <td>
+            <strong>Logged-out session remains on login after refresh</strong>
+            <span>Session Security</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SessionSecurity.spec.ts:93</code>
+          </td>
+        </tr>
+        <tr>
+          <td>162</td>
+          <td>
+            <strong>Logout blocks direct access to key protected routes</strong>
+            <span>Session Security</span>
+          </td>
+          <td>Session Security</td>
+          <td>Unmapped</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SessionSecurity.spec.ts:131</code>
+          </td>
+        </tr>
+        <tr>
+          <td>163</td>
+          <td>
+            <strong>Authenticated session can open dashboard in a new tab</strong>
+            <span>Session Security</span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SessionSecurity.spec.ts:179</code>
+          </td>
+        </tr>
+        <tr>
+          <td>164</td>
+          <td>
+            <strong>Signup form blocks empty required fields</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:151</code>
+          </td>
+        </tr>
+        <tr>
+          <td>165</td>
+          <td>
+            <strong>Signup form blocks invalid email format</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:196</code>
+          </td>
+        </tr>
+        <tr>
+          <td>166</td>
+          <td>
+            <strong>Signup form blocks missing domain email input</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:219</code>
+          </td>
+        </tr>
+        <tr>
+          <td>167</td>
+          <td>
+            <strong>Signup form blocks missing @ email input</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:219</code>
+          </td>
+        </tr>
+        <tr>
+          <td>168</td>
+          <td>
+            <strong>Signup form blocks SQL injection email input</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:219</code>
+          </td>
+        </tr>
+        <tr>
+          <td>169</td>
+          <td>
+            <strong>Signup form blocks XSS injection email input</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:219</code>
+          </td>
+        </tr>
+        <tr>
+          <td>170</td>
+          <td>
+            <strong>Signup email trims leading and trailing spaces</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:242</code>
+          </td>
+        </tr>
+        <tr>
+          <td>171</td>
+          <td>
+            <strong>Signup form keeps submit disabled without password and confirmation</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:263</code>
+          </td>
+        </tr>
+        <tr>
+          <td>172</td>
+          <td>
+            <strong>Signup form keeps submit disabled when passwords do not match</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:286</code>
+          </td>
+        </tr>
+        <tr>
+          <td>173</td>
+          <td>
+            <strong>Signup form keeps OTP request disabled without mobile number</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:325</code>
+          </td>
+        </tr>
+        <tr>
+          <td>174</td>
+          <td>
+            <strong>Signup form keeps OTP request disabled for short mobile number</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:348</code>
+          </td>
+        </tr>
+        <tr>
+          <td>175</td>
+          <td>
+            <strong>Signup mobile input strips letters and keeps OTP disabled</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:367</code>
+          </td>
+        </tr>
+        <tr>
+          <td>176</td>
+          <td>
+            <strong>Signup mobile input normalizes formatted US number</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:392</code>
+          </td>
+        </tr>
+        <tr>
+          <td>177</td>
+          <td>
+            <strong>Signup mobile input limits extra digits to ten digits</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:417</code>
+          </td>
+        </tr>
+        <tr>
+          <td>178</td>
+          <td>
+            <strong>Signup form shows US mobile number guidance before OTP request</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:442</code>
+          </td>
+        </tr>
+        <tr>
+          <td>179</td>
+          <td>
+            <strong>Signup OTP input limits entry to six digits</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:463</code>
+          </td>
+        </tr>
+        <tr>
+          <td>180</td>
+          <td>
+            <strong>Signup OTP input trims pasted value to six digits</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:501</code>
+          </td>
+        </tr>
+        <tr>
+          <td>181</td>
+          <td>
+            <strong>Signup OTP input accepts digits only</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:532</code>
+          </td>
+        </tr>
+        <tr>
+          <td>182</td>
+          <td>
+            <strong>Signup OTP verify button is enabled only for six digits</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:563</code>
+          </td>
+        </tr>
+        <tr>
+          <td>183</td>
+          <td>
+            <strong>Signup OTP resend or cooldown state is visible after code request</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:611</code>
+          </td>
+        </tr>
+        <tr>
+          <td>184</td>
+          <td>
+            <strong>Signup blocks already registered email address</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Onboarding</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:646</code>
+          </td>
+        </tr>
+        <tr>
+          <td>185</td>
+          <td>
+            <strong>Signup password visibility toggles work for both password fields</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Password</td>
+          <td>Registration</td>
+          <td><span class="type">Negative</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:705</code>
+          </td>
+        </tr>
+        <tr>
+          <td>186</td>
+          <td>
+            <strong>Signup submit stays disabled before mobile OTP verification</strong>
+            <span>Signup Negative Scenarios</span>
+          </td>
+          <td>Signup</td>
+          <td>Registration</td>
+          <td><span class="type">Security</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>SignupNegative.spec.ts:756</code>
+          </td>
+        </tr>
+        <tr>
+          <td>187</td>
+          <td>
+            <strong>Subscriber Login</strong>
+            <span></span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>Subscriber.spec.ts:108</code>
+          </td>
+        </tr>
+        <tr>
+          <td>188</td>
+          <td>
+            <strong>Unlock Account Flow</strong>
+            <span></span>
+          </td>
+          <td>Authentication</td>
+          <td>Authentication</td>
+          <td><span class="type">Positive</span></td>
+          <td><span class="pill muted">standalone</span></td>
+          <td>
+            <code>UnlockAccount.spec.ts:39</code>
+          </td>
+        </tr></tbody>
+    </table>
+  </section>
+</main>
+<script>
+const search = document.getElementById('search');
+const rows = [...document.querySelectorAll('#inventory tbody tr')];
+search.addEventListener('input', () => {
+  const value = search.value.trim().toLowerCase();
+  rows.forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(value) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>

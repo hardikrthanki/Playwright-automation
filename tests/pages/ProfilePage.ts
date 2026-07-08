@@ -265,6 +265,84 @@ async waitForProfileData() {
     }
   );
 }
+
+async validatePersonalInfoControls() {
+
+  Logger.info(
+    'Validating Profile Personal Info Controls'
+  );
+
+  await expect(
+    this.firstNameInput
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    this.lastNameInput
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    this.emailInput
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    this.emailInput
+  ).toBeDisabled();
+
+  await expect(
+    this.saveChangesButton
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  Logger.success(
+    'Profile Personal Info Controls Validated'
+  );
+}
+
+async updateProfileAndValidatePersistence(
+  firstName: string,
+  lastName: string
+) {
+
+  await this.updateProfile(
+    firstName,
+    lastName
+  );
+
+  await this.page.reload({
+    waitUntil: 'domcontentloaded'
+  });
+
+  await this.waitForProfileData();
+
+  await expect(
+    this.firstNameInput
+  ).toHaveValue(
+    firstName,
+    {
+      timeout: 15000
+    }
+  );
+
+  await expect(
+    this.lastNameInput
+  ).toHaveValue(
+    lastName,
+    {
+      timeout: 15000
+    }
+  );
+
+  Logger.success(
+    'Profile Update Persisted After Refresh'
+  );
+}
 async validatePasswordMismatch() {
 
   await expect(

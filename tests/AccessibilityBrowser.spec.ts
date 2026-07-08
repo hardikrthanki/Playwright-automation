@@ -128,6 +128,29 @@ test.describe(
     );
 
     test(
+      'Forgot password form exposes accessible email and submit controls',
+      async ({ page }) => {
+
+        const forgotPassword =
+          new ForgotPasswordPage(page);
+
+        await forgotPassword.open();
+
+        await expect(
+          page.getByLabel(
+            /^email$/i
+          ).or(
+            forgotPassword.emailInput.first()
+          )
+        ).toBeVisible();
+
+        await expect(
+          forgotPassword.sendResetButton
+        ).toBeVisible();
+      }
+    );
+
+    test(
       'Register page keeps form visible after browser refresh',
       async ({ page }) => {
 

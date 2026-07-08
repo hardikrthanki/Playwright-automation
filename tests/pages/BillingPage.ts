@@ -76,6 +76,89 @@ constructor(page: Page) {
       }
     );
 }
+
+private async billingContentIsVisible() {
+  const markers = [
+    this.plansTab,
+    this.historyTab,
+    this.page.getByRole(
+      'button',
+      {
+        name: /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|payment settings|invoices/i,
+      }
+    ).first(),
+    this.page.getByRole(
+      'link',
+      {
+        name: /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|payment settings|invoices/i,
+      }
+    ).first(),
+    this.page.getByText(
+      /current plan|current subscription|income builder|transactions|invoice history|billing overview/i
+    ).first(),
+  ];
+
+  for (const marker of markers) {
+    if (
+      await marker.isVisible()
+        .catch(
+          () => false
+        )
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+private async visibleControlSummary() {
+  return this.page.locator(
+    'a, button'
+  )
+    .evaluateAll(
+      elements =>
+        elements
+          .map(
+            element =>
+              (
+                element.textContent ??
+                element.getAttribute('aria-label') ??
+                element.getAttribute('href') ??
+                ''
+              ).trim()
+          )
+          .filter(Boolean)
+          .slice(0, 30)
+    )
+    .catch(
+      () => []
+    );
+}
+
+private async waitForBillingContent() {
+  await expect
+    .poll(
+      async () =>
+        this.billingContentIsVisible(),
+      {
+        timeout: 30000,
+        message: 'Waiting for billing page content to load',
+      }
+    )
+    .toBe(
+      true
+    );
+
+  await expect(
+    this.page.getByText(
+      /this page couldn'?t load|reload to try again/i
+    ).first()
+  ).not.toBeVisible({
+    timeout: 3000,
+  });
+}
+
 async validateOverview() {
 
 Logger.info(
@@ -104,6 +187,8 @@ Logger.info(
         timeout: 5000,
       }
     );
+
+    await this.waitForBillingContent();
   } catch {
     Logger.info(
       'Billing menu navigation unavailable; opening billing route directly'
@@ -118,6 +203,25 @@ Logger.info(
         waitUntil: 'domcontentloaded',
       }
     );
+
+    await expect(this.page)
+      .toHaveURL(
+        /billing/,
+        {
+          timeout: 15000,
+        }
+      );
+
+    try {
+      await this.waitForBillingContent();
+    } catch (error) {
+      const availableControls =
+        await this.visibleControlSummary();
+
+      throw new Error(
+        `Billing route opened but billing content did not load. Current URL: ${this.page.url()}. Visible controls: ${availableControls.join(' | ')}. Original error: ${String(error)}`
+      );
+    }
   }
 
   await expect(this.page)
@@ -324,6 +428,54 @@ async validatePlansTabStable() {
   );
 }
 
+async validatePlanActionControls() {
+
+  Logger.info(
+    'Validating Billing Plan Action Controls'
+  );
+
+  await this.validateOverview();
+
+  if (
+    await this.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.plansTab,
+      'Open Plans Tab'
+    );
+  }
+
+  await this.validateBillingUrl();
+
+  const planActions =
+    this.page.locator(
+      'a, button'
+    ).filter({
+      hasText: /upgrade|downgrade|current plan|active|selected|subscribe|choose plan|manage/i
+    });
+
+  await expect
+    .poll(
+      async () =>
+        planActions.count(),
+      {
+        timeout: 15000,
+        message: 'Waiting for at least one plan action/status control',
+      }
+    )
+    .toBeGreaterThan(
+      0
+    );
+
+  Logger.success(
+    'Billing Plan Action Controls Visible'
+  );
+}
+
 async validateHistoryTabStable() {
 
   Logger.info(
@@ -402,5 +554,530 @@ async validateInvoiceAndPdfLinksHaveTargets() {
   Logger.success(
     'Billing Evidence Links Have Targets'
   );
+}
+
+private async manageSubscriptionControl() {
+  const visibleControls =
+    this.page.locator(
+      'a, button'
+    );
+
+  const manageText =
+    /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|invoices|payment settings|update payment method|change payment method|edit payment method/i;
+
+  const controlCount =
+    await visibleControls.count();
+
+  for (let i = 0; i < controlCount; i++) {
+    const control =
+      visibleControls.nth(i);
+
+    if (
+      !await control.isVisible()
+        .catch(
+          () => false
+        )
+    ) {
+      continue;
+    }
+
+    const text =
+      (
+        await control.innerText()
+          .catch(
+            () => ''
+          )
+      ).trim();
+
+    const href =
+      await control.getAttribute(
+        'href'
+      );
+
+    if (
+      manageText.test(
+        text
+      ) ||
+      /stripe|billing_portal|customer-portal|portal/i.test(
+        href ?? ''
+      )
+    ) {
+      return control;
+    }
+  }
+
+  const availableControls =
+    await visibleControls
+      .evaluateAll(
+        elements =>
+          elements
+            .map(
+              element =>
+                (
+                  element.textContent ??
+                  element.getAttribute('aria-label') ??
+                  element.getAttribute('href') ??
+                  ''
+                ).trim()
+            )
+            .filter(Boolean)
+            .slice(0, 30)
+      )
+      .catch(
+        () => []
+      );
+
+  throw new Error(
+    `Manage subscription control was not found. Visible controls: ${availableControls.join(' | ')}`
+  );
+}
+
+async openSubscriptionPortal() {
+
+  Logger.info(
+    'Opening subscription management portal'
+  );
+
+  await this.validateOverview();
+
+  const manageControl =
+    await this.manageSubscriptionControl();
+
+  await expect(
+    manageControl
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const newPagePromise =
+    this.page.context()
+      .waitForEvent(
+        'page',
+        {
+          timeout: 7000
+        }
+      )
+      .catch(
+        () => undefined
+      );
+
+  await safeClick(
+    manageControl,
+    'Manage Subscription'
+  );
+
+  const portalPage =
+    await newPagePromise ??
+    this.page;
+
+  await portalPage.waitForLoadState(
+    'domcontentloaded'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /current subscription|payment method|billing information|invoice history/i
+    ).first()
+  ).toBeVisible({
+    timeout: 30000
+  });
+
+  Logger.success(
+    'Subscription management portal opened'
+  );
+
+  return portalPage;
+}
+
+async validateSubscriptionPortalOverview() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating subscription portal overview'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /current subscription/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /payment method/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /billing information/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /invoice history/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const portalText =
+    await portalPage
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    portalText
+  ).toMatch(
+    /current subscription[\s\S]+payment method[\s\S]+billing information[\s\S]+invoice history/i
+  );
+
+  const expectedPlan =
+    process.env.BILLING_EXPECTED_PLAN;
+
+  if (expectedPlan) {
+    expect(
+      portalText
+    ).toMatch(
+      new RegExp(
+        expectedPlan.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        ),
+        'i'
+      )
+    );
+  } else {
+    expect(
+      portalText
+    ).toMatch(
+      /income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i
+    );
+  }
+
+  const expectedFrequency =
+    process.env.BILLING_EXPECTED_FREQUENCY;
+
+  if (expectedFrequency) {
+    expect(
+      portalText
+    ).toMatch(
+      new RegExp(
+        expectedFrequency,
+        'i'
+      )
+    );
+  } else {
+    expect(
+      portalText
+    ).toMatch(
+      /per month|per year|\/ month|\/ year|monthly|annual/i
+    );
+  }
+
+  const expectedCardLast4 =
+    process.env.BILLING_EXPECTED_CARD_LAST4;
+
+  if (expectedCardLast4) {
+    expect(
+      portalText
+    ).toMatch(
+      new RegExp(
+        expectedCardLast4,
+        'i'
+      )
+    );
+  } else {
+    expect(
+      portalText
+    ).toMatch(
+      /visa|mastercard|card|payment method/i
+    );
+  }
+
+  Logger.success(
+    'Subscription portal overview validated'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validateSubscriptionPortalInvoiceHistory() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating subscription portal invoice history'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /invoice history/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /paid/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const invoiceLink =
+    portalPage.getByRole(
+      'link',
+      {
+        name: /paid|invoice|\$\d|₹|advanced|builder|strategist/i
+      }
+    ).first();
+
+  await expect(
+    invoiceLink
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const invoiceHref =
+    await invoiceLink.getAttribute(
+      'href'
+    );
+
+  expect(
+    invoiceHref
+  ).toBeTruthy();
+
+  Logger.success(
+    'Subscription portal invoice history validated'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validateAddPaymentMethodOpensWithoutSaving() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating add payment method screen without saving'
+  );
+
+  await safeClick(
+    portalPage.getByRole(
+      'link',
+      {
+        name: /add payment method/i
+      }
+    ).first(),
+    'Open Add Payment Method'
+  );
+
+  await portalPage.waitForLoadState(
+    'domcontentloaded'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /add payment method|payment method|card information|card/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    'Add payment method screen opened without saving'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validateBillingInformationUpdateOpensWithoutSaving() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating billing information update screen without saving'
+  );
+
+  await safeClick(
+    portalPage.getByRole(
+      'link',
+      {
+        name: /update information/i
+      }
+    ).first(),
+    'Open Update Billing Information'
+  );
+
+  await portalPage.waitForLoadState(
+    'domcontentloaded'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /billing information|update information|email|save|cancel/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    'Billing information update screen opened without saving'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validateCancelSubscriptionFormWithoutCancelling() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating cancel subscription form without cancelling'
+  );
+
+  const alreadyCancelling =
+    portalPage.getByText(
+      /cancels\s+\w+|your service will end/i
+    ).first();
+
+  const reactivateControl =
+    portalPage.getByRole(
+      'link',
+      {
+        name: /don'?t cancel subscription|resume subscription|reactivate/i
+      }
+    ).first();
+
+  if (
+    await alreadyCancelling.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await expect(
+      reactivateControl
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Subscription is already scheduled to cancel; cancellation state validated without changing it'
+    );
+
+    if (portalPage !== this.page) {
+      await portalPage.close();
+    }
+
+    return;
+  }
+
+  const cancelControl =
+    portalPage.locator(
+      'button, a'
+    ).filter({
+      hasText: /cancel subscription/i
+    }).first();
+
+  await safeClick(
+    cancelControl,
+    'Open Cancel Subscription'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /cancel your subscription/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /selected subscription|why you'?re leaving|reason/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const feedback =
+    portalPage.locator(
+      'textarea'
+    ).first();
+
+  if (
+    await feedback.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await feedback.fill(
+      'Automation validation only - cancellation not submitted.'
+    );
+  }
+
+  const goBack =
+    portalPage.getByRole(
+      'button',
+      {
+        name: /go back/i
+      }
+    ).first();
+
+  if (
+    await goBack.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      goBack,
+      'Go Back From Cancel Subscription'
+    );
+  }
+
+  await expect(
+    portalPage.getByText(
+      /current subscription|payment method|billing information/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    'Cancel subscription form validated without cancelling'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
 }
 }

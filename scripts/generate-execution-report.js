@@ -2178,12 +2178,16 @@ const evidenceCounts = {
   videos: Array.isArray(evidenceData.videos) ? evidenceData.videos.length : 0,
   traces: Array.isArray(evidenceData.traces) ? evidenceData.traces.length : 0,
   logs: Array.isArray(evidenceData.logs) ? evidenceData.logs.length : 0,
+  rawReports: Array.isArray(evidenceData.rawReports) ? evidenceData.rawReports.length : 0,
 };
-const totalEvidenceArtifacts =
+const totalRichEvidenceArtifacts =
   evidenceCounts.screenshots +
   evidenceCounts.videos +
   evidenceCounts.traces +
   evidenceCounts.logs;
+const totalEvidenceArtifacts =
+  totalRichEvidenceArtifacts +
+  evidenceCounts.rawReports;
 
 const evidenceHeroHtml = `
   <div class="evidence-hero">
@@ -2191,11 +2195,13 @@ const evidenceHeroHtml = `
       <span class="mission-label">Evidence Readiness</span>
       <strong>${totalEvidenceArtifacts > 0 ? 'Proof Available' : 'No Evidence Captured'}</strong>
       <p>${totalEvidenceArtifacts > 0
-        ? 'AIR found evidence artifacts that can support investigation and release review.'
-        : 'This execution does not include screenshots, videos, traces, or logs. Attach evidence for release-impacting failures before approval.'}</p>
+        ? (totalRichEvidenceArtifacts > 0
+            ? 'AIR found rich evidence artifacts that can support investigation and release review.'
+            : 'AIR found raw Playwright report evidence. Enable full artifacts to include screenshots, videos, and traces for every run.')
+        : 'This execution does not include raw reports, screenshots, videos, traces, or logs. Run tests before approval.'}</p>
     </div>
     <div class="evidence-score-card">
-      <span>Total Artifacts</span>
+      <span>Total Evidence</span>
       <strong>${totalEvidenceArtifacts}</strong>
       <small>${hasPlaywrightReport ? 'Playwright report available' : 'Playwright report not linked'}</small>
     </div>
@@ -2205,6 +2211,7 @@ const evidenceHeroHtml = `
     <span><b>${evidenceCounts.videos}</b><small>Videos</small></span>
     <span><b>${evidenceCounts.traces}</b><small>Traces</small></span>
     <span><b>${evidenceCounts.logs}</b><small>Logs</small></span>
+    <span><b>${evidenceCounts.rawReports}</b><small>Raw Reports</small></span>
   </div>`;
 
 const businessHealthCards =

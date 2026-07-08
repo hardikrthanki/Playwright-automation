@@ -13,6 +13,12 @@
       "critical": true
     },
     {
+      "name": "Access Control",
+      "patterns": ["permission", "access control", "rbac", "restricted user", "allowed user"],
+      "modules": ["Access Control"],
+      "critical": true
+    },
+    {
       "name": "Profile Setup",
       "patterns": ["profile"],
       "modules": ["Profile"],
@@ -37,7 +43,13 @@
         "subscription",
         "plans",
         "overlay strategists",
-        "trial"
+        "trial",
+        "customer portal",
+        "billing portal",
+        "upgrade",
+        "downgrade",
+        "cancel subscription",
+        "renewal"
       ],
       "modules": ["Billing"],
       "critical": true
@@ -49,7 +61,11 @@
         "stripe",
         "checkout",
         "billing",
-        "with card"
+        "with card",
+        "declined card",
+        "payment method",
+        "invoice history",
+        "dunning"
       ],
       "modules": ["Billing"],
       "critical": true

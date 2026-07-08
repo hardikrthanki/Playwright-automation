@@ -440,6 +440,24 @@ test.describe(
     );
 
     test(
+      'Risk Profile and Compliance selections can be updated before save',
+      async ({ page }) => {
+        await registerAndLoginFreshUser(
+          page,
+          'risk-compliance-update'
+        );
+
+        await new RiskProfilePage(
+          page
+        ).validateSelectionsCanBeUpdatedBeforeSave();
+
+        await new CompliancePage(
+          page
+        ).validateSelectionsCanBeUpdatedBeforeSave();
+      }
+    );
+
+    test(
       'Compliance state field is required',
       async ({ page }) => {
         await openComplianceForFreshUser(

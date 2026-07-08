@@ -27,6 +27,8 @@ Included:
 
 ```text
 Subscriber.spec.ts
+DashboardHealth.spec.ts
+DashboardNavigation.spec.ts
 Profile.spec.ts
 SessionSecurity.spec.ts
 ```
@@ -57,9 +59,12 @@ Included:
 ```text
 onboarding.spec.ts
 AuthNegative.spec.ts
+AuthUiValidation.spec.ts
 SignupNegative.spec.ts
 PasswordPolicy.spec.ts
 SessionSecurity.spec.ts
+DashboardHealth.spec.ts
+DashboardNavigation.spec.ts
 Profile.spec.ts
 ProfileNegative.spec.ts
 ProfilePasswordMismatch.spec.ts
@@ -94,6 +99,7 @@ Included:
 ```text
 onboarding.spec.ts
 AuthNegative.spec.ts
+AuthUiValidation.spec.ts
 SignupNegative.spec.ts
 PasswordPolicy.spec.ts
 SessionSecurity.spec.ts
@@ -144,6 +150,29 @@ $env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
 npm run test:controlled:onboarding-fields -- --headed
 ```
 
+Risk Profile and Compliance update-before-save validation:
+
+```powershell
+$env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"
+$env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
+npm run test:controlled:onboarding-fields -- --headed -g "Risk Profile and Compliance selections can be updated before save"
+```
+
+Authenticated dashboard Risk & Compliance validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+npm run test:controlled:risk-compliance -- --headed
+```
+
+Authenticated dashboard Risk & Compliance update validation:
+
+```powershell
+$env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
+$env:RISK_COMPLIANCE_UPDATE_ENABLED="true"
+npm run test:controlled:risk-compliance -- --headed
+```
+
 Forgot password and unlock:
 
 ```powershell
@@ -168,6 +197,31 @@ Billing edge validation:
 
 ```powershell
 npm run test:controlled:billing-edge -- --headed
+```
+
+Billing subscription management portal validation:
+
+```powershell
+$env:BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED="true"
+npm run test:controlled:billing-management -- --headed
+```
+
+Dashboard navigation validation:
+
+```powershell
+npm run test:controlled:dashboard-navigation -- --headed
+```
+
+Dashboard health validation:
+
+```powershell
+npm run test:controlled:dashboard-health -- --headed
+```
+
+Auth UI validation:
+
+```powershell
+npm run test:controlled:auth-ui -- --headed
 ```
 
 Profile mobile:

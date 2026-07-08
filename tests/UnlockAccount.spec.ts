@@ -22,9 +22,19 @@ email-link step, then validates the user can log in again.
 
 Run:
 $env:RUN_UNLOCK_ACCOUNT_TEST="true"
+$env:UNLOCK_ACCOUNT_EMAIL="imhardikthanki+8@gmail.com"
+$env:UNLOCK_ACCOUNT_PASSWORD="your-password"
 npx playwright test tests/UnlockAccount.spec.ts --headed
 
 ============================================================================= */
+
+const unlockAccountEmail =
+  process.env.UNLOCK_ACCOUNT_EMAIL ??
+  TEST_USERS.subscriber.email;
+
+const unlockAccountPassword =
+  process.env.UNLOCK_ACCOUNT_PASSWORD ??
+  TEST_USERS.subscriber.password;
 
 test(
   'Unlock Account Flow',
@@ -44,8 +54,8 @@ test(
       );
 
     await login.requestUnlockLink(
-      TEST_USERS.subscriber.email,
-      TEST_USERS.subscriber.password
+      unlockAccountEmail,
+      unlockAccountPassword
     );
 
     console.log(
@@ -55,8 +65,8 @@ test(
     await page.pause();
 
     await login.login(
-      TEST_USERS.subscriber.email,
-      TEST_USERS.subscriber.password
+      unlockAccountEmail,
+      unlockAccountPassword
     );
 
     const dashboard =

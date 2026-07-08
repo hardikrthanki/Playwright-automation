@@ -4,6 +4,10 @@ import {
   test
 } from '@playwright/test';
 
+import {
+  STRIPE_DECLINED_CARD
+} from './config/testData';
+
 /* =============================================================================
 TEST SUITE: Payment Negative Scenarios
 
@@ -218,6 +222,67 @@ test.describe(
         await expect(
           payButton
         ).toBeDisabled();
+      }
+    );
+
+    test(
+      'Stripe Checkout rejects declined card without activating subscription',
+      async ({ page }) => {
+
+        await page.locator(
+          '#cardNumber'
+        ).fill(
+          STRIPE_DECLINED_CARD
+        );
+
+        await page.locator(
+          '#cardExpiry'
+        ).fill(
+          '12/34'
+        );
+
+        await page.locator(
+          '#cardCvc'
+        ).fill(
+          '123'
+        );
+
+        await fillBasicBilling(
+          page
+        );
+
+        const payButton =
+          page.getByRole(
+            'button',
+            {
+              name: /subscribe|pay|complete|start/i
+            }
+          );
+
+        await expect(
+          payButton
+        ).toBeEnabled({
+          timeout: 15000
+        });
+
+        await payButton.click();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /checkout\.stripe\.com/,
+          {
+            timeout: 30000
+          }
+        );
+
+        await expect(
+          page.getByText(
+            /declined|card was declined|payment failed|try another card/i
+          ).first()
+        ).toBeVisible({
+          timeout: 30000
+        });
       }
     );
   }

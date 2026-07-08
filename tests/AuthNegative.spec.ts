@@ -308,6 +308,56 @@ test.describe(
       );
     }
 
+    test(
+      'Login form does not authenticate email with leading and trailing spaces',
+      async ({ page }) => {
+
+        await page.goto(
+          `${BASE_URL}/login`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        const emailInput =
+          page.locator(
+            'input[type="email"]'
+          ).first();
+
+        const passwordInput =
+          page.locator(
+            'input[type="password"]'
+          ).first();
+
+        const submitButton =
+          page.locator(
+            'button[type="submit"]'
+          ).first();
+
+        await emailInput.fill(
+          ' user@example.com '
+        );
+
+        await passwordInput.fill(
+          'AnyPassword123'
+        );
+
+        await submitButton.click();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/
+        );
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /\/dashboard/
+        );
+      }
+    );
+
     for (const route of protectedRoutes) {
       test(
         `Protected route ${route} redirects unauthenticated user to login`,
@@ -410,5 +460,28 @@ test.describe(
         }
       );
     }
+
+    test(
+      'Forgot password keeps user on reset page for email with surrounding spaces',
+      async ({ page }) => {
+
+        const forgotPassword =
+          new ForgotPasswordPage(page);
+
+        await forgotPassword.open();
+
+        await forgotPassword.emailInput.fill(
+          ' user@example.com '
+        );
+
+        await forgotPassword.sendResetButton.click();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/forgot-password/
+        );
+      }
+    );
   }
 );
