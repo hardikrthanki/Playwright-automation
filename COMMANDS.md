@@ -137,6 +137,23 @@ configuration limits, and MFA:
 npm run test:user-journey:controlled -- --headed
 ```
 
+Manual reset-password email links are skipped by default so this suite can keep
+running when the reset email is delayed. Enable the reset-link flow only when
+you are ready to open Gmail, copy the reset link, paste it into the Playwright
+browser, and resume:
+
+```powershell
+$env:FORGOT_PASSWORD_FLOW_ENABLED="true"
+npm run test:controlled:email -- --headed -g "Forgot Password Flow"
+```
+
+If a run is already stuck waiting for the reset email, stop it with `Ctrl + C`
+and rerun without the flag, or exclude it explicitly:
+
+```powershell
+npx playwright test --headed --grep-invert "Forgot Password|Reset Password"
+```
+
 Full core user journey, including controlled/manual-gated tests but excluding
 Stripe checkout/customer-portal lifecycle:
 

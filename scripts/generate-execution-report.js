@@ -2009,29 +2009,6 @@ const journeyHealthRows = (demoMode ? [
   })
   .join('');
 
-const failedRows = (demoMode ? [
-  ['login_MFA_invalid_otp', 'Authentication', 'High', 'Invalid OTP attempts'],
-  ['payment_card_declined', 'Payment', 'Medium', 'Card declined handling'],
-  ['api_getUser_500_error', 'User API', 'Medium', 'Server error response'],
-] : failedTests.length > 0
-  ? failedTests.slice(0, 8).map(test => [
-    test.title,
-    getModuleName(test.title),
-    'High',
-    test.error || 'Review Playwright trace',
-  ])
-  : [
-    ['No failed tests in current execution', 'All Modules', 'Low', 'No blocker detected'],
-  ])
-  .map(([name, module, priority, reason]) => `
-    <tr>
-      <td>${escapeHtml(name)}</td>  
-      <td>${escapeHtml(module)}</td>
-      <td><span class="badge ${priority === 'High' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
-      <td>${escapeHtml(reason)}</td>
-    </tr>`)
-  .join('');
-
 const failedSourceItems = demoMode
   ? [
     {
@@ -2055,6 +2032,85 @@ const failedSourceItems = demoMode
   ]
   : failedTests;
 
+const FAILED_TESTS_INITIAL_VISIBLE = 6;
+const FAILED_TESTS_LOAD_BATCH = 6;
+const shouldShowFailureLoadMore = failedSourceItems.length > FAILED_TESTS_INITIAL_VISIBLE;
+
+function formatShortFailureReason(test) {
+  const rawReason = String(
+    test?.reason ||
+    test?.recommendedAction ||
+    test?.businessImpact ||
+    test?.error ||
+    'Review failure evidence.'
+  ).trim();
+
+  const rawError = String(test?.error || rawReason).trim();
+
+  if (/Registration OTP input did not appear/i.test(rawError)) {
+    return 'Registration OTP input did not appear.';
+  }
+
+  if (/expect\(page\)\.toHaveURL|toHaveURL/i.test(rawError)) {
+    return 'Expected navigation did not complete.';
+  }
+
+  if (/locator\.waitFor|waiting for .* to be visible/i.test(rawError)) {
+    return 'Expected element did not appear in time.';
+  }
+
+  if (/Test timeout|Timeout.*exceeded/i.test(rawError)) {
+    return 'Timed out waiting for expected result.';
+  }
+
+  if (/Invalid email or password/i.test(rawError)) {
+    return 'Login failed with invalid credentials message.';
+  }
+
+  const usefulLine = rawReason
+    .replace(/\r/g, '\n')
+    .split('\n')
+    .map(line => line.trim())
+    .find(line =>
+      line &&
+      !/^at\s/i.test(line) &&
+      !/^Call log:/i.test(line) &&
+      !/^\d+\s*[×x]\s*/.test(line) &&
+      !/^[A-Z]:\\/.test(line)
+    ) || 'Review failure evidence.';
+
+  return usefulLine.length > 120
+    ? `${usefulLine.slice(0, 117).trim()}...`
+    : usefulLine;
+}
+
+const failedRows = (failedSourceItems.length > 0
+  ? failedSourceItems
+  : [
+    {
+      title: 'No failed tests in current execution',
+      module: 'All Modules',
+      severity: 'Low',
+      error: 'No blocker detected',
+    },
+  ])
+  .map((test, index) => {
+    const title = test.title ?? test.testName ?? `Failure ${index + 1}`;
+    const moduleName = test.module ?? getModuleName(title);
+    const priority = test.severity ?? 'High';
+    const reason = formatShortFailureReason(test);
+    const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
+
+    return `
+    <tr${hiddenClass} data-failure-row data-failure-index="${index}">
+      <td>${escapeHtml(title)}</td>
+      <td>${escapeHtml(moduleName)}</td>
+      <td><span class="badge ${priority === 'High' || priority === 'Critical' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
+      <td>${escapeHtml(reason)}</td>
+    </tr>`;
+  })
+  .join('');
+
 const criticalFailedCount = failedSourceItems
   .filter(test => ['Critical', 'High'].includes(test.severity ?? 'High'))
   .length;
@@ -2070,16 +2126,17 @@ const failureInvestigationCards = failedSourceItems
     const moduleName = test.module ?? getModuleName(title);
     const severity = test.severity ?? 'High';
     const category = test.category ?? 'Execution';
-    const reason = test.error || test.reason || test.businessImpact || 'Review failure details and attach available evidence.';
+    const reason = formatShortFailureReason(test);
     const evidenceCount = (test.evidence ?? []).length;
     const tone = ['Critical', 'High'].includes(severity)
       ? 'red'
-      : severity === 'Medium'
-        ? 'amber'
-        : 'green';
+        : severity === 'Medium'
+          ? 'amber'
+          : 'green';
+    const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' is-hidden' : '';
 
     return `
-      <article class="failure-investigation-card ${tone}">
+      <article class="failure-investigation-card ${tone}${hiddenClass}" data-failure-card data-failure-index="${index}">
         <div class="failure-card-head">
           <span class="failure-index">F${index + 1}</span>
           <div>
@@ -2101,6 +2158,20 @@ const failureInvestigationCards = failedSourceItems
       </article>`;
   })
   .join('');
+
+const failureCardLoadMoreHtml = shouldShowFailureLoadMore
+  ? `<div class="failure-load-more" data-failure-load-more="cards">
+      <span data-failure-count="cards">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed tests</span>
+      <button type="button" data-load-more-failures data-failure-target="cards" aria-label="Load more failed test cards">Load More</button>
+    </div>`
+  : '';
+
+const failureTableLoadMoreHtml = shouldShowFailureLoadMore
+  ? `<div class="failure-load-more" data-failure-load-more="rows">
+      <span data-failure-count="rows">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed tests</span>
+      <button type="button" data-load-more-failures data-failure-target="rows" aria-label="Load more failed test list rows">Load More</button>
+    </div>`
+  : '';
 
 const failedTestsContent =
   !demoMode && failedTests.length === 0
@@ -2140,10 +2211,12 @@ const failedTestsContent =
         </div>
       </div>
       <div class="failure-investigation-grid">${failureInvestigationCards}</div>
+      ${failureCardLoadMoreHtml}
       <div class="failure-table-wrap">
         <h2>Detailed Failure List</h2>
         <table class="failure-detail-table"><thead><tr><th>Test Name</th><th>Module</th><th>Priority</th><th>Reason / Next Action</th></tr></thead><tbody>${failedRows}</tbody></table>
-      </div>`;
+      </div>
+      ${failureTableLoadMoreHtml}`;
 
 const evidenceCards = [
   ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Camera', '#evidence'],
@@ -5343,8 +5416,14 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-detail-table td{background:rgba(4,13,23,.68);border-top:1px solid rgba(148,163,184,.08);border-bottom:1px solid rgba(148,163,184,.08);padding:14px 12px;color:#d8e6f3;vertical-align:top}
     #failures .failure-detail-table td:first-child{border-left:1px solid rgba(148,163,184,.08);border-radius:14px 0 0 14px;color:#f8fafc;font-weight:800}
     #failures .failure-detail-table td:last-child{border-right:1px solid rgba(148,163,184,.08);border-radius:0 14px 14px 0}
+    #failures .failure-investigation-card.is-hidden,#failures .failure-detail-table tr.is-hidden{display:none}
+    #failures .failure-load-more{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;border:1px solid rgba(57,231,95,.18);border-radius:22px;background:linear-gradient(180deg,rgba(13,25,41,.72),rgba(6,15,27,.68));padding:15px 16px}
+    #failures .failure-load-more span{color:#9fb0c5;font-size:13px;font-weight:800}
+    #failures .failure-load-more button{border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:950;padding:10px 16px;cursor:pointer}
+    #failures .failure-load-more button:hover{border-color:rgba(57,231,95,.66);background:rgba(57,231,95,.17)}
     @media(max-width:1250px){#failures .failure-command-center,#failures .failure-investigation-grid{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#failures .failure-card-head{grid-template-columns:auto minmax(0,1fr)}#failures .failure-card-head .badge{grid-column:2;justify-self:start}#failures .failure-card-meta{grid-template-columns:1fr}#failures .failure-card-action{align-items:flex-start;flex-direction:column}}
+    @media(max-width:760px){#failures .failure-card-head{grid-template-columns:auto minmax(0,1fr)}#failures .failure-card-head .badge{grid-column:2;justify-self:start}#failures .failure-card-meta{grid-template-columns:1fr}#failures .failure-card-action{align-items:flex-start;flex-direction:column}#failures .failure-load-more{align-items:flex-start;flex-direction:column}}
+    @media print{#failures .failure-investigation-card.is-hidden{display:flex!important}#failures .failure-detail-table tr.is-hidden{display:table-row!important}#failures .failure-load-more{display:none!important}}
     /* Screen 07: Evidence, styled as a proof center with artifact readiness. */
     #evidence{background:radial-gradient(circle at 12% 8%,rgba(56,189,248,.12),transparent 28%),radial-gradient(circle at 84% 12%,rgba(57,231,95,.12),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
     #evidence .topbar{align-items:center!important;margin-bottom:24px!important}
@@ -5415,6 +5494,14 @@ const airGoldenDashboardHtml = `<!doctype html>
     .module-card-stats span,.module-meta span,.module-selector-summary span,.module-dashboard-metrics span,.drawer-metric,.engine-metrics div,.roadmap-card li,.compare-card,.health-stat{overflow:hidden!important}
     .module-card-stats b,.module-meta b,.module-dashboard-metrics b,.drawer-metric strong,.engine-metrics b,.compare-card strong,.health-stat strong{line-height:1.12!important}
     .page *{min-width:0}
+    html{min-height:100%;overflow-y:scroll;scrollbar-gutter:stable;scrollbar-width:thin;scrollbar-color:rgba(57,231,95,.55) #07101f}
+    body{min-height:100%;overflow-x:hidden;overflow-y:auto}
+    .app{min-height:100vh}
+    main{min-width:0;overflow:visible}
+    html::-webkit-scrollbar,body::-webkit-scrollbar{width:10px}
+    html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:#07101f}
+    html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:rgba(57,231,95,.48);border:2px solid #07101f;border-radius:999px}
+    html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover{background:rgba(57,231,95,.68)}
     #evidence .evidence-card span{display:block!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important}
     @media(max-width:900px){.topbar{align-items:flex-start!important;flex-direction:column!important}.topbar .pill,.topbar .btn{align-self:flex-start}.page{padding:20px!important}.panel{padding:18px!important}}
     /* Global identity and typography refinement: Automation Intelligence Report. */
@@ -6551,6 +6638,37 @@ const airGoldenDashboardHtml = `<!doctype html>
         card.style.display = matches ? '' : 'none';
       });
     });
+  });
+
+  document.querySelectorAll('[data-load-more-failures]').forEach(button => {
+    const target = button.dataset.failureTarget === 'rows' ? 'rows' : 'cards';
+    const items = Array.from(document.querySelectorAll(target === 'rows' ? '[data-failure-row]' : '[data-failure-card]'));
+    const countLabel = document.querySelector('[data-failure-count="' + target + '"]');
+    const loadMoreWrap = button.closest('[data-failure-load-more]');
+    const totalFailures = items.length;
+    let visibleFailures = Math.min(${FAILED_TESTS_INITIAL_VISIBLE}, totalFailures);
+    const failureBatchSize = ${FAILED_TESTS_LOAD_BATCH};
+
+    const updateFailureVisibility = () => {
+      items.forEach((item, index) => {
+        item.classList.toggle('is-hidden', index >= visibleFailures);
+      });
+
+      if (countLabel) {
+        countLabel.textContent = 'Showing ' + Math.min(visibleFailures, totalFailures) + ' of ' + totalFailures + ' failed tests';
+      }
+
+      if (visibleFailures >= totalFailures && loadMoreWrap) {
+        loadMoreWrap.remove();
+      }
+    };
+
+    button.addEventListener('click', () => {
+      visibleFailures = Math.min(visibleFailures + failureBatchSize, totalFailures);
+      updateFailureVisibility();
+    });
+
+    updateFailureVisibility();
   });
 
   const airSearch = document.getElementById('airSearch');

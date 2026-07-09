@@ -213,5 +213,127 @@ test.describe(
         await newTab.close();
       }
     );
+
+    test(
+      'Authenticated storage does not leak into a fresh browser context',
+      async ({ page, browser }) => {
+        test.setTimeout(
+          120000
+        );
+
+        const login =
+          new LoginPage(page);
+
+        await login.login(
+          TEST_USERS.subscriber.email,
+          TEST_USERS.subscriber.password
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard/,
+          {
+            timeout: 30000
+          }
+        );
+
+        const isolatedContext =
+          await browser.newContext();
+
+        try {
+          const isolatedPage =
+            await isolatedContext.newPage();
+
+          await isolatedPage.goto(
+            `${BASE_URL}/dashboard`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            isolatedPage
+          ).toHaveURL(
+            /\/login/,
+            {
+              timeout: 30000
+            }
+          );
+
+          await expect(
+            isolatedPage.locator(
+              'input[type="email"]'
+            ).first()
+          ).toBeVisible();
+        } finally {
+          await isolatedContext.close();
+        }
+      }
+    );
+
+    test(
+      'Logout invalidates dashboard access in an already opened tab',
+      async ({ page, context }) => {
+        test.setTimeout(
+          120000
+        );
+
+        const login =
+          new LoginPage(page);
+
+        await login.login(
+          TEST_USERS.subscriber.email,
+          TEST_USERS.subscriber.password
+        );
+
+        const dashboardTab =
+          await context.newPage();
+
+        try {
+          await dashboardTab.goto(
+            `${BASE_URL}/dashboard`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            dashboardTab
+          ).toHaveURL(
+            /\/dashboard/,
+            {
+              timeout: 30000
+            }
+          );
+
+          await login.logout();
+
+          await dashboardTab.goto(
+            `${BASE_URL}/dashboard`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            dashboardTab
+          ).toHaveURL(
+            /\/login/,
+            {
+              timeout: 30000
+            }
+          );
+
+          await expect(
+            dashboardTab.locator(
+              'input[type="email"]'
+            ).first()
+          ).toBeVisible();
+        } finally {
+          await dashboardTab.close();
+        }
+      }
+    );
   }
 );

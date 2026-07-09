@@ -113,7 +113,7 @@ test.describe(
         await expect(
           page.getByText(
             /^paid$/i
-          )
+          ).first()
         ).toBeVisible();
       }
     );

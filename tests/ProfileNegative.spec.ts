@@ -197,5 +197,50 @@ test.describe(
         );
       }
     );
+
+    test(
+      'Profile password drafts are cleared after refresh without saving',
+      async ({ page }) => {
+
+        const profile =
+          new ProfilePage(page);
+
+        await profile.currentPasswordInput.fill(
+          'DraftCurrentPassword1!'
+        );
+
+        await profile.newPasswordInput.fill(
+          'DraftNewPassword1!'
+        );
+
+        await profile.confirmPasswordInput.fill(
+          'DraftNewPassword1!'
+        );
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await profile.waitForProfileData();
+
+        await expect(
+          profile.currentPasswordInput
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          profile.newPasswordInput
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          profile.confirmPasswordInput
+        ).toHaveValue(
+          ''
+        );
+      }
+    );
   }
 );

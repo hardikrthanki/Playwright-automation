@@ -147,6 +147,30 @@ test.describe(
     );
 
     test(
+      'Risk and Compliance tabs remain available after refresh',
+      async ({ page }) => {
+        const riskCompliance =
+          await loginAndOpenRiskCompliance(
+            page
+          );
+
+        await riskCompliance.validateSavedRiskProfileLoaded();
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await riskCompliance.validateSavedComplianceLoaded();
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await riskCompliance.validateSavedRiskProfileLoaded();
+      }
+    );
+
+    test(
       'Risk Profile can be updated from dashboard',
       async ({ page }) => {
         test.skip(

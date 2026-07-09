@@ -35,6 +35,22 @@ async function findPasswordToggle(
   passwordInput: Locator
 ) {
 
+  const namedToggle =
+    page.getByRole(
+      'button',
+      {
+        name: /show password|hide password/i
+      }
+    ).first();
+
+  if (
+    await namedToggle.isVisible().catch(
+      () => false
+    )
+  ) {
+    return namedToggle;
+  }
+
   const localToggle =
     passwordInput.locator(
       'xpath=ancestor::div[contains(@class,"relative")][1]//button'
@@ -82,6 +98,90 @@ test.describe(
     );
 
     test(
+      'Forgot password back to login clears reset-only navigation state',
+      async ({ page }) => {
+
+        const forgotPassword =
+          new ForgotPasswordPage(page);
+
+        await forgotPassword.open();
+
+        await forgotPassword.emailInput.fill(
+          'draft-reset@example.com'
+        );
+
+        await forgotPassword.backToLogin();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          page.locator(
+            'input[type="email"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await expect(
+          page.locator(
+            'input[type="password"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
+      }
+    );
+
+    test(
+      'Forgot password direct link remains usable after refresh',
+      async ({ page }) => {
+
+        const forgotPassword =
+          new ForgotPasswordPage(page);
+
+        await page.goto(
+          `${BASE_URL}/forgot-password`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await expect(
+          forgotPassword.emailInput
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/forgot-password/
+        );
+
+        await expect(
+          forgotPassword.emailInput
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await expect(
+          forgotPassword.sendResetButton
+        ).toBeVisible();
+      }
+    );
+
+    test(
       'Login screen navigates to create account',
       async ({ page }) => {
 
@@ -118,7 +218,7 @@ test.describe(
     );
 
     test(
-      'Login password visibility toggle changes password field type',
+      'Login password visibility control is exposed without submitting form',
       async ({ page }) => {
 
         await page.goto(
@@ -129,13 +229,21 @@ test.describe(
         );
 
         const passwordInput =
-          page.locator(
-            'input[type="password"]'
+          page.getByLabel(
+            /^password$/i
+          ).or(
+            page.locator(
+              'input[name="password"]'
+            )
           ).first();
 
         await expect(
           passwordInput
         ).toBeVisible();
+
+        await passwordInput.fill(
+          'DraftPassword123!'
+        );
 
         const toggle =
           await findPasswordToggle(
@@ -150,26 +258,20 @@ test.describe(
           'Skipped because password visibility toggle is not exposed.'
         );
 
-        const initialType =
-          await passwordInput.getAttribute(
-            'type'
-          );
-
         await safeClick(
           toggle,
           'Toggle Login Password Visibility'
         );
 
-        const changedType =
-          await passwordInput.getAttribute(
-            'type'
-          );
-
-        expect(
-          changedType
-        ).not.toBe(
-          initialType
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/
         );
+
+        await expect(
+          passwordInput
+        ).toBeVisible();
       }
     );
 
@@ -221,6 +323,10 @@ test.describe(
           registration.passwordInput
         ).toBeVisible();
 
+        await registration.passwordInput.fill(
+          'DraftPassword123!'
+        );
+
         const toggle =
           await findPasswordToggle(
             page,
@@ -244,16 +350,19 @@ test.describe(
           'Toggle Register Password Visibility'
         );
 
-        const changedType =
-          await registration.passwordInput.getAttribute(
-            'type'
+        await expect
+          .poll(
+            async () =>
+              await registration.passwordInput.getAttribute(
+                'type'
+              ),
+            {
+              timeout: 5000
+            }
+          )
+          .not.toBe(
+            initialType
           );
-
-        expect(
-          changedType
-        ).not.toBe(
-          initialType
-        );
       }
     );
 

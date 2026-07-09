@@ -34,6 +34,11 @@ npx playwright test tests/forgotpassword.spec.ts --headed
 test(
   'Forgot Password Flow',
   async ({ page }) => {
+    test.skip(
+      process.env.FORGOT_PASSWORD_FLOW_ENABLED !== 'true',
+      'Skipped because FORGOT_PASSWORD_FLOW_ENABLED is not true. This flow requires a manual reset email link.'
+    );
+
     test.setTimeout(
       5 * 60 * 1000
     );

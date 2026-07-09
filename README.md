@@ -275,16 +275,26 @@ are easier to identify.
 Run manual email-link flows:
 
 ```powershell
+$env:FORGOT_PASSWORD_FLOW_ENABLED="true"
 npm run test:controlled:email -- --headed
 ```
 
 `forgotpassword.spec.ts` pauses while you open the reset email link in the same
-Playwright browser. `UnlockAccount.spec.ts` is opt-in and runs only when the
-account is already locked and `RUN_UNLOCK_ACCOUNT_TEST=true`.
+Playwright browser. It is skipped unless `FORGOT_PASSWORD_FLOW_ENABLED=true`
+so broad executions do not get stuck when the reset email is delayed.
+`UnlockAccount.spec.ts` is opt-in and runs only when the account is already
+locked and `RUN_UNLOCK_ACCOUNT_TEST=true`.
 
 ```powershell
 $env:RUN_UNLOCK_ACCOUNT_TEST="true"
 npm run test:controlled:email -- --headed
+```
+
+If an execution is already paused waiting for a reset email, press `Ctrl + C`
+and rerun without `FORGOT_PASSWORD_FLOW_ENABLED`, or exclude reset flows:
+
+```powershell
+npx playwright test --headed --grep-invert "Forgot Password|Reset Password"
 ```
 
 If these URLs are not set, controlled tests are skipped by design.

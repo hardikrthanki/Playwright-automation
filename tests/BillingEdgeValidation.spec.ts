@@ -69,6 +69,17 @@ test.describe(
     );
 
     test(
+      'Billing overview exposes plan status and management controls',
+      async ({ page }) => {
+
+        const billing =
+          new BillingPage(page);
+
+        await billing.validateOverviewContract();
+      }
+    );
+
+    test(
       'Billing history and transactions remain stable after refresh',
       async ({ page }) => {
 

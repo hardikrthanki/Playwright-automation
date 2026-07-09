@@ -217,11 +217,28 @@ extends BasePage {
           8
         );
 
+    const mobileValue =
+      await this.mobileInput
+        .inputValue()
+        .catch(
+          () => ''
+        );
+
+    const sendCodeEnabled =
+      await this.sendCodeButton
+        .isEnabled()
+        .catch(
+          () => false
+        );
+
+    const stateSummary =
+      `mobile="${mobileValue}", sendCodeEnabled=${sendCodeEnabled}`;
+
     return relevantLines.length > 0
-      ? relevantLines.join(
+      ? `${stateSummary}; ${relevantLines.join(
         ' | '
-      )
-      : 'No visible OTP/SMS error text found.';
+      )}`
+      : `${stateSummary}; No visible OTP/SMS error text found.`;
   }
 
 
@@ -240,9 +257,13 @@ extends BasePage {
       const otpVisible =
         await this.otpInput
           .first()
-          .isVisible({
+          .waitFor({
+            state: 'visible',
             timeout: 20000
           })
+          .then(
+            () => true
+          )
           .catch(
             () => false
           );
@@ -281,6 +302,8 @@ extends BasePage {
           `Registration OTP input did not appear after requesting SMS code. Visible diagnostics: ${diagnostics}`
         );
       }
+
+      await this.waitForSendCodeEnabled();
 
       await safeClick(
         this.sendCodeButton,

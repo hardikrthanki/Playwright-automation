@@ -121,6 +121,19 @@ test.describe(
     );
 
     test(
+      'Profile mobile change blocks invalid mobile number formats',
+      async ({ page }) => {
+
+        const profile =
+          await loginAndOpenProfile(
+            page
+          );
+
+        await profile.validateInvalidMobileNumberCandidatesBlocked();
+      }
+    );
+
+    test(
       'Profile mobile change can request OTP for valid mobile number',
       async ({ page }) => {
 

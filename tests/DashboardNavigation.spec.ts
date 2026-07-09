@@ -260,6 +260,17 @@ test.describe(
     );
 
     test(
+      'Notification panel remains usable after dashboard refresh',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateNotificationPanelAfterRefresh();
+      }
+    );
+
+    test(
       'Key authenticated routes stay usable after refresh',
       async ({ page }) => {
 

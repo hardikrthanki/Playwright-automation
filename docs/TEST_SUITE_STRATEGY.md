@@ -176,7 +176,17 @@ npm run test:controlled:risk-compliance -- --headed
 Forgot password and unlock:
 
 ```powershell
+$env:FORGOT_PASSWORD_FLOW_ENABLED="true"
 npm run test:controlled:email -- --headed
+```
+
+The forgot-password reset-link flow is skipped unless
+`FORGOT_PASSWORD_FLOW_ENABLED=true` because it requires a manual email link.
+Leave the flag unset for unattended execution. If a run is already waiting for
+the email link, stop it with `Ctrl + C` and rerun without the flag or use:
+
+```powershell
+npx playwright test --headed --grep-invert "Forgot Password|Reset Password"
 ```
 
 MFA:

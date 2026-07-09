@@ -358,6 +358,56 @@ test.describe(
       }
     );
 
+    test(
+      'Login form keeps user on login when invalid credentials are submitted with Enter',
+      async ({ page }) => {
+
+        await page.goto(
+          `${BASE_URL}/login`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        const emailInput =
+          page.locator(
+            'input[type="email"]'
+          ).first();
+
+        const passwordInput =
+          page.locator(
+            'input[type="password"]'
+          ).first();
+
+        await emailInput.fill(
+          'invalid-login@example.com'
+        );
+
+        await passwordInput.fill(
+          'WrongPassword123!'
+        );
+
+        await passwordInput.press(
+          'Enter'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 15000
+          }
+        );
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /\/dashboard/
+        );
+      }
+    );
+
     for (const route of protectedRoutes) {
       test(
         `Protected route ${route} redirects unauthenticated user to login`,

@@ -415,6 +415,31 @@ test.describe(
     );
 
     test(
+      'Signup mobile input normalizes spaces and parentheses',
+      async ({ page }) => {
+
+        const registration =
+          new RegistrationPage(page);
+
+        await registration.open();
+
+        await registration.mobileInput.fill(
+          '(201) 555 0123'
+        );
+
+        await expect(
+          registration.mobileInput
+        ).toHaveValue(
+          '2015550123'
+        );
+
+        await expect(
+          registration.sendCodeButton
+        ).toBeEnabled();
+      }
+    );
+
+    test(
       'Signup mobile input limits extra digits to ten digits',
       async ({ page }) => {
 
@@ -794,6 +819,41 @@ test.describe(
           registration.submitButton
         ).toBeDisabled();
       } 
+    );
+
+    test(
+      'Signup password drafts are cleared after refresh',
+      async ({ page }) => {
+
+        const registration =
+          new RegistrationPage(page);
+
+        await registration.open();
+
+        await registration.passwordInput.fill(
+          'DraftSignupPassword1!'
+        );
+
+        await registration.confirmPasswordInput.fill(
+          'DraftSignupPassword1!'
+        );
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          registration.passwordInput
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          registration.confirmPasswordInput
+        ).toHaveValue(
+          ''
+        );
+      }
     );
   }
 );

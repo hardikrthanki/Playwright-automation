@@ -97,6 +97,15 @@ test.describe(
     );
 
     test(
+      'Stripe portal return link opens application content',
+      async ({ page }) => {
+        await new BillingPage(
+          page
+        ).validateSubscriptionPortalReturnToApplication();
+      }
+    );
+
+    test(
       'Stripe add payment method screen opens without saving',
       async ({ page }) => {
         await new BillingPage(

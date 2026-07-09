@@ -501,6 +501,60 @@ async validateInvalidMobileNumberBlocked(
   );
 }
 
+async validateInvalidMobileNumberCandidatesBlocked(
+  invalidMobileNumbers = [
+    '123',
+    'abcdef',
+    '!!!!!!!!',
+    '20155501234'
+  ]
+) {
+
+  await this.openMobileNumberChange();
+
+  Logger.info(
+    'Validating Invalid Mobile Number Candidates'
+  );
+
+  for (const invalidMobileNumber of invalidMobileNumbers) {
+    await this.mobileNumberInput.fill(
+      invalidMobileNumber
+    );
+
+    const sendDisabled =
+      await this.sendMobileCodeButton
+        .isDisabled()
+        .catch(
+          () => false
+        );
+
+    if (sendDisabled) {
+      continue;
+    }
+
+    await safeClick(
+      this.sendMobileCodeButton,
+      `Send Mobile Code With Invalid Number: ${invalidMobileNumber}`
+    );
+
+    await expect(
+      this.mobileOtpInput
+    ).not.toBeVisible({
+      timeout: 3000
+    });
+
+    await expect(
+      this.mobileValidationMessage
+    ).toBeVisible({
+      timeout: 5000
+    });
+  }
+
+  Logger.success(
+    'Invalid Mobile Number Candidates Blocked'
+  );
+}
+
 async requestMobileNumberOtp(
   mobileNumber: string
 ) {

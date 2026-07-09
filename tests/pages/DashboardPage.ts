@@ -480,6 +480,24 @@ Logger.info(
     );
   }
 
+  async validateNotificationPanelAfterRefresh() {
+
+    Logger.info(
+      'Validating notification panel after dashboard refresh'
+    );
+
+    await this.page.reload({
+      waitUntil: 'domcontentloaded'
+    });
+
+    await this.validateLoaded();
+    await this.validateNotificationPanelBehavior();
+
+    Logger.success(
+      'Notification panel remains healthy after refresh'
+    );
+  }
+
   async validateProfileMenuNavigationActions() {
 
     Logger.info(

@@ -305,10 +305,13 @@ async validateTransactions() {
     'Open Transactions Tab'
   );
 
-  await expect(
+  const paidStatusBadges =
     this.page.getByText(
       /^paid$/i
-    )
+    );
+
+  await expect(
+    paidStatusBadges.first()
   ).toBeVisible();
 
   console.log(
@@ -331,7 +334,7 @@ Logger.info(
         {
           name: /invoice/i,
         }
-      ).click(),
+      ).first().click(),
     ]);
 
   await invoicePage.waitForLoadState(
@@ -473,6 +476,62 @@ async validatePlanActionControls() {
 
   Logger.success(
     'Billing Plan Action Controls Visible'
+  );
+}
+
+async validateOverviewContract() {
+
+  Logger.info(
+    'Validating Billing Overview Contract'
+  );
+
+  await this.validateBillingUrl();
+  await this.waitForBillingContent();
+
+  await expect(
+    this.plansTab
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  await expect(
+    this.historyTab
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  await expect(
+    this.page.getByText(
+      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  const manageControl =
+    await this.manageSubscriptionControl();
+
+  await expect(
+    manageControl
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  const planStatusOrAction =
+    this.page.locator(
+      'a, button, [role="status"], [data-state]'
+    ).filter({
+      hasText: /active|current|trial|free|manage|upgrade|downgrade|selected|subscription/i,
+    }).first();
+
+  await expect(
+    planStatusOrAction
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  Logger.success(
+    'Billing Overview Contract Validated'
   );
 }
 
@@ -868,6 +927,81 @@ async validateSubscriptionPortalInvoiceHistory() {
   );
 
   if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validateSubscriptionPortalReturnToApplication() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating subscription portal return link'
+  );
+
+  const returnControl =
+    portalPage.locator(
+      'a, button'
+    ).filter({
+      hasText: /return to|back to|go back/i,
+    }).first();
+
+  await expect(
+    returnControl
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await safeClick(
+    returnControl,
+    'Return To Application'
+  );
+
+  await portalPage.waitForLoadState(
+    'domcontentloaded'
+  ).catch(
+    () => undefined
+  );
+
+  await expect
+    .poll(
+      async () => {
+        const currentUrl =
+          portalPage.url();
+
+        const bodyText =
+          await portalPage.locator(
+            'body'
+          ).innerText()
+            .catch(
+              () => ''
+            );
+
+        return (
+          /ooltool|dashboard|billing/i.test(
+            currentUrl
+          ) ||
+          /ooltool|dashboard|billing|profile|plan/i.test(
+            bodyText
+          )
+        );
+      },
+      {
+        timeout: 30000,
+        message:
+          'Portal return action should land back on application content'
+      }
+    )
+    .toBe(
+      true
+    );
+
+  Logger.success(
+    'Subscription portal return link validated'
+  );
+
+  if (portalPage !== this.page && !portalPage.isClosed()) {
     await portalPage.close();
   }
 }
