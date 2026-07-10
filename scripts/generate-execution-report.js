@@ -1643,9 +1643,9 @@ const displayModules =
       }));
 
 const warningModules =
-  displayModules.filter(module => getModuleTone(module) === 'amber').length;
+  displayModules.filter(module => getModuleFilterTone(module) === 'amber').length;
 const criticalModules =
-  displayModules.filter(module => getModuleTone(module) === 'red').length;
+  displayModules.filter(module => getModuleFilterTone(module) === 'red').length;
 
 function moduleSlug(name) {
   return String(name)
@@ -1776,6 +1776,34 @@ function getModuleTone(module) {
       : 'green';
 }
 
+function getModuleFilterTone(module) {
+  const status = String(module.status || '').toLowerCase();
+  const failedCount =
+    Number(module.failed ?? Math.max(0, (module.total || 0) - (module.passed || 0) - (module.skipped || 0))) || 0;
+
+  if (
+    status.includes('at risk') ||
+    status.includes('critical') ||
+    status.includes('failed') ||
+    failedCount > 0
+  ) {
+    return 'red';
+  }
+
+  if (
+    status.includes('warning') ||
+    status.includes('partial') ||
+    status.includes('not executed') ||
+    status.includes('skipped') ||
+    status.includes('needs review') ||
+    status.includes('no data')
+  ) {
+    return 'amber';
+  }
+
+  return 'green';
+}
+
 function testBelongsToModule(test, moduleName) {
   return (test.module ?? getModuleName(test.title)) === moduleName;
 }
@@ -1788,6 +1816,7 @@ function getModuleExecutionMs(moduleName) {
 
 function renderModuleHealthCard(module) {
   const tone = getModuleTone(module);
+  const filterTone = getModuleFilterTone(module);
   const failedCount =
     module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
   const coverage =
@@ -1796,7 +1825,7 @@ function renderModuleHealthCard(module) {
       : Math.round((module.passed / module.total) * 100);
 
   return `
-    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}">
+    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-risk="${escapeHtml(module.risk)}">
       <div class="module-card-head">
         <div class="module-title">
           <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -1828,6 +1857,7 @@ const moduleDashboardCards =
   displayModules
     .map(module => {
       const tone = getModuleTone(module);
+      const filterTone = getModuleFilterTone(module);
       const failedCount =
         module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
       const coverage =
@@ -1840,7 +1870,7 @@ const moduleDashboardCards =
         getModuleBusinessScenarios(module.name).length;
 
       return `
-        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}">
+        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-risk="${escapeHtml(module.risk)}">
           <div class="module-card-head">
             <div class="module-title">
               <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2035,6 +2065,27 @@ const failedSourceItems = demoMode
 const FAILED_TESTS_INITIAL_VISIBLE = 6;
 const FAILED_TESTS_LOAD_BATCH = 6;
 const shouldShowFailureLoadMore = failedSourceItems.length > FAILED_TESTS_INITIAL_VISIBLE;
+const warningSourceItems = demoMode
+  ? [
+    {
+      title: 'MFA trusted-device scenarios are controlled',
+      module: 'MFA',
+      file: 'MfaUserFlow.spec.ts',
+      status: 'skipped',
+      reason: 'Requires MFA secret, backup code, or manual OTP confirmation.',
+    },
+    {
+      title: 'Forgot password reset link flow is controlled',
+      module: 'Password',
+      file: 'forgotpassword.spec.ts',
+      status: 'skipped',
+      reason: 'Requires external email reset-link confirmation.',
+    },
+  ]
+  : tests.filter(test =>
+    ['skipped', 'interrupted', 'unknown'].includes(test.status)
+  );
+const shouldShowWarningLoadMore = warningSourceItems.length > FAILED_TESTS_INITIAL_VISIBLE;
 
 function formatShortFailureReason(test) {
   const rawReason = String(
@@ -2084,6 +2135,183 @@ function formatShortFailureReason(test) {
     : usefulLine;
 }
 
+function getFailureFullTitle(test, index = 0) {
+  return String(test?.title ?? test?.testName ?? `Failure ${index + 1}`);
+}
+
+function getFailureShortTitle(test, index = 0) {
+  const title = getFailureFullTitle(test, index);
+  const parts = title
+    .split(' > ')
+    .map(part => part.trim())
+    .filter(Boolean);
+  const lastPart = parts.length > 0 ? parts[parts.length - 1] : title;
+
+  if (/OOLTool Onboarding Flow/i.test(title)) {
+    return 'End-to-end onboarding flow did not complete';
+  }
+
+  if (/Subscriber Login/i.test(title)) {
+    return 'Subscriber billing journey did not complete';
+  }
+
+  return lastPart;
+}
+
+function getFailureClientDescription(test, index = 0) {
+  const title = getFailureFullTitle(test, index).toLowerCase();
+  const defaultReason = formatShortFailureReason(test);
+
+  if (title.includes('transactions tab shows paid transaction status')) {
+    return 'Billing transaction history did not expose a uniquely verifiable Paid status.';
+  }
+
+  if (title.includes('invoice link opens invoice page with paid status')) {
+    return 'Invoice validation could not confirm the expected paid invoice state.';
+  }
+
+  if (title.includes('pdf link is available') || title.includes('non-empty url')) {
+    return 'Invoice PDF availability could not be confirmed after invoice validation.';
+  }
+
+  if (title.includes('onboarding flow') || title.includes('register -> verify email')) {
+    return 'The complete onboarding path did not finish in the latest execution.';
+  }
+
+  if (title.includes('subscriber login')) {
+    return 'The subscriber login and billing validation journey did not complete.';
+  }
+
+  if (title.includes('signup otp input accepts more than six digits')) {
+    return 'Signup OTP input currently accepts more than six digits before validation.';
+  }
+
+  return defaultReason === 'Review failure evidence.'
+    ? 'The expected validation did not complete in the latest execution.'
+    : defaultReason;
+}
+
+function getFailureNextAction(test, index = 0) {
+  const title = getFailureFullTitle(test, index).toLowerCase();
+
+  if (title.includes('transactions tab shows paid transaction status')) {
+    return 'Review paid-status matching on the billing history table and rerun billing validation.';
+  }
+
+  if (title.includes('invoice link opens invoice page with paid status')) {
+    return 'Open the invoice from billing history and confirm paid status with a stable selector.';
+  }
+
+  if (title.includes('pdf link is available') || title.includes('non-empty url')) {
+    return 'Confirm invoice page load first, then verify the PDF link target is populated.';
+  }
+
+  if (title.includes('onboarding flow') || title.includes('register -> verify email')) {
+    return 'Rerun onboarding after SMS/email handoff is stable and attach trace evidence.';
+  }
+
+  if (title.includes('subscriber login')) {
+    return 'Rerun subscriber smoke flow and confirm dashboard, billing, invoice, and logout steps.';
+  }
+
+  if (title.includes('signup otp input accepts more than six digits')) {
+    return 'Add a six-digit input limit, then rerun signup OTP field validation.';
+  }
+
+  return 'Review the trace, screenshot, and latest run details before rerunning this scenario.';
+}
+
+function getFailureEvidenceInfo(test) {
+  const directEvidenceCount = Array.isArray(test?.evidence)
+    ? test.evidence.length
+    : 0;
+
+  if (directEvidenceCount > 0) {
+    return {
+      status: 'Attached',
+      label: `${directEvidenceCount} artifact${directEvidenceCount === 1 ? '' : 's'} attached`,
+      action: 'Open Evidence',
+      href: '#evidence',
+      available: true,
+    };
+  }
+
+  if (hasPlaywrightReport) {
+    return {
+      status: 'Report Available',
+      label: 'Open Playwright report for trace, video, and screenshot context',
+      action: 'Open Report',
+      href: '../playwright-report/index.html',
+      available: true,
+    };
+  }
+
+  return {
+    status: 'Not Captured',
+    label: 'Evidence was not captured for this failure',
+    action: 'Evidence Needed',
+    href: '#evidence',
+    available: false,
+  };
+}
+
+function getWarningShortTitle(test, index = 0) {
+  const fullTitle = String(test?.title ?? test?.testName ?? `Warning ${index + 1}`);
+  const parts = fullTitle
+    .split(' > ')
+    .map(part => part.trim())
+    .filter(Boolean);
+
+  return parts.at(-1) ?? fullTitle;
+}
+
+function getWarningReason(test) {
+  const rawReason = String(
+    test?.reason ||
+    test?.error ||
+    test?.annotation ||
+    ''
+  ).trim();
+
+  if (rawReason) {
+    return rawReason.length > 110
+      ? `${rawReason.slice(0, 107).trim()}...`
+      : rawReason;
+  }
+
+  if (test?.status === 'skipped') {
+    return 'Skipped or gated by configuration, external dependency, manual handoff, or controlled execution scope.';
+  }
+
+  if (test?.status === 'interrupted') {
+    return 'Execution was interrupted before this scenario completed.';
+  }
+
+  return 'Scenario requires review before it can contribute to full release confidence.';
+}
+
+function getWarningNextAction(test) {
+  const title = String(test?.title ?? '').toLowerCase();
+
+  if (title.includes('forgot') || title.includes('reset')) {
+    return 'Run with the reset email link available, or keep it as controlled coverage.';
+  }
+
+  if (title.includes('mfa') || title.includes('2fa') || title.includes('backup code')) {
+    return 'Provide MFA secret, backup code, or manual OTP confirmation before running this scenario.';
+  }
+
+  if (title.includes('stripe') || title.includes('billing') || title.includes('subscription')) {
+    return 'Run when Stripe portal/test data prerequisites are available.';
+  }
+
+  if (title.includes('onboarding') || title.includes('otp') || title.includes('sms')) {
+    return 'Run when SMS OTP handoff is stable and test data is ready.';
+  }
+
+  return 'Confirm prerequisites, enable the required flag if needed, then rerun the scenario.';
+}
+
 const failedRows = (failedSourceItems.length > 0
   ? failedSourceItems
   : [
@@ -2095,18 +2323,20 @@ const failedRows = (failedSourceItems.length > 0
     },
   ])
   .map((test, index) => {
-    const title = test.title ?? test.testName ?? `Failure ${index + 1}`;
+    const fullTitle = getFailureFullTitle(test, index);
+    const title = getFailureShortTitle(test, index);
     const moduleName = test.module ?? getModuleName(title);
     const priority = test.severity ?? 'High';
-    const reason = formatShortFailureReason(test);
+    const reason = getFailureClientDescription(test, index);
+    const nextAction = getFailureNextAction(test, index);
     const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
 
     return `
     <tr${hiddenClass} data-failure-row data-failure-index="${index}">
-      <td>${escapeHtml(title)}</td>
+      <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(fullTitle)}</small></td>
       <td>${escapeHtml(moduleName)}</td>
       <td><span class="badge ${priority === 'High' || priority === 'Critical' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
-      <td>${escapeHtml(reason)}</td>
+      <td><strong>${escapeHtml(reason)}</strong><small>Next: ${escapeHtml(nextAction)}</small></td>
     </tr>`;
   })
   .join('');
@@ -2115,19 +2345,22 @@ const criticalFailedCount = failedSourceItems
   .filter(test => ['Critical', 'High'].includes(test.severity ?? 'High'))
   .length;
 const failedEvidenceCount = failedSourceItems
-  .reduce((count, test) => count + ((test.evidence ?? []).length), 0);
+  .filter(test => getFailureEvidenceInfo(test).available)
+  .length;
 const failedModuleCount = new Set(
   failedSourceItems.map(test => test.module ?? getModuleName(test.title ?? test.testName ?? 'Unknown'))
 ).size;
 
 const failureInvestigationCards = failedSourceItems
   .map((test, index) => {
-    const title = test.title ?? test.testName ?? `Failure ${index + 1}`;
+    const fullTitle = getFailureFullTitle(test, index);
+    const title = getFailureShortTitle(test, index);
     const moduleName = test.module ?? getModuleName(title);
     const severity = test.severity ?? 'High';
     const category = test.category ?? 'Execution';
-    const reason = formatShortFailureReason(test);
-    const evidenceCount = (test.evidence ?? []).length;
+    const reason = getFailureClientDescription(test, index);
+    const nextAction = getFailureNextAction(test, index);
+    const evidenceInfo = getFailureEvidenceInfo(test);
     const tone = ['Critical', 'High'].includes(severity)
       ? 'red'
         : severity === 'Medium'
@@ -2141,19 +2374,20 @@ const failureInvestigationCards = failedSourceItems
           <span class="failure-index">F${index + 1}</span>
           <div>
             <strong>${escapeHtml(title)}</strong>
-            <small>${escapeHtml(moduleName)} • ${escapeHtml(category)}</small>
+            <small title="${escapeHtml(fullTitle)}">${escapeHtml(moduleName)} &bull; ${escapeHtml(category)}</small>
           </div>
           <span class="badge ${tone}">${escapeHtml(severity)}</span>
         </div>
         <p>${escapeHtml(reason)}</p>
+        <p class="failure-next-action"><b>Next:</b> ${escapeHtml(nextAction)}</p>
         <div class="failure-card-meta">
           <span><b>${escapeHtml(test.status ?? 'failed')}</b><small>Status</small></span>
-          <span><b>${evidenceCount}</b><small>Evidence</small></span>
+          <span><b>${escapeHtml(evidenceInfo.status)}</b><small>Evidence</small></span>
           <span><b>${escapeHtml(moduleName)}</b><small>Module</small></span>
         </div>
         <div class="failure-card-action">
-          <span>${evidenceCount > 0 ? 'Evidence attached' : 'Evidence required'}</span>
-          <a href="#evidence">Open Evidence</a>
+          <span>${escapeHtml(evidenceInfo.label)}</span>
+          <a href="${escapeHtml(evidenceInfo.href)}">${escapeHtml(evidenceInfo.action)}</a>
         </div>
       </article>`;
   })
@@ -2206,8 +2440,8 @@ const failedTestsContent =
         </div>
         <div class="failure-summary-card">
           <span>Evidence</span>
-          <strong>${failedEvidenceCount}</strong>
-          <p>${failedEvidenceCount > 0 ? 'Artifacts attached' : 'Needs attachment'}</p>
+          <strong>${failedEvidenceCount}/${failedSourceItems.length}</strong>
+          <p>${failedEvidenceCount > 0 ? 'Evidence source available' : 'Needs attachment'}</p>
         </div>
       </div>
       <div class="failure-investigation-grid">${failureInvestigationCards}</div>
@@ -2218,11 +2452,95 @@ const failedTestsContent =
       </div>
       ${failureTableLoadMoreHtml}`;
 
+const warningInvestigationCards = warningSourceItems
+  .map((test, index) => {
+    const fullTitle = String(test.title ?? test.testName ?? `Warning ${index + 1}`);
+    const title = getWarningShortTitle(test, index);
+    const moduleName = test.module ?? getModuleName(fullTitle);
+    const reason = getWarningReason(test);
+    const nextAction = getWarningNextAction(test);
+    const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' is-hidden' : '';
+
+    return `
+      <article class="failure-investigation-card amber${hiddenClass}" data-warning-card data-warning-index="${index}">
+        <div class="failure-card-head">
+          <span class="failure-index warning">W${index + 1}</span>
+          <div>
+            <strong>${escapeHtml(title)}</strong>
+            <small title="${escapeHtml(fullTitle)}">${escapeHtml(moduleName)} &bull; ${escapeHtml(test.file ?? 'Controlled coverage')}</small>
+          </div>
+          <span class="badge warn">${escapeHtml(test.status ?? 'warning')}</span>
+        </div>
+        <p>${escapeHtml(reason)}</p>
+        <p class="failure-next-action"><b>Next:</b> ${escapeHtml(nextAction)}</p>
+        <div class="failure-card-meta">
+          <span><b>${escapeHtml(test.status ?? 'warning')}</b><small>Status</small></span>
+          <span><b>${escapeHtml(moduleName)}</b><small>Module</small></span>
+          <span><b>Warning</b><small>Release Signal</small></span>
+        </div>
+      </article>`;
+  })
+  .join('');
+
+const warningRows = warningSourceItems
+  .map((test, index) => {
+    const fullTitle = String(test.title ?? test.testName ?? `Warning ${index + 1}`);
+    const title = getWarningShortTitle(test, index);
+    const moduleName = test.module ?? getModuleName(fullTitle);
+    const reason = getWarningReason(test);
+    const nextAction = getWarningNextAction(test);
+    const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
+
+    return `
+      <tr${hiddenClass} data-warning-row data-warning-index="${index}">
+        <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(fullTitle)}</small></td>
+        <td>${escapeHtml(moduleName)}</td>
+        <td><span class="badge warn">${escapeHtml(test.status ?? 'warning')}</span></td>
+        <td><strong>${escapeHtml(reason)}</strong><small>Next: ${escapeHtml(nextAction)}</small></td>
+      </tr>`;
+  })
+  .join('');
+
+const warningCardLoadMoreHtml = shouldShowWarningLoadMore
+  ? `<div class="failure-load-more" data-warning-load-more="cards">
+      <span data-warning-count="cards">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${warningSourceItems.length} warning tests</span>
+      <button type="button" data-load-more-warnings data-warning-target="cards" aria-label="Load more warning test cards">Load More</button>
+    </div>`
+  : '';
+
+const warningTableLoadMoreHtml = shouldShowWarningLoadMore
+  ? `<div class="failure-load-more" data-warning-load-more="rows">
+      <span data-warning-count="rows">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${warningSourceItems.length} warning tests</span>
+      <button type="button" data-load-more-warnings data-warning-target="rows" aria-label="Load more warning test list rows">Load More</button>
+    </div>`
+  : '';
+
+const warningTestsContent = warningSourceItems.length === 0
+  ? ''
+  : `
+    <div class="warning-tests-section">
+      <div class="warning-section-head">
+        <div>
+          <span class="mission-label">Warning Coverage</span>
+          <h2>Warning Tests</h2>
+          <p>Skipped, controlled, or prerequisite-gated scenarios that explain conditional release confidence.</p>
+        </div>
+        <span class="release-status-badge warn compact" data-status="WARNING">${warningSourceItems.length} Warnings</span>
+      </div>
+      <div class="failure-investigation-grid warning-grid">${warningInvestigationCards}</div>
+      ${warningCardLoadMoreHtml}
+      <div class="failure-table-wrap warning-table-wrap">
+        <h2>Detailed Warning List</h2>
+        <table class="failure-detail-table"><thead><tr><th>Test Name</th><th>Module</th><th>Status</th><th>Reason / Next Action</th></tr></thead><tbody>${warningRows}</tbody></table>
+      </div>
+      ${warningTableLoadMoreHtml}
+    </div>`;
+
 const evidenceCards = [
-  ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Camera', '#evidence'],
-  ['Videos', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Play', '../playwright-report/index.html'],
-  ['Traces', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'Trace', '../playwright-report/index.html'],
-  ['Raw Results', hasResults ? loadedResults.source : demoMode ? 'Demo Data' : 'No Data', 'JSON', 'air-results.json'],
+  ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'IMG', '#evidence'],
+  ['Videos', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'VID', '../playwright-report/index.html'],
+  ['Traces', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'TRC', '../playwright-report/index.html'],
+  ['Raw Results', hasResults ? 'AIR Model' : demoMode ? 'Demo Data' : 'No Data', 'JSON', 'air-results.json'],
 ]
   .map(([label, value, icon, href]) => `
     <a class="evidence-card" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="${escapeHtml(value)}" data-evidence-href="${escapeHtml(href)}">
@@ -3239,11 +3557,11 @@ const decisionWorkflowSteps = [
   </article>`).join('');
 
 const healthyModuleCount =
-  displayModules.filter(module => module.status === 'Healthy').length;
+  displayModules.filter(module => getModuleFilterTone(module) === 'green').length;
 const warningModuleCount =
-  displayModules.filter(module => module.status === 'Partial').length;
+  displayModules.filter(module => getModuleFilterTone(module) === 'amber').length;
 const criticalModuleCount =
-  displayModules.filter(module => module.status === 'At Risk').length;
+  displayModules.filter(module => getModuleFilterTone(module) === 'red').length;
 const nextFocusText =
   executiveData.failed === 0
     ? 'Evidence Linking'
@@ -5419,6 +5737,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-card-head strong{display:block;color:#f8fafc;font-size:clamp(18px,1.4vw,24px);line-height:1.22;letter-spacing:-.03em;overflow-wrap:anywhere}
     #failures .failure-card-head small{display:block;margin-top:7px;color:#9fb0c5;font-size:12px;line-height:1.35}
     #failures .failure-investigation-card p{margin:0;color:#d8e6f3;font-size:15px;line-height:1.55}
+    #failures .failure-investigation-card .failure-next-action{border-left:3px solid rgba(57,231,95,.55);padding:10px 12px!important;border-radius:12px;background:rgba(57,231,95,.06);color:#cbd5e1!important;font-size:13px!important}
+    #failures .failure-investigation-card .failure-next-action b{color:#39e75f}
     #failures .failure-card-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:auto}
     #failures .failure-card-meta span{min-width:0;border:1px solid rgba(148,163,184,.10);border-radius:14px;background:rgba(4,13,23,.68);padding:12px;color:#8fa4bb;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
     #failures .failure-card-meta b{display:block;color:#f8fafc;font-size:15px;line-height:1.12;text-transform:none;letter-spacing:0;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -5433,13 +5753,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-detail-table td{background:rgba(4,13,23,.68);border-top:1px solid rgba(148,163,184,.08);border-bottom:1px solid rgba(148,163,184,.08);padding:14px 12px;color:#d8e6f3;vertical-align:top}
     #failures .failure-detail-table td:first-child{border-left:1px solid rgba(148,163,184,.08);border-radius:14px 0 0 14px;color:#f8fafc;font-weight:800}
     #failures .failure-detail-table td:last-child{border-right:1px solid rgba(148,163,184,.08);border-radius:0 14px 14px 0}
+    #failures .failure-detail-table td strong{display:block;color:#f8fafc;font-size:13px;line-height:1.35}
+    #failures .failure-detail-table td small{display:block;margin-top:5px;color:#8fa4bb;font-size:11px;line-height:1.35;overflow:hidden;text-overflow:ellipsis}
     #failures .failure-investigation-card.is-hidden,#failures .failure-detail-table tr.is-hidden{display:none}
     #failures .failure-load-more{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;border:1px solid rgba(57,231,95,.18);border-radius:22px;background:linear-gradient(180deg,rgba(13,25,41,.72),rgba(6,15,27,.68));padding:15px 16px}
     #failures .failure-load-more span{color:#9fb0c5;font-size:13px;font-weight:800}
     #failures .failure-load-more button{border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:950;padding:10px 16px;cursor:pointer}
     #failures .failure-load-more button:hover{border-color:rgba(57,231,95,.66);background:rgba(57,231,95,.17)}
+    #failures .warning-tests-section{margin-top:24px;padding-top:24px;border-top:1px solid rgba(245,197,66,.16)}
+    #failures .warning-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+    #failures .warning-section-head h2{margin:4px 0 6px!important;font-size:clamp(22px,1.9vw,32px)!important;letter-spacing:-.04em!important}
+    #failures .warning-section-head p{margin:0;color:#9fb0c5;font-size:14px;line-height:1.45;max-width:760px}
+    #failures .failure-index.warning{background:rgba(245,197,66,.13);border-color:rgba(245,197,66,.42);color:#f5c542}
+    #failures .warning-grid .failure-investigation-card{border-color:rgba(245,197,66,.30)}
+    #failures .warning-table-wrap{margin-top:18px;border-color:rgba(245,197,66,.16)}
     @media(max-width:1250px){#failures .failure-command-center,#failures .failure-investigation-grid{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#failures .failure-card-head{grid-template-columns:auto minmax(0,1fr)}#failures .failure-card-head .badge{grid-column:2;justify-self:start}#failures .failure-card-meta{grid-template-columns:1fr}#failures .failure-card-action{align-items:flex-start;flex-direction:column}#failures .failure-load-more{align-items:flex-start;flex-direction:column}}
+    @media(max-width:760px){#failures .failure-card-head{grid-template-columns:auto minmax(0,1fr)}#failures .failure-card-head .badge{grid-column:2;justify-self:start}#failures .failure-card-meta{grid-template-columns:1fr}#failures .failure-card-action{align-items:flex-start;flex-direction:column}#failures .failure-load-more,#failures .warning-section-head{align-items:flex-start;flex-direction:column}}
     @media print{#failures .failure-investigation-card.is-hidden{display:flex!important}#failures .failure-detail-table tr.is-hidden{display:table-row!important}#failures .failure-load-more{display:none!important}}
     /* Screen 07: Evidence, styled as a proof center with artifact readiness. */
     #evidence{background:radial-gradient(circle at 12% 8%,rgba(56,189,248,.12),transparent 28%),radial-gradient(circle at 84% 12%,rgba(57,231,95,.12),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
@@ -5452,7 +5781,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .evidence-score-card span{color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
     #evidence .evidence-score-card strong{color:#39e75f;font-size:clamp(42px,4vw,70px);margin:8px 0 4px}
     #evidence .evidence-score-card small{color:#9fb0c5;font-size:13px}
-    #evidence .evidence-proof-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}
+    #evidence .evidence-proof-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
     #evidence .evidence-proof-strip span{border:1px solid rgba(57,231,95,.14);border-radius:20px;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.72));padding:16px}
     #evidence .evidence-proof-strip b{display:block;color:#39e75f;font-size:clamp(24px,2.3vw,38px);line-height:1}
     #evidence .evidence-proof-strip small{display:block;margin-top:7px;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
@@ -5462,8 +5791,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .evidence-card:hover{transform:translateY(-4px)!important;border-color:rgba(57,231,95,.58)!important;box-shadow:0 28px 80px rgba(57,231,95,.10)!important}
     #evidence .evidence-icon{width:58px!important;height:58px!important;min-width:58px!important;border-radius:18px!important;background:rgba(57,231,95,.12)!important;border-color:rgba(57,231,95,.32)!important;color:#39e75f!important}
     #evidence .evidence-card strong{max-width:100%;font-size:19px!important;line-height:1.15!important;color:#f8fafc!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
-    #evidence .evidence-card span{font-size:14px!important;color:#9fb0c5!important;line-height:1.4!important;overflow-wrap:anywhere}
-    #evidence .evidence-card em{position:absolute;right:20px;bottom:20px;margin:0!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 14px;color:#39e75f!important;text-align:center}
+    #evidence .evidence-card span{font-size:14px!important;color:#9fb0c5!important;line-height:1.4!important;overflow-wrap:break-word}
+    #evidence .evidence-card em{position:absolute;right:20px;bottom:20px;margin:0!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 14px;color:#39e75f!important;text-align:center;max-width:calc(100% - 40px);white-space:normal;line-height:1.15}
     #evidence .panel{border-radius:28px!important;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.74))!important;border:1px solid rgba(57,231,95,.14)!important;padding:24px!important}
     #evidence .thumb-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important}
     #evidence .thumb{min-height:172px!important;border-radius:20px!important;background:rgba(4,13,23,.72)!important;border:1px solid rgba(148,163,184,.12)!important;padding:12px!important}
@@ -5471,7 +5800,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .thumb span{color:#d8e6f3!important;font-size:13px!important;font-weight:800!important}
     #evidence .thumb-grid .empty-state{border-radius:22px!important;border:1px dashed rgba(57,231,95,.30)!important;background:rgba(57,231,95,.06)!important;padding:34px!important}
     #evidence .panel:last-of-type p{color:#d8e6f3!important;line-height:1.65!important}
-    #evidence span,#evidence strong,#evidence small,#evidence p{overflow-wrap:anywhere!important}
+    #evidence p{overflow-wrap:anywhere!important}
+    #evidence .evidence-proof-strip small,#evidence .evidence-card strong,#evidence .evidence-icon{overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important}
     @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}}
     @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}#evidence .evidence-card-body{min-height:118px}}
     /* Final Engineering Mode polish: unify spacing, cards, typography, chart surfaces, and controls. */
@@ -5520,7 +5850,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     html::-webkit-scrollbar-track,body::-webkit-scrollbar-track{background:#07101f}
     html::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:rgba(57,231,95,.48);border:2px solid #07101f;border-radius:999px}
     html::-webkit-scrollbar-thumb:hover,body::-webkit-scrollbar-thumb:hover{background:rgba(57,231,95,.68)}
-    #evidence .evidence-card span{display:block!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:break-word!important}
+    #evidence .evidence-card span{display:block!important;max-width:100%!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
+    #evidence .evidence-card strong,#evidence .evidence-card small,#evidence .evidence-card em,#evidence .evidence-icon{word-break:normal!important;overflow-wrap:normal!important;hyphens:none!important}
     @media(max-width:900px){.topbar{align-items:flex-start!important;flex-direction:column!important}.topbar .pill,.topbar .btn{align-self:flex-start}.page{padding:20px!important}.panel{padding:18px!important}}
     /* Global identity and typography refinement: Automation Intelligence Report. */
     .brand-lockup{display:flex;align-items:center;gap:12px;margin-bottom:10px}
@@ -5545,6 +5876,149 @@ const airGoldenDashboardHtml = `<!doctype html>
     @media(max-width:1100px){.executive-mode-header{grid-template-columns:1fr!important}.executive-toolbar{grid-template-columns:1fr!important;justify-items:start!important}.mode-toggle{justify-self:start!important}.executive-kpi-stack{grid-template-columns:repeat(2,minmax(0,1fr))!important}.executive-evidence-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}.cover-page{min-height:auto!important}}
     @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}.page-title-row{align-items:flex-start}.page-heading-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:12px!important}.page-heading-icon svg{width:19px!important;height:19px!important}}
     @media(max-width:1100px){.app{grid-template-columns:1fr!important}.app:before{display:none}.sidebar{position:relative!important;width:100%!important;max-width:none;min-width:0;height:auto;min-height:0;overflow:visible}main{grid-column:auto}}
+    /* Report-wide label resilience: keep labels readable without breaking card layouts. */
+    .nav a span,
+    .nav-section,
+    .eyebrow,
+    .label,
+    .kpi span,
+    .cover-stat span,
+    .wow-card span,
+    .compare-card span,
+    .ai-metric span,
+    .health-stat span,
+    .module-card-stats small,
+    .module-meta span,
+    .module-selector-summary span,
+    .module-dashboard-metrics span,
+    .engine-metrics small,
+    .engine-head span,
+    .freshness-strip b,
+    .history-trend-head span,
+    .evidence-proof-strip small,
+    .evidence-card strong,
+    .evidence-icon,
+    .thumb span,
+    .badge,
+    .mini-badge,
+    .pill,
+    .btn,
+    .module-button,
+    .release-status-badge.compact,
+    .trend-indicator {
+      max-width:100%!important;
+      min-width:0!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      word-break:normal!important;
+      overflow-wrap:normal!important;
+      hyphens:none!important;
+    }
+    .topbar h1,
+    .page-title-row h1,
+    .panel h2,
+    .panel h3,
+    .card h2,
+    .module-title strong,
+    .roadmap-card-head h2,
+    .engine-card h3,
+    .failure-card-head strong,
+    .failure-detail-table td strong {
+      word-break:normal!important;
+      overflow-wrap:break-word!important;
+      hyphens:none!important;
+    }
+    .kpi strong,
+    .cover-stat strong,
+    .wow-card strong,
+    .compare-card strong,
+    .ai-metric strong,
+    .health-stat strong,
+    .module-card-stats b,
+    .module-meta b,
+    .module-selector-summary b,
+    .module-dashboard-metrics b,
+    .engine-metrics b,
+    .freshness-strip span {
+      white-space:normal!important;
+      word-break:normal!important;
+      overflow-wrap:break-word!important;
+      hyphens:none!important;
+    }
+    .failure-card-action span,
+    .failure-next-action,
+    .failure-detail-table td small,
+    .recommendation-card p,
+    .roadmap-card p,
+    .roadmap-card li,
+    .module-health-card p,
+    .module-selector-card p,
+    .module-dashboard-card p,
+    .compare-card small,
+    .drawer-test-row span,
+    .drawer-test-row strong,
+    .history-narrative p,
+    .history-change-list li,
+    .summary-lead,
+    .empty-note,
+    .empty-state p {
+      word-break:normal!important;
+      overflow-wrap:break-word!important;
+      hyphens:none!important;
+    }
+    .badge,
+    .mini-badge,
+    .pill,
+    .release-status-badge.compact {
+      display:inline-flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      width:auto!important;
+      max-inline-size:100%!important;
+    }
+    .release-status-badge:not(.compact) {
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+      word-break:normal!important;
+      overflow-wrap:break-word!important;
+    }
+    .evidence-grid,
+    .thumb-grid,
+    .module-card-grid,
+    .module-dashboard-grid,
+    .compare-grid,
+    .roadmap-grid,
+    .core-status-grid,
+    .history-section-grid {
+      align-items:stretch!important;
+    }
+    .evidence-card,
+    .module-health-card,
+    .module-selector-card,
+    .module-dashboard-card,
+    .compare-card,
+    .roadmap-card,
+    .engine-card,
+    .history-trend-card,
+    .failure-investigation-card {
+      overflow:hidden!important;
+    }
+    .evidence-card em,
+    .failure-card-action a,
+    .module-button {
+      flex:0 0 auto!important;
+      white-space:normal!important;
+      overflow-wrap:break-word!important;
+      word-break:normal!important;
+    }
+    td,
+    th {
+      word-break:normal!important;
+      overflow-wrap:break-word!important;
+      hyphens:none!important;
+    }
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -5765,7 +6239,7 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     <section class="page" id="failures">
       <div class="topbar"><div><div class="eyebrow">PAGE 06</div>${pageHeading('failures', 'Failed Tests')}<p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
-      <div class="panel">${failedTestsContent}</div>
+      <div class="panel">${failedTestsContent}${warningTestsContent}</div>
       ${renderPageFooter(6)}
     </section>
 
@@ -6649,14 +7123,15 @@ const airGoldenDashboardHtml = `<!doctype html>
 
   document.querySelectorAll('[data-module-filter]').forEach(button => {
     button.addEventListener('click', () => {
-      const filter = button.dataset.moduleFilter;
+      const filter = String(button.dataset.moduleFilter || 'all').toLowerCase();
       document.querySelectorAll('[data-module-filter]').forEach(item => item.classList.remove('active'));
       button.classList.add('active');
 
       document.querySelectorAll('.module-health-card[data-module], .module-dashboard-card[data-module]').forEach(card => {
+        const moduleStatus = String(card.dataset.moduleStatus || '').toLowerCase();
         const matches =
           filter === 'all' ||
-          card.classList.contains(filter);
+          moduleStatus === filter;
         card.style.display = matches ? '' : 'none';
       });
     });
@@ -6691,6 +7166,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     });
 
     updateFailureVisibility();
+  });
+
+  document.querySelectorAll('[data-load-more-warnings]').forEach(button => {
+    const target = button.dataset.warningTarget === 'rows' ? 'rows' : 'cards';
+    const items = Array.from(document.querySelectorAll(target === 'rows' ? '[data-warning-row]' : '[data-warning-card]'));
+    const countLabel = document.querySelector('[data-warning-count="' + target + '"]');
+    const loadMoreWrap = button.closest('[data-warning-load-more]');
+    const totalWarnings = items.length;
+    let visibleWarnings = Math.min(${FAILED_TESTS_INITIAL_VISIBLE}, totalWarnings);
+    const warningBatchSize = ${FAILED_TESTS_LOAD_BATCH};
+
+    const updateWarningVisibility = () => {
+      items.forEach((item, index) => {
+        item.classList.toggle('is-hidden', index >= visibleWarnings);
+      });
+
+      if (countLabel) {
+        countLabel.textContent = 'Showing ' + Math.min(visibleWarnings, totalWarnings) + ' of ' + totalWarnings + ' warning tests';
+      }
+
+      if (visibleWarnings >= totalWarnings && loadMoreWrap) {
+        loadMoreWrap.remove();
+      }
+    };
+
+    button.addEventListener('click', () => {
+      visibleWarnings = Math.min(visibleWarnings + warningBatchSize, totalWarnings);
+      updateWarningVisibility();
+    });
+
+    updateWarningVisibility();
   });
 
   const airSearch = document.getElementById('airSearch');

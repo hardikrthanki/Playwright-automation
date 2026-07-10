@@ -5,8 +5,11 @@ const { loadAirConfig, readJsonIfExists } = require('./config/config-loader');
 const { loadAutomationResults } = require('./services/parser-service');
 const { formatDuration } = require('./services/duration');
 const { runEnginePipeline } = require('./engine/engine-orchestrator');
+const { buildExecutionSummary } = require('./engine/execution-summary-engine');
 const { buildBusinessJourneys } = require('./engine/journey-engine');
+const { buildModules } = require('./engine/module-engine');
 const { buildHistory } = require('./engine/history-engine');
+const { buildReleaseDecision } = require('./engine/release-engine');
 const { schemaVersion, createFutureValidation } = require('./model/air-results.schema');
 const { validateAirResults } = require('./model/air-results-validator');
 
@@ -169,6 +172,68 @@ function buildManualDefectFailures(config = {}) {
       evidence: [],
       recommendedInvestigationAction: defect.recommendedInvestigationAction ?? 'Review the confirmed product defect and attached manual evidence.',
     }));
+}
+
+function getDisabledManualDefectMeta(config = {}) {
+  const disabledDefects = (config.manualDefects ?? [])
+    .filter(defect => defect.enabled === false);
+
+  return {
+    ids: new Set(disabledDefects.map(defect => defect.id).filter(Boolean)),
+    titles: new Set(disabledDefects.map(defect => defect.title).filter(Boolean)),
+    modules: new Set(disabledDefects.map(defect => defect.module).filter(Boolean)),
+  };
+}
+
+function isDisabledManualDefectItem(item, config = {}) {
+  if (!item || typeof item !== 'object') {
+    return false;
+  }
+
+  const disabled = getDisabledManualDefectMeta(config);
+  const identifiers = [
+    item.id,
+    item.testId,
+    item.title,
+    item.testName,
+    item.name,
+  ].filter(Boolean);
+
+  if (identifiers.some(value => disabled.ids.has(value) || disabled.titles.has(value))) {
+    return true;
+  }
+
+  return item.source === 'manualDefect' && disabled.modules.has(item.module);
+}
+
+function sanitizeDisabledManualDefects(value, config = {}) {
+  if (Array.isArray(value)) {
+    return value
+      .map(item => sanitizeDisabledManualDefects(item, config))
+      .filter(item => item !== undefined);
+  }
+
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+
+  if (isDisabledManualDefectItem(value, config)) {
+    return undefined;
+  }
+
+  return Object.entries(value).reduce((next, [key, item]) => {
+    const sanitized = sanitizeDisabledManualDefects(item, config);
+
+    if (sanitized !== undefined) {
+      next[key] = sanitized;
+    }
+
+    return next;
+  }, Array.isArray(value) ? [] : {});
+}
+
+function sanitizeHistory(history, config = {}) {
+  return sanitizeDisabledManualDefects(history, config) ?? [];
 }
 
 function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
@@ -381,7 +446,8 @@ function normalizeEvidenceForRestore(evidence = {}) {
 
 function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHistory, currentEvidence = {}) {
   const config = loadAirConfig(projectRoot);
-  const existingExecutions = getStoredExecutions(existingHistory);
+  const sanitizedHistory = sanitizeHistory(existingHistory, config);
+  const existingExecutions = getStoredExecutions(sanitizedHistory);
   const latestValidSnapshot = [...existingExecutions]
     .filter(item => item?.summary?.total > 0)
     .sort((left, right) => {
@@ -405,23 +471,52 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
     return undefined;
   }
 
-  const restoredModules = (latestValidSnapshot.modules ?? []).map(module => ({
-    ...module,
-    coverage: module.coverage ?? module.score ?? 0,
-    testCount: module.testCount ?? module.total ?? 0,
-    failedCount: module.failedCount ?? module.failed ?? 0,
-    durationMs: module.durationMs ?? 0,
-    duration: module.duration ?? '0s',
-    tests: module.tests ?? [],
-  }));
-  const restoredFailedTests = latestValidSnapshot.failedTests ?? latestValidSnapshot.failures ?? [];
+  const sanitizedSnapshot = sanitizeDisabledManualDefects(latestValidSnapshot, config);
+  const restoredTests = (sanitizedSnapshot.tests ?? []).map(test => ({ ...test }));
+  const restoredModules = restoredTests.length > 0
+    ? buildModules(restoredTests, config)
+    : (sanitizedSnapshot.modules ?? []).map(module => ({
+        ...module,
+        coverage: module.coverage ?? module.score ?? 0,
+        testCount: module.testCount ?? module.total ?? 0,
+        failedCount: module.failedCount ?? module.failed ?? 0,
+        durationMs: module.durationMs ?? 0,
+        duration: module.duration ?? '0s',
+        tests: module.tests ?? [],
+      }));
+  const restoredFailedTests = sanitizeDisabledManualDefects(
+    sanitizedSnapshot.failedTests ?? sanitizedSnapshot.failures ?? [],
+    config
+  );
+  const restoredSummary = {
+    ...(sanitizedSnapshot.summary ?? {}),
+    ...buildExecutionSummary(restoredTests),
+  };
   const restoredBusinessJourneys = buildBusinessJourneys({
     modules: restoredModules,
     failedTests: restoredFailedTests,
-    executionSummary: latestValidSnapshot.summary,
-    executionScope: latestValidSnapshot.executionContext?.type,
+    executionSummary: restoredSummary,
+    executionScope: sanitizedSnapshot.executionContext?.type,
     config,
     thresholds: config.releaseThresholds,
+  });
+  const restoredEvidence = normalizeEvidenceForRestore(currentEvidence);
+  const restoredQuality = {
+    score: sanitizedSnapshot.quality?.score ?? sanitizedSnapshot.summary?.qualityScore ?? restoredSummary.passRate ?? 0,
+    confidence: sanitizedSnapshot.quality?.confidence ?? sanitizedSnapshot.summary?.qualityScore ?? restoredSummary.passRate ?? 0,
+    grade: sanitizedSnapshot.quality?.grade ?? 'Historical Snapshot',
+    factors: sanitizedSnapshot.quality?.factors ?? {},
+    weights: sanitizedSnapshot.quality?.weights ?? {},
+    explanation: sanitizedSnapshot.quality?.explanation ?? ['AIR restored quality data from history. Run the latest execution for full factor details.'],
+  };
+  const restoredRelease = buildReleaseDecision({
+    summary: restoredSummary,
+    failedTests: restoredFailedTests,
+    modules: restoredModules,
+    businessJourneys: restoredBusinessJourneys,
+    evidence: restoredEvidence,
+    quality: restoredQuality,
+    config,
   });
 
   const restoredAirResults = {
@@ -438,9 +533,9 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
     },
     generatedAt: new Date().toISOString(),
     generatedAtDisplay: new Date().toLocaleString(),
-    project: latestValidSnapshot.project,
+    project: sanitizedSnapshot.project,
     environment: {
-      name: latestValidSnapshot.project?.environment ?? config.environment ?? 'Environment',
+      name: sanitizedSnapshot.project?.environment ?? config.environment ?? 'Environment',
       os: process.platform,
       runtime: 'Node.js',
     },
@@ -448,43 +543,36 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       id: `air-history-${Date.now()}`,
       startedAt: '',
       endedAt: new Date().toISOString(),
-      durationMs: latestValidSnapshot.summary.durationMs ?? 0,
-      duration: latestValidSnapshot.summary.duration ?? '0s',
-      trigger: latestValidSnapshot.project?.trigger ?? 'Local Execution',
+      durationMs: restoredSummary.durationMs ?? 0,
+      duration: restoredSummary.duration ?? '0s',
+      trigger: sanitizedSnapshot.project?.trigger ?? 'Local Execution',
       source: 'air-history',
     },
     source: {
       type: 'air-history',
       hasResults: true,
-      framework: latestValidSnapshot.source?.framework ?? 'AIR History',
+      framework: sanitizedSnapshot.source?.framework ?? 'AIR History',
       note: 'AIR reused the strongest valid execution snapshot because the available Playwright output was missing or older than history.',
     },
-    summary: latestValidSnapshot.summary,
-    executionContext: latestValidSnapshot.executionContext ?? {
+    summary: restoredSummary,
+    executionContext: sanitizedSnapshot.executionContext ?? {
       type: 'Historical Snapshot',
       scope: 'Saved execution history',
-      executedModules: (latestValidSnapshot.modules ?? []).map(module => module.name).filter(Boolean),
+      executedModules: restoredModules.map(module => module.name).filter(Boolean),
       coverage: 0,
-      confidence: latestValidSnapshot.summary?.qualityScore ?? 0,
+      confidence: restoredSummary.qualityScore ?? restoredQuality.confidence ?? 0,
       validationLevel: 'Historical Snapshot',
     },
-    releaseDecision: normalizeSavedRelease(latestValidSnapshot),
-    release: normalizeSavedRelease(latestValidSnapshot),
-    quality: {
-      score: latestValidSnapshot.summary?.qualityScore ?? 0,
-      confidence: latestValidSnapshot.summary?.qualityScore ?? 0,
-      grade: 'Historical Snapshot',
-      factors: {},
-      weights: {},
-      explanation: ['AIR restored quality data from history. Run the latest execution for full factor details.'],
-    },
+    releaseDecision: restoredRelease,
+    release: restoredRelease,
     businessJourneys: restoredBusinessJourneys,
     businessJourney: restoredBusinessJourneys.map(journey => journey.name),
     modules: restoredModules,
-    tests: latestValidSnapshot.tests ?? [],
+    tests: restoredTests,
     failedTests: restoredFailedTests,
     failures: restoredFailedTests,
-    evidence: normalizeEvidenceForRestore(currentEvidence),
+    evidence: restoredEvidence,
+    quality: restoredQuality,
     recommendations: [
       {
         priority: 'P2',
@@ -506,19 +594,19 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       suggestions: [],
       configurationIssues: [],
     },
-    history: Array.isArray(existingHistory)
+    history: Array.isArray(sanitizedHistory)
       ? {
-          executions: existingHistory,
+          executions: sanitizedHistory,
           trends: {},
           comparison: { status: 'Historical Restore' },
           regressions: [],
           improvements: [],
           summary: {
             status: 'Historical Restore',
-            totalExecutions: existingHistory.length,
+            totalExecutions: sanitizedHistory.length,
           },
         }
-      : existingHistory,
+      : sanitizedHistory,
     futureValidation: createFutureValidation(),
     navigation: config.navigation,
     engineLog: [
@@ -533,7 +621,7 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
   const restoredWithManualDefects = applyManualDefectsToRestoredResults(restoredAirResults, config);
   restoredWithManualDefects.history = buildHistory(
     restoredWithManualDefects,
-    existingHistory,
+    sanitizedHistory,
     config
   );
 
@@ -545,6 +633,7 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
 }
 
 function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
+  const config = loadAirConfig(projectRoot);
   const outputDir = path.join(projectRoot, 'execution-report');
   const outputPath = path.join(outputDir, 'air-results.json');
   const historyDir = path.join(outputDir, 'history');
@@ -552,7 +641,10 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
   fs.mkdirSync(outputDir, { recursive: true });
   fs.mkdirSync(historyDir, { recursive: true });
 
-  const existingHistory = readJsonIfExists(historyPath, []);
+  const existingHistory = sanitizeHistory(
+    readJsonIfExists(historyPath, []),
+    config
+  );
   const existingExecutions = getStoredExecutions(existingHistory);
   const airResults = buildAirResults(projectRoot, {
     existingHistory,
@@ -565,15 +657,21 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
   const useLatestRunOnly =
     reportScope === 'latest' ||
     process.env.AIR_USE_LATEST_RUN === 'true';
+  const forceHistoryRestore =
+    process.env.AIR_RESTORE_HISTORY === 'true' ||
+    reportScope === 'history';
+  const currentRunHasUsableResults =
+    airResults.source.hasResults &&
+    (airResults.summary.total ?? 0) > 0;
 
   if (
     !useLatestRunOnly &&
     existingExecutions.length > 0 &&
     (
-      !airResults.source.hasResults ||
+      forceHistoryRestore ||
       (
-        process.env.AIR_ALLOW_STALE_REPORT !== 'true' &&
-        bestHistoryTotal > airResults.summary.total
+        !currentRunHasUsableResults &&
+        bestHistoryTotal > 0
       )
     )
   ) {

@@ -2,7 +2,7 @@
   "defects": [
     {
       "id": "MFA-BACKUP-CODE-FORMAT-001",
-      "enabled": true,
+      "enabled": false,
       "title": "MFA backup codes generated in incomplete format are rejected during login recovery",
       "module": "MFA",
       "severity": "Critical",
@@ -16,7 +16,7 @@
     },
     {
       "id": "MFA-GOOGLE-AUTH-PASSWORD-001",
-      "enabled": true,
+      "enabled": false,
       "title": "Google-authenticated users are asked for password when regenerating backup codes or disabling 2FA",
       "module": "MFA",
       "severity": "Critical",

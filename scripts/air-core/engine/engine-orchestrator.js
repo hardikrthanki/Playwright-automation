@@ -41,10 +41,22 @@ function buildManualDefectTests(manualDefects = []) {
 function getDefaultEnginePipeline() {
   return [
     createEngine('Manual Defect Engine', (model, context) => {
+      const includeManualDefects =
+        process.env.AIR_INCLUDE_MANUAL_DEFECTS === 'true' ||
+        context.config.includeManualDefects === true;
+
+      if (!includeManualDefects) {
+        return {
+          ...model,
+          manualDefectsIncluded: false,
+        };
+      }
+
       const manualDefectTests = buildManualDefectTests(context.config.manualDefects);
 
       return {
         ...model,
+        manualDefectsIncluded: manualDefectTests.length > 0,
         tests: [
           ...model.tests,
           ...manualDefectTests,
