@@ -98,6 +98,59 @@ test.describe(
     );
 
     test(
+      'Login direct link remains usable after refresh',
+      async ({ page }) => {
+
+        await page.goto(
+          `${BASE_URL}/login`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await expect(
+          page.locator(
+            'input[type="email"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await expect(
+          page.locator(
+            'input[type="password"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /sign in/i
+            }
+          )
+        ).toBeVisible({
+          timeout: 10000
+        });
+      }
+    );
+
+    test(
       'Forgot password back to login clears reset-only navigation state',
       async ({ page }) => {
 
@@ -214,6 +267,84 @@ test.describe(
             timeout: 10000
           }
         );
+      }
+    );
+
+    test(
+      'Auth pages remain usable with browser back and forward',
+      async ({ page }) => {
+
+        await page.goto(
+          `${BASE_URL}/login`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /create account|sign up/i
+            }
+          ).or(
+            page.getByText(
+              /create account|sign up/i
+            )
+          ).first(),
+          'Open Create Account'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/register|\/signup/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await page.goBack({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          page.locator(
+            'input[type="email"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await page.goForward({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/register|\/signup/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          page.locator(
+            'input[type="email"]'
+          ).first()
+        ).toBeVisible({
+          timeout: 10000
+        });
       }
     );
 

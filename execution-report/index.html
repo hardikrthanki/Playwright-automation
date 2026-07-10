@@ -347,8 +347,10 @@
     .executive-panel-head h2{margin:0;font-size:20px;letter-spacing:-.025em}
     .executive-panel-head a{color:#7ee787;font-weight:800;font-size:13px}
     .business-impact-card{grid-column:2}
-    .business-impact-layout{display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;align-items:center}
-    .business-impact-orb{display:grid;place-items:center;width:86px;height:86px;border-radius:50%;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.42);color:#7ee787;font-weight:950;box-shadow:0 0 44px rgba(57,231,95,.18)}
+    .business-impact-layout{display:grid;grid-template-columns:82px minmax(0,1fr);gap:18px;align-items:center}
+    .business-impact-orb{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:linear-gradient(145deg,rgba(57,231,95,.16),rgba(8,16,30,.72));border:1px solid rgba(57,231,95,.34);color:#7ee787;font-weight:950;box-shadow:0 16px 36px rgba(57,231,95,.10)}
+    .business-impact-orb strong{font-size:16px;line-height:1;letter-spacing:.02em}
+    .business-impact-orb span{margin-top:7px;color:#9fb0c5;font-size:10px;text-transform:uppercase;letter-spacing:.12em}
     .business-impact-layout ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;color:#dbe5ef}
     .business-impact-layout li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:start}
     .business-impact-layout li:before{content:"";width:9px;height:9px;border-radius:50%;background:#39e75f;margin-top:7px;box-shadow:0 0 12px rgba(57,231,95,.7)}
@@ -368,7 +370,8 @@
     .executive-trend-svg .trend-grid{stroke-dasharray:3 5}
     .executive-trend-svg .trend-line{fill:none;stroke:#7ee787;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(57,231,95,.40))}
     .executive-trend-svg .trend-fill{fill:url(#executiveTrendFill)}
-    .executive-trend-svg circle{fill:#d7fbe0;stroke:#39e75f;stroke-width:3}
+    .executive-trend-svg .trend-dot{fill:#10221b;stroke:#7ee787;stroke-width:2}
+    .executive-trend-svg .trend-dot-current{fill:#d7fbe0;stroke:#39e75f;stroke-width:3}
     .executive-trend-svg text{fill:#9aa7b7;font-size:11px;text-anchor:middle}
     .executive-empty-trend{min-height:166px;display:grid;place-items:center;text-align:center;border:1px dashed rgba(148,163,184,.18);border-radius:14px;color:#9aa7b7}
     .executive-empty-trend strong{display:block;color:#f8fafc;margin-bottom:6px}
@@ -1064,10 +1067,12 @@
     .executive-panel-head{margin-bottom:14px!important}
     .executive-panel-head h2{font-size:21px!important}
     .executive-panel-head a{color:#38a3ff!important;text-decoration:none!important}
-    .business-impact-layout{grid-template-columns:92px minmax(0,.9fr) minmax(210px,1fr)!important;gap:18px!important}
+    .business-impact-layout{grid-template-columns:82px minmax(0,.9fr) minmax(210px,1fr)!important;gap:18px!important}
     .business-impact-spark{grid-column:auto!important;min-width:0}
     .business-impact-orb{width:82px!important;height:82px!important;font-size:0!important}
     .business-impact-orb:before{content:"● ●";font-size:20px;letter-spacing:-4px}
+    .business-impact-orb{width:72px!important;height:72px!important;font-size:inherit!important;border-radius:18px!important}
+    .business-impact-orb:before{content:none!important}
     .executive-trend-svg{min-height:154px!important}
     .executive-change-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
     .executive-change-card{text-align:center!important;align-items:center!important;border-radius:20px!important;min-height:130px!important}
@@ -1347,12 +1352,13 @@
     #evidence .evidence-proof-strip b{display:block;color:#39e75f;font-size:clamp(24px,2.3vw,38px);line-height:1}
     #evidence .evidence-proof-strip small{display:block;margin-top:7px;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
     #evidence .evidence-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important;margin-bottom:22px}
-    #evidence .evidence-card{min-width:0;min-height:178px!important;display:flex!important;align-items:flex-start!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:20px!important;box-shadow:0 18px 56px rgba(0,0,0,.16)}
+    #evidence .evidence-card{position:relative;min-width:0;min-height:178px!important;display:flex!important;align-items:flex-start!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:20px 20px 76px!important;box-shadow:0 18px 56px rgba(0,0,0,.16)}
+    #evidence .evidence-card-body{min-width:0;display:flex;flex:1;flex-direction:column;align-items:flex-start}
     #evidence .evidence-card:hover{transform:translateY(-4px)!important;border-color:rgba(57,231,95,.58)!important;box-shadow:0 28px 80px rgba(57,231,95,.10)!important}
     #evidence .evidence-icon{width:58px!important;height:58px!important;min-width:58px!important;border-radius:18px!important;background:rgba(57,231,95,.12)!important;border-color:rgba(57,231,95,.32)!important;color:#39e75f!important}
-    #evidence .evidence-card strong{font-size:19px!important;line-height:1.15!important;color:#f8fafc!important}
+    #evidence .evidence-card strong{max-width:100%;font-size:19px!important;line-height:1.15!important;color:#f8fafc!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
     #evidence .evidence-card span{font-size:14px!important;color:#9fb0c5!important;line-height:1.4!important;overflow-wrap:anywhere}
-    #evidence .evidence-card em{margin-top:14px!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 10px;color:#39e75f!important}
+    #evidence .evidence-card em{position:absolute;right:20px;bottom:20px;margin:0!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 14px;color:#39e75f!important;text-align:center}
     #evidence .panel{border-radius:28px!important;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.74))!important;border:1px solid rgba(57,231,95,.14)!important;padding:24px!important}
     #evidence .thumb-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important}
     #evidence .thumb{min-height:172px!important;border-radius:20px!important;background:rgba(4,13,23,.72)!important;border:1px solid rgba(148,163,184,.12)!important;padding:12px!important}
@@ -1362,7 +1368,7 @@
     #evidence .panel:last-of-type p{color:#d8e6f3!important;line-height:1.65!important}
     #evidence span,#evidence strong,#evidence small,#evidence p{overflow-wrap:anywhere!important}
     @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}}
+    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}#evidence .evidence-card-body{min-height:118px}}
     /* Final Engineering Mode polish: unify spacing, cards, typography, chart surfaces, and controls. */
     :root{--air-gap-section:clamp(22px,2.4vw,34px);--air-gap-card:clamp(12px,1.25vw,18px);--air-card-radius:22px;--air-panel-radius:28px}
     .page{padding:clamp(24px,2.6vw,38px)!important}
@@ -1418,6 +1424,10 @@
     .brand-lockup .brand{font-size:62px!important;line-height:.82!important;letter-spacing:-6px!important;margin:0!important}
     .brand-sub{margin:8px 4px 26px!important;text-align:left!important;color:#f8fafc!important;font-size:13px!important;line-height:1.38!important;font-weight:750!important}
     .brand-sub span{color:#39e75f!important}
+    .page-title-row{display:flex;align-items:center;gap:12px;margin:4px 0 5px}
+    .page-title-row h1{margin:0!important}
+    .page-heading-icon{display:inline-grid!important;place-items:center!important;width:42px!important;height:42px!important;min-width:42px!important;border-radius:14px!important;background:linear-gradient(135deg,rgba(57,231,95,.16),rgba(57,231,95,.06))!important;border:1px solid rgba(57,231,95,.38)!important;color:#9cffab!important;box-shadow:0 14px 34px rgba(57,231,95,.10)!important}
+    .page-heading-icon svg{width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important}
     .topbar h1{font-size:clamp(28px,2.35vw,40px)!important;line-height:1.02!important;letter-spacing:-.05em!important}
     #executive .topbar h1,#health .topbar h1,#journey .topbar h1,#module-dashboard .topbar h1,#failures .topbar h1,#evidence .topbar h1{font-size:clamp(28px,2.35vw,40px)!important;line-height:1.02!important;letter-spacing:-.05em!important}
     .executive-mode-header h1{font-size:clamp(30px,3.1vw,46px)!important;line-height:1!important}
@@ -1426,9 +1436,9 @@
     #module-dashboard .module-dashboard-score-row strong{font-size:clamp(38px,3.2vw,58px)!important}
     #journey .journey-node span{font-size:clamp(30px,2.4vw,42px)!important}
     @media(min-width:1501px){.executive-mode-grid{grid-template-columns:minmax(560px,.95fr) minmax(0,1.05fr)!important}.release-cockpit{grid-template-columns:minmax(165px,200px) minmax(0,1fr)!important}.cockpit-mini-grid{gap:10px!important}.cockpit-mini-grid div{padding-left:10px!important}.cockpit-mini-grid span{font-size:9px!important;line-height:1.15!important;letter-spacing:.06em!important;word-break:normal!important;overflow-wrap:normal!important}.cockpit-mini-grid strong{font-size:clamp(16px,1.65vw,28px)!important;line-height:1.02!important;word-break:normal!important;overflow-wrap:normal!important}.executive-kpi strong{font-size:clamp(30px,2.45vw,44px)!important;white-space:nowrap!important}.executive-kpi{min-height:158px!important}.executive-kpi:before{width:48px!important;height:48px!important;font-size:24px!important}}
-    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis" "impact" "changes" "trend" "product" "evidence" "recommend"!important}.business-impact-layout{grid-template-columns:92px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis" "impact" "changes" "trend" "product" "evidence" "recommend"!important}.business-impact-layout{grid-template-columns:82px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
     @media(max-width:1100px){.executive-mode-header{grid-template-columns:1fr!important}.executive-toolbar{grid-template-columns:1fr!important;justify-items:start!important}.mode-toggle{justify-self:start!important}.executive-kpi-stack{grid-template-columns:repeat(2,minmax(0,1fr))!important}.executive-evidence-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}.cover-page{min-height:auto!important}}
-    @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}}
+    @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}.page-title-row{align-items:flex-start}.page-heading-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:12px!important}.page-heading-icon svg{width:19px!important;height:19px!important}}
     @media(max-width:1100px){.app{grid-template-columns:1fr!important}.app:before{display:none}.sidebar{position:relative!important;width:100%!important;max-width:none;min-width:0;height:auto;min-height:0;overflow:visible}main{grid-column:auto}}
   </style>
   <aside class="sidebar">
@@ -1529,7 +1539,10 @@
         <a href="#journey">View Details</a>
       </div>
       <div class="business-impact-layout">
-        <div class="business-impact-orb">!</div>
+        <div class="business-impact-orb">
+          <strong>REVIEW</strong>
+          <span>Impact</span>
+        </div>
         <ul><li>8 issues require release review</li><li>Needs Review business journey status</li><li>11 modules evaluated</li><li>Evidence is ready for review</li></ul>
         <div class="business-impact-spark">
           <p class="chart-explainer">Quality movement across recent executions.</p>
@@ -1549,35 +1562,35 @@
       
         <g>
           <title>Execution 1 | Executed: 7/8/2026, 10:44:27 AM | Quality: 51% | Release: NO DATA | Value: 51%</title>
-          <circle cx="24.0" cy="77.0" r="4" />
+          <circle class="trend-dot" cx="24.0" cy="77.0" r="3.5" />
         </g>
         <g>
           <title>Execution 2 | Executed: 7/8/2026, 11:30:04 AM | Quality: 51% | Release: NO DATA | Value: 51%</title>
-          <circle cx="88.6" cy="77.0" r="4" />
+          <circle class="trend-dot" cx="88.6" cy="77.0" r="3.5" />
         </g>
         <g>
           <title>Execution 3 | Executed: 7/8/2026, 4:11:29 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="153.1" cy="93.4" r="4" />
+          <circle class="trend-dot" cx="153.1" cy="93.4" r="3.5" />
         </g>
         <g>
           <title>Execution 4 | Executed: 7/8/2026, 4:36:34 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="217.7" cy="93.4" r="4" />
+          <circle class="trend-dot" cx="217.7" cy="93.4" r="3.5" />
         </g>
         <g>
           <title>Execution 5 | Executed: 7/9/2026, 10:28:00 AM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="282.3" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="282.3" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 6 | Executed: 7/9/2026, 3:42:56 PM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="346.9" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="346.9" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 7 | Executed: 7/9/2026, 3:57:26 PM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="411.4" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="411.4" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 8 | Executed: 7/9/2026, 4:40:51 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="476.0" cy="93.4" r="6" />
+          <circle class="trend-dot-current" cx="476.0" cy="93.4" r="5.5" />
         </g>
       <text x="24.0" y="150">E1</text><text x="88.6" y="150">E2</text><text x="153.1" y="150">E3</text><text x="217.7" y="150">E4</text><text x="282.3" y="150">E5</text><text x="346.9" y="150">E6</text><text x="411.4" y="150">E7</text><text x="476.0" y="150">E8</text>
     </svg>
@@ -1629,35 +1642,35 @@
       
         <g>
           <title>Execution 1 | Executed: 7/8/2026, 10:44:27 AM | Quality: 51% | Release: NO DATA | Value: 51%</title>
-          <circle cx="24.0" cy="77.0" r="4" />
+          <circle class="trend-dot" cx="24.0" cy="77.0" r="3.5" />
         </g>
         <g>
           <title>Execution 2 | Executed: 7/8/2026, 11:30:04 AM | Quality: 51% | Release: NO DATA | Value: 51%</title>
-          <circle cx="88.6" cy="77.0" r="4" />
+          <circle class="trend-dot" cx="88.6" cy="77.0" r="3.5" />
         </g>
         <g>
           <title>Execution 3 | Executed: 7/8/2026, 4:11:29 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="153.1" cy="93.4" r="4" />
+          <circle class="trend-dot" cx="153.1" cy="93.4" r="3.5" />
         </g>
         <g>
           <title>Execution 4 | Executed: 7/8/2026, 4:36:34 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="217.7" cy="93.4" r="4" />
+          <circle class="trend-dot" cx="217.7" cy="93.4" r="3.5" />
         </g>
         <g>
           <title>Execution 5 | Executed: 7/9/2026, 10:28:00 AM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="282.3" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="282.3" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 6 | Executed: 7/9/2026, 3:42:56 PM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="346.9" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="346.9" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 7 | Executed: 7/9/2026, 3:57:26 PM | Quality: 27% | Release: NO DATA | Value: 27%</title>
-          <circle cx="411.4" cy="100.1" r="4" />
+          <circle class="trend-dot" cx="411.4" cy="100.1" r="3.5" />
         </g>
         <g>
           <title>Execution 8 | Executed: 7/9/2026, 4:40:51 PM | Quality: 34% | Release: NO DATA | Value: 34%</title>
-          <circle cx="476.0" cy="93.4" r="6" />
+          <circle class="trend-dot-current" cx="476.0" cy="93.4" r="5.5" />
         </g>
       <text x="24.0" y="150">E1</text><text x="88.6" y="150">E2</text><text x="153.1" y="150">E3</text><text x="217.7" y="150">E4</text><text x="282.3" y="150">E5</text><text x="346.9" y="150">E6</text><text x="411.4" y="150">E7</text><text x="476.0" y="150">E8</text>
     </svg>
@@ -1705,25 +1718,10 @@
         <a href="#evidence">Open Gallery</a>
       </div>
       <div class="executive-evidence-strip">
-        <a class="executive-evidence-card attention" href="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png" data-evidence-preview data-evidence-kind="Screenshot 1" data-evidence-status="Available" data-evidence-href="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png">
-          <img src="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png" alt="Evidence screenshot 1">
+        <a class="executive-evidence-card attention" href="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png" data-evidence-preview data-evidence-kind="Screenshot 1" data-evidence-status="Available" data-evidence-href="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png">
+          <img src="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png" alt="Evidence screenshot 1">
           <span>Screenshot 1</span>
           <strong>Review</strong>
-        </a>
-        <a class="executive-evidence-card " href="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png" data-evidence-preview data-evidence-kind="Screenshot 2" data-evidence-status="Available" data-evidence-href="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png">
-          <img src="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png" alt="Evidence screenshot 2">
-          <span>Screenshot 2</span>
-          <strong>Available</strong>
-        </a>
-        <a class="executive-evidence-card " href="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png" data-evidence-preview data-evidence-kind="Screenshot 3" data-evidence-status="Available" data-evidence-href="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png">
-          <img src="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png" alt="Evidence screenshot 3">
-          <span>Screenshot 3</span>
-          <strong>Available</strong>
-        </a>
-        <a class="executive-evidence-card " href="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png" data-evidence-preview data-evidence-kind="Screenshot 4" data-evidence-status="Available" data-evidence-href="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png">
-          <img src="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png" alt="Evidence screenshot 4">
-          <span>Screenshot 4</span>
-          <strong>Available</strong>
         </a></div>
     </div>
     <div class="executive-recommendation-band">
@@ -1765,7 +1763,7 @@
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 02</div>
-          <h1>Release Decision</h1>
+          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4.2-2.7 7-7 8-4.3-1-7-3.8-7-8V7l7-4z"></path><path d="m9 12 2 2 4-5"></path></svg></span><h1>Release Decision</h1></div>
           <p>Why is this the release decision?</p>
         </div>
         <div class="actions">
@@ -1950,7 +1948,7 @@
     </section>
 
     <section class="page" id="health">
-      <div class="topbar"><div><div class="eyebrow">PAGE 03</div><h1>Product Health</h1><p>Which modules need attention?</p></div><a class="btn" href="#module-dashboard">Open Module Details</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 03</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M8 17h7"></path></svg></span><h1>Product Health</h1></div><p>Which modules need attention?</p></div><a class="btn" href="#module-dashboard">Open Module Details</a></div>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Module Status</h2>
         <div class="module-filter" aria-label="Filter modules by health">
@@ -2222,7 +2220,7 @@
     </section>
 
     <section class="page" id="journey">
-      <div class="topbar"><div><div class="eyebrow">PAGE 04</div><h1>Business Journeys</h1><p>Can users complete critical business flows?</p></div><span class="pill demo">Live Data</span></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 04</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="5" r="2"></circle><circle cx="19" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle><path d="M6.5 10.5 10.5 6.5"></path><path d="m13.5 6.5 4 4"></path><path d="m17.5 13.5-4 4"></path><path d="m10.5 17.5-4-4"></path></svg></span><h1>Business Journeys</h1></div><p>Can users complete critical business flows?</p></div><span class="pill demo">Live Data</span></div>
       <div class="panel journey-flow-panel"><h2>Core Flow Health</h2><div class="journey">
     <div class="journey-node red interactive-card" data-journey="Registration" data-module="Signup" role="button" tabindex="0" aria-label="Open Registration journey details">
       <div class="node-icon">NA</div>
@@ -2313,7 +2311,7 @@
     </section>
 
     <section class="page" id="module-dashboard">
-      <div class="topbar"><div><div class="eyebrow">PAGE 05</div><h1>Module Details</h1><p>What is happening inside this module?</p></div><a class="btn" href="#health">Back to Product Health</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 05</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg></span><h1>Module Details</h1></div><p>What is happening inside this module?</p></div><a class="btn" href="#health">Back to Product Health</a></div>
       <div class="module-dashboard-intro">
         <h2>Choose a module</h2>
         <p>AIR keeps module detail one click away. Product Health shows status; this page opens the drill-down for scenarios, evidence, validation gaps, and recommendations.</p>
@@ -2628,7 +2626,7 @@
     </section>
 
     <section class="page" id="failures">
-      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">8 Failures</span></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"></path><path d="M12 9v5"></path><path d="M12 17h.01"></path></svg></span><h1>Failed Tests</h1></div><p>What failed and why?</p></div><span class="pill">8 Failures</span></div>
       <div class="panel">
       <div class="failure-command-center">
         <div class="failure-summary-card primary">
@@ -2885,7 +2883,7 @@
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">PAGE 07</div><h1>Evidence</h1><p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 07</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m7 15 3-3 2 2 3-4 2 5"></path><circle cx="8" cy="9" r="1"></circle></svg></span><h1>Evidence</h1></div><p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
       
   <div class="evidence-hero">
     <div>
@@ -2909,7 +2907,7 @@
       <div class="evidence-grid">
     <a class="evidence-card" href="#evidence" data-evidence-preview data-evidence-kind="Screenshots" data-evidence-status="Available" data-evidence-href="#evidence">
       <div class="evidence-icon">Camera</div>
-      <div>
+      <div class="evidence-card-body">
         <strong>Screenshots</strong>
         <span>Available</span>
         <em>Open Evidence</em>
@@ -2917,7 +2915,7 @@
     </a>
     <a class="evidence-card" href="../playwright-report/index.html" data-evidence-preview data-evidence-kind="Videos" data-evidence-status="Available" data-evidence-href="../playwright-report/index.html">
       <div class="evidence-icon">Play</div>
-      <div>
+      <div class="evidence-card-body">
         <strong>Videos</strong>
         <span>Available</span>
         <em>Open Evidence</em>
@@ -2925,7 +2923,7 @@
     </a>
     <a class="evidence-card" href="../playwright-report/index.html" data-evidence-preview data-evidence-kind="Traces" data-evidence-status="Available" data-evidence-href="../playwright-report/index.html">
       <div class="evidence-icon">Trace</div>
-      <div>
+      <div class="evidence-card-body">
         <strong>Traces</strong>
         <span>Available</span>
         <em>Open Evidence</em>
@@ -2933,7 +2931,7 @@
     </a>
     <a class="evidence-card" href="air-results.json" data-evidence-preview data-evidence-kind="Raw Results" data-evidence-status="air-results/json-reporter" data-evidence-href="air-results.json">
       <div class="evidence-icon">JSON</div>
-      <div>
+      <div class="evidence-card-body">
         <strong>Raw Results</strong>
         <span>air-results/json-reporter</span>
         <em>Open Evidence</em>
@@ -2943,21 +2941,9 @@
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
         <div class="thumb-grid">
-        <a class="thumb" href="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png" data-evidence-preview data-evidence-kind="Screenshot 1" data-evidence-status="Available" data-evidence-href="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png">
-          <img src="../playwright-report/data/0d60d9748ad27f80849f1cfbe3119763d8311e7d.png" alt="Evidence screenshot 1">
+        <a class="thumb" href="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png" data-evidence-preview data-evidence-kind="Screenshot 1" data-evidence-status="Available" data-evidence-href="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png">
+          <img src="../playwright-report/data/78485ad26ab49de2007fe98b0854715a58aaf5b6.png" alt="Evidence screenshot 1">
           <span>Screenshot 1</span>
-        </a>
-        <a class="thumb" href="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png" data-evidence-preview data-evidence-kind="Screenshot 2" data-evidence-status="Available" data-evidence-href="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png">
-          <img src="../playwright-report/data/16d49ab3e42082611b53011bed8226d7121f45e6.png" alt="Evidence screenshot 2">
-          <span>Screenshot 2</span>
-        </a>
-        <a class="thumb" href="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png" data-evidence-preview data-evidence-kind="Screenshot 3" data-evidence-status="Available" data-evidence-href="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png">
-          <img src="../playwright-report/data/1773a9a69aac7e32abca47f7129e407051a772c7.png" alt="Evidence screenshot 3">
-          <span>Screenshot 3</span>
-        </a>
-        <a class="thumb" href="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png" data-evidence-preview data-evidence-kind="Screenshot 4" data-evidence-status="Available" data-evidence-href="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png">
-          <img src="../playwright-report/data/1cad16bb99f08ebbf6da2326098b401b5966ee02.png" alt="Evidence screenshot 4">
-          <span>Screenshot 4</span>
         </a></div>
       </div>
       <br>
@@ -2974,7 +2960,7 @@
     </section>
 
     <section class="page" id="insight">
-      <div class="topbar"><div><div class="eyebrow">PAGE 08</div><h1>AI Insights</h1><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>Execution Recommendation</button></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 08</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M8.5 14.5a6 6 0 1 1 7 0c-.8.6-1.5 1.5-1.5 2.5h-4c0-1-.7-1.9-1.5-2.5z"></path></svg></span><h1>AI Insights</h1></div><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>Execution Recommendation</button></div>
       <div class="ai-command-hero">
         <div>
           <span class="mission-label">AIR Recommendation</span>
@@ -3105,7 +3091,7 @@
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 09</div>
-          <h1>Historical Intelligence</h1>
+          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-3 3 2 5-7"></path></svg></span><h1>Historical Intelligence</h1></div>
           <p>How has software quality evolved over time?</p>
         </div>
         <span class="pill demo">Historical Comparison</span>
@@ -4069,7 +4055,7 @@
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 10</div>
-          <h1>AIR Core</h1>
+          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1-2 2-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V20h-3v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1-2-2 .1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H5v-3h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1 2-2 .1.1a1.6 1.6 0 0 0 1.8.3 1.6 1.6 0 0 0 1-1.5V4h3v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1 2 2-.1.1a1.6 1.6 0 0 0-.3 1.8 1.6 1.6 0 0 0 1.5 1h.1v3h-.1a1.6 1.6 0 0 0-1.5 1z"></path></svg></span><h1>AIR Core</h1></div>
           <p>Which intelligence engines produced this report?</p>
         </div>
         <span class="pill demo">Platform Core</span>
@@ -4654,7 +4640,7 @@
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 11</div>
-          <h1>AIR Product Roadmap</h1>
+          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19V5"></path><path d="M5 6h10l-1.5 3L15 12H5"></path><path d="M19 19H5"></path><path d="M9 19v-4"></path><path d="M15 19v-7"></path></svg></span><h1>AIR Product Roadmap</h1></div>
           <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
         </div>
         <span class="pill demo">Platform Evolution</span>
@@ -5742,6 +5728,61 @@
 
   bindSearch(airSearch, airSearchResults);
   bindSearch(airGlobalSearch, airGlobalSearchResults);
+
+  const sidebarLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]:not(.disabled)'));
+  const sidebarSections = sidebarLinks
+    .map(link => {
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      return {
+        id,
+        link,
+        section: document.getElementById(id),
+      };
+    })
+    .filter(item => item.section);
+
+  function setActiveSidebarLink(activeId) {
+    sidebarLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === '#' + activeId;
+      link.classList.toggle('active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function updateActiveSidebarFromScroll() {
+    if (!sidebarSections.length) {
+      return;
+    }
+
+    const anchorOffset = Math.max(120, window.innerHeight * 0.22);
+    let activeItem = sidebarSections[0];
+
+    for (const item of sidebarSections) {
+      const top = item.section.getBoundingClientRect().top;
+
+      if (top <= anchorOffset) {
+        activeItem = item;
+      } else {
+        break;
+      }
+    }
+
+    setActiveSidebarLink(activeItem.id);
+  }
+
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      setActiveSidebarLink(id);
+    });
+  });
+
+  updateActiveSidebarFromScroll();
+  window.addEventListener('scroll', updateActiveSidebarFromScroll, { passive: true });
 
   document.addEventListener('click', event => {
     if (!event.target.closest('.report-search, .global-search')) {

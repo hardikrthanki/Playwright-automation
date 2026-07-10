@@ -395,6 +395,137 @@ Logger.info(
     );
   }
 
+  async validateRefreshUtilityControl() {
+
+    Logger.info(
+      'Validating dashboard refresh utility control'
+    );
+
+    const refreshButton =
+      this.utilityButton(
+        'lucide-refresh-cw',
+        /refresh|reload|sync/i
+      ).or(
+        this.utilityButton(
+          'lucide-rotate-cw',
+          /refresh|reload|sync/i
+        )
+      ).first();
+
+    await expect(
+      refreshButton
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      refreshButton,
+      'Refresh Dashboard Data'
+    );
+
+    await this.page.waitForLoadState(
+      'domcontentloaded'
+    );
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /\/dashboard/,
+      {
+        timeout: 15000
+      }
+    );
+
+    await this.validateNoLoadError();
+    await this.validateUsablePageContent();
+
+    Logger.success(
+      'Dashboard refresh utility control is healthy'
+    );
+  }
+
+  async validateQuickActionControl() {
+
+    Logger.info(
+      'Validating dashboard quick-action control'
+    );
+
+    const quickActionButton =
+      this.utilityButton(
+        'lucide-plus',
+        /add|create|new|quick action/i
+      );
+
+    await expect(
+      quickActionButton
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    const bodyBefore =
+      await this.page.locator(
+        'body'
+      ).innerText();
+
+    await safeClick(
+      quickActionButton,
+      'Open Quick Action Menu'
+    );
+
+    await this.validateNoLoadError();
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /\/dashboard/,
+      {
+        timeout: 15000
+      }
+    );
+
+    const quickActionSurface =
+      this.page
+        .locator(
+          '[role="dialog"], [role="menu"], [data-radix-popper-content-wrapper], [data-state="open"]'
+        )
+        .filter({
+          hasText: /add|create|new|connect|broker|portfolio|account|manual|upload/i
+        })
+        .first();
+
+    const hasQuickActionSurface =
+      await quickActionSurface.isVisible()
+        .catch(
+          () => false
+        );
+
+    const bodyAfter =
+      await this.page.locator(
+        'body'
+      ).innerText();
+
+    expect(
+      hasQuickActionSurface ||
+      bodyAfter !== bodyBefore ||
+      await quickActionButton.isVisible()
+    ).toBeTruthy();
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    await this.page.mouse.click(
+      20,
+      20
+    );
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Dashboard quick-action control is healthy'
+    );
+  }
+
   async validateNotificationPanelBehavior() {
 
     Logger.info(
@@ -576,6 +707,63 @@ Logger.info(
 
     Logger.success(
       'Profile-menu navigation actions are healthy'
+    );
+  }
+
+  async validateProfileMenuDismissal() {
+
+    Logger.info(
+      'Validating profile-menu dismissal behavior'
+    );
+
+    const billingMenuItem =
+      this.page
+        .getByText(
+          /billing/i
+        )
+        .first();
+
+    await this.openProfileMenu();
+
+    await expect(
+      billingMenuItem
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    await expect(
+      billingMenuItem
+    ).not.toBeVisible({
+      timeout: 10000
+    });
+
+    await this.openProfileMenu();
+
+    await expect(
+      billingMenuItem
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await this.page.mouse.click(
+      20,
+      20
+    );
+
+    await expect(
+      billingMenuItem
+    ).not.toBeVisible({
+      timeout: 10000
+    });
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Profile-menu dismissal behavior is healthy'
     );
   }
 

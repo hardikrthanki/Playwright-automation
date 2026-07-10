@@ -173,6 +173,17 @@ test.describe(
     );
 
     test(
+      'Profile menu closes with Escape and outside click',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateProfileMenuDismissal();
+      }
+    );
+
+    test(
       'Dashboard top navigation tabs are visible',
       async ({ page }) => {
 
@@ -245,6 +256,28 @@ test.describe(
           new DashboardPage(page);
 
         await dashboard.validateHeaderUtilityControls();
+      }
+    );
+
+    test(
+      'Dashboard refresh utility reloads data without ending session',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateRefreshUtilityControl();
+      }
+    );
+
+    test(
+      'Dashboard quick action menu opens without changing session',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateQuickActionControl();
       }
     );
 

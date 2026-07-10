@@ -4,6 +4,7 @@ import {
 } from '@playwright/test';
 
 import {
+  BASE_URL,
   TEST_USERS
 } from './config/testData';
 
@@ -68,6 +69,33 @@ test.describe(
         ).toHaveValue(
           originalEmail
         );
+      }
+    );
+
+    test(
+      'Profile personal information controls are visible and safe',
+      async ({ page }) => {
+
+        const profile =
+          new ProfilePage(page);
+
+        await profile.validatePersonalInfoControls();
+
+        await expect(
+          profile.firstNameInput
+        ).not.toHaveValue(
+          ''
+        );
+
+        await expect(
+          profile.lastNameInput
+        ).not.toHaveValue(
+          ''
+        );
+
+        await expect(
+          profile.emailInput
+        ).toBeDisabled();
       }
     );
 
@@ -165,6 +193,50 @@ test.describe(
           profile.emailInput
         ).toHaveValue(
           originalEmail
+        );
+      }
+    );
+
+    test(
+      'Profile direct route remains usable after browser back and forward',
+      async ({ page }) => {
+
+        const profile =
+          new ProfilePage(page);
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await page.goBack({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/profile/,
+          {
+            timeout: 15000
+          }
+        );
+
+        await profile.waitForProfileData();
+
+        await page.goForward({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard/,
+          {
+            timeout: 15000
+          }
         );
       }
     );

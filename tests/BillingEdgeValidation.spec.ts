@@ -4,6 +4,7 @@ import {
 } from '@playwright/test';
 
 import {
+  BASE_URL,
   TEST_USERS
 } from './config/testData';
 
@@ -93,6 +94,69 @@ test.describe(
         });
 
         await billing.validateHistoryTabStable();
+      }
+    );
+
+    test(
+      'Billing plans and history tabs can be revisited safely',
+      async ({ page }) => {
+
+        const billing =
+          new BillingPage(page);
+
+        await billing.validatePlansTabStable();
+        await billing.validateHistoryTabStable();
+        await billing.validatePlansTabStable();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /billing/
+        );
+      }
+    );
+
+    test(
+      'Billing route remains usable after browser back and forward',
+      async ({ page }) => {
+
+        const billing =
+          new BillingPage(page);
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await page.goBack({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/billing/,
+          {
+            timeout: 15000
+          }
+        );
+
+        await billing.validateOverviewContract();
+
+        await page.goForward({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard/,
+          {
+            timeout: 15000
+          }
+        );
       }
     );
 

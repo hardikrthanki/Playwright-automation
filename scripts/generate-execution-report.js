@@ -2227,7 +2227,7 @@ const evidenceCards = [
   .map(([label, value, icon, href]) => `
     <a class="evidence-card" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="${escapeHtml(value)}" data-evidence-href="${escapeHtml(href)}">
       <div class="evidence-icon">${escapeHtml(icon)}</div>
-      <div>
+      <div class="evidence-card-body">
         <strong>${escapeHtml(label)}</strong>
         <span>${escapeHtml(value)}</span>
         <em>Open Evidence</em>
@@ -3499,7 +3499,7 @@ function renderExecutiveTrendSvg() {
       return `
         <g>
           <title>${escapeHtml(getHistoryTooltip(snapshots[index], index, `${value}%`))}</title>
-          <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === values.length - 1 ? 6 : 4}" />
+          <circle class="${index === values.length - 1 ? 'trend-dot-current' : 'trend-dot'}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${index === values.length - 1 ? 5.5 : 3.5}" />
         </g>`;
     })
     .join('');
@@ -3642,7 +3642,10 @@ const executiveModeShellHtml = `
         <a href="#journey">View Details</a>
       </div>
       <div class="business-impact-layout">
-        <div class="business-impact-orb">${businessJourneyStatus === 'Healthy' ? 'OK' : '!'}</div>
+        <div class="business-impact-orb">
+          <strong>${businessJourneyStatus === 'Healthy' ? 'OK' : 'REVIEW'}</strong>
+          <span>Impact</span>
+        </div>
         <ul>${businessImpactBullets}</ul>
         <div class="business-impact-spark">
           <p class="chart-explainer">Quality movement across recent executions.</p>
@@ -4091,6 +4094,15 @@ function navIcon(name) {
   return `<span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${icons[name] ?? icons.home}</svg></span>`;
 }
 
+function pageHeading(iconName, title) {
+  const icon = navIcon(iconName).replace(
+    'class="nav-icon"',
+    'class="page-heading-icon"'
+  );
+
+  return `<div class="page-title-row">${icon}<h1>${escapeHtml(title)}</h1></div>`;
+}
+
 const airGoldenDashboardHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -4440,8 +4452,10 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-panel-head h2{margin:0;font-size:20px;letter-spacing:-.025em}
     .executive-panel-head a{color:#7ee787;font-weight:800;font-size:13px}
     .business-impact-card{grid-column:2}
-    .business-impact-layout{display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;align-items:center}
-    .business-impact-orb{display:grid;place-items:center;width:86px;height:86px;border-radius:50%;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.42);color:#7ee787;font-weight:950;box-shadow:0 0 44px rgba(57,231,95,.18)}
+    .business-impact-layout{display:grid;grid-template-columns:82px minmax(0,1fr);gap:18px;align-items:center}
+    .business-impact-orb{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:72px;border-radius:18px;background:linear-gradient(145deg,rgba(57,231,95,.16),rgba(8,16,30,.72));border:1px solid rgba(57,231,95,.34);color:#7ee787;font-weight:950;box-shadow:0 16px 36px rgba(57,231,95,.10)}
+    .business-impact-orb strong{font-size:16px;line-height:1;letter-spacing:.02em}
+    .business-impact-orb span{margin-top:7px;color:#9fb0c5;font-size:10px;text-transform:uppercase;letter-spacing:.12em}
     .business-impact-layout ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;color:#dbe5ef}
     .business-impact-layout li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:start}
     .business-impact-layout li:before{content:"";width:9px;height:9px;border-radius:50%;background:#39e75f;margin-top:7px;box-shadow:0 0 12px rgba(57,231,95,.7)}
@@ -4461,7 +4475,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-trend-svg .trend-grid{stroke-dasharray:3 5}
     .executive-trend-svg .trend-line{fill:none;stroke:#7ee787;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(57,231,95,.40))}
     .executive-trend-svg .trend-fill{fill:url(#executiveTrendFill)}
-    .executive-trend-svg circle{fill:#d7fbe0;stroke:#39e75f;stroke-width:3}
+    .executive-trend-svg .trend-dot{fill:#10221b;stroke:#7ee787;stroke-width:2}
+    .executive-trend-svg .trend-dot-current{fill:#d7fbe0;stroke:#39e75f;stroke-width:3}
     .executive-trend-svg text{fill:#9aa7b7;font-size:11px;text-anchor:middle}
     .executive-empty-trend{min-height:166px;display:grid;place-items:center;text-align:center;border:1px dashed rgba(148,163,184,.18);border-radius:14px;color:#9aa7b7}
     .executive-empty-trend strong{display:block;color:#f8fafc;margin-bottom:6px}
@@ -5157,10 +5172,12 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-panel-head{margin-bottom:14px!important}
     .executive-panel-head h2{font-size:21px!important}
     .executive-panel-head a{color:#38a3ff!important;text-decoration:none!important}
-    .business-impact-layout{grid-template-columns:92px minmax(0,.9fr) minmax(210px,1fr)!important;gap:18px!important}
+    .business-impact-layout{grid-template-columns:82px minmax(0,.9fr) minmax(210px,1fr)!important;gap:18px!important}
     .business-impact-spark{grid-column:auto!important;min-width:0}
     .business-impact-orb{width:82px!important;height:82px!important;font-size:0!important}
     .business-impact-orb:before{content:"● ●";font-size:20px;letter-spacing:-4px}
+    .business-impact-orb{width:72px!important;height:72px!important;font-size:inherit!important;border-radius:18px!important}
+    .business-impact-orb:before{content:none!important}
     .executive-trend-svg{min-height:154px!important}
     .executive-change-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
     .executive-change-card{text-align:center!important;align-items:center!important;border-radius:20px!important;min-height:130px!important}
@@ -5440,12 +5457,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .evidence-proof-strip b{display:block;color:#39e75f;font-size:clamp(24px,2.3vw,38px);line-height:1}
     #evidence .evidence-proof-strip small{display:block;margin-top:7px;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
     #evidence .evidence-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important;margin-bottom:22px}
-    #evidence .evidence-card{min-width:0;min-height:178px!important;display:flex!important;align-items:flex-start!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:20px!important;box-shadow:0 18px 56px rgba(0,0,0,.16)}
+    #evidence .evidence-card{position:relative;min-width:0;min-height:178px!important;display:flex!important;align-items:flex-start!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:20px 20px 76px!important;box-shadow:0 18px 56px rgba(0,0,0,.16)}
+    #evidence .evidence-card-body{min-width:0;display:flex;flex:1;flex-direction:column;align-items:flex-start}
     #evidence .evidence-card:hover{transform:translateY(-4px)!important;border-color:rgba(57,231,95,.58)!important;box-shadow:0 28px 80px rgba(57,231,95,.10)!important}
     #evidence .evidence-icon{width:58px!important;height:58px!important;min-width:58px!important;border-radius:18px!important;background:rgba(57,231,95,.12)!important;border-color:rgba(57,231,95,.32)!important;color:#39e75f!important}
-    #evidence .evidence-card strong{font-size:19px!important;line-height:1.15!important;color:#f8fafc!important}
+    #evidence .evidence-card strong{max-width:100%;font-size:19px!important;line-height:1.15!important;color:#f8fafc!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
     #evidence .evidence-card span{font-size:14px!important;color:#9fb0c5!important;line-height:1.4!important;overflow-wrap:anywhere}
-    #evidence .evidence-card em{margin-top:14px!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 10px;color:#39e75f!important}
+    #evidence .evidence-card em{position:absolute;right:20px;bottom:20px;margin:0!important;border:1px solid rgba(57,231,95,.32);border-radius:999px;background:rgba(57,231,95,.08);padding:8px 14px;color:#39e75f!important;text-align:center}
     #evidence .panel{border-radius:28px!important;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.74))!important;border:1px solid rgba(57,231,95,.14)!important;padding:24px!important}
     #evidence .thumb-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important}
     #evidence .thumb{min-height:172px!important;border-radius:20px!important;background:rgba(4,13,23,.72)!important;border:1px solid rgba(148,163,184,.12)!important;padding:12px!important}
@@ -5455,7 +5473,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .panel:last-of-type p{color:#d8e6f3!important;line-height:1.65!important}
     #evidence span,#evidence strong,#evidence small,#evidence p{overflow-wrap:anywhere!important}
     @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}}
+    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}#evidence .evidence-card-body{min-height:118px}}
     /* Final Engineering Mode polish: unify spacing, cards, typography, chart surfaces, and controls. */
     :root{--air-gap-section:clamp(22px,2.4vw,34px);--air-gap-card:clamp(12px,1.25vw,18px);--air-card-radius:22px;--air-panel-radius:28px}
     .page{padding:clamp(24px,2.6vw,38px)!important}
@@ -5511,6 +5529,10 @@ const airGoldenDashboardHtml = `<!doctype html>
     .brand-lockup .brand{font-size:62px!important;line-height:.82!important;letter-spacing:-6px!important;margin:0!important}
     .brand-sub{margin:8px 4px 26px!important;text-align:left!important;color:#f8fafc!important;font-size:13px!important;line-height:1.38!important;font-weight:750!important}
     .brand-sub span{color:#39e75f!important}
+    .page-title-row{display:flex;align-items:center;gap:12px;margin:4px 0 5px}
+    .page-title-row h1{margin:0!important}
+    .page-heading-icon{display:inline-grid!important;place-items:center!important;width:42px!important;height:42px!important;min-width:42px!important;border-radius:14px!important;background:linear-gradient(135deg,rgba(57,231,95,.16),rgba(57,231,95,.06))!important;border:1px solid rgba(57,231,95,.38)!important;color:#9cffab!important;box-shadow:0 14px 34px rgba(57,231,95,.10)!important}
+    .page-heading-icon svg{width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important}
     .topbar h1{font-size:clamp(28px,2.35vw,40px)!important;line-height:1.02!important;letter-spacing:-.05em!important}
     #executive .topbar h1,#health .topbar h1,#journey .topbar h1,#module-dashboard .topbar h1,#failures .topbar h1,#evidence .topbar h1{font-size:clamp(28px,2.35vw,40px)!important;line-height:1.02!important;letter-spacing:-.05em!important}
     .executive-mode-header h1{font-size:clamp(30px,3.1vw,46px)!important;line-height:1!important}
@@ -5519,9 +5541,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     #module-dashboard .module-dashboard-score-row strong{font-size:clamp(38px,3.2vw,58px)!important}
     #journey .journey-node span{font-size:clamp(30px,2.4vw,42px)!important}
     @media(min-width:1501px){.executive-mode-grid{grid-template-columns:minmax(560px,.95fr) minmax(0,1.05fr)!important}.release-cockpit{grid-template-columns:minmax(165px,200px) minmax(0,1fr)!important}.cockpit-mini-grid{gap:10px!important}.cockpit-mini-grid div{padding-left:10px!important}.cockpit-mini-grid span{font-size:9px!important;line-height:1.15!important;letter-spacing:.06em!important;word-break:normal!important;overflow-wrap:normal!important}.cockpit-mini-grid strong{font-size:clamp(16px,1.65vw,28px)!important;line-height:1.02!important;word-break:normal!important;overflow-wrap:normal!important}.executive-kpi strong{font-size:clamp(30px,2.45vw,44px)!important;white-space:nowrap!important}.executive-kpi{min-height:158px!important}.executive-kpi:before{width:48px!important;height:48px!important;font-size:24px!important}}
-    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis" "impact" "changes" "trend" "product" "evidence" "recommend"!important}.business-impact-layout{grid-template-columns:92px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis" "impact" "changes" "trend" "product" "evidence" "recommend"!important}.business-impact-layout{grid-template-columns:82px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
     @media(max-width:1100px){.executive-mode-header{grid-template-columns:1fr!important}.executive-toolbar{grid-template-columns:1fr!important;justify-items:start!important}.mode-toggle{justify-self:start!important}.executive-kpi-stack{grid-template-columns:repeat(2,minmax(0,1fr))!important}.executive-evidence-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}.cover-page{min-height:auto!important}}
-    @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}}
+    @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}.page-title-row{align-items:flex-start}.page-heading-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:12px!important}.page-heading-icon svg{width:19px!important;height:19px!important}}
     @media(max-width:1100px){.app{grid-template-columns:1fr!important}.app:before{display:none}.sidebar{position:relative!important;width:100%!important;max-width:none;min-width:0;height:auto;min-height:0;overflow:visible}main{grid-column:auto}}
   </style>
   <aside class="sidebar">
@@ -5592,7 +5614,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 02</div>
-          <h1>Release Decision</h1>
+          ${pageHeading('release', 'Release Decision')}
           <p>Why is this the release decision?</p>
         </div>
         <div class="actions">
@@ -5688,7 +5710,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="health">
-      <div class="topbar"><div><div class="eyebrow">PAGE 03</div><h1>Product Health</h1><p>Which modules need attention?</p></div><a class="btn" href="#module-dashboard">Open Module Details</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 03</div>${pageHeading('product', 'Product Health')}<p>Which modules need attention?</p></div><a class="btn" href="#module-dashboard">Open Module Details</a></div>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Module Status</h2>
         <div class="module-filter" aria-label="Filter modules by health">
@@ -5721,7 +5743,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="journey">
-      <div class="topbar"><div><div class="eyebrow">PAGE 04</div><h1>Business Journeys</h1><p>Can users complete critical business flows?</p></div><span class="pill demo">${demoMode ? 'Demo Data' : 'Live Data'}</span></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 04</div>${pageHeading('journey', 'Business Journeys')}<p>Can users complete critical business flows?</p></div><span class="pill demo">${demoMode ? 'Demo Data' : 'Live Data'}</span></div>
       <div class="panel journey-flow-panel"><h2>Core Flow Health</h2><div class="journey">${journeyHealthRows}</div></div>
       <br>
       <div class="grid two journey-support-grid">
@@ -5732,7 +5754,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="module-dashboard">
-      <div class="topbar"><div><div class="eyebrow">PAGE 05</div><h1>Module Details</h1><p>What is happening inside this module?</p></div><a class="btn" href="#health">Back to Product Health</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 05</div>${pageHeading('modules', 'Module Details')}<p>What is happening inside this module?</p></div><a class="btn" href="#health">Back to Product Health</a></div>
       <div class="module-dashboard-intro">
         <h2>Choose a module</h2>
         <p>AIR keeps module detail one click away. Product Health shows status; this page opens the drill-down for scenarios, evidence, validation gaps, and recommendations.</p>
@@ -5742,13 +5764,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="failures">
-      <div class="topbar"><div><div class="eyebrow">PAGE 06</div><h1>Failed Tests</h1><p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 06</div>${pageHeading('failures', 'Failed Tests')}<p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
       <div class="panel">${failedTestsContent}</div>
       ${renderPageFooter(6)}
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">PAGE 07</div><h1>Evidence</h1><p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 07</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
       ${evidenceHeroHtml}
       <div class="evidence-grid">${evidenceCards}</div>
       <br>
@@ -5762,7 +5784,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="insight">
-      <div class="topbar"><div><div class="eyebrow">PAGE 08</div><h1>AI Insights</h1><p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 08</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
       <div class="ai-command-hero">
         <div>
           <span class="mission-label">AIR Recommendation</span>
@@ -5811,7 +5833,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 09</div>
-          <h1>Historical Intelligence</h1>
+          ${pageHeading('analytics', 'Historical Intelligence')}
           <p>How has software quality evolved over time?</p>
         </div>
         <span class="pill demo">${hasPreviousComparison ? 'Historical Comparison' : 'First Recorded Execution'}</span>
@@ -5977,7 +5999,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 10</div>
-          <h1>AIR Core</h1>
+          ${pageHeading('settings', 'AIR Core')}
           <p>Which intelligence engines produced this report?</p>
         </div>
         <span class="pill demo">Platform Core</span>
@@ -6033,7 +6055,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 11</div>
-          <h1>AIR Product Roadmap</h1>
+          ${pageHeading('roadmap', 'AIR Product Roadmap')}
           <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
         </div>
         <span class="pill demo">Platform Evolution</span>
@@ -6805,6 +6827,61 @@ const airGoldenDashboardHtml = `<!doctype html>
 
   bindSearch(airSearch, airSearchResults);
   bindSearch(airGlobalSearch, airGlobalSearchResults);
+
+  const sidebarLinks = Array.from(document.querySelectorAll('.nav a[href^="#"]:not(.disabled)'));
+  const sidebarSections = sidebarLinks
+    .map(link => {
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      return {
+        id,
+        link,
+        section: document.getElementById(id),
+      };
+    })
+    .filter(item => item.section);
+
+  function setActiveSidebarLink(activeId) {
+    sidebarLinks.forEach(link => {
+      const isActive = link.getAttribute('href') === '#' + activeId;
+      link.classList.toggle('active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function updateActiveSidebarFromScroll() {
+    if (!sidebarSections.length) {
+      return;
+    }
+
+    const anchorOffset = Math.max(120, window.innerHeight * 0.22);
+    let activeItem = sidebarSections[0];
+
+    for (const item of sidebarSections) {
+      const top = item.section.getBoundingClientRect().top;
+
+      if (top <= anchorOffset) {
+        activeItem = item;
+      } else {
+        break;
+      }
+    }
+
+    setActiveSidebarLink(activeItem.id);
+  }
+
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      const id = decodeURIComponent(link.getAttribute('href').slice(1));
+      setActiveSidebarLink(id);
+    });
+  });
+
+  updateActiveSidebarFromScroll();
+  window.addEventListener('scroll', updateActiveSidebarFromScroll, { passive: true });
 
   document.addEventListener('click', event => {
     if (!event.target.closest('.report-search, .global-search')) {

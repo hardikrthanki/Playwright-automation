@@ -139,6 +139,7 @@ test.describe(
           new LoginPage(page);
 
         const protectedRoutes = [
+          '/onboarding',
           '/dashboard/profile',
           '/dashboard/billing',
           '/dashboard/risk-compliance',
