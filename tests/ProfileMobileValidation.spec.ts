@@ -39,10 +39,6 @@ $env:PROFILE_MOBILE_COMPLETE_ENABLED="true"
 
 ============================================================================= */
 
-const profileMobileValidationEnabled =
-  process.env.PROFILE_MOBILE_VALIDATION_ENABLED ===
-  'true';
-
 const profileMobileChangeEnabled =
   process.env.PROFILE_MOBILE_CHANGE_ENABLED ===
   'true';
@@ -89,11 +85,6 @@ test.describe(
       timeout: 90000
     });
 
-    test.skip(
-      !profileMobileValidationEnabled,
-      'Skipped because PROFILE_MOBILE_VALIDATION_ENABLED is not configured.'
-    );
-
     test(
       'Profile mobile number section is visible',
       async ({ page }) => {
@@ -134,13 +125,29 @@ test.describe(
     );
 
     test(
-      'Profile mobile change can request OTP for valid mobile number',
+      'Profile mobile section remains visible after refresh',
       async ({ page }) => {
 
-        test.skip(
-          !profileMobileChangeEnabled,
-          'Skipped because PROFILE_MOBILE_CHANGE_ENABLED is not configured.'
-        );
+        const profile =
+          await loginAndOpenProfile(
+            page
+          );
+
+        await profile.validateMobileSectionLoaded();
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await profile.waitForProfileData();
+        await profile.validateMobileSectionLoaded();
+      }
+    );
+
+    if (profileMobileChangeEnabled) {
+      test(
+        'Profile mobile change can request OTP for valid mobile number',
+        async ({ page }) => {
 
         const mobileNumber =
           generateMobileNumber();
@@ -167,7 +174,8 @@ test.describe(
         await profile.requestMobileNumberOtp(
           mobileNumber
         );
-      }
-    );
+        }
+      );
+    }
   }
 );

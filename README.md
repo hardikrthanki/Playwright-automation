@@ -14,10 +14,16 @@ Run a stable sanity suite:
 npm run test:sanity -- --headed
 ```
 
-Run full regression:
+Run executable regression. This suite is best for AIR/client reporting because it avoids manually gated flows that would otherwise appear as skipped tests:
 
 ```powershell
 npm run test:regression -- --headed
+```
+
+Run the extended regression inventory, including controlled/manual/stateful flows. This can show skipped tests unless the required environment variables and one-time test data are configured:
+
+```powershell
+npm run test:regression:all -- --headed
 ```
 
 Run the stable execution suite and generate the execution report:
@@ -40,14 +46,25 @@ SessionSecurity.spec.ts
 AccessibilityBrowser.spec.ts
 Profile.spec.ts
 ProfileNegative.spec.ts
+ProfileSecurityDisplay.spec.ts
+ProfileMobileValidation.spec.ts
+RiskComplianceUpdate.spec.ts
+OnboardingFieldValidation.spec.ts
 ProfilePasswordMismatch.spec.ts
 ProfileWrongCurrentPassword.spec.ts
 DashboardHealth.spec.ts
 DashboardNavigation.spec.ts
 BillingDeep.spec.ts
 BillingEdgeValidation.spec.ts
+BillingSubscriptionManagement.spec.ts
 Subscriber.spec.ts
 ```
+
+`OnboardingFieldValidation.spec.ts` runs the fast Risk Profile and Compliance
+field validation by default. The full fresh-user field regression remains
+opt-in with `ONBOARDING_FIELD_VALIDATION_FULL_ENABLED=true`.
+`ProfileSecurityDisplay.spec.ts` runs read-only MFA/security display checks by
+default and does not enable, disable, or regenerate MFA settings.
 
 ## User Journey Execution
 
@@ -98,6 +115,15 @@ npm run test:controlled:onboarding-fields -- --headed
 Run plan selection validation without Stripe checkout:
 
 ```powershell
+$env:PLAN_SELECTION_EXISTING_EMAIL="prepared-plan-user@example.com"
+$env:PLAN_SELECTION_EXISTING_PASSWORD="current-password"
+$env:PLAN_SELECTION_EXISTING_MOBILE="2015550123"
+npm run test:controlled:plan-selection -- --headed
+```
+
+Run plan selection validation with a fresh onboarding user:
+
+```powershell
 $env:PLAN_SELECTION_VALIDATION_ENABLED="true"
 npm run test:controlled:plan-selection -- --headed
 ```
@@ -126,10 +152,28 @@ Run auth UI validation:
 npm run test:controlled:auth-ui -- --headed
 ```
 
+Run signup validation with static registration OTP:
+
+```powershell
+$env:SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED="true"
+$env:SIGNUP_OTP_LENGTH_VALIDATION_ENABLED="true"
+$env:SIGNUP_OTP_RESEND_VALIDATION_ENABLED="true"
+$env:AUTH_OTP_CODE="111111"
+npm run test:controlled:signup -- --headed
+```
+
+Note: the OTP length scenario is currently tracked as an expected defect because
+the signup OTP input accepts more than six digits.
+
+Run profile security display validation:
+
+```powershell
+npm run test:controlled:profile-security -- --headed
+```
+
 Run profile mobile number validation:
 
 ```powershell
-$env:PROFILE_MOBILE_VALIDATION_ENABLED="true"
 npm run test:controlled:profile-mobile -- --headed
 ```
 
@@ -164,6 +208,12 @@ Smoke, sanity, regression, and controlled-suite strategy is documented in:
 docs/TEST_SUITE_STRATEGY.md
 ```
 
+Controlled test data readiness is documented in:
+
+```text
+docs/CONTROLLED_TEST_READINESS.md
+```
+
 Open the execution report:
 
 ```text
@@ -193,8 +243,11 @@ Run reset-password negative tests:
 
 ```powershell
 $env:RESET_URL="https://puat.ooltool.com/reset-password/..."
-npm run controlled
+npm run test:controlled:reset -- --headed
 ```
+
+When `RESET_URL` is set, reset-password negative tests are also included in
+`test:regression`, `test:stable`, and `test:execution`.
 
 Run payment negative tests:
 
@@ -280,8 +333,9 @@ npm run test:controlled:email -- --headed
 ```
 
 `forgotpassword.spec.ts` pauses while you open the reset email link in the same
-Playwright browser. It is skipped unless `FORGOT_PASSWORD_FLOW_ENABLED=true`
-so broad executions do not get stuck when the reset email is delayed.
+Playwright browser. It is only registered when
+`FORGOT_PASSWORD_FLOW_ENABLED=true`, so broad executions do not get stuck when
+the reset email is delayed.
 `UnlockAccount.spec.ts` is opt-in and runs only when the account is already
 locked and `RUN_UNLOCK_ACCOUNT_TEST=true`.
 
@@ -297,7 +351,8 @@ and rerun without `FORGOT_PASSWORD_FLOW_ENABLED`, or exclude reset flows:
 npx playwright test --headed --grep-invert "Forgot Password|Reset Password"
 ```
 
-If these URLs are not set, controlled tests are skipped by design.
+If these URLs are not set, controlled reset/payment tests are not registered by
+design.
 
 ## Useful Commands
 

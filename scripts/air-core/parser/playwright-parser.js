@@ -12,6 +12,28 @@ function normalizeStatus(status) {
   return status ?? 'unknown';
 }
 
+function resolvePlaywrightStatus(test, result) {
+  const overallStatus = test?.status ?? test?.outcome;
+
+  if (overallStatus === 'expected') {
+    return 'passed';
+  }
+
+  if (overallStatus === 'unexpected') {
+    return 'failed';
+  }
+
+  if (overallStatus === 'skipped') {
+    return 'skipped';
+  }
+
+  if (overallStatus === 'flaky') {
+    return 'flaky';
+  }
+
+  return result?.status ?? overallStatus;
+}
+
 function readZipEntry(zipBuffer, targetName) {
   const eocdSignature = 0x06054b50;
   let eocdOffset = -1;
@@ -107,7 +129,7 @@ function collectJsonReporterTests(suites, parentTitle = []) {
             title: [...suiteTitle, spec.title].filter(Boolean).join(' > '),
             file: suite.file ?? '',
             project: test.projectName ?? '',
-            status: normalizeStatus(result.status),
+            status: normalizeStatus(resolvePlaywrightStatus(test, result)),
             durationMs: result.duration ?? 0,
             error: result.error?.message ?? '',
             retry: result.retry ?? 0,
@@ -129,23 +151,12 @@ function collectHtmlReportTests(files) {
   for (const file of files ?? []) {
     for (const test of file.tests ?? []) {
       for (const result of test.results ?? []) {
-        const status = result.status ??
-          (
-            test.outcome === 'expected'
-              ? 'passed'
-              : test.outcome === 'skipped'
-                ? 'skipped'
-                : test.outcome === 'unexpected'
-                  ? 'failed'
-                  : test.outcome
-          );
-
         tests.push({
           id: `${file.fileName} > ${(test.path ?? []).join(' > ')} > ${test.title}`,
           title: [file.fileName, ...(test.path ?? []), test.title].filter(Boolean).join(' > '),
           file: file.fileName ?? '',
           project: test.projectName ?? '',
-          status: normalizeStatus(status),
+          status: normalizeStatus(resolvePlaywrightStatus(test, result)),
           durationMs: result.duration ?? test.duration ?? 0,
           error: result.error?.message ?? '',
           retry: result.retry ?? 0,

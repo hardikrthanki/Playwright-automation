@@ -1,0 +1,1987 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\playwright.config.ts",
+    "rootDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/BAPS/Documents/Oools_paywright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "dot",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "title": "OOLTool PUAT Automation Report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\execution-report\\playwright-batches\\06-billing.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "BillingDeep.spec.ts",
+      "file": "BillingDeep.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Billing Deep Validation",
+          "file": "BillingDeep.spec.ts",
+          "line": 28,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Billing page remains available after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16355,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:52:22.267Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-11871-ins-available-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-11871-ins-available-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-11871-ins-available-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c09c2ce4d5da59c72b22-7789297bb8f8a13a3202",
+              "file": "BillingDeep.spec.ts",
+              "line": 53,
+              "column": 9
+            },
+            {
+              "title": "Plans tab shows expected Income Builder plan",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13334,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Plans Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": " Income Builder Plan Visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:52:39.528Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-eb5bd-xpected-Income-Builder-plan-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-eb5bd-xpected-Income-Builder-plan-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-eb5bd-xpected-Income-Builder-plan-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c09c2ce4d5da59c72b22-d3d7253f4cb06cc83b82",
+              "file": "BillingDeep.spec.ts",
+              "line": 87,
+              "column": 9
+            },
+            {
+              "title": "Transactions tab shows paid transaction status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14580,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Transactions\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": " Paid Status Verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:52:53.213Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-6d68f-ows-paid-transaction-status-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-6d68f-ows-paid-transaction-status-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-6d68f-ows-paid-transaction-status-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c09c2ce4d5da59c72b22-7fe08e9ef0d90b679568",
+              "file": "BillingDeep.spec.ts",
+              "line": 104,
+              "column": 9
+            },
+            {
+              "title": "Invoice link opens invoice page with paid status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20140,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Transactions\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": " Paid Status Verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:53:08.564Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video-1.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c09c2ce4d5da59c72b22-b8c9b5934097fe5c12fe",
+              "file": "BillingDeep.spec.ts",
+              "line": 121,
+              "column": 9
+            },
+            {
+              "title": "PDF link is available and points to a non-empty URL",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13797,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Transactions\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": " Paid Status Verified\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:53:29.176Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-d8589-d-points-to-a-non-empty-URL-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-d8589-d-points-to-a-non-empty-URL-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-d8589-d-points-to-a-non-empty-URL-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c09c2ce4d5da59c72b22-a3994c7d5d4e6cba9b8e",
+              "file": "BillingDeep.spec.ts",
+              "line": 174,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "BillingEdgeValidation.spec.ts",
+      "file": "BillingEdgeValidation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Billing Edge Validation",
+          "file": "BillingEdgeValidation.spec.ts",
+          "line": 30,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Billing plans tab remains stable without launching checkout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11649,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Plans Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Reopen Plans Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Plans Tab Stable\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:53:43.410Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-cc738--without-launching-checkout-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-cc738--without-launching-checkout-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-cc738--without-launching-checkout-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-680048948d1a3e4adfc4",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 55,
+              "column": 9
+            },
+            {
+              "title": "Billing overview exposes plan status and management controls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12435,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview Contract\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Overview Contract Validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:53:55.401Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-73c96-tus-and-management-controls-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-73c96-tus-and-management-controls-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-73c96-tus-and-management-controls-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-bb77b2c800611ae157a6",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 72,
+              "column": 9
+            },
+            {
+              "title": "Billing history and transactions remain stable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15170,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing History Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing History Tab Stable\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing History Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing History Tab Stable\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:54:08.160Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-11eef-remain-stable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-11eef-remain-stable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-11eef-remain-stable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-d73dc694d4c46e64236d",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 83,
+              "column": 9
+            },
+            {
+              "title": "Billing plans and history tabs can be revisited safely",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14309,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Plans Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Reopen Plans Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Plans Tab Stable\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing History Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing History Tab Stable\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Plans Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Reopen Plans Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Plans Tab Stable\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:54:23.787Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-97764-abs-can-be-revisited-safely-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-97764-abs-can-be-revisited-safely-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-97764-abs-can-be-revisited-safely-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-89af9d08c045bcb0596f",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 100,
+              "column": 9
+            },
+            {
+              "title": "Billing route remains usable after browser back and forward",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17261,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview Contract\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Overview Contract Validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:54:38.529Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-96934-er-browser-back-and-forward-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-96934-er-browser-back-and-forward-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-96934-er-browser-back-and-forward-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-8a1625f067fac540b542",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 119,
+              "column": 9
+            },
+            {
+              "title": "Billing invoice and PDF links have usable targets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15053,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Evidence Links\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing History Tab Stability\n"
+                        },
+                        {
+                          "text": "[CLICK] Open History Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Transactions Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing History Tab Stable\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Evidence Links Have Targets\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:54:56.245Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-19d62-F-links-have-usable-targets-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-19d62-F-links-have-usable-targets-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingEdgeValidation-Bill-19d62-F-links-have-usable-targets-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7507d29bc99cdcc56132-2f57c0468ee011507b40",
+              "file": "BillingEdgeValidation.spec.ts",
+              "line": 163,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "BillingSubscriptionManagement.spec.ts",
+      "file": "BillingSubscriptionManagement.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Billing Subscription Management",
+          "file": "BillingSubscriptionManagement.spec.ts",
+          "line": 44,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Manage subscription opens Stripe portal with subscription details",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20494,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating subscription portal overview\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription portal overview validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:55:11.732Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-72d9355237e73b1a8094",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 65,
+              "column": 9
+            },
+            {
+              "title": "Billing plans show plan action or status controls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13102,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Plan Action Controls\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Plan Action Controls Visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:55:32.767Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-528cb3a16c15db08f204",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 74,
+              "column": 9
+            },
+            {
+              "title": "Stripe portal shows paid invoice history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21029,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating subscription portal invoice history\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription portal invoice history validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:55:46.388Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-9df76--shows-paid-invoice-history-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-9df76--shows-paid-invoice-history-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-9df76--shows-paid-invoice-history-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-873fd3e951508d26226e",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 83,
+              "column": 9
+            },
+            {
+              "title": "Stripe portal return link opens application content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24443,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating subscription portal return link\n"
+                        },
+                        {
+                          "text": "[CLICK] Return To Application\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription portal return link validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:56:07.919Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-d2062-k-opens-application-content-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-d2062-k-opens-application-content-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-d2062-k-opens-application-content-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-72cbf8d30c6a2489b61b",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 92,
+              "column": 9
+            },
+            {
+              "title": "Stripe add payment method screen opens without saving",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26734,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating add payment method screen without saving\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Add Payment Method\n"
+                        },
+                        {
+                          "text": "[PASS] Add payment method screen opened without saving\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:56:32.816Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-6fa6c-screen-opens-without-saving-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-6fa6c-screen-opens-without-saving-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-6fa6c-screen-opens-without-saving-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-17794fe655c711167110",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 102,
+              "column": 11
+            },
+            {
+              "title": "Stripe billing information update screen opens without saving",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22977,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating billing information update screen without saving\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Update Billing Information\n"
+                        },
+                        {
+                          "text": "[PASS] Billing information update screen opened without saving\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:57:00.152Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3021d-screen-opens-without-saving-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3021d-screen-opens-without-saving-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3021d-screen-opens-without-saving-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-30699fe679a8c0b771cb",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 111,
+              "column": 11
+            },
+            {
+              "title": "Cancel subscription form accepts reason and feedback without cancelling",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 39442,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1205:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:123:11",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                          "column": 5,
+                          "line": 1205
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1205\n\n\u001b[0m \u001b[90m 1203 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1204 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1205 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1206 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1207 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1208 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                            "column": 5,
+                            "line": 1205
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1205\n\n\u001b[0m \u001b[90m 1203 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1204 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1205 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1206 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1207 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1208 |\u001b[39m\u001b[0m\n\u001b[2m    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1205:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:123:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening subscription management portal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Manage Subscription\n"
+                        },
+                        {
+                          "text": "[PASS] Subscription management portal opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating cancel subscription form without cancelling\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Cancel Subscription\n"
+                        },
+                        {
+                          "text": "[CLICK] Go Back From Cancel Subscription\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:57:24.160Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-f08a8-feedback-without-cancelling-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-f08a8-feedback-without-cancelling-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-f08a8-feedback-without-cancelling-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-f08a8-feedback-without-cancelling-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                        "column": 5,
+                        "line": 1205
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-bf22512348ca4915d01d",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 120,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Subscriber.spec.ts",
+      "file": "Subscriber.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Subscriber Login",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36490,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[INFO] Logging in\n"
+                    },
+                    {
+                      "text": "Login Attempt 1\n"
+                    },
+                    {
+                      "text": "[CLICK] Submit Login\n"
+                    },
+                    {
+                      "text": "[PASS] Logged in successfully\n"
+                    },
+                    {
+                      "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Dashboard\n"
+                    },
+                    {
+                      "text": "[PASS] Dashboard Loaded\n"
+                    },
+                    {
+                      "text": "[STEP] Refreshing Dashboard\n"
+                    },
+                    {
+                      "text": "[PASS] Dashboard persists after refresh\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Billing Overview\n"
+                    },
+                    {
+                      "text": "[CLICK] Open Profile Menu\n"
+                    },
+                    {
+                      "text": "[CLICK] Open Billing\n"
+                    },
+                    {
+                      "text": "[PASS] Billing Page Opened\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Plans Tab\n"
+                    },
+                    {
+                      "text": "[CLICK] Open Plans Tab\n"
+                    },
+                    {
+                      "text": " Income Builder Plan Visible\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Transactions\n"
+                    },
+                    {
+                      "text": "[CLICK] Open History Tab\n"
+                    },
+                    {
+                      "text": "[CLICK] Open Transactions Tab\n"
+                    },
+                    {
+                      "text": " Paid Status Verified\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Invoice Page\n"
+                    },
+                    {
+                      "text": " Invoice Page Opened\n"
+                    },
+                    {
+                      "text": "[DONE] Invoice Validation Completed\n"
+                    },
+                    {
+                      "text": "[INFO] Validating PDF Link\n"
+                    },
+                    {
+                      "text": " PDF Link Available\n"
+                    },
+                    {
+                      "text": " PDF Link Clicked\n"
+                    },
+                    {
+                      "text": " PDF Validation Completed\n"
+                    },
+                    {
+                      "text": "Logging Out\n"
+                    },
+                    {
+                      "text": "[CLICK] Open Profile Menu\n"
+                    },
+                    {
+                      "text": "[CLICK] Click Sign Out\n"
+                    },
+                    {
+                      "text": "[PASS] Logout Validation Completed\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:58:08.026Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Subscriber-Subscriber-Login-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Subscriber-Subscriber-Login-chromium\\video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Subscriber-Subscriber-Login-chromium\\video-2.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Subscriber-Subscriber-Login-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Subscriber-Subscriber-Login-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7c89749f6ab4af49c26b-0e14ef6976dce9a518da",
+          "file": "Subscriber.spec.ts",
+          "line": 108,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T11:52:20.946Z",
+    "duration": 385158.387,
+    "expected": 18,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

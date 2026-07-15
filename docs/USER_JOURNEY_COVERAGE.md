@@ -104,6 +104,15 @@ npm run test:controlled:risk-compliance -- --headed
 Run plan-selection validation without activating a plan:
 
 ```powershell
+$env:PLAN_SELECTION_EXISTING_EMAIL="PASTE_REAL_PREPARED_PLAN_USER_EMAIL"
+$env:PLAN_SELECTION_EXISTING_PASSWORD="PASTE_REAL_PREPARED_PLAN_USER_PASSWORD"
+$env:PLAN_SELECTION_EXISTING_MOBILE="PASTE_REAL_PREPARED_PLAN_USER_MOBILE"
+npm run test:controlled:plan-selection -- --headed
+```
+
+Run plan-selection validation with a fresh onboarding user:
+
+```powershell
 $env:PLAN_SELECTION_VALIDATION_ENABLED="true"
 npm run test:controlled:plan-selection -- --headed
 ```

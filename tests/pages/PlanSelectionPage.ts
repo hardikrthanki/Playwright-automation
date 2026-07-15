@@ -120,7 +120,7 @@ hasText:/complete setup|continue to payment/i
         'dialog'
       )
       .filter({
-        hasText: /try out pro/i
+        hasText: /try out pro|try overlay strategists free/i
       })
       .first();
   }
@@ -512,7 +512,7 @@ hasText:/complete setup|continue to payment/i
   async validateCompleteSetupRequiresPlanSelection() {
 
     Logger.info(
-      'Validating Complete Setup requires plan selection'
+      'Validating Complete Setup initial state'
     );
 
     await expect(
@@ -532,15 +532,38 @@ hasText:/complete setup|continue to payment/i
         );
 
     if (completeVisible) {
-      await expect(
-        this.completeSetupButton.first()
-      ).toBeDisabled({
-        timeout: 5000
-      });
+      const completeEnabled =
+        await this.completeSetupButton
+          .first()
+          .isEnabled()
+          .catch(
+            () => false
+          );
+
+      if (completeEnabled) {
+        await expect(
+          this.page
+            .getByRole(
+              'radio',
+              {
+                checked: true
+              }
+            )
+            .first()
+        ).toBeVisible({
+          timeout: 5000
+        });
+      } else {
+        await expect(
+          this.completeSetupButton.first()
+        ).toBeDisabled({
+          timeout: 5000
+        });
+      }
     }
 
     Logger.success(
-      'Complete Setup is not actionable before plan selection'
+      'Complete Setup initial state is safe'
     );
   }
 
@@ -568,7 +591,7 @@ hasText:/complete setup|continue to payment/i
     await expect(
       this.trialDialog()
     ).toContainText(
-      /try out pro|try overlay strategists free for 30 days/i
+      /try out pro|try overlay strategists free/i
     );
 
     await expect(

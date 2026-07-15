@@ -1,0 +1,3878 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\playwright.config.ts",
+    "rootDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/BAPS/Documents/Oools_paywright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "dot",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "title": "OOLTool PUAT Automation Report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\execution-report\\playwright-batches\\04-risk-compliance-onboarding-fields.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "OnboardingFieldValidation.spec.ts",
+      "file": "OnboardingFieldValidation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Onboarding Field Validation",
+          "file": "OnboardingFieldValidation.spec.ts",
+          "line": 235,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Fast Risk and Compliance field validation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 162353,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "fast-risk-compliance-validation Email: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                        },
+                        {
+                          "text": "fast-risk-compliance-validation Mobile: 2015559418\n"
+                        },
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        },
+                        {
+                          "text": "[STEP] Registering: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                        },
+                        {
+                          "text": "Registration Email: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                        },
+                        {
+                          "text": "[CLICK] Send Code via SMS\n"
+                        },
+                        {
+                          "text": "[INFO] Entering OTP\n"
+                        },
+                        {
+                          "text": "[CLICK] Verify OTP\n"
+                        },
+                        {
+                          "text": "[PASS] OTP Verify Clicked\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Registration\n"
+                        },
+                        {
+                          "text": "[PASS] Registration successful. Verification email sent.\n"
+                        },
+                        {
+                          "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                        },
+                        {
+                          "text": "Verify email sent to: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                        },
+                        {
+                          "text": "Open Gmail and click the verification link.\n"
+                        },
+                        {
+                          "text": "After verification, resume Playwright.\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bfast-risk-compliance-validation-1784027769418%40gmail.com\n"
+                        },
+                        {
+                          "text": "Login Attempt 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/login\n"
+                        },
+                        {
+                          "text": "Login Attempt 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Risk Profile required fields\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile Without Required Fields\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile required fields block progress\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Risk Profile investing experience is required\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Beginner\n"
+                        },
+                        {
+                          "text": "[CLICK] Select No\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Moderate\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile Without Investing Experience\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile investing experience is required\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select 3-5 years\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Compliance required fields\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Compliance Without Required Fields\n"
+                        },
+                        {
+                          "text": "[PASS] Compliance required fields block progress\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Compliance disclosures are required\n"
+                        },
+                        {
+                          "text": "[CLICK] Open State Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select State\n"
+                        },
+                        {
+                          "text": "Selected State: Alabama\n"
+                        },
+                        {
+                          "text": "[PASS] State Selected\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Compliance Without Disclosures\n"
+                        },
+                        {
+                          "text": "[PASS] Compliance disclosures are required\n"
+                        },
+                        {
+                          "text": "Found 5 disclosure(s)\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 1 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 1\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 1 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 2 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 2\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 2 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 3 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 3\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 3 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 4 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 4\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 4\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 4 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 5 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 5\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 5 Accepted\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Compliance Profile\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:16:07.991Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--17564-Compliance-field-validation-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--17564-Compliance-field-validation-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--17564-Compliance-field-validation-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "58116153685230c06d23-38bef685f39f915e5540",
+              "file": "OnboardingFieldValidation.spec.ts",
+              "line": 243,
+              "column": 9
+            }
+          ],
+          "suites": [
+            {
+              "title": "Full field-level regression",
+              "file": "OnboardingFieldValidation.spec.ts",
+              "line": 300,
+              "column": 12,
+              "specs": [
+                {
+                  "title": "Risk Profile required fields block onboarding progress",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 122438,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "risk-validation Email: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-validation Mobile: 2015554207\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Risk Profile required fields\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Required Fields\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile required fields block progress\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:18:33.776Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--fce52-s-block-onboarding-progress-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--fce52-s-block-onboarding-progress-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--fce52-s-block-onboarding-progress-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-3b0340bf62a5015b2fe2",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 304,
+                  "column": 9
+                },
+                {
+                  "title": "Compliance required fields and disclosures block onboarding progress",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 163083,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "compliance-validation Email: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-validation Mobile: 2015559539\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-validation-1784028019539%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance required fields\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Without Required Fields\n"
+                            },
+                            {
+                              "text": "[PASS] Compliance required fields block progress\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Compliance Profile\n"
+                            },
+                            {
+                              "text": " State of Residence\n"
+                            },
+                            {
+                              "text": "Found 4 dropdown(s)\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 4\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 4 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 5 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 5\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 5 Accepted\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Profile\n"
+                            },
+                            {
+                              "text": "[URL] https://puat.ooltool.com/onboarding\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:20:19.124Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--f1ee1-s-block-onboarding-progress-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--f1ee1-s-block-onboarding-progress-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--f1ee1-s-block-onboarding-progress-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-668dec2d6e7ee374e045",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 331,
+                  "column": 9
+                },
+                {
+                  "title": "Risk Profile investing experience field is required",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 119601,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "risk-experience-required Email: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-experience-required Mobile: 2015555577\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-experience-required-1784028165577%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Risk Profile investing experience is required\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Investing Experience\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile investing experience is required\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:22:45.210Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-98f395a56e27b67a5007",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 365,
+                  "column": 9
+                },
+                {
+                  "title": "Risk Profile strategy selection is required",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 107355,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                              "column": 25,
+                              "line": 347
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                                "column": 25,
+                                "line": 347
+                              },
+                              "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9\u001b[22m"
+                            }
+                          ],
+                          "stdout": [
+                            {
+                              "text": "risk-strategy-required Email: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-strategy-required Mobile: 2015558004\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-strategy-required-1784028268004%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:24:27.610Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\error-context.md"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\trace.zip"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                            "column": 25,
+                            "line": 347
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-1bd2a2d688cd3b545570",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 379,
+                  "column": 9
+                },
+                {
+                  "title": "Risk Profile account type selection is required",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 120642,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "risk-account-type-required Email: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-account-type-required Mobile: 2015551117\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-account-type-required-1784028361117%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Risk Profile account type is required\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Account Type\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile account type is required\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:25:59.769Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-7852aa8830d204060271",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 393,
+                  "column": 9
+                },
+                {
+                  "title": "Risk Profile saved progress persists after refresh",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 130825,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "risk-persistence Email: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-persistence Mobile: 2015553865\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-persistence-1784028463865%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:27:43.422Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4e7f-ress-persists-after-refresh-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4e7f-ress-persists-after-refresh-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4e7f-ress-persists-after-refresh-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-366542ae1d2768d433e8",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 407,
+                  "column": 9
+                },
+                {
+                  "title": "Risk Profile and Compliance selections can be updated before save",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 173499,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "risk-compliance-update Email: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                            },
+                            {
+                              "text": "risk-compliance-update Mobile: 2015558014\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-compliance-update-1784028578014%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Risk Profile selections can be updated before save\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Update Options Experience\n"
+                            },
+                            {
+                              "text": "[INFO] Alternate options experience was not available; keeping Beginner.\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Yes\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Update Risk Tolerance\n"
+                            },
+                            {
+                              "text": "[INFO] Alternate risk tolerance was not available; keeping Moderate.\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Updated Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile update before save is accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance selections can be updated before save\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown For Update\n"
+                            },
+                            {
+                              "text": "[CLICK] Update State Selection\n"
+                            },
+                            {
+                              "text": "[PASS] State updated to Alaska\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 4\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 4 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 5 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 5\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 5 Accepted\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Updated Compliance Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Compliance update before save is accepted\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:29:37.342Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--364b5--can-be-updated-before-save-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--364b5--can-be-updated-before-save-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--364b5--can-be-updated-before-save-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-ef0730d528229306a6cf",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 433,
+                  "column": 9
+                },
+                {
+                  "title": "Compliance state field is required",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 156450,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "compliance-state-required Email: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-state-required Mobile: 2015557893\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-state-required-1784028727893%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance state is required\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 4\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 4 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 5 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 5\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 5 Accepted\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Without State\n"
+                            },
+                            {
+                              "text": "[PASS] Compliance state is required\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:32:07.444Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4193-nce-state-field-is-required-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4193-nce-state-field-is-required-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--c4193-nce-state-field-is-required-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-f96da21211120ff6d3c5",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 451,
+                  "column": 9
+                },
+                {
+                  "title": "Compliance disclosures are required",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 108042,
+                          "error": {
+                            "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n",
+                            "stack": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                              "column": 25,
+                              "line": 347
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                                "column": 25,
+                                "line": 347
+                              },
+                              "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9\u001b[22m"
+                            }
+                          ],
+                          "stdout": [
+                            {
+                              "text": "compliance-disclosures-required Email: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-disclosures-required Mobile: 2015556060\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosures-required-1784028866060%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:34:25.713Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\error-context.md"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\trace.zip"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                            "column": 25,
+                            "line": 347
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-83a06ac4f94184bf1652",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 465,
+                  "column": 9
+                },
+                {
+                  "title": "Every Compliance disclosure must be accepted",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 147593,
+                          "error": {
+                            "message": "Error: Login failed after 3 attempts",
+                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:338:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                              "column": 17,
+                              "line": 338
+                            },
+                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:338\n\n\u001b[0m \u001b[90m 336 |\u001b[39m\n \u001b[90m 337 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 338 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 339 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 340 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 341 |\u001b[39m         }\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                                "column": 17,
+                                "line": 338
+                              },
+                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:338\n\n\u001b[0m \u001b[90m 336 |\u001b[39m\n \u001b[90m 337 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 338 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 339 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 340 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 341 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:338:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9\u001b[22m"
+                            }
+                          ],
+                          "stdout": [
+                            {
+                              "text": "compliance-each-disclosure-required Email: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-each-disclosure-required Mobile: 2015551484\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-each-disclosure-required-1784028961484%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-each-disclosure-required-1784028961484%40gmail.com\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:35:59.789Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\error-context.md"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\trace.zip"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                            "column": 17,
+                            "line": 338
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-63f89be022e7b6edffb7",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 479,
+                  "column": 9
+                },
+                {
+                  "title": "Compliance disclosure cancel does not accept disclosure",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 127640,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "compliance-disclosure-cancel Email: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-disclosure-cancel Mobile: 2015551974\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosure-cancel-1784029091974%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating disclosure cancel does not accept disclosure\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance After Disclosure Cancel\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure cancel does not accept disclosure\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:38:10.319Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-e11e0569db5493adc042",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 493,
+                  "column": 9
+                },
+                {
+                  "title": "Compliance saved progress persists after refresh",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 1200000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 162982,
+                          "errors": [],
+                          "stdout": [
+                            {
+                              "text": "compliance-persistence Email: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                            },
+                            {
+                              "text": "compliance-persistence Mobile: 2015551551\n"
+                            },
+                            {
+                              "text": "[INFO] Opening application\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Create Account\n"
+                            },
+                            {
+                              "text": "[PASS] Create Account Opened\n"
+                            },
+                            {
+                              "text": "[STEP] Registering: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                            },
+                            {
+                              "text": "Registration Email: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                            },
+                            {
+                              "text": "[CLICK] Send Code via SMS\n"
+                            },
+                            {
+                              "text": "[INFO] Entering OTP\n"
+                            },
+                            {
+                              "text": "[CLICK] Verify OTP\n"
+                            },
+                            {
+                              "text": "[PASS] OTP Verify Clicked\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Registration\n"
+                            },
+                            {
+                              "text": "[PASS] Registration successful. Verification email sent.\n"
+                            },
+                            {
+                              "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                            },
+                            {
+                              "text": "Verify email sent to: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                            },
+                            {
+                              "text": "Open Gmail and click the verification link.\n"
+                            },
+                            {
+                              "text": "After verification, resume Playwright.\n"
+                            },
+                            {
+                              "text": "[INFO] Logging in\n"
+                            },
+                            {
+                              "text": "Login Attempt 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-persistence-1784029201551%40gmail.com\n"
+                            },
+                            {
+                              "text": "Login Attempt 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                            },
+                            {
+                              "text": "Login Attempt 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Submit Login\n"
+                            },
+                            {
+                              "text": "[PASS] Logged in successfully\n"
+                            },
+                            {
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                            },
+                            {
+                              "text": "[INFO] Mobile verification step not shown\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Filling Compliance Profile\n"
+                            },
+                            {
+                              "text": " State of Residence\n"
+                            },
+                            {
+                              "text": "Found 4 dropdown(s)\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 4\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 4 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 5 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 5\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 5 Accepted\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Profile\n"
+                            },
+                            {
+                              "text": "[URL] https://puat.ooltool.com/onboarding\n"
+                            }
+                          ],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2026-07-14T11:40:01.221Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\test-finished-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\video.webm"
+                            },
+                            {
+                              "name": "trace",
+                              "contentType": "application/zip",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\trace.zip"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "58116153685230c06d23-bec30317837470c4b7bb",
+                  "file": "OnboardingFieldValidation.spec.ts",
+                  "line": 507,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RiskComplianceUpdate.spec.ts",
+      "file": "RiskComplianceUpdate.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Risk & Compliance Dashboard Update",
+          "file": "RiskComplianceUpdate.spec.ts",
+          "line": 125,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Saved Risk Profile and Compliance details load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21020,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating saved Risk Profile details\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Saved Risk Profile details loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating saved Compliance details\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Saved Compliance details loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:42:27.363Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--5ca43-and-Compliance-details-load-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--5ca43-and-Compliance-details-load-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--5ca43-and-Compliance-details-load-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-0a5599384efa74da1f54",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 133,
+              "column": 9
+            },
+            {
+              "title": "Risk Profile editable controls are available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18444,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Risk Profile editable controls\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile editable controls available\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:42:48.626Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--85993-able-controls-are-available-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--85993-able-controls-are-available-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--85993-able-controls-are-available-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-c9231001f6d87e7cd017",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 146,
+              "column": 9
+            },
+            {
+              "title": "Compliance editable controls are available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19300,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Compliance editable controls\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[INFO] Visible optional compliance field count: 2\n"
+                        },
+                        {
+                          "text": "[PASS] Compliance editable controls available\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:43:07.341Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fa0ef-able-controls-are-available-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fa0ef-able-controls-are-available-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fa0ef-able-controls-are-available-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-406580a9d3afd4a9d230",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "Risk and Compliance tabs remain available after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24182,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating saved Risk Profile details\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Saved Risk Profile details loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating saved Compliance details\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Saved Compliance details loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating saved Risk Profile details\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Saved Risk Profile details loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:43:26.940Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--3cd4e-ain-available-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--3cd4e-ain-available-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--3cd4e-ain-available-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-6c9d2cf22c56325cbf42",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 170,
+              "column": 9
+            },
+            {
+              "title": "Risk and Compliance route remains usable after browser back and forward",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22027,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:43:51.768Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fadcf-er-browser-back-and-forward-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fadcf-er-browser-back-and-forward-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--fadcf-er-browser-back-and-forward-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-e9d3a10bf8496f8c21ce",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 194,
+              "column": 9
+            },
+            {
+              "title": "Risk Profile can be updated from dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22201,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Updating saved Risk Profile\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Update Options Trading Experience to Beginner\n"
+                        },
+                        {
+                          "text": "[CLICK] Update Multi-leg Strategy Answer to No\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile Update\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile update submitted\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile update persisted\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:44:14.272Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--aa3b7-n-be-updated-from-dashboard-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--aa3b7-n-be-updated-from-dashboard-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--aa3b7-n-be-updated-from-dashboard-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-df9c5168749bba90d8e2",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 244,
+              "column": 11
+            },
+            {
+              "title": "Compliance can be updated from dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "No alternate Compliance State option was available.",
+                      "location": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                        "line": 115,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 17607,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Updating saved Compliance\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance State Dropdown\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:44:36.883Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "No alternate Compliance State option was available.",
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                            "line": 115,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f8958-n-be-updated-from-dashboard-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f8958-n-be-updated-from-dashboard-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f8958-n-be-updated-from-dashboard-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-f5f042972947734d8b11",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 257,
+              "column": 11
+            },
+            {
+              "title": "Risk Profile additional editable fields persist after update",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "No alternate Years of Investing Experience option was available.",
+                      "location": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                        "line": 115,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 19364,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Updating additional saved Risk Profile fields\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk Profile Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Years of Investing Experience Dropdown\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:44:54.817Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "No alternate Years of Investing Experience option was available.",
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                            "line": 115,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f598e-fields-persist-after-update-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f598e-fields-persist-after-update-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--f598e-fields-persist-after-update-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-c8fa8d52500af6f44a70",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 272,
+              "column": 11
+            },
+            {
+              "title": "Compliance additional editable fields persist after update",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 300000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "No alternate Compliance State option was available.",
+                      "location": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                        "line": 115,
+                        "column": 12
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 18280,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Updating additional saved Compliance fields\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance Tab\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Compliance State Dropdown\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:45:14.427Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "No alternate Compliance State option was available.",
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\RiskComplianceUpdate.spec.ts",
+                            "line": 115,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--8b673-fields-persist-after-update-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--8b673-fields-persist-after-update-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\RiskComplianceUpdate-Risk--8b673-fields-persist-after-update-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ec5ed94b7c44685c1e8-783e0c02e0913d9f2e70",
+              "file": "RiskComplianceUpdate.spec.ts",
+              "line": 287,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T11:16:06.840Z",
+    "duration": 1768302.429,
+    "expected": 16,
+    "skipped": 3,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

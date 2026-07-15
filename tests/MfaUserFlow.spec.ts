@@ -181,16 +181,10 @@ async function loginWithMfa(
   );
 }
 
-test.describe(
-  'User-side MFA - Local User',
-  () => {
-
-    test.beforeEach(() => {
-      test.skip(
-        !hasLocalMfaUser(),
-        'Set MFA_USER_FLOW_ENABLED=true, MFA_LOCAL_EMAIL, and MFA_LOCAL_PASSWORD to run user-side MFA tests.'
-      );
-    });
+if (hasLocalMfaUser()) {
+  test.describe(
+    'User-side MFA - Local User',
+    () => {
 
     test(
       'Local user enables MFA successfully',
@@ -1155,42 +1149,41 @@ test.describe(
         });
       }
     );
-  }
-);
+    }
+  );
+}
 
-test.describe(
-  'User-side MFA - Google OAuth',
-  () => {
+if (
+  MFA_SETTINGS.allowGoogleUserFlow &&
+  googleMfaUser.email
+) {
+  test.describe(
+    'User-side MFA - Google OAuth',
+    () => {
 
-    test.beforeEach(() => {
-      test.skip(
-        !MFA_SETTINGS.allowGoogleUserFlow || !googleMfaUser.email,
-        'Set MFA_ALLOW_GOOGLE_USER_FLOW=true and Google MFA test credentials to run Google MFA scenarios.'
+      test.fixme(
+        'Google user regenerate backup codes does not require application password',
+        async () => {
+          // Known defect: Google-authenticated users cannot provide an
+          // application password for backup-code regeneration.
+        }
       );
-    });
 
-    test.fixme(
-      'Google user regenerate backup codes does not require application password',
-      async () => {
-        // Known defect: Google-authenticated users cannot provide an
-        // application password for backup-code regeneration.
-      }
-    );
+      test.fixme(
+        'Google user disable MFA does not require application password',
+        async () => {
+          // Known defect: Google-authenticated users cannot provide an
+          // application password for disabling MFA.
+        }
+      );
 
-    test.fixme(
-      'Google user disable MFA does not require application password',
-      async () => {
-        // Known defect: Google-authenticated users cannot provide an
-        // application password for disabling MFA.
-      }
-    );
-
-    test.fixme(
-      'Google user enables and completes MFA challenge',
-      async () => {
-        // Google OAuth automation needs a dedicated authenticated Google
-        // fixture/session to avoid external account prompts and CAPTCHA.
-      }
-    );
-  }
-);
+      test.fixme(
+        'Google user enables and completes MFA challenge',
+        async () => {
+          // Google OAuth automation needs a dedicated authenticated Google
+          // fixture/session to avoid external account prompts and CAPTCHA.
+        }
+      );
+    }
+  );
+}

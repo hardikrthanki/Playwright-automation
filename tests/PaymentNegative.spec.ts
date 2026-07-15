@@ -88,14 +88,10 @@ async function fillBasicBilling(
   }
 }
 
-test.describe(
-  'Payment Negative Scenarios',
-  () => {
-
-    test.skip(
-      !STRIPE_CHECKOUT_URL,
-      'STRIPE_CHECKOUT_URL is required for payment negative validation.'
-    );
+if (STRIPE_CHECKOUT_URL) {
+  test.describe(
+    'Payment Negative Scenarios',
+    () => {
 
     test.beforeEach(
       async ({ page }) => {
@@ -285,5 +281,6 @@ test.describe(
         });
       }
     );
-  }
-);
+    }
+  );
+}

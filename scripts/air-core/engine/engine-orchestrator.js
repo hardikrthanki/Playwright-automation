@@ -122,7 +122,7 @@ function getDefaultEnginePipeline() {
       const businessHealth = calculateBusinessHealth(
         businessJourneys,
         model.summary.passRate,
-        model.summary.failed
+        model.failedTests.filter(failure => (failure.failureType ?? 'Product') === 'Product').length
       );
 
       return {

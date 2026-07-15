@@ -151,6 +151,8 @@ The Failure Engine owns `failedTests[]`.
       "status": "failed",
       "severity": "Critical",
       "category": "Authentication",
+      "failureType": "Product",
+      "releaseImpact": "Product Review",
       "businessImpact": "Critical business flow may be blocked.",
       "errorMessage": "Expected dashboard to be visible.",
       "evidence": [],
@@ -159,6 +161,8 @@ The Failure Engine owns `failedTests[]`.
   ]
 }
 ```
+
+`failureType` separates confirmed product defects from automation, environment, and test-data/external-state failures. `releaseImpact` tells AIR whether the failure should be treated as a product release review item or an automation/environment review item.
 
 ## Business Journeys Contract
 

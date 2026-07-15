@@ -1,5 +1,6 @@
 import {
   expect,
+  Locator,
   test
 } from '@playwright/test';
 
@@ -24,6 +25,14 @@ Validate profile-page guardrails without changing persistent account data.
 Run:
 npx playwright test tests/ProfileNegative.spec.ts --headed
 ============================================================================= */
+
+async function findLocalPasswordToggle(
+  passwordInput: Locator
+) {
+  return passwordInput.locator(
+    'xpath=ancestor::div[contains(@class,"relative")][1]//button'
+  ).first();
+}
 
 test.describe(
   'Profile Negative Scenarios',
@@ -69,6 +78,28 @@ test.describe(
         ).toHaveValue(
           originalEmail
         );
+      }
+    );
+
+    test(
+      'Profile email matches logged-in subscriber identity',
+      async ({ page }) => {
+
+        const profile =
+          new ProfilePage(page);
+
+        await expect(
+          profile.emailInput
+        ).toHaveValue(
+          TEST_USERS.subscriber.email,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          profile.emailInput
+        ).toBeDisabled();
       }
     );
 
@@ -261,6 +292,84 @@ test.describe(
         ).toBeVisible();
 
         await profile.changePasswordButton.click();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/profile/
+        );
+      }
+    );
+
+    test(
+      'Profile password visibility controls are usable without saving drafts',
+      async ({ page }) => {
+
+        const profile =
+          new ProfilePage(page);
+
+        const passwordInputs = [
+          page.getByLabel(
+            /^current password$/i
+          ),
+          page.getByLabel(
+            /^new password$/i
+          ),
+          page.getByLabel(
+            /^confirm new password$/i
+          )
+        ];
+
+        await profile.currentPasswordInput.fill(
+          'DraftCurrentPassword1!'
+        );
+
+        await profile.newPasswordInput.fill(
+          'DraftNewPassword1!'
+        );
+
+        await profile.confirmPasswordInput.fill(
+          'DraftNewPassword1!'
+        );
+
+        for (let index = 0; index < passwordInputs.length; index += 1) {
+          const input =
+            passwordInputs[index];
+
+          await expect(
+            input
+          ).toHaveAttribute(
+            'type',
+            'password'
+          );
+
+          const toggle =
+            await findLocalPasswordToggle(
+              input
+            );
+
+          await expect(
+            toggle
+          ).toBeVisible({
+            timeout: 10000
+          });
+
+          await toggle.click();
+
+          await expect(
+            input
+          ).not.toHaveValue(
+            ''
+          );
+
+          await toggle.click();
+
+          await expect(
+            input
+          ).not.toHaveValue(
+            ''
+          );
+        }
 
         await expect(
           page

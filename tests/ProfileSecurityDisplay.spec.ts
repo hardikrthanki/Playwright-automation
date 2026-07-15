@@ -22,13 +22,8 @@ regenerating backup codes, or revoking trusted devices.
 
 RUN
 ---
-$env:PROFILE_SECURITY_DISPLAY_ENABLED="true"
 npx playwright test tests/ProfileSecurityDisplay.spec.ts --headed
 ============================================================================= */
-
-const profileSecurityDisplayEnabled =
-  process.env.PROFILE_SECURITY_DISPLAY_ENABLED ===
-  'true';
 
 const profileSecurityUser = {
   email:
@@ -47,11 +42,6 @@ test.describe(
     test.describe.configure({
       timeout: 120000
     });
-
-    test.skip(
-      !profileSecurityDisplayEnabled,
-      'Skipped because PROFILE_SECURITY_DISPLAY_ENABLED is not configured.'
-    );
 
     test.beforeEach(
       async ({ page }) => {
@@ -94,6 +84,24 @@ test.describe(
         const mfa =
           new MfaPage(page);
 
+        await mfa.validateTrustedDevicesReadOnly();
+      }
+    );
+
+    test(
+      'Profile security page remains stable after refresh',
+      async ({ page }) => {
+
+        const mfa =
+          new MfaPage(page);
+
+        await mfa.validateSecurityOverviewReadOnly();
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await mfa.validateSecurityOverviewReadOnly();
         await mfa.validateTrustedDevicesReadOnly();
       }
     );

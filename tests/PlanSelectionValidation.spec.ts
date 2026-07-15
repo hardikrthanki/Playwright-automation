@@ -87,6 +87,25 @@ function getExistingPlanSelectionUser() {
   };
 }
 
+const planSelectionValidationEnabled =
+  envEnabled(
+    'PLAN_SELECTION_VALIDATION_ENABLED'
+  );
+
+const planSelectionHasPreparedUser =
+  Boolean(
+    getExistingPlanSelectionUser()
+  );
+
+const planSelectionReadOnlyEnabled =
+  planSelectionValidationEnabled ||
+  planSelectionHasPreparedUser;
+
+const planSelectionFreeActivationEnabled =
+  envEnabled(
+    'PLAN_SELECTION_FREE_ACTIVATION_ENABLED'
+  );
+
 async function openPlanSelection(
   page: Page,
   scenario: string,
@@ -227,24 +246,22 @@ async function openPlanSelection(
   });
 }
 
-test.describe(
-  'Plan Selection Validation',
-  () => {
+if (
+  planSelectionReadOnlyEnabled ||
+  planSelectionFreeActivationEnabled
+) {
+  test.describe(
+    'Plan Selection Validation',
+    () => {
 
     test.describe.configure({
       timeout: 20 * 60 * 1000
     });
 
-    test.skip(
-      !envEnabled(
-        'PLAN_SELECTION_VALIDATION_ENABLED'
-      ),
-      'Skipped because PLAN_SELECTION_VALIDATION_ENABLED is not configured.'
-    );
-
-    test(
-      'Plan catalog, feature summary, and billing toggle are visible',
-      async ({ page }) => {
+    if (planSelectionReadOnlyEnabled) {
+      test(
+        'Plan catalog, feature summary, and billing toggle are visible',
+        async ({ page }) => {
         await openPlanSelection(
           page,
           'plan-toggle-validation'
@@ -258,12 +275,12 @@ test.describe(
         await planPage.validatePlanCatalog();
 
         await planPage.validateBillingToggle();
-      }
-    );
+        }
+      );
 
-    test(
-      'Complete Setup is guarded before selecting a plan',
-      async ({ page }) => {
+      test(
+        'Complete Setup initial state is safe before checkout',
+        async ({ page }) => {
         await openPlanSelection(
           page,
           'plan-complete-setup-guard'
@@ -275,12 +292,12 @@ test.describe(
           );
 
         await planPage.validateCompleteSetupRequiresPlanSelection();
-      }
-    );
+        }
+      );
 
-    test(
-      'Overlay Strategists with-card trial modal content and cancel behavior',
-      async ({ page }) => {
+      test(
+        'Overlay Strategists with-card trial modal content and cancel behavior',
+        async ({ page }) => {
         await openPlanSelection(
           page,
           'plan-with-card-modal-validation'
@@ -302,12 +319,12 @@ test.describe(
         await planPage.validatePlanVisible(
           'Overlay Strategists'
         );
-      }
-    );
+        }
+      );
 
-    test(
-      'Overlay Strategists without-card trial modal content and close behavior',
-      async ({ page }) => {
+      test(
+        'Overlay Strategists without-card trial modal content and close behavior',
+        async ({ page }) => {
         await openPlanSelection(
           page,
           'plan-without-card-modal-validation'
@@ -329,12 +346,12 @@ test.describe(
         await planPage.validatePlanVisible(
           'Overlay Strategists'
         );
-      }
-    );
+        }
+      );
 
-    test(
-      'Overlay Strategists trial start requires terms acceptance',
-      async ({ page }) => {
+      test(
+        'Overlay Strategists trial start requires terms acceptance',
+        async ({ page }) => {
         await openPlanSelection(
           page,
           'plan-terms-validation'
@@ -348,41 +365,27 @@ test.describe(
         await planPage.openOverlayStrategistsTrialWithoutCardModal();
 
         await planPage.validateTrialTermsRequired();
-      }
-    );
-
-    test(
-      'Curious Explorer free plan completes onboarding without Stripe',
-      async ({ page }) => {
-        test.skip(
-          !envEnabled(
-            'PLAN_SELECTION_FREE_ACTIVATION_ENABLED'
-          ),
-          'Skipped because PLAN_SELECTION_FREE_ACTIVATION_ENABLED is not configured.'
-        );
-
-        try {
-          await openPlanSelection(
-            page,
-            'plan-free-activation'
-          );
-        } catch (error) {
-          const message =
-            error instanceof Error
-              ? error.message
-              : String(
-                error
-              );
-
-          test.skip(
-            /Registration OTP input did not appear/i.test(
-              message
-            ),
-            'Skipped because registration SMS OTP was not available for the fresh free-plan activation user. Use PLAN_SELECTION_EXISTING_EMAIL/PASSWORD with a prepared user on plan selection.'
-          );
-
-          throw error;
         }
+      );
+    }
+
+    if (planSelectionFreeActivationEnabled) {
+      test(
+        'Curious Explorer free plan completes onboarding without Stripe',
+        async ({ page }) => {
+        const hasPreparedUser =
+          Boolean(
+            getExistingPlanSelectionUser()
+          );
+
+        await openPlanSelection(
+          page,
+          'plan-free-activation',
+          {
+            useExistingUser:
+              hasPreparedUser
+          }
+        );
 
         const planPage =
           new PlanSelectionPage(
@@ -402,7 +405,9 @@ test.describe(
         await new DashboardPage(
           page
         ).validateLoaded();
-      }
-    );
-  }
-);
+        }
+      );
+    }
+    }
+  );
+}

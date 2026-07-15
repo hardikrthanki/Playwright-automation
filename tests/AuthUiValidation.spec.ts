@@ -382,17 +382,35 @@ test.describe(
             passwordInput
           );
 
-        test.skip(
-          !(await toggle.isVisible().catch(
-            () => false
-          )),
-          'Skipped because password visibility toggle is not exposed.'
-        );
+        await expect(
+          toggle
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        const initialType =
+          await passwordInput.getAttribute(
+            'type'
+          );
 
         await safeClick(
           toggle,
           'Toggle Login Password Visibility'
         );
+
+        await expect
+          .poll(
+            async () =>
+              await passwordInput.getAttribute(
+                'type'
+              ),
+            {
+              timeout: 5000
+            }
+          )
+          .not.toBe(
+            initialType
+          );
 
         await expect(
           page
@@ -464,12 +482,11 @@ test.describe(
             registration.passwordInput
           );
 
-        test.skip(
-          !(await toggle.isVisible().catch(
-            () => false
-          )),
-          'Skipped because registration password visibility toggle is not exposed.'
-        );
+        await expect(
+          toggle
+        ).toBeVisible({
+          timeout: 10000
+        });
 
         const initialType =
           await registration.passwordInput.getAttribute(

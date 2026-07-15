@@ -61,7 +61,7 @@ Step 10 - Logout Validation
 
 ## TEST DATA
 
-Subscriber Email : [imhardikthanki+09@gmail.com](mailto:imhardikthanki+09@gmail.com)
+Subscriber Email : [imhardikthanki+plantest@gmail.com](mailto:imhardikthanki+plantest@gmail.com)
 Subscription Plan : Income Builder
 Environment       : PUAT
 

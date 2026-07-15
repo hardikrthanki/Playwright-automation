@@ -134,20 +134,15 @@ test.describe(
   'Auth Configuration Limits',
   () => {
 
-    test(
-      'Configured failed login attempts trigger account lockout',
-      async ({ page }) => {
-        test.skip(
-          !authConfigurationLimitsEnabled ||
-          !lockoutLimitValidationEnabled,
-          'Skipped because auth configuration lockout validation is not enabled.'
-        );
-
-        test.skip(
-          !lockoutEmail ||
-          !lockoutPassword,
-          'Skipped because AUTH_LOCKOUT_EMAIL and AUTH_LOCKOUT_PASSWORD are required.'
-        );
+    if (
+      authConfigurationLimitsEnabled &&
+      lockoutLimitValidationEnabled &&
+      lockoutEmail &&
+      lockoutPassword
+    ) {
+      test(
+        'Configured failed login attempts trigger account lockout',
+        async ({ page }) => {
 
         skipWhenLimitIsTooHigh(
           AUTH_LOCKOUT_SETTINGS.maxFailedLoginAttempts,
@@ -205,17 +200,17 @@ test.describe(
         ).toBeVisible({
           timeout: 10000
         });
-      }
-    );
+        }
+      );
+    }
 
-    test(
-      'Configured password reset email request limit is enforced',
-      async ({ page }) => {
-        test.skip(
-          !authConfigurationLimitsEnabled ||
-          !passwordResetRateLimitValidationEnabled,
-          'Skipped because password-reset rate-limit validation is not enabled.'
-        );
+    if (
+      authConfigurationLimitsEnabled &&
+      passwordResetRateLimitValidationEnabled
+    ) {
+      test(
+        'Configured password reset email request limit is enforced',
+        async ({ page }) => {
 
         skipWhenLimitIsTooHigh(
           AUTH_RATE_LIMITS.passwordResetsPerWindow + 1,
@@ -265,7 +260,9 @@ test.describe(
         ).toBe(
           true
         );
-      }
-    );
+        }
+      );
+    }
+
   }
 );

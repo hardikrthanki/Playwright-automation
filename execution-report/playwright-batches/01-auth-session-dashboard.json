@@ -1,0 +1,4306 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\playwright.config.ts",
+    "rootDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/BAPS/Documents/Oools_paywright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "dot",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "title": "OOLTool PUAT Automation Report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\execution-report\\playwright-batches\\01-auth-session-dashboard.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "AuthNegative.spec.ts",
+      "file": "AuthNegative.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Auth Negative Scenarios",
+          "file": "AuthNegative.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Login form blocks empty required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9037,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:56:48.852Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-df06b-locks-empty-required-fields-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-df06b-locks-empty-required-fields-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-df06b-locks-empty-required-fields-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-4c3cbca076fa946f609f",
+              "file": "AuthNegative.spec.ts",
+              "line": 56,
+              "column": 9
+            },
+            {
+              "title": "Login form blocks empty email only",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2750,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:56:58.627Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-942a8-orm-blocks-empty-email-only-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-942a8-orm-blocks-empty-email-only-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-942a8-orm-blocks-empty-email-only-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-544ed872a7036bd76ce9",
+              "file": "AuthNegative.spec.ts",
+              "line": 107,
+              "column": 9
+            },
+            {
+              "title": "Login form blocks empty password only",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2031,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:01.530Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9cd32--blocks-empty-password-only-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9cd32--blocks-empty-password-only-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9cd32--blocks-empty-password-only-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-992258f1b0b36b207ada",
+              "file": "AuthNegative.spec.ts",
+              "line": 154,
+              "column": 9
+            },
+            {
+              "title": "Login form blocks invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2029,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:03.669Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a6317-blocks-invalid-email-format-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a6317-blocks-invalid-email-format-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a6317-blocks-invalid-email-format-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-27673cd71c91b53f9d18",
+              "file": "AuthNegative.spec.ts",
+              "line": 201,
+              "column": 9
+            },
+            {
+              "title": "Login form rejects SQL injection input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2184,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:05.799Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a44a-rejects-SQL-injection-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a44a-rejects-SQL-injection-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a44a-rejects-SQL-injection-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-60cc99ca8c292906418e",
+              "file": "AuthNegative.spec.ts",
+              "line": 260,
+              "column": 11
+            },
+            {
+              "title": "Login form rejects XSS injection input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:08.077Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-13f21-rejects-XSS-injection-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-13f21-rejects-XSS-injection-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-13f21-rejects-XSS-injection-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-5e019b456130c9f57678",
+              "file": "AuthNegative.spec.ts",
+              "line": 260,
+              "column": 11
+            },
+            {
+              "title": "Login form rejects very long email input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2327,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:10.097Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a9ace-jects-very-long-email-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a9ace-jects-very-long-email-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-a9ace-jects-very-long-email-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-5165877dab4ca7d1188a",
+              "file": "AuthNegative.spec.ts",
+              "line": 260,
+              "column": 11
+            },
+            {
+              "title": "Login form does not authenticate email with leading and trailing spaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2325,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:12.536Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-1f276-leading-and-trailing-spaces-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-1f276-leading-and-trailing-spaces-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-1f276-leading-and-trailing-spaces-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-ce39fbf881daadf390d7",
+              "file": "AuthNegative.spec.ts",
+              "line": 311,
+              "column": 9
+            },
+            {
+              "title": "Login form keeps user on login when invalid credentials are submitted with Enter",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2268,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:14.967Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-f1341-ls-are-submitted-with-Enter-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-f1341-ls-are-submitted-with-Enter-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-f1341-ls-are-submitted-with-Enter-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-2d377f7fb7f3a23ce8b0",
+              "file": "AuthNegative.spec.ts",
+              "line": 361,
+              "column": 9
+            },
+            {
+              "title": "Protected route /dashboard redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2333,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:17.333Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-00203-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-00203-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-00203-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-7d98b5ef049d416767ac",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/profile redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2808,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:19.794Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-cb3f8-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-cb3f8-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-cb3f8-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-f6089a56f4726d7d5153",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/billing redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1807,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:22.722Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-79dfc-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-79dfc-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-79dfc-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-50ef5c58942705abfb42",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /onboarding redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2313,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:24.598Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-765d3-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-765d3-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-765d3-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-9c24eef439e84e4eb2cc",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/settings redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1805,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:26.967Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-602e6-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-602e6-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-602e6-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-aeb73f1c13db3acf0703",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/security redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2449,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:28.898Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4a498-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4a498-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4a498-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-917f81586b38aaf320c8",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/subscription redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1937,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:31.454Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-964fb-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-964fb-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-964fb-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-154fe9f0cc0ce2b694f9",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/notifications redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1977,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:33.491Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4c23b-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4c23b-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-4c23b-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-baea33eed18447110c9e",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Protected route /dashboard/activity redirects unauthenticated user to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1992,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:35.596Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-e6fef-authenticated-user-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-e6fef-authenticated-user-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-e6fef-authenticated-user-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-ad3d6478b73ea916f4ac",
+              "file": "AuthNegative.spec.ts",
+              "line": 412,
+              "column": 11
+            },
+            {
+              "title": "Forgot password form blocks empty email",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2688,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:37.723Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-0afe4-ord-form-blocks-empty-email-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-0afe4-ord-form-blocks-empty-email-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-0afe4-ord-form-blocks-empty-email-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-10c1dfb84f74b5a86252",
+              "file": "AuthNegative.spec.ts",
+              "line": 441,
+              "column": 9
+            },
+            {
+              "title": "Forgot password form blocks invalid email format",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6525,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:40.546Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-5de19-blocks-invalid-email-format-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-5de19-blocks-invalid-email-format-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-5de19-blocks-invalid-email-format-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-46a48fe967ec6e2d3938",
+              "file": "AuthNegative.spec.ts",
+              "line": 467,
+              "column": 9
+            },
+            {
+              "title": "Forgot password rejects SQL injection input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3376,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:47.191Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-b9c67-rejects-SQL-injection-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-b9c67-rejects-SQL-injection-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-b9c67-rejects-SQL-injection-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-faa4f7f33ac489705d4d",
+              "file": "AuthNegative.spec.ts",
+              "line": 490,
+              "column": 11
+            },
+            {
+              "title": "Forgot password rejects XSS injection input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2919,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:50.771Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a3d5-rejects-XSS-injection-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a3d5-rejects-XSS-injection-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-3a3d5-rejects-XSS-injection-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-d961bf01ee0c0400c855",
+              "file": "AuthNegative.spec.ts",
+              "line": 490,
+              "column": 11
+            },
+            {
+              "title": "Forgot password rejects very long email input",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4407,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:53.984Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-6fa5f-jects-very-long-email-input-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-6fa5f-jects-very-long-email-input-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-6fa5f-jects-very-long-email-input-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-7b94ed4b8b26c904f2a3",
+              "file": "AuthNegative.spec.ts",
+              "line": 490,
+              "column": 11
+            },
+            {
+              "title": "Forgot password keeps user on reset page for email with surrounding spaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3025,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:57:58.884Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9d1b8-ail-with-surrounding-spaces-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9d1b8-ail-with-surrounding-spaces-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthNegative-Auth-Negative-9d1b8-ail-with-surrounding-spaces-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "452a601b1899dd7f60d5-e1f9b6656ccf829a37f3",
+              "file": "AuthNegative.spec.ts",
+              "line": 514,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "AuthUiValidation.spec.ts",
+      "file": "AuthUiValidation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Auth UI Validation",
+          "file": "AuthUiValidation.spec.ts",
+          "line": 77,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Login screen navigates to forgot password and back",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4615,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Returning To Login Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Back To Login\n"
+                        },
+                        {
+                          "text": "[PASS] Returned To Login Page\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:02.111Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-c8fd8-to-forgot-password-and-back-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-c8fd8-to-forgot-password-and-back-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-c8fd8-to-forgot-password-and-back-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-fa3a13a837df2a976e05",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 81,
+              "column": 9
+            },
+            {
+              "title": "Login direct link remains usable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2616,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:06.844Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-67964-emains-usable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-67964-emains-usable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-67964-emains-usable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-5268677bedab91cdbdda",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 100,
+              "column": 9
+            },
+            {
+              "title": "Forgot password back to login clears reset-only navigation state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3861,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Returning To Login Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Back To Login\n"
+                        },
+                        {
+                          "text": "[PASS] Returned To Login Page\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:09.604Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-5e335-reset-only-navigation-state-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-5e335-reset-only-navigation-state-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-5e335-reset-only-navigation-state-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-baeb348759907e8a396c",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 153,
+              "column": 9
+            },
+            {
+              "title": "Forgot password direct link remains usable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2526,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:13.632Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-e1e62-emains-usable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-e1e62-emains-usable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-e1e62-emains-usable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-975049c32c675d6578b1",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 195,
+              "column": 9
+            },
+            {
+              "title": "Login screen navigates to create account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2653,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:16.233Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-218ef-navigates-to-create-account-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-218ef-navigates-to-create-account-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-218ef-navigates-to-create-account-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-eb68f965980750adf612",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 237,
+              "column": 9
+            },
+            {
+              "title": "Auth pages remain usable with browser back and forward",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5250,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:18.991Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d3a83-th-browser-back-and-forward-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d3a83-th-browser-back-and-forward-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d3a83-th-browser-back-and-forward-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-ad0bdabe497d49ac7020",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 273,
+              "column": 9
+            },
+            {
+              "title": "Login password visibility control is exposed without submitting form",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6536,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"password\"\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"password\"\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:401:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                          "column": 9,
+                          "line": 401
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 399 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 400 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 401 |\u001b[39m         \u001b[36mawait\u001b[39m expect\n \u001b[90m     |\u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 402 |\u001b[39m           \u001b[33m.\u001b[39mpoll(\n \u001b[90m 403 |\u001b[39m             \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m\n \u001b[90m 404 |\u001b[39m               \u001b[36mawait\u001b[39m passwordInput\u001b[33m.\u001b[39mgetAttribute(\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                            "column": 9,
+                            "line": 401
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"password\"\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n\u001b[0m \u001b[90m 399 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 400 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 401 |\u001b[39m         \u001b[36mawait\u001b[39m expect\n \u001b[90m     |\u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 402 |\u001b[39m           \u001b[33m.\u001b[39mpoll(\n \u001b[90m 403 |\u001b[39m             \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m\n \u001b[90m 404 |\u001b[39m               \u001b[36mawait\u001b[39m passwordInput\u001b[33m.\u001b[39mgetAttribute(\u001b[0m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:401:9\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[CLICK] Toggle Login Password Visibility\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:24.430Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                        "column": 9,
+                        "line": 401
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-a68e87f5c3d9704dabe8",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 351,
+              "column": 9
+            },
+            {
+              "title": "Register screen exposes required public form controls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9590,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:32.607Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2fcfb-quired-public-form-controls-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2fcfb-quired-public-form-controls-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2fcfb-quired-public-form-controls-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-71c9137da6732d727397",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 427,
+              "column": 9
+            },
+            {
+              "title": "Register screen password visibility toggle changes password field type",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9440,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Toggle Register Password Visibility\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:43.588Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-75414157541f8702e583",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 462,
+              "column": 9
+            },
+            {
+              "title": "Register screen navigates back to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10556,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Back To Login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:58:53.921Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-03cb8-een-navigates-back-to-login-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-03cb8-een-navigates-back-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-03cb8-een-navigates-back-to-login-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-4a70a46f087bc8a200c1",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 517,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "DashboardHealth.spec.ts",
+      "file": "DashboardHealth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Dashboard Health",
+          "file": "DashboardHealth.spec.ts",
+          "line": 29,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Dashboard direct route does not show load-error screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14399,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:59:05.363Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--4a4ec--not-show-load-error-screen-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--4a4ec--not-show-load-error-screen-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--4a4ec--not-show-load-error-screen-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3a4bc710b709affead59-7e1ed9a91f44fce2fdd6",
+              "file": "DashboardHealth.spec.ts",
+              "line": 49,
+              "column": 9
+            },
+            {
+              "title": "Dashboard refresh does not show load-error screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12594,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:59:20.222Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--2494d--not-show-load-error-screen-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--2494d--not-show-load-error-screen-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardHealth-Dashboard--2494d--not-show-load-error-screen-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3a4bc710b709affead59-90f6bfa23cc8ad406e40",
+              "file": "DashboardHealth.spec.ts",
+              "line": 67,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "DashboardNavigation.spec.ts",
+      "file": "DashboardNavigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Dashboard Navigation",
+          "file": "DashboardNavigation.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Authenticated user can open dashboard profile billing and compliance routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22406,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Risk & Compliance page\n"
+                        },
+                        {
+                          "text": "[PASS] Risk & Compliance page loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:59:33.068Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-631df-lling-and-compliance-routes-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-631df-lling-and-compliance-routes-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-631df-lling-and-compliance-routes-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-e94df1e5682c6d9df3dd",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 90,
+              "column": 9
+            },
+            {
+              "title": "Authenticated dashboard remains usable on mobile viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12048,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T10:59:56.119Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-39a6090575fa46114618",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 147,
+              "column": 9
+            },
+            {
+              "title": "Authenticated profile billing and compliance routes remain usable on tablet viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19866,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:00:08.476Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-f7b94-n-usable-on-tablet-viewport-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-f7b94-n-usable-on-tablet-viewport-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-f7b94-n-usable-on-tablet-viewport-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-b2687f8d945bacc10a1c",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 171,
+              "column": 9
+            },
+            {
+              "title": "Authenticated deep links with query parameters render expected pages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19562,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:00:28.915Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-500fb-eters-render-expected-pages-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-500fb-eters-render-expected-pages-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-500fb-eters-render-expected-pages-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-d1e7493b99ab190d6a63",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 227,
+              "column": 9
+            },
+            {
+              "title": "Dashboard footer legal and support links expose usable targets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12517,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:00:49.020Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-506cb-links-expose-usable-targets-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-506cb-links-expose-usable-targets-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-506cb-links-expose-usable-targets-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-7ad73219b22c3454436c",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 301,
+              "column": 9
+            },
+            {
+              "title": "Profile menu exposes billing risk compliance and sign out actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11054,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:01:01.908Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-ea65b-liance-and-sign-out-actions-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-ea65b-liance-and-sign-out-actions-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-ea65b-liance-and-sign-out-actions-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-f0fbace36d5b30cb1d0d",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 352,
+              "column": 9
+            },
+            {
+              "title": "Profile menu navigation actions open the expected pages",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22254,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating profile-menu navigation actions\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile From Profile Menu\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing From Profile Menu\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Risk & Compliance From Profile Menu\n"
+                        },
+                        {
+                          "text": "[PASS] Profile-menu navigation actions are healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:01:13.334Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-45bc0-ons-open-the-expected-pages-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-45bc0-ons-open-the-expected-pages-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-45bc0-ons-open-the-expected-pages-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-8e1db3d5e398e02d0a31",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 392,
+              "column": 9
+            },
+            {
+              "title": "Profile menu closes with Escape and outside click",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11195,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating profile-menu dismissal behavior\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[PASS] Profile-menu dismissal behavior is healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:01:36.375Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-6ac0a-th-Escape-and-outside-click-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-6ac0a-th-Escape-and-outside-click-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-6ac0a-th-Escape-and-outside-click-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-89eef5db57afafb08b2f",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 403,
+              "column": 9
+            },
+            {
+              "title": "Dashboard top navigation tabs are visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10749,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:01:47.988Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-3383e-navigation-tabs-are-visible-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-3383e-navigation-tabs-are-visible-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-3383e-navigation-tabs-are-visible-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-51b3d9885e08ed7c641e",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 414,
+              "column": 9
+            },
+            {
+              "title": "Dashboard top navigation links open without load errors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11969,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard top navigation routes\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Dashboard\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Analytics\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Portfolio\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Accounts\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard top navigation routes are healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:01:59.110Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-12b84-ks-open-without-load-errors-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-12b84-ks-open-without-load-errors-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-12b84-ks-open-without-load-errors-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-efd1de176eb11ba0c9a0",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 446,
+              "column": 9
+            },
+            {
+              "title": "Dashboard top navigation destinations render usable content",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12099,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard top navigation destination content\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Dashboard\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Analytics\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Portfolio\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Accounts\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard top navigation destinations render content\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:02:11.456Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8faf1-tions-render-usable-content-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8faf1-tions-render-usable-content-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8faf1-tions-render-usable-content-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-3c5d1734a0e948e26c11",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 457,
+              "column": 9
+            },
+            {
+              "title": "Dashboard top navigation destinations stay usable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17500,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard top navigation destination refresh behavior\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Dashboard\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Analytics\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Portfolio\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Accounts\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard top navigation destinations persist after refresh\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:02:23.910Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-d93d5-s-stay-usable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-d93d5-s-stay-usable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-d93d5-s-stay-usable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-ac58dcb47ff3d1e58119",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 468,
+              "column": 9
+            },
+            {
+              "title": "Dashboard header notification theme and fullscreen controls are healthy",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9743,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard header utility controls\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Notifications\n"
+                        },
+                        {
+                          "text": "[CLICK] Toggle Theme\n"
+                        },
+                        {
+                          "text": "[CLICK] Toggle Fullscreen\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard header utility controls are healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:02:42.015Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-a0245-screen-controls-are-healthy-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-a0245-screen-controls-are-healthy-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-a0245-screen-controls-are-healthy-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-6c71b9ac478a642f1d8e",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 479,
+              "column": 9
+            },
+            {
+              "title": "Dashboard refresh utility reloads data without ending session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13097,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard refresh utility control\n"
+                        },
+                        {
+                          "text": "[CLICK] Refresh Dashboard Data\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard refresh utility control is healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:02:52.024Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-69aea-data-without-ending-session-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-69aea-data-without-ending-session-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-69aea-data-without-ending-session-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-18c0c522fa02e00486bd",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 490,
+              "column": 9
+            },
+            {
+              "title": "Dashboard quick action menu opens without changing session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9671,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating dashboard quick-action control\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Quick Action Menu\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard quick-action control is healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:03:05.349Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-7dff8-ns-without-changing-session-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-7dff8-ns-without-changing-session-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-7dff8-ns-without-changing-session-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-39ffc38d9aaeee93db0d",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 501,
+              "column": 9
+            },
+            {
+              "title": "Notification panel opens and closes without disrupting dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10229,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating notification panel behavior\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Notification Panel\n"
+                        },
+                        {
+                          "text": "[CLICK] Reopen Notification Panel\n"
+                        },
+                        {
+                          "text": "[PASS] Notification panel behavior is healthy\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:03:15.263Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-2985e-ithout-disrupting-dashboard-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-2985e-ithout-disrupting-dashboard-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-2985e-ithout-disrupting-dashboard-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-30a42057b6345e052da9",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 512,
+              "column": 9
+            },
+            {
+              "title": "Notification panel remains usable after dashboard refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11872,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating notification panel after dashboard refresh\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating notification panel behavior\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Notification Panel\n"
+                        },
+                        {
+                          "text": "[CLICK] Reopen Notification Panel\n"
+                        },
+                        {
+                          "text": "[PASS] Notification panel behavior is healthy\n"
+                        },
+                        {
+                          "text": "[PASS] Notification panel remains healthy after refresh\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:03:25.820Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8681a-ble-after-dashboard-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8681a-ble-after-dashboard-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-8681a-ble-after-dashboard-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-84cca6836eea7d09ddb9",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 523,
+              "column": 9
+            },
+            {
+              "title": "Key authenticated routes stay usable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26746,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating key authenticated route refresh behavior\n"
+                        },
+                        {
+                          "text": "[PASS] Key authenticated routes remain usable after refresh\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:03:37.973Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-5d488-s-stay-usable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-5d488-s-stay-usable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-5d488-s-stay-usable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-1b75cabe50713151b6c0",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 534,
+              "column": 9
+            },
+            {
+              "title": "Browser back returns from billing to dashboard without ending session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12126,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:04:05.449Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-33b73-oard-without-ending-session-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-33b73-oard-without-ending-session-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-33b73-oard-without-ending-session-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-5b824a785e6578cc31f7",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 545,
+              "column": 9
+            },
+            {
+              "title": "Profile menu sign out blocks direct dashboard access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12452,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating profile-menu sign out\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Click Sign Out\n"
+                        },
+                        {
+                          "text": "[PASS] Profile-menu sign out redirects to login\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:04:17.925Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-e0fa1-cks-direct-dashboard-access-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-e0fa1-cks-direct-dashboard-access-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-e0fa1-cks-direct-dashboard-access-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d7c789189ee614e96ffe-bfbcfe097713626ec361",
+              "file": "DashboardNavigation.spec.ts",
+              "line": 584,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "SessionSecurity.spec.ts",
+      "file": "SessionSecurity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Session Security",
+          "file": "SessionSecurity.spec.ts",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Logout prevents browser back and direct dashboard access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15964,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "Logging Out\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Click Sign Out\n"
+                        },
+                        {
+                          "text": "[PASS] Logout Validation Completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:04:30.787Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-e64ab-and-direct-dashboard-access-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-e64ab-and-direct-dashboard-access-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-e64ab-and-direct-dashboard-access-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-070c21c0b8db977dd5f4",
+              "file": "SessionSecurity.spec.ts",
+              "line": 30,
+              "column": 9
+            },
+            {
+              "title": "Logged-out session remains on login after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14721,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "Logging Out\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Click Sign Out\n"
+                        },
+                        {
+                          "text": "[PASS] Logout Validation Completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:04:47.270Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-7b73b-ains-on-login-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-7b73b-ains-on-login-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-7b73b-ains-on-login-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-65b14358fc8c943ab86c",
+              "file": "SessionSecurity.spec.ts",
+              "line": 93,
+              "column": 9
+            },
+            {
+              "title": "Logout blocks direct access to key protected routes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21002,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "Logging Out\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Click Sign Out\n"
+                        },
+                        {
+                          "text": "[PASS] Logout Validation Completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:05:02.428Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-d020b-ess-to-key-protected-routes-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-d020b-ess-to-key-protected-routes-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-d020b-ess-to-key-protected-routes-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-dc5262598a4f4a48e4c9",
+              "file": "SessionSecurity.spec.ts",
+              "line": 131,
+              "column": 9
+            },
+            {
+              "title": "Authenticated session can open dashboard in a new tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11732,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:05:23.939Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-b3aedde18741593183e7",
+              "file": "SessionSecurity.spec.ts",
+              "line": 180,
+              "column": 9
+            },
+            {
+              "title": "Authenticated storage does not leak into a fresh browser context",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12170,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:05:36.001Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-fd1ad-nto-a-fresh-browser-context-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-fd1ad-nto-a-fresh-browser-context-chromium\\video.webm"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-fd1ad-nto-a-fresh-browser-context-chromium\\test-finished-2.png"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-fd1ad-nto-a-fresh-browser-context-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-6684e173372beb900552",
+              "file": "SessionSecurity.spec.ts",
+              "line": 218,
+              "column": 9
+            },
+            {
+              "title": "Logout invalidates dashboard access in an already opened tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16669,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "Logging Out\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Click Sign Out\n"
+                        },
+                        {
+                          "text": "[PASS] Logout Validation Completed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:05:48.480Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video-1.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "22c14752ae12d94a4dec-d628d021f085b0005f62",
+              "file": "SessionSecurity.spec.ts",
+              "line": 276,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T10:56:47.903Z",
+    "duration": 560109.181,
+    "expected": 61,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

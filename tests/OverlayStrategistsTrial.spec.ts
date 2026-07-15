@@ -61,20 +61,18 @@ function envEnabled(
   );
 }
 
-test.describe(
-  'Overlay Strategists Trial Experience',
-  () => {
+if (
+  envEnabled(
+    'OVERLAY_STRATEGISTS_FLOW_ENABLED'
+  )
+) {
+  test.describe(
+    'Overlay Strategists Trial Experience',
+    () => {
 
     test.describe.configure({
       timeout: 20 * 60 * 1000
     });
-
-    test.skip(
-      !envEnabled(
-        'OVERLAY_STRATEGISTS_FLOW_ENABLED'
-      ),
-      'Skipped because OVERLAY_STRATEGISTS_FLOW_ENABLED is not configured.'
-    );
 
     test(
       'New user can reach Overlay Strategists trial option',
@@ -188,16 +186,14 @@ test.describe(
       }
     );
 
-    test(
-      'New user can start Overlay Strategists trial with card',
-      async ({ page }) => {
-
-        test.skip(
-          !envEnabled(
-            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
-          ),
-          'Skipped because OVERLAY_STRATEGISTS_WITH_CARD_ENABLED is not configured.'
-        );
+    if (
+      envEnabled(
+        'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+      )
+    ) {
+      test(
+        'New user can start Overlay Strategists trial with card',
+        async ({ page }) => {
 
         const email =
           generateEmail(
@@ -322,19 +318,18 @@ test.describe(
             await dashboard.validateLoaded();
           }
         );
-      }
-    );
+        }
+      );
+    }
 
-    test(
-      'Overlay Strategists with-card trial blocks missing Stripe card details',
-      async ({ page }) => {
-
-        test.skip(
-          !envEnabled(
-            'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
-          ),
-          'Skipped because OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED is not configured.'
-        );
+    if (
+      envEnabled(
+        'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
+      )
+    ) {
+      test(
+        'Overlay Strategists with-card trial blocks missing Stripe card details',
+        async ({ page }) => {
 
         const email =
           generateEmail(
@@ -447,19 +442,18 @@ test.describe(
             await stripe.validateMissingCardDetailsBlocked();
           }
         );
-      }
-    );
+        }
+      );
+    }
 
-    test(
-      'New user can start Overlay Strategists trial without card',
-      async ({ page }) => {
-
-        test.skip(
-          !envEnabled(
-            'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED'
-          ),
-          'Skipped because OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED is not configured.'
-        );
+    if (
+      envEnabled(
+        'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED'
+      )
+    ) {
+      test(
+        'New user can start Overlay Strategists trial without card',
+        async ({ page }) => {
 
         const email =
           generateEmail(
@@ -588,19 +582,18 @@ test.describe(
             );
           }
         );
-      }
-    );
+        }
+      );
+    }
 
-    test(
-      'Overlay Strategists trial requires terms acceptance',
-      async ({ page }) => {
-
-        test.skip(
-          !envEnabled(
-            'OVERLAY_STRATEGISTS_TERMS_ENABLED'
-          ),
-          'Skipped because OVERLAY_STRATEGISTS_TERMS_ENABLED is not configured.'
-        );
+    if (
+      envEnabled(
+        'OVERLAY_STRATEGISTS_TERMS_ENABLED'
+      )
+    ) {
+      test(
+        'Overlay Strategists trial requires terms acceptance',
+        async ({ page }) => {
 
         const email =
           generateEmail(
@@ -703,7 +696,9 @@ test.describe(
             await planPage.validateTrialTermsRequired();
           }
         );
-      }
-    );
-  }
-);
+        }
+      );
+    }
+    }
+  );
+}

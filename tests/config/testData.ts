@@ -108,11 +108,11 @@ export const TEST_USERS = {
 
     email:
       process.env.SUBSCRIBER_EMAIL ??
-      'imhardikthanki+09@gmail.com',
+      'imhardikthanki+plantest@gmail.com',
 
     password:
       process.env.SUBSCRIBER_PASSWORD ??
-      'H@rdik1989'
+      'H@rdik9944'
   },
 
   mfaLocal: {

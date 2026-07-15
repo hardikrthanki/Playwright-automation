@@ -51,7 +51,10 @@ function getNotExecutedModules(journeyModules, modules) {
 }
 
 function getFailedDependencies(journeyModules, failedTests) {
-  return failedTests.filter(failure => journeyModules.includes(failure.module));
+  return failedTests.filter(failure =>
+    journeyModules.includes(failure.module) &&
+    (failure.failureType ?? 'Product') === 'Product'
+  );
 }
 
 function calculateCoverage(journeyModules, notExecutedSteps) {
@@ -71,7 +74,7 @@ function getJourneyStatus(journey, thresholds = {}) {
     return 'Critical';
   }
 
-  if (journey.failedCount > 0 && journey.critical) {
+  if (journey.productFailedCount > 0 && journey.critical) {
     return 'Critical';
   }
 
@@ -94,7 +97,11 @@ function getAffectedModules(journeyModuleRecords, failedDependencies) {
   return [...new Set(
     [
       ...journeyModuleRecords
-        .filter(module => module.failed > 0 || module.skipped > 0 || module.interrupted > 0)
+        .filter(module =>
+          (module.productFailedCount ?? module.productFailed ?? module.failed ?? 0) > 0 ||
+          module.skipped > 0 ||
+          module.interrupted > 0
+        )
         .map(module => module.name),
       ...failedDependencies.map(failure => failure.module),
     ]
@@ -133,6 +140,14 @@ function buildBusinessJourneys(input, legacyConfig) {
     const total = journeyModuleRecords.reduce((sum, module) => sum + (module.total ?? 0), 0);
     const passed = journeyModuleRecords.reduce((sum, module) => sum + (module.passed ?? 0), 0);
     const failed = journeyModuleRecords.reduce((sum, module) => sum + (module.failed ?? 0), 0);
+    const productFailed = journeyModuleRecords.reduce(
+      (sum, module) => sum + (module.productFailedCount ?? module.productFailed ?? 0),
+      0
+    );
+    const reviewFailed = journeyModuleRecords.reduce(
+      (sum, module) => sum + (module.reviewFailedCount ?? module.reviewFailed ?? 0),
+      0
+    );
     const skipped = journeyModuleRecords.reduce((sum, module) => sum + (module.skipped ?? 0), 0);
     const interrupted = journeyModuleRecords.reduce((sum, module) => sum + (module.interrupted ?? 0), 0);
     const health = total === 0 ? 0 : Math.round((passed / total) * 100);
@@ -153,6 +168,8 @@ function buildBusinessJourneys(input, legacyConfig) {
       coverage,
       testCount: total,
       failedCount: failed,
+      productFailedCount: productFailed,
+      reviewFailedCount: reviewFailed,
       modules: journeyModules,
       affectedModules: getAffectedModules(journeyModuleRecords, failedDependencies),
       failedDependencies: failedDependencies.map(failure => ({

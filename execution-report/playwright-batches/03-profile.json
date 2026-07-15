@@ -1,0 +1,1668 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\playwright.config.ts",
+    "rootDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/BAPS/Documents/Oools_paywright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "dot",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "title": "OOLTool PUAT Automation Report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\execution-report\\playwright-batches\\03-profile.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "Profile.spec.ts",
+      "file": "Profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Profile Update",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12488,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[INFO] Logging in\n"
+                    },
+                    {
+                      "text": "Login Attempt 1\n"
+                    },
+                    {
+                      "text": "[CLICK] Submit Login\n"
+                    },
+                    {
+                      "text": "[PASS] Logged in successfully\n"
+                    },
+                    {
+                      "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Profile Data\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Data Loaded\n"
+                    },
+                    {
+                      "text": "[PASS] Email Field Disabled\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Profile Personal Info Controls\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Personal Info Controls Validated\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:10:51.674Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-Update-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-Update-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-Update-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2e97e061bf8ddea8a79a-36c71b646444cd88fae9",
+          "file": "Profile.spec.ts",
+          "line": 26,
+          "column": 5
+        },
+        {
+          "title": "Profile name update persists and can be restored",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19786,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[INFO] Logging in\n"
+                    },
+                    {
+                      "text": "Login Attempt 1\n"
+                    },
+                    {
+                      "text": "[CLICK] Submit Login\n"
+                    },
+                    {
+                      "text": "[PASS] Logged in successfully\n"
+                    },
+                    {
+                      "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                    },
+                    {
+                      "text": "[INFO] Validating Profile Data\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Data Loaded\n"
+                    },
+                    {
+                      "text": "[PASS] Email Field Disabled\n"
+                    },
+                    {
+                      "text": "[INFO] Updating Profile\n"
+                    },
+                    {
+                      "text": "[CLICK] Save Changes\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Updated\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Update Persisted After Refresh\n"
+                    },
+                    {
+                      "text": "[INFO] Updating Profile\n"
+                    },
+                    {
+                      "text": "[CLICK] Save Changes\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Updated\n"
+                    },
+                    {
+                      "text": "[PASS] Profile Update Persisted After Refresh\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:11:04.853Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-name-update-persists-and-can-be-restored-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-name-update-persists-and-can-be-restored-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\Profile-Profile-name-update-persists-and-can-be-restored-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2e97e061bf8ddea8a79a-d760c937df91650f0800",
+          "file": "Profile.spec.ts",
+          "line": 52,
+          "column": 7
+        }
+      ]
+    },
+    {
+      "title": "ProfileMobileValidation.spec.ts",
+      "file": "ProfileMobileValidation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Profile Mobile Number Validation",
+          "file": "ProfileMobileValidation.spec.ts",
+          "line": 80,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Profile mobile number section is visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13920,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Profile Mobile Section\n"
+                        },
+                        {
+                          "text": "[PASS] Profile Mobile Section Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:11:24.971Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-49020-e-number-section-is-visible-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-49020-e-number-section-is-visible-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-49020-e-number-section-is-visible-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1fe726ada820ca4cc207-b5f7ab501d8b8deb1150",
+              "file": "ProfileMobileValidation.spec.ts",
+              "line": 88,
+              "column": 9
+            },
+            {
+              "title": "Profile mobile change blocks invalid mobile number",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14706,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Mobile Number Change Form\n"
+                        },
+                        {
+                          "text": "[CLICK] Change Mobile Number\n"
+                        },
+                        {
+                          "text": "[PASS] Mobile Number Change Form Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Invalid Mobile Number\n"
+                        },
+                        {
+                          "text": "[PASS] Send Code Button Disabled For Invalid Mobile Number\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:11:39.084Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-beba5-locks-invalid-mobile-number-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-beba5-locks-invalid-mobile-number-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-beba5-locks-invalid-mobile-number-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1fe726ada820ca4cc207-9cc5fd3dc0a9d7886cb8",
+              "file": "ProfileMobileValidation.spec.ts",
+              "line": 101,
+              "column": 9
+            },
+            {
+              "title": "Profile mobile change blocks invalid mobile number formats",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13825,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Mobile Number Change Form\n"
+                        },
+                        {
+                          "text": "[CLICK] Change Mobile Number\n"
+                        },
+                        {
+                          "text": "[PASS] Mobile Number Change Form Opened\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Invalid Mobile Number Candidates\n"
+                        },
+                        {
+                          "text": "[CLICK] Send Mobile Code With Invalid Number: 20155501234\n"
+                        },
+                        {
+                          "text": "[PASS] Invalid Mobile Number Candidates Blocked\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:11:54.028Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-cff3d-valid-mobile-number-formats-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-cff3d-valid-mobile-number-formats-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-cff3d-valid-mobile-number-formats-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1fe726ada820ca4cc207-9dc6c42e24f9ed025e64",
+              "file": "ProfileMobileValidation.spec.ts",
+              "line": 114,
+              "column": 9
+            },
+            {
+              "title": "Profile mobile section remains visible after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20129,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Profile Mobile Section\n"
+                        },
+                        {
+                          "text": "[PASS] Profile Mobile Section Loaded\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Profile Mobile Section\n"
+                        },
+                        {
+                          "text": "[PASS] Profile Mobile Section Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:12:08.099Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-e4be3-mains-visible-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-e4be3-mains-visible-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileMobileValidation-Pr-e4be3-mains-visible-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1fe726ada820ca4cc207-8094b347f0dfc46d9a7b",
+              "file": "ProfileMobileValidation.spec.ts",
+              "line": 127,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ProfileNegative.spec.ts",
+      "file": "ProfileNegative.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Profile Negative Scenarios",
+          "file": "ProfileNegative.spec.ts",
+          "line": 28,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Profile email field cannot be edited",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18938,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:12:28.483Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-fc908-mail-field-cannot-be-edited-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-fc908-mail-field-cannot-be-edited-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-fc908-mail-field-cannot-be-edited-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-d08d9364c442f5025157",
+              "file": "ProfileNegative.spec.ts",
+              "line": 53,
+              "column": 9
+            },
+            {
+              "title": "Profile personal information controls are visible and safe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13375,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Profile Personal Info Controls\n"
+                        },
+                        {
+                          "text": "[PASS] Profile Personal Info Controls Validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:12:47.634Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-85c7a-ntrols-are-visible-and-safe-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-85c7a-ntrols-are-visible-and-safe-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-85c7a-ntrols-are-visible-and-safe-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-df9150b83fc5dbbffc91",
+              "file": "ProfileNegative.spec.ts",
+              "line": 75,
+              "column": 9
+            },
+            {
+              "title": "Profile first name empty draft is not persisted without saving",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13529,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:13:01.202Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-a10b1-ot-persisted-without-saving-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-a10b1-ot-persisted-without-saving-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-a10b1-ot-persisted-without-saving-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-833fceab0f07f7b14aec",
+              "file": "ProfileNegative.spec.ts",
+              "line": 102,
+              "column": 9
+            },
+            {
+              "title": "Profile last name empty draft is not persisted without saving",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15649,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:13:14.969Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-41aea-ot-persisted-without-saving-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-41aea-ot-persisted-without-saving-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-41aea-ot-persisted-without-saving-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-f0f60b403490ceca3955",
+              "file": "ProfileNegative.spec.ts",
+              "line": 130,
+              "column": 9
+            },
+            {
+              "title": "Profile page keeps data after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15285,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:13:30.865Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-25027-ge-keeps-data-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-25027-ge-keeps-data-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-25027-ge-keeps-data-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-536bf131beceb75cd1bc",
+              "file": "ProfileNegative.spec.ts",
+              "line": 158,
+              "column": 9
+            },
+            {
+              "title": "Profile direct route remains usable after browser back and forward",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15919,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:13:46.454Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-aefd9-er-browser-back-and-forward-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-aefd9-er-browser-back-and-forward-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-aefd9-er-browser-back-and-forward-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-cf41c91e4e914e4de3f8",
+              "file": "ProfileNegative.spec.ts",
+              "line": 200,
+              "column": 9
+            },
+            {
+              "title": "Profile password change button stays safe with empty password fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12071,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:14:02.688Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5255c--with-empty-password-fields-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5255c--with-empty-password-fields-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5255c--with-empty-password-fields-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-3781a8bb0d46c5fa4ad9",
+              "file": "ProfileNegative.spec.ts",
+              "line": 244,
+              "column": 9
+            },
+            {
+              "title": "Profile password drafts are cleared after refresh without saving",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15043,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:14:15.091Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5d2fa-fter-refresh-without-saving-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5d2fa-fter-refresh-without-saving-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileNegative-Profile-Ne-5d2fa-fter-refresh-without-saving-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7b2a5f38e7ffb932d874-cf767b8597e7d80fcbbe",
+              "file": "ProfileNegative.spec.ts",
+              "line": 273,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ProfilePasswordMismatch.spec.ts",
+      "file": "ProfilePasswordMismatch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Password Mismatch Validation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15965,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[INFO] Logging in\n"
+                    },
+                    {
+                      "text": "Login Attempt 1\n"
+                    },
+                    {
+                      "text": "[CLICK] Submit Login\n"
+                    },
+                    {
+                      "text": "[PASS] Logged in successfully\n"
+                    },
+                    {
+                      "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                    },
+                    {
+                      "text": "[INFO] Testing Password Mismatch\n"
+                    },
+                    {
+                      "text": "[CLICK] Change Password\n"
+                    },
+                    {
+                      "text": "[PASS] Password Mismatch Message Verified\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:14:30.694Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfilePasswordMismatch-Password-Mismatch-Validation-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfilePasswordMismatch-Password-Mismatch-Validation-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfilePasswordMismatch-Password-Mismatch-Validation-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "963801f4dca06c49f087-cf47c5ee14f03eb1e378",
+          "file": "ProfilePasswordMismatch.spec.ts",
+          "line": 26,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "ProfileSecurityDisplay.spec.ts",
+      "file": "ProfileSecurityDisplay.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Profile Security Display",
+          "file": "ProfileSecurityDisplay.spec.ts",
+          "line": 38,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Profile security page shows MFA overview state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12271,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating MFA Security Overview\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[PASS] MFA Security Overview Visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:14:47.332Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-3dee7-ge-shows-MFA-overview-state-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-3dee7-ge-shows-MFA-overview-state-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-3dee7-ge-shows-MFA-overview-state-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "df993c100b75441cc488-a9a9b8f673e5db05cc3d",
+              "file": "ProfileSecurityDisplay.spec.ts",
+              "line": 58,
+              "column": 9
+            },
+            {
+              "title": "Profile security page shows backup-code controls when MFA is enabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13091,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Backup Code Controls\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[INFO] MFA is not enabled; backup-code controls are not expected.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:15:00.003Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0d8b7-ontrols-when-MFA-is-enabled-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0d8b7-ontrols-when-MFA-is-enabled-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0d8b7-ontrols-when-MFA-is-enabled-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "df993c100b75441cc488-a68d8ff1065d0aa5a397",
+              "file": "ProfileSecurityDisplay.spec.ts",
+              "line": 69,
+              "column": 9
+            },
+            {
+              "title": "Profile security page shows trusted devices section",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13079,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Trusted Devices Section\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[PASS] Trusted Devices Section Visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:15:13.456Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-1446a-ows-trusted-devices-section-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-1446a-ows-trusted-devices-section-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-1446a-ows-trusted-devices-section-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "df993c100b75441cc488-2a2530da61632c1868a8",
+              "file": "ProfileSecurityDisplay.spec.ts",
+              "line": 80,
+              "column": 9
+            },
+            {
+              "title": "Profile security page remains stable after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18754,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating MFA Security Overview\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[PASS] MFA Security Overview Visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating MFA Security Overview\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[PASS] MFA Security Overview Visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Trusted Devices Section\n"
+                        },
+                        {
+                          "text": "[INFO] Opening user Security / MFA settings\n"
+                        },
+                        {
+                          "text": "[PASS] Security settings opened: /dashboard/profile\n"
+                        },
+                        {
+                          "text": "[PASS] Trusted Devices Section Visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:15:26.911Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0e654-emains-stable-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0e654-emains-stable-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileSecurityDisplay-Pro-0e654-emains-stable-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "df993c100b75441cc488-4f525cf4a35dd0066e76",
+              "file": "ProfileSecurityDisplay.spec.ts",
+              "line": 91,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ProfileWrongCurrentPassword.spec.ts",
+      "file": "ProfileWrongCurrentPassword.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Wrong Current Password Validation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15477,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[INFO] Logging in\n"
+                    },
+                    {
+                      "text": "Login Attempt 1\n"
+                    },
+                    {
+                      "text": "[CLICK] Submit Login\n"
+                    },
+                    {
+                      "text": "[PASS] Logged in successfully\n"
+                    },
+                    {
+                      "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                    },
+                    {
+                      "text": "[INFO] Testing Password Mismatch\n"
+                    },
+                    {
+                      "text": "[CLICK] Change Password\n"
+                    },
+                    {
+                      "text": "[PASS] Wrong Current Password Message Verified\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:15:46.309Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileWrongCurrentPasswor-6751e-Current-Password-Validation-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileWrongCurrentPasswor-6751e-Current-Password-Validation-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ProfileWrongCurrentPasswor-6751e-Current-Password-Validation-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a828d639c9d1a6acd52b-612f150a8b9ebd87e5ce",
+          "file": "ProfileWrongCurrentPassword.spec.ts",
+          "line": 27,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T11:10:50.492Z",
+    "duration": 313812.52300000004,
+    "expected": 20,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

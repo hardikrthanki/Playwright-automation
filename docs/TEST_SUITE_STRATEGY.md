@@ -67,10 +67,13 @@ DashboardHealth.spec.ts
 DashboardNavigation.spec.ts
 Profile.spec.ts
 ProfileNegative.spec.ts
+ProfileSecurityDisplay.spec.ts
+ProfileMobileValidation.spec.ts
 ProfilePasswordMismatch.spec.ts
 ProfileWrongCurrentPassword.spec.ts
 BillingDeep.spec.ts
 BillingEdgeValidation.spec.ts
+RiskComplianceUpdate.spec.ts
 Subscriber.spec.ts
 ```
 
@@ -78,9 +81,9 @@ Subscriber.spec.ts
 
 Purpose:
 
-- Broadest local automation coverage
-- Includes stable, controlled, and gated flows
-- Best for full validation before a major release
+- Broad executable automation coverage
+- Avoids manually gated, destructive, one-time, and environment-dependent flows
+- Best for clean AIR/client reporting before a release review
 
 Command:
 
@@ -104,17 +107,60 @@ SignupNegative.spec.ts
 PasswordPolicy.spec.ts
 SessionSecurity.spec.ts
 AccessibilityBrowser.spec.ts
+DashboardHealth.spec.ts
+DashboardNavigation.spec.ts
 Profile.spec.ts
 ProfileNegative.spec.ts
+ProfileSecurityDisplay.spec.ts
 ProfileMobileValidation.spec.ts
+RiskComplianceUpdate.spec.ts
+OnboardingFieldValidation.spec.ts
 ProfilePasswordMismatch.spec.ts
 ProfileWrongCurrentPassword.spec.ts
 BillingDeep.spec.ts
 BillingEdgeValidation.spec.ts
+BillingSubscriptionManagement.spec.ts
 Subscriber.spec.ts
+```
+
+Notes:
+
+- `ProfileSecurityDisplay.spec.ts` runs read-only MFA/security display
+  validation by default and does not mutate MFA state.
+- `ProfileMobileValidation.spec.ts` runs read-only mobile validation by
+  default. Mobile change/OTP validation remains opt-in.
+- `RiskComplianceUpdate.spec.ts` runs saved Risk Profile and Compliance
+  validation by default. Update/save flows remain opt-in.
+- `OnboardingFieldValidation.spec.ts` runs fast Risk Profile and Compliance
+  validation by default. Full fresh-user field regression remains opt-in.
+- `BillingSubscriptionManagement.spec.ts` runs read-only Stripe portal and
+  billing-management checks by default. Mutating portal checks remain opt-in.
+
+## Extended Regression Inventory
+
+Purpose:
+
+- Includes stable regression plus controlled/manual/stateful flows
+- Useful for checking total automation inventory
+- May show skipped tests unless required environment variables and one-time data are configured
+
+Command:
+
+```powershell
+npm run test:regression:all -- --headed
+```
+
+With AIR:
+
+```powershell
+npm run regression:all:report
+```
+
+Additional gated specs:
+
+```text
 ResetPasswordNegative.spec.ts
 PaymentNegative.spec.ts
-OnboardingFieldValidation.spec.ts
 PlanSelectionValidation.spec.ts
 OverlayStrategistsTrial.spec.ts
 forgotpassword.spec.ts
@@ -124,8 +170,9 @@ MfaUserFlow.spec.ts
 
 Notes:
 
-- Some regression tests are gated and will skip unless their environment
-  variables are enabled.
+- Extended regression tests are gated. Controlled-only specs do not register
+  tests unless their required environment variables and one-time data are
+  available.
 - Forgot-password changes account state and requires email-link handling.
 - MFA backup codes are single-use and require fresh data.
 - Overlay Strategists and onboarding field validation create fresh users.
@@ -134,6 +181,12 @@ Notes:
 
 Use controlled suites when a flow needs a fresh link, fresh user, MFA secret,
 backup code, or manual interaction.
+
+Before enabling controlled suites, use the readiness checklist:
+
+```text
+docs/CONTROLLED_TEST_READINESS.md
+```
 
 Onboarding field validation:
 
@@ -158,6 +211,19 @@ $env:ONBOARDING_FIELD_VALIDATION_FULL_ENABLED="true"
 npm run test:controlled:onboarding-fields -- --headed -g "Risk Profile and Compliance selections can be updated before save"
 ```
 
+Signup live validation with static OTP:
+
+```powershell
+$env:SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED="true"
+$env:SIGNUP_OTP_LENGTH_VALIDATION_ENABLED="true"
+$env:SIGNUP_OTP_RESEND_VALIDATION_ENABLED="true"
+$env:AUTH_OTP_CODE="111111"
+npm run test:controlled:signup -- --headed
+```
+
+The OTP length case is expected to fail until the application limits signup OTP
+entry to six digits.
+
 Authenticated dashboard Risk & Compliance validation:
 
 ```powershell
@@ -171,6 +237,22 @@ Authenticated dashboard Risk & Compliance update validation:
 $env:RISK_COMPLIANCE_VALIDATION_ENABLED="true"
 $env:RISK_COMPLIANCE_UPDATE_ENABLED="true"
 npm run test:controlled:risk-compliance -- --headed
+```
+
+Plan selection read-only validation with prepared onboarding user:
+
+```powershell
+$env:PLAN_SELECTION_EXISTING_EMAIL="prepared-plan-user@example.com"
+$env:PLAN_SELECTION_EXISTING_PASSWORD="current-password"
+$env:PLAN_SELECTION_EXISTING_MOBILE="2015550123"
+npm run test:controlled:plan-selection -- --headed
+```
+
+Plan selection fresh-user validation:
+
+```powershell
+$env:PLAN_SELECTION_VALIDATION_ENABLED="true"
+npm run test:controlled:plan-selection -- --headed
 ```
 
 Forgot password and unlock:
@@ -234,10 +316,15 @@ Auth UI validation:
 npm run test:controlled:auth-ui -- --headed
 ```
 
+Profile security display:
+
+```powershell
+npm run test:controlled:profile-security -- --headed
+```
+
 Profile mobile:
 
 ```powershell
-$env:PROFILE_MOBILE_VALIDATION_ENABLED="true"
 npm run test:controlled:profile-mobile -- --headed
 ```
 

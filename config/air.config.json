@@ -24,7 +24,7 @@
     "Signup"
   ],
   "moduleMappings": {
-    "Access Control": ["permission", "permissions", "access control", "rbac", "role", "restricted user", "allowed user"],
+    "Access Control": ["permission", "permissions", "access control", "rbac", "role", "restricted user", "allowed user", "protected route", "unauthenticated user", "direct access", "blocks direct access"],
     "Accessibility": ["accessibility", "browser", "keyboard", "tab order"],
     "Authentication": ["auth", "login", "forgot", "unlock account"],
     "Billing": ["billing", "subscriber", "invoice", "transaction", "plans"],

@@ -1,4 +1,82 @@
+function getFailureText(test = {}) {
+  return `${test.title ?? ''}\n${test.error ?? ''}`.toLowerCase();
+}
+
+function hasAny(value, patterns) {
+  return patterns.some(pattern => value.includes(pattern));
+}
+
+function getFailureType(test = {}) {
+  if (test.manualDefect) {
+    return 'Product';
+  }
+
+  const text = getFailureText(test);
+
+  if (
+    hasAny(
+      text,
+      [
+        'err_connection_closed',
+        'err_connection_reset',
+        'err_internet_disconnected',
+        'econnreset',
+        'epipe',
+        'target page, context or browser has been closed',
+        'browser has been closed',
+        'page.goto: net::',
+        'login failed after 3 attempts'
+      ]
+    )
+  ) {
+    return 'Environment';
+  }
+
+  if (
+    hasAny(
+      text,
+      [
+        'stripe portal',
+        'billing subscription management',
+        'cancel subscription form accepts reason',
+        'current subscription',
+        'payment method',
+        'billing information',
+        'already scheduled to cancel',
+        'checkout.stripe.com'
+      ]
+    )
+  ) {
+    return 'Test Data / External State';
+  }
+
+  if (
+    hasAny(
+      text,
+      [
+        'password visibility control',
+        'expected: not "password"',
+        'locator.waitfor: timeout',
+        'element(s) not found',
+        'strict mode violation',
+        'to be visible',
+        'tohaveurl'
+      ]
+    )
+  ) {
+    return 'Automation';
+  }
+
+  return 'Product';
+}
+
 function getFailureSeverity(test = {}) {
+  const failureType = getFailureType(test);
+
+  if (failureType !== 'Product') {
+    return 'Medium';
+  }
+
   if (test.critical) {
     return 'Critical';
   }
@@ -51,6 +129,12 @@ function getBusinessImpact(test = {}) {
     return test.businessImpact;
   }
 
+  const failureType = getFailureType(test);
+
+  if (failureType !== 'Product') {
+    return 'Execution evidence requires review; product impact is not confirmed.';
+  }
+
   if (test.critical) {
     return 'Critical business flow may be blocked.';
   }
@@ -61,6 +145,20 @@ function getBusinessImpact(test = {}) {
 function getRecommendedInvestigationAction(test = {}) {
   if (test.recommendedInvestigationAction) {
     return test.recommendedInvestigationAction;
+  }
+
+  const failureType = getFailureType(test);
+
+  if (failureType === 'Environment') {
+    return 'Rerun the scenario and review network/session stability before logging a product defect.';
+  }
+
+  if (failureType === 'Automation') {
+    return 'Review selector, timing, and assertion logic before treating this as a product defect.';
+  }
+
+  if (failureType === 'Test Data / External State') {
+    return 'Verify account state, external portal state, and prepared test data, then rerun the scenario.';
   }
 
   const category = getFailureCategory(test);
@@ -107,6 +205,10 @@ function buildFailedTests(tests = [], evidence = {}) {
       status: test.status,
       severity: getFailureSeverity(test),
       category: getFailureCategory(test),
+      failureType: getFailureType(test),
+      releaseImpact: getFailureType(test) === 'Product'
+        ? 'Product Review'
+        : 'Automation / Environment Review',
       businessImpact: getBusinessImpact(test),
       errorMessage: test.error ?? '',
       error: test.error ?? '',
@@ -121,5 +223,6 @@ module.exports = {
   getEvidenceLinks,
   getFailureCategory,
   getFailureSeverity,
+  getFailureType,
   getRecommendedInvestigationAction,
 };

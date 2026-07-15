@@ -1,4 +1,5 @@
 const { formatDuration } = require('../services/duration');
+const { getFailureType } = require('./failure-engine');
 
 function matchByPatterns(title, items, fallback) {
   const normalizedTitle = String(title ?? '').toLowerCase();
@@ -27,7 +28,7 @@ function getModuleStatus(module) {
     return 'Not Executed';
   }
 
-  if (module.failed > 0 && module.critical) {
+  if (module.productFailed > 0 && module.critical) {
     return 'Critical';
   }
 
@@ -43,7 +44,7 @@ function getModuleStatus(module) {
 }
 
 function getModuleRisk(module) {
-  if (module.failed > 0 && module.critical) {
+  if (module.productFailed > 0 && module.critical) {
     return 'High';
   }
 
@@ -55,8 +56,12 @@ function getModuleRisk(module) {
 }
 
 function getModuleRecommendation(module) {
-  if (module.failed > 0) {
+  if (module.productFailed > 0) {
     return `Review ${module.name} failures and attached evidence.`;
+  }
+
+  if (module.reviewFailed > 0) {
+    return `Review ${module.name} automation or environment evidence before marking as product risk.`;
   }
 
   if (module.skipped > 0 || module.interrupted > 0) {
@@ -90,6 +95,8 @@ function buildModules(tests, config) {
         total: 0,
         passed: 0,
         failed: 0,
+        productFailed: 0,
+        reviewFailed: 0,
         skipped: 0,
         interrupted: 0,
         durationMs: 0,
@@ -105,7 +112,15 @@ function buildModules(tests, config) {
     if (test.status === 'passed') module.passed += 1;
     else if (test.status === 'skipped') module.skipped += 1;
     else if (test.status === 'interrupted') module.interrupted += 1;
-    else module.failed += 1;
+    else {
+      module.failed += 1;
+
+      if (getFailureType(test) === 'Product') {
+        module.productFailed += 1;
+      } else {
+        module.reviewFailed += 1;
+      }
+    }
 
     test.module = moduleName;
     test.critical = Boolean(moduleConfig.critical);
@@ -125,6 +140,8 @@ function buildModules(tests, config) {
         coverage: score,
         testCount: module.total,
         failedCount: module.failed,
+        productFailedCount: module.productFailed,
+        reviewFailedCount: module.reviewFailed,
         duration: formatDuration(module.durationMs),
       };
 

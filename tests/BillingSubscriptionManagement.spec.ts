@@ -49,13 +49,6 @@ test.describe(
       timeout: 3 * 60 * 1000
     });
 
-    test.skip(
-      !envEnabled(
-        'BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED'
-      ),
-      'Skipped because BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED is not configured.'
-    );
-
     test.beforeEach(
       async ({ page }) => {
         await new LoginPage(
@@ -105,31 +98,33 @@ test.describe(
       }
     );
 
-    test(
-      'Stripe add payment method screen opens without saving',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateAddPaymentMethodOpensWithoutSaving();
-      }
-    );
+    if (envEnabled('BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED')) {
+      test(
+        'Stripe add payment method screen opens without saving',
+        async ({ page }) => {
+          await new BillingPage(
+            page
+          ).validateAddPaymentMethodOpensWithoutSaving();
+        }
+      );
 
-    test(
-      'Stripe billing information update screen opens without saving',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateBillingInformationUpdateOpensWithoutSaving();
-      }
-    );
+      test(
+        'Stripe billing information update screen opens without saving',
+        async ({ page }) => {
+          await new BillingPage(
+            page
+          ).validateBillingInformationUpdateOpensWithoutSaving();
+        }
+      );
 
-    test(
-      'Cancel subscription form accepts reason and feedback without cancelling',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateCancelSubscriptionFormWithoutCancelling();
-      }
-    );
+      test(
+        'Cancel subscription form accepts reason and feedback without cancelling',
+        async ({ page }) => {
+          await new BillingPage(
+            page
+          ).validateCancelSubscriptionFormWithoutCancelling();
+        }
+      );
+    }
   }
 );

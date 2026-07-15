@@ -240,13 +240,6 @@ test.describe(
       timeout: 20 * 60 * 1000
     });
 
-    test.skip(
-      !envEnabled(
-        'ONBOARDING_FIELD_VALIDATION_ENABLED'
-      ),
-      'Skipped because ONBOARDING_FIELD_VALIDATION_ENABLED is not configured.'
-    );
-
     test(
       'Fast Risk and Compliance field validation',
       async ({ page }) => {
@@ -299,16 +292,14 @@ test.describe(
       }
     );
 
-    test.describe(
-      'Full field-level regression',
-      () => {
-
-        test.skip(
-          !envEnabled(
-            'ONBOARDING_FIELD_VALIDATION_FULL_ENABLED'
-          ),
-          'Skipped because ONBOARDING_FIELD_VALIDATION_FULL_ENABLED is not configured.'
-        );
+    if (
+      envEnabled(
+        'ONBOARDING_FIELD_VALIDATION_FULL_ENABLED'
+      )
+    ) {
+      test.describe(
+        'Full field-level regression',
+        () => {
 
     test(
       'Risk Profile required fields block onboarding progress',
@@ -538,7 +529,8 @@ test.describe(
         });
       }
     );
-      }
-    );
+        }
+      );
+    }
   }
 );

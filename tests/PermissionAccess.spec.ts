@@ -153,23 +153,17 @@ async function expectRouteBlocked(
   });
 }
 
-test.describe(
-  'Permission Access',
-  () => {
+if (
+  permissionTestEnabled &&
+  hasConfiguredUsers()
+) {
+  test.describe(
+    'Permission Access',
+    () => {
 
     test.describe.configure({
       timeout: 120000
     });
-
-    test.skip(
-      !permissionTestEnabled,
-      'Skipped because PERMISSION_TEST_ENABLED is not configured.'
-    );
-
-    test.skip(
-      !hasConfiguredUsers(),
-      'Skipped because allowed and restricted permission users are not configured.'
-    );
 
     for (const scenario of permissionScenarios) {
       test(
@@ -225,5 +219,6 @@ test.describe(
         }
       );
     }
-  }
-);
+    }
+  );
+}

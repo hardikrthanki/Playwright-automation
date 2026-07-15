@@ -5,6 +5,9 @@ import {
 
 import { ResetPasswordPage }
   from './pages/ResetPasswordPage';
+import {
+  BASE_URL
+} from './config/testData';
 
 /* =============================================================================
 TEST SUITE: Reset Password Negative Scenarios
@@ -26,14 +29,36 @@ fresh RESET_URL can be reused across these negative checks.
 const RESET_URL =
   process.env.RESET_URL ?? '';
 
-test.describe(
-  'Reset Password Negative Scenarios',
-  () => {
-
-    test.skip(
-      !RESET_URL,
-      'RESET_URL is required for reset-password negative validation.'
+test(
+  'Invalid reset password link does not authenticate user',
+  async ({ page }) => {
+    await page.goto(
+      `${BASE_URL}/reset-password/invalid-token-for-automation`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
     );
+
+    await expect(
+      page
+    ).not.toHaveURL(
+      /\/dashboard/
+    );
+
+    await expect(
+      page.getByText(
+        /reset password|set new password|invalid|expired|back to login|login/i
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
+  }
+);
+
+if (RESET_URL) {
+  test.describe(
+    'Reset Password Negative Scenarios',
+    () => {
 
     test.beforeEach(
       async ({ page }) => {
@@ -153,5 +178,6 @@ test.describe(
         );
       }
     );
-  }
-);
+    }
+  );
+}

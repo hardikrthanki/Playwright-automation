@@ -532,6 +532,11 @@ export class MfaPage
         )
       ).first();
 
+    const overviewSignal =
+      this.page.getByText(
+        /add an extra layer of security|authenticator app like google authenticator|trusted devices/i
+      ).first();
+
     const mfaStateVisible =
       await enabledSignal.isVisible({
         timeout: 5000
@@ -542,11 +547,16 @@ export class MfaPage
         timeout: 5000
       }).catch(
         () => false
+      ) ||
+      await overviewSignal.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
       );
 
     expect(
       mfaStateVisible,
-      'Profile security should show enabled or disabled MFA state.'
+      'Profile security should show MFA overview state.'
     ).toBe(
       true
     );

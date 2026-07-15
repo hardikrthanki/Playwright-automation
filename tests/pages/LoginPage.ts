@@ -92,6 +92,98 @@ export class LoginPage
       );
   }
 
+  private async waitForLoginFormReady() {
+
+    await this.emailInput.waitFor({
+      state: 'visible',
+      timeout: 15000
+    });
+
+    await this.passwordInput.waitFor({
+      state: 'visible',
+      timeout: 15000
+    });
+
+    await expect(
+      this.emailInput
+    ).toBeEditable({
+      timeout: 15000
+    });
+
+    await expect(
+      this.passwordInput
+    ).toBeEditable({
+      timeout: 15000
+    });
+
+    await expect(
+      this.submitButton
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await this.page.waitForLoadState(
+      'networkidle',
+      {
+        timeout: 5000
+      }
+    ).catch(
+      () => undefined
+    );
+  }
+
+  private async fillLoginCredentials(
+    email: string,
+    password: string
+  ) {
+
+    await this.emailInput.fill('');
+
+    await this.emailInput.fill(
+      email
+    );
+
+    await expect(
+      this.emailInput
+    ).toHaveValue(
+      email,
+      {
+        timeout: 5000
+      }
+    );
+
+    await this.passwordInput.fill('');
+
+    await this.passwordInput.fill(
+      password
+    );
+
+    await expect(
+      this.passwordInput
+    ).toHaveValue(
+      password,
+      {
+        timeout: 5000
+      }
+    );
+
+    await expect(
+      this.submitButton
+    ).toBeEnabled({
+      timeout: 15000
+    });
+  }
+
+  private async waitForLoginRedirect() {
+
+    await this.page.waitForURL(
+      /\/(dashboard|onboarding)/,
+      {
+        timeout: 30000
+      }
+    );
+  }
+
   async handleLockedAccount(
     email: string
   ) {
@@ -185,26 +277,32 @@ export class LoginPage
       );
     }
 
-    await this.emailInput.waitFor({
-      state: 'visible',
-      timeout: 10000
-    });
+    if (
+      /\/(dashboard|onboarding)/.test(
+        this.page.url()
+      )
+    ) {
+      Logger.success(
+        'User already authenticated'
+      );
 
-    await this.passwordInput.waitFor({
-      state: 'visible',
-      timeout: 10000
-    });
+      console.log(
+        'Current URL:',
+        this.page.url()
+      );
+
+      return;
+    }
+
+    await this.waitForLoginFormReady();
 
     for (let attempt = 1; attempt <= 3; attempt++) {
       console.log(
         `Login Attempt ${attempt}`
       );
 
-      await this.emailInput.fill(
-        email
-      );
-
-      await this.passwordInput.fill(
+      await this.fillLoginCredentials(
+        email,
         password
       );
 
@@ -218,12 +316,7 @@ export class LoginPage
       );
 
       try {
-        await this.page.waitForURL(
-          /\/(dashboard|onboarding)/,
-          {
-            timeout: 20000
-          }
-        );
+        await this.waitForLoginRedirect();
 
         Logger.success(
           'Logged in successfully'
@@ -258,15 +351,7 @@ export class LoginPage
           }
         );
 
-        await this.emailInput.waitFor({
-          state: 'visible',
-          timeout: 10000
-        });
-
-        await this.passwordInput.waitFor({
-          state: 'visible',
-          timeout: 10000
-        });
+        await this.waitForLoginFormReady();
       }
     }
   }

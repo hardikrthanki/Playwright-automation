@@ -36,13 +36,12 @@ const unlockAccountPassword =
   process.env.UNLOCK_ACCOUNT_PASSWORD ??
   TEST_USERS.subscriber.password;
 
-test(
-  'Unlock Account Flow',
-  async ({ page }) => {
-    test.skip(
-      process.env.RUN_UNLOCK_ACCOUNT_TEST !== 'true',
-      'UnlockAccount.spec.ts is opt-in because it requires a locked account.'
-    );
+if (
+  process.env.RUN_UNLOCK_ACCOUNT_TEST === 'true'
+) {
+  test(
+    'Unlock Account Flow',
+    async ({ page }) => {
 
     test.setTimeout(
       5 * 60 * 1000
@@ -75,5 +74,6 @@ test(
       );
 
     await dashboard.validate();
-  }
-);
+    }
+  );
+}

@@ -48,13 +48,10 @@ await profile.validatePersonalInfoControls();
   }
 );
 
-test(
-  'Profile name update persists and can be restored',
-  async ({ page }) => {
-    test.skip(
-      process.env.PROFILE_UPDATE_VALIDATION_ENABLED !== 'true',
-      'Skipped because PROFILE_UPDATE_VALIDATION_ENABLED is not configured.'
-    );
+if (process.env.PROFILE_UPDATE_VALIDATION_ENABLED === 'true') {
+  test(
+    'Profile name update persists and can be restored',
+    async ({ page }) => {
 
     test.setTimeout(
       120000
@@ -98,5 +95,6 @@ test(
         originalLastName
       );
     }
-  }
-);
+    }
+  );
+}

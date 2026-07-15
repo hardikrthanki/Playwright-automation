@@ -11,13 +11,15 @@ export default defineConfig({
   workers: 1,
 
   reporter: [
-    ['list'],
+    ['dot'],
     ['html', {
       open: 'never',
       title: 'OOLTool PUAT Automation Report',
     }],
     ['json', {
-      outputFile: 'test-results/results.json',
+      outputFile:
+        process.env.PLAYWRIGHT_JSON_OUTPUT_NAME ??
+        'test-results/results.json',
     }],
   ],
 

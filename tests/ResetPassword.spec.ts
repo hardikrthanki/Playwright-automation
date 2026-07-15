@@ -27,19 +27,14 @@ npx playwright test tests/ResetPassword.spec.ts --headed
 
 ============================================================================= */
 
-test(
-  'Reset Password',
-  async ({ page }) => {
-    const RESET_URL =
-      process.env.RESET_URL ??
-      '';
+const RESET_URL =
+  process.env.RESET_URL ??
+  '';
 
-    if (!RESET_URL) {
-      test.skip(
-        true,
-        'RESET_URL is required for this standalone reset-password test.'
-      );
-    }
+if (RESET_URL) {
+  test(
+    'Reset Password',
+    async ({ page }) => {
 
     await page.goto(
       RESET_URL
@@ -58,5 +53,6 @@ test(
 
     await resetPassword.validateSuccess();
 
-  }
-);
+    }
+  );
+}

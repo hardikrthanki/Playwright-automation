@@ -1,0 +1,1466 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\playwright.config.ts",
+    "rootDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/BAPS/Documents/Oools_paywright/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/BAPS/Documents/Oools_paywright/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "dot",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "title": "OOLTool PUAT Automation Report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\execution-report\\playwright-batches\\05-plan-reset-overlay.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "OverlayStrategistsTrial.spec.ts",
+      "file": "OverlayStrategistsTrial.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Overlay Strategists Trial Experience",
+          "file": "OverlayStrategistsTrial.spec.ts",
+          "line": 69,
+          "column": 8,
+          "specs": [
+            {
+              "title": "New user can reach Overlay Strategists trial option",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 164896,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Overlay Trial Email: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                        },
+                        {
+                          "text": "Overlay Trial Mobile: 2015553076\n"
+                        },
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        },
+                        {
+                          "text": "[STEP] Registering: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                        },
+                        {
+                          "text": "Registration Email: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                        },
+                        {
+                          "text": "[CLICK] Send Code via SMS\n"
+                        },
+                        {
+                          "text": "[INFO] Entering OTP\n"
+                        },
+                        {
+                          "text": "[CLICK] Verify OTP\n"
+                        },
+                        {
+                          "text": "[PASS] OTP Verify Clicked\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Registration\n"
+                        },
+                        {
+                          "text": "[PASS] Registration successful. Verification email sent.\n"
+                        },
+                        {
+                          "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                        },
+                        {
+                          "text": "Verify email sent to: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                        },
+                        {
+                          "text": "Open Gmail and click the verification link.\n"
+                        },
+                        {
+                          "text": "After verification, resume Playwright.\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/login\n"
+                        },
+                        {
+                          "text": "Login Attempt 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/login\n"
+                        },
+                        {
+                          "text": "Login Attempt 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Filling Risk Profile\n"
+                        },
+                        {
+                          "text": "[STEP] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select 3-5 years\n"
+                        },
+                        {
+                          "text": " Options Experience  Beginner\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Beginner\n"
+                        },
+                        {
+                          "text": " Multi-leg Strategies  No\n"
+                        },
+                        {
+                          "text": "[CLICK] Select No\n"
+                        },
+                        {
+                          "text": " Risk Tolerance  Moderate\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Moderate\n"
+                        },
+                        {
+                          "text": " Portfolio Loss  Keeping default 10%\n"
+                        },
+                        {
+                          "text": " Preferred Duration  30-60 days\n"
+                        },
+                        {
+                          "text": " Allowed Strategy  Covered Calls\n"
+                        },
+                        {
+                          "text": " Allowed Strategy  Cash Secured Puts\n"
+                        },
+                        {
+                          "text": " Account Type  Cash\n"
+                        },
+                        {
+                          "text": " Cash Account Type selected\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile completed\n"
+                        },
+                        {
+                          "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": " Compliance tab opened successfully\n"
+                        },
+                        {
+                          "text": "[INFO] Filling Compliance Profile\n"
+                        },
+                        {
+                          "text": " State of Residence\n"
+                        },
+                        {
+                          "text": "Found 4 dropdown(s)\n"
+                        },
+                        {
+                          "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "[CLICK] Open State Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select State\n"
+                        },
+                        {
+                          "text": "Selected State: Alabama\n"
+                        },
+                        {
+                          "text": "[PASS] State Selected\n"
+                        },
+                        {
+                          "text": "Found 5 disclosure(s)\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 1 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 1\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 1 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 2 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 2\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 2 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 3 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 3\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 3 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 4 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 4\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 4\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 4 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 5 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 5\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 5 Accepted\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Compliance Profile\n"
+                        },
+                        {
+                          "text": "[URL] https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists trial options\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Register new user",
+                          "duration": 18921
+                        },
+                        {
+                          "title": "Verify email manually when enabled",
+                          "duration": 5
+                        },
+                        {
+                          "title": "Login and complete onboarding prerequisites",
+                          "duration": 124337
+                        },
+                        {
+                          "title": "Validate Overlay Strategists trial availability",
+                          "duration": 72
+                        }
+                      ],
+                      "startTime": "2026-07-14T11:45:41.588Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-94f0f-ay-Strategists-trial-option-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-94f0f-ay-Strategists-trial-option-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-94f0f-ay-Strategists-trial-option-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b24ed9020043c8797020-a9f6142b370d92f3075b",
+              "file": "OverlayStrategistsTrial.spec.ts",
+              "line": 77,
+              "column": 9
+            },
+            {
+              "title": "Overlay Strategists trial requires terms acceptance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 161083,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "Overlay Terms Validation Email: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                        },
+                        {
+                          "text": "Overlay Terms Validation Mobile: 2015559990\n"
+                        },
+                        {
+                          "text": "[INFO] Opening application\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Create Account\n"
+                        },
+                        {
+                          "text": "[PASS] Create Account Opened\n"
+                        },
+                        {
+                          "text": "[STEP] Registering: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                        },
+                        {
+                          "text": "Registration Email: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                        },
+                        {
+                          "text": "[CLICK] Send Code via SMS\n"
+                        },
+                        {
+                          "text": "[INFO] Entering OTP\n"
+                        },
+                        {
+                          "text": "[CLICK] Verify OTP\n"
+                        },
+                        {
+                          "text": "[PASS] OTP Verify Clicked\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Registration\n"
+                        },
+                        {
+                          "text": "[PASS] Registration successful. Verification email sent.\n"
+                        },
+                        {
+                          "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
+                        },
+                        {
+                          "text": "Verify email sent to: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                        },
+                        {
+                          "text": "Open Gmail and click the verification link.\n"
+                        },
+                        {
+                          "text": "After verification, resume Playwright.\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Boverlay-terms-required-1784029689990%40gmail.com\n"
+                        },
+                        {
+                          "text": "Login Attempt 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/login\n"
+                        },
+                        {
+                          "text": "Login Attempt 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Filling Risk Profile\n"
+                        },
+                        {
+                          "text": "[STEP] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select 3-5 years\n"
+                        },
+                        {
+                          "text": " Options Experience  Beginner\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Beginner\n"
+                        },
+                        {
+                          "text": " Multi-leg Strategies  No\n"
+                        },
+                        {
+                          "text": "[CLICK] Select No\n"
+                        },
+                        {
+                          "text": " Risk Tolerance  Moderate\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Moderate\n"
+                        },
+                        {
+                          "text": " Portfolio Loss  Keeping default 10%\n"
+                        },
+                        {
+                          "text": " Preferred Duration  30-60 days\n"
+                        },
+                        {
+                          "text": " Allowed Strategy  Covered Calls\n"
+                        },
+                        {
+                          "text": " Allowed Strategy  Cash Secured Puts\n"
+                        },
+                        {
+                          "text": " Account Type  Cash\n"
+                        },
+                        {
+                          "text": " Cash Account Type selected\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile completed\n"
+                        },
+                        {
+                          "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": " Compliance tab opened successfully\n"
+                        },
+                        {
+                          "text": "[INFO] Filling Compliance Profile\n"
+                        },
+                        {
+                          "text": " State of Residence\n"
+                        },
+                        {
+                          "text": "Found 4 dropdown(s)\n"
+                        },
+                        {
+                          "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                        },
+                        {
+                          "text": "[CLICK] Open State Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select State\n"
+                        },
+                        {
+                          "text": "Selected State: Alabama\n"
+                        },
+                        {
+                          "text": "[PASS] State Selected\n"
+                        },
+                        {
+                          "text": "Found 5 disclosure(s)\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 1 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 1\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 1 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 2 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 2\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 2\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 2 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 3 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 3\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 3\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 3 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 4 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 4\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 4\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 4 Accepted\n"
+                        },
+                        {
+                          "text": "[INFO] Processing Disclosure 5 of 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Disclosure 5\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Disclosure 5\n"
+                        },
+                        {
+                          "text": "[PASS] Disclosure 5 Accepted\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Compliance Profile\n"
+                        },
+                        {
+                          "text": "[URL] https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Overlay Strategists without-card trial modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists trial options\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
+                        },
+                        {
+                          "text": "[CLICK] Try 30 days free without card\n"
+                        },
+                        {
+                          "text": "[INFO] Validating trial terms are required\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Trial Terms\n"
+                        },
+                        {
+                          "text": "[PASS] Trial terms required validation passed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Register new user",
+                          "duration": 17971
+                        },
+                        {
+                          "title": "Verify email manually when enabled",
+                          "duration": 3
+                        },
+                        {
+                          "title": "Login and complete onboarding prerequisites",
+                          "duration": 122662
+                        },
+                        {
+                          "title": "Validate terms are required before trial can start",
+                          "duration": 705
+                        }
+                      ],
+                      "startTime": "2026-07-14T11:48:09.607Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-af795-l-requires-terms-acceptance-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-af795-l-requires-terms-acceptance-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OverlayStrategistsTrial-Ov-af795-l-requires-terms-acceptance-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b24ed9020043c8797020-9d52aeb8fc509aff5e5c",
+              "file": "OverlayStrategistsTrial.spec.ts",
+              "line": 594,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "PlanSelectionValidation.spec.ts",
+      "file": "PlanSelectionValidation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Plan Selection Validation",
+          "file": "PlanSelectionValidation.spec.ts",
+          "line": 253,
+          "column": 8,
+          "specs": [
+            {
+              "title": "Plan catalog, feature summary, and billing toggle are visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14298,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-toggle-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Validating plan catalog and feature summary\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Curious Explorer plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Curious Explorer plan is visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Income Builder plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Income Builder plan is visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Portfolio Hedger plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Portfolio Hedger plan is visible\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Marketplace plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Marketplace plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Plan catalog and feature summary validated\n"
+                        },
+                        {
+                          "text": "[INFO] Validating monthly and annual billing toggle\n"
+                        },
+                        {
+                          "text": "[CLICK] Annual Toggle\n"
+                        },
+                        {
+                          "text": "[CLICK] Monthly Toggle\n"
+                        },
+                        {
+                          "text": "[PASS] Monthly and annual billing toggle validated\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:50:34.496Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-d011001dd02c63a5f6c5",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 262,
+              "column": 11
+            },
+            {
+              "title": "Complete Setup initial state is safe before checkout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14616,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-complete-setup-guard Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Complete Setup initial state\n"
+                        },
+                        {
+                          "text": "[PASS] Complete Setup initial state is safe\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:50:49.090Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-77818c2074263e00ac4b",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 281,
+              "column": 11
+            },
+            {
+              "title": "Overlay Strategists with-card trial modal content and cancel behavior",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16089,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-with-card-modal-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Overlay Strategists with-card trial modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists trial options\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
+                        },
+                        {
+                          "text": "[CLICK] Try 30 days free with card\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists with-card trial modal content\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card trial modal content validated\n"
+                        },
+                        {
+                          "text": "[CLICK] Cancel Trial Modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:51:04.152Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-36d0fb04eacc72b6fd68",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 298,
+              "column": 11
+            },
+            {
+              "title": "Overlay Strategists without-card trial modal content and close behavior",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14282,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-without-card-modal-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Overlay Strategists without-card trial modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists trial options\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
+                        },
+                        {
+                          "text": "[CLICK] Try 30 days free without card\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists without-card trial modal content\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists without-card trial modal content validated\n"
+                        },
+                        {
+                          "text": "[CLICK] Close Trial Modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:51:20.572Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-179a8482edecab3a72e5",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 325,
+              "column": 11
+            },
+            {
+              "title": "Overlay Strategists trial start requires terms acceptance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14157,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-terms-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Opening Overlay Strategists without-card trial modal\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists trial options\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists plan is visible\n"
+                        },
+                        {
+                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
+                        },
+                        {
+                          "text": "[CLICK] Try 30 days free without card\n"
+                        },
+                        {
+                          "text": "[INFO] Validating trial terms are required\n"
+                        },
+                        {
+                          "text": "[CLICK] Accept Trial Terms\n"
+                        },
+                        {
+                          "text": "[PASS] Trial terms required validation passed\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:51:35.213Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-2ae38a25e905e7c84169",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 352,
+              "column": 11
+            },
+            {
+              "title": "Curious Explorer free plan completes onboarding without Stripe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23260,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "plan-free-activation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        },
+                        {
+                          "text": "[INFO] Selecting Curious Explorer Plan\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Curious Explorer plan visibility\n"
+                        },
+                        {
+                          "text": "[PASS] Curious Explorer plan is visible\n"
+                        },
+                        {
+                          "text": "[CLICK] Curious Explorer Plan\n"
+                        },
+                        {
+                          "text": "[CLICK] Complete Setup\n"
+                        },
+                        {
+                          "text": "[PASS] Curious Explorer selected\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Dashboard\n"
+                        },
+                        {
+                          "text": "[PASS] Dashboard Loaded\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-14T11:51:49.588Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-f2a85a41ba6f1514b53b",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 373,
+              "column": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "ResetPasswordNegative.spec.ts",
+      "file": "ResetPasswordNegative.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Invalid reset password link does not authenticate user",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2266,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-07-14T11:52:13.189Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ResetPasswordNegative-Inva-d9f37--does-not-authenticate-user-chromium\\test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ResetPasswordNegative-Inva-d9f37--does-not-authenticate-user-chromium\\video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\ResetPasswordNegative-Inva-d9f37--does-not-authenticate-user-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "764cfcd596a1177bcfc8-705da3a9c3e558094dfd",
+          "file": "ResetPasswordNegative.spec.ts",
+          "line": 32,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-14T11:45:40.078Z",
+    "duration": 397317.334,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

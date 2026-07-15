@@ -22,7 +22,7 @@ AIR Core turns normalized execution data into quality decisions, release recomme
 | Engine Orchestrator | Registers and executes AIR engines as a configurable pipeline |
 | AI Engine | Explains and recommends |
 | Execution Summary Engine | Calculates execution totals, status counts, flaky count, duration, pass rate, failure rate, and execution status |
-| Failure Engine | Builds failedTests with severity, category, business impact, evidence, and investigation action |
+| Failure Engine | Builds failedTests with severity, category, failure type, release impact, business impact, evidence, and investigation action |
 | Recommendation Engine | Produces traceable next actions from normalized AIR data |
 
 ## Current Phase
@@ -113,7 +113,8 @@ Current implementation:
 Responsibilities:
 
 - Build `failedTests[]`.
-- Include test name, module, status, severity, category, business impact, error message, evidence links, and recommended investigation action.
+- Include test name, module, status, severity, category, failure type, release impact, business impact, error message, evidence links, and recommended investigation action.
+- Classify failures as product issues, automation issues, environment issues, or test-data/external-state issues so AIR does not treat every failed execution as a confirmed release blocker.
 - Return an empty array when there are no failures.
 
 Non-responsibilities:

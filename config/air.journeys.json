@@ -14,7 +14,7 @@
     },
     {
       "name": "Access Control",
-      "patterns": ["permission", "access control", "rbac", "restricted user", "allowed user"],
+      "patterns": ["permission", "access control", "rbac", "restricted user", "allowed user", "protected route", "unauthenticated user", "direct access", "blocks direct access"],
       "modules": ["Access Control"],
       "critical": true
     },
