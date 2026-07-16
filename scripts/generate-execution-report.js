@@ -39,6 +39,106 @@ function escapeJsString(value) {
     .replaceAll('\n', ' ');
 }
 
+function stripAnsi(value) {
+  return String(value ?? '')
+    .replace(/\u001b\[[0-9;]*m/g, '')
+    .replace(/\x1b\[[0-9;]*m/g, '');
+}
+
+function compactText(value, maxLength = 180) {
+  const normalized = stripAnsi(value)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return normalized.length > maxLength
+    ? `${normalized.slice(0, maxLength - 3).trim()}...`
+    : normalized;
+}
+
+function tooltipAttr(value) {
+  const text = compactText(value, 600);
+
+  if (!text) {
+    return '';
+  }
+
+  return ` data-air-tooltip="${escapeHtml(text)}" aria-label="${escapeHtml(text)}" tabindex="0"`;
+}
+
+function readPngSize(filePath) {
+  try {
+    const buffer = fs.readFileSync(filePath);
+
+    if (
+      buffer.length >= 24 &&
+      buffer[0] === 0x89 &&
+      buffer[1] === 0x50 &&
+      buffer[2] === 0x4e &&
+      buffer[3] === 0x47
+    ) {
+      return {
+        width: buffer.readUInt32BE(16),
+        height: buffer.readUInt32BE(20),
+      };
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function normalizeEvidenceRegion(candidate) {
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+
+  const x = Number(candidate.x ?? candidate.left);
+  const y = Number(candidate.y ?? candidate.top);
+  const width = Number(candidate.width ?? candidate.w ?? (candidate.right != null ? Number(candidate.right) - x : NaN));
+  const height = Number(candidate.height ?? candidate.h ?? (candidate.bottom != null ? Number(candidate.bottom) - y : NaN));
+
+  if (![x, y, width, height].every(Number.isFinite) || width <= 0 || height <= 0) {
+    return null;
+  }
+
+  return {
+    x,
+    y,
+    width,
+    height,
+    label: candidate.label || candidate.name || '',
+    expectedElementNotFound: Boolean(candidate.expectedElementNotFound || candidate.elementNotFound || candidate.notFound),
+  };
+}
+
+function getReliableFailureRegion(item = {}) {
+  const candidates = [
+    item.failureRegion,
+    item.expectedRegion,
+    item.boundingBox,
+    item.region,
+    item.locatorBoundingBox,
+    item.elementBoundingBox,
+    item.metadata?.failureRegion,
+    item.metadata?.expectedRegion,
+    item.metadata?.boundingBox,
+    item.metadata?.locatorBoundingBox,
+    item.metadata?.elementBoundingBox,
+    item.metadata?.nearestContainer,
+  ];
+
+  for (const candidate of candidates) {
+    const region = normalizeEvidenceRegion(candidate);
+
+    if (region) {
+      return region;
+    }
+  }
+
+  return null;
+}
+
 function collectTests(suites, parentTitle = []) {
   const tests = [];
 
@@ -281,6 +381,8 @@ const tests =
       error: test.error,
       module: test.module,
       file: test.file,
+      annotations: test.annotations,
+      reason: test.reason,
     }))
     : Array.isArray(results.files)
     ? collectHtmlReportTests(results.files)
@@ -979,7 +1081,9 @@ const journeyChips = businessJourney
   .map(step => `<span class="journey-chip green">${escapeHtml(step)}</span>`)
   .join('');
 
-const failedTests = tests.filter(test => test.status === 'failed' || test.status === 'timedOut');
+const failedTests = Array.isArray(airResults?.failedTests) && airResults.failedTests.length > 0
+  ? airResults.failedTests
+  : tests.filter(test => test.status === 'failed' || test.status === 'timedOut');
 const topFailureRows =
   failedTests
     .slice(0, 4)
@@ -1804,6 +1908,84 @@ function getModuleFilterTone(module) {
   return 'green';
 }
 
+function getModuleStatusGroup(module) {
+  const status = String(module.status || '').toLowerCase();
+  const total = Number(module.total ?? 0);
+  const failedCount =
+    Number(module.failed ?? Math.max(0, (module.total || 0) - (module.passed || 0) - (module.skipped || 0))) || 0;
+
+  if (
+    total === 0 ||
+    status.includes('not executed') ||
+    status.includes('no data')
+  ) {
+    return 'not-executed';
+  }
+
+  if (
+    status.includes('at risk') ||
+    status.includes('critical') ||
+    status.includes('failed')
+  ) {
+    return 'critical';
+  }
+
+  if (
+    status.includes('warning') ||
+    status.includes('partial') ||
+    status.includes('skipped') ||
+    status.includes('needs review') ||
+    failedCount > 0 ||
+    Number(module.skipped ?? 0) > 0
+  ) {
+    return 'warning';
+  }
+
+  return 'healthy';
+}
+
+function getModuleStatusTooltip(module) {
+  const group = getModuleStatusGroup(module);
+  const failedCount =
+    Number(module.failed ?? Math.max(0, (module.total || 0) - (module.passed || 0) - (module.skipped || 0))) || 0;
+  const skippedCount = Number(module.skipped ?? 0) || 0;
+
+  if (group === 'critical') {
+    return `${failedCount} failed test${failedCount === 1 ? '' : 's'} are affecting ${module.name} in the current execution.`;
+  }
+
+  if (group === 'warning') {
+    if (failedCount > 0) {
+      return `${module.name} has ${failedCount} failed test${failedCount === 1 ? '' : 's'} and needs review.`;
+    }
+
+    return `${module.name} has ${skippedCount} skipped or controlled check${skippedCount === 1 ? '' : 's'} and needs review.`;
+  }
+
+  if (group === 'not-executed') {
+    return `${module.name} has no executed tests in the current AIR model.`;
+  }
+
+  return `${module.name} is healthy: ${module.passed}/${module.total} checks passed with low risk.`;
+}
+
+const moduleStatusGroupCounts =
+  displayModules.reduce(
+    (counts, module) => {
+      const group = getModuleStatusGroup(module);
+      counts.all += 1;
+      counts[group] = (counts[group] ?? 0) + 1;
+      return counts;
+    },
+    {
+      all: 0,
+      healthy: 0,
+      warning: 0,
+      critical: 0,
+      'not-executed': 0,
+    }
+  );
+
 function testBelongsToModule(test, moduleName) {
   return (test.module ?? getModuleName(test.title)) === moduleName;
 }
@@ -1825,13 +2007,13 @@ function renderModuleHealthCard(module) {
       : Math.round((module.passed / module.total) * 100);
 
   return `
-    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-risk="${escapeHtml(module.risk)}">
+    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
       <div class="module-card-head">
         <div class="module-title">
           <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
           <strong>${escapeHtml(module.name)}</strong>
         </div>
-        <span class="badge ${tone}">${escapeHtml(module.status)}</span>
+        <span class="badge ${tone}"${tooltipAttr(getModuleStatusTooltip(module))}>${escapeHtml(module.status)}</span>
       </div>
       <div class="module-health-score">
         <strong>${module.score}%</strong>
@@ -1870,7 +2052,7 @@ const moduleDashboardCards =
         getModuleBusinessScenarios(module.name).length;
 
       return `
-        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-risk="${escapeHtml(module.risk)}">
+        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}">
           <div class="module-card-head">
             <div class="module-title">
               <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2089,10 +2271,15 @@ const shouldShowWarningLoadMore = warningSourceItems.length > FAILED_TESTS_INITI
 
 function formatShortFailureReason(test) {
   const rawReason = String(
+    test?.failureSummary ||
+    test?.shortReason ||
+    test?.whyFailed ||
     test?.reason ||
     test?.recommendedAction ||
+    test?.recommendedInvestigationAction ||
     test?.businessImpact ||
     test?.error ||
+    test?.errorMessage ||
     'Review failure evidence.'
   ).trim();
 
@@ -2160,6 +2347,11 @@ function getFailureShortTitle(test, index = 0) {
 
 function getFailureClientDescription(test, index = 0) {
   const title = getFailureFullTitle(test, index).toLowerCase();
+
+  if (test?.failureSummary || test?.shortReason || test?.whyFailed) {
+    return test.failureSummary ?? test.shortReason ?? test.whyFailed;
+  }
+
   const defaultReason = formatShortFailureReason(test);
 
   if (title.includes('transactions tab shows paid transaction status')) {
@@ -2191,7 +2383,154 @@ function getFailureClientDescription(test, index = 0) {
     : defaultReason;
 }
 
+function getFailureTechnicalError(test) {
+  return compactText(
+    test?.technicalError ||
+    test?.errorMessage ||
+    test?.error ||
+    'Technical error was not available in the AIR model.',
+    900
+  );
+}
+
+function getFailureExpected(test, index = 0) {
+  if (test?.expected) {
+    return test.expected;
+  }
+
+  const title = getFailureFullTitle(test, index).toLowerCase();
+  const technicalError = getFailureTechnicalError(test).toLowerCase();
+
+  if (title.includes('otp') || technicalError.includes('otp')) {
+    return 'The expected OTP verification state should become available so the user can continue.';
+  }
+
+  if (title.includes('billing') || title.includes('subscription') || title.includes('stripe')) {
+    return 'The billing or subscription page should show the expected prepared plan, portal, or payment state.';
+  }
+
+  if (technicalError.includes('tohaveurl') || technicalError.includes('expected pattern')) {
+    return 'The page should navigate to the expected route or destination.';
+  }
+
+  if (technicalError.includes('locator.waitfor') || technicalError.includes('to be visible')) {
+    return 'The expected UI element should appear before the test timeout.';
+  }
+
+  return 'The scenario should reach the expected validation state defined by the automated test.';
+}
+
+function getFailureExpectedSource(test) {
+  return test?.expected
+    ? 'Test metadata'
+    : 'Derived from execution';
+}
+
+function getFailureObserved(test, index = 0) {
+  if (test?.observed) {
+    return test.observed;
+  }
+
+  const technicalError = getFailureTechnicalError(test);
+
+  if (/received string:/i.test(technicalError)) {
+    return compactText(technicalError.split(/received string:/i).at(-1), 220);
+  }
+
+  if (/timeout/i.test(technicalError)) {
+    return 'The test waited for the expected state until timeout and the expected condition was not reached.';
+  }
+
+  if (/expected pattern:/i.test(technicalError)) {
+    return 'The actual application state did not match the expected validation pattern.';
+  }
+
+  return getFailureClientDescription(test, index);
+}
+
+function getFailureObservedSource(test) {
+  if (test?.observed) {
+    return 'Test metadata';
+  }
+
+  const technicalError = getFailureTechnicalError(test);
+
+  if (/received string:/i.test(technicalError) || /timeout/i.test(technicalError) || /expected pattern:/i.test(technicalError)) {
+    return 'Playwright error';
+  }
+
+  return 'Fallback explanation';
+}
+
+function getFailureImpact(test, index = 0) {
+  if (test?.businessImpact || test?.releaseImpact) {
+    return test.businessImpact ?? test.releaseImpact;
+  }
+
+  const moduleName = String(test?.module ?? getModuleName(getFailureFullTitle(test, index))).toLowerCase();
+
+  if (moduleName.includes('billing') || moduleName.includes('payment')) {
+    return 'Billing confidence is reduced until the prepared account state and subscription behavior are confirmed.';
+  }
+
+  if (moduleName.includes('authentication') || moduleName.includes('mfa')) {
+    return 'User access confidence is reduced until the authentication scenario is rerun successfully.';
+  }
+
+  if (moduleName.includes('onboarding') || moduleName.includes('signup')) {
+    return 'New-user onboarding confidence is reduced until this scenario is verified.';
+  }
+
+  return 'Requires investigation before using this scenario as release evidence.';
+}
+
+function getFailureImpactSource(test) {
+  return test?.businessImpact || test?.releaseImpact
+    ? 'AIR failure engine'
+    : 'Derived from module mapping';
+}
+
+function getFailureCauseLabel(test) {
+  if (test?.confirmedCause) {
+    return test.confirmedCause;
+  }
+
+  if (test?.failureType) {
+    return `${test.failureType} / Requires Investigation`;
+  }
+
+  return 'Requires Investigation';
+}
+
+function getFailureCauseSource(test) {
+  if (test?.confirmedCause) {
+    return 'Test metadata';
+  }
+
+  if (test?.failureType) {
+    return 'AIR failure engine';
+  }
+
+  return 'Fallback explanation';
+}
+
+function getFailureSummarySource(test) {
+  if (test?.whatFailed || test?.whyFailed || test?.failureSummary || test?.shortReason) {
+    return 'AIR failure engine';
+  }
+
+  if (test?.errorMessage || test?.error) {
+    return 'Playwright error';
+  }
+
+  return 'Fallback explanation';
+}
+
 function getFailureNextAction(test, index = 0) {
+  if (test?.recommendedInvestigationAction || test?.recommendedAction) {
+    return test.recommendedInvestigationAction ?? test.recommendedAction;
+  }
+
   const title = getFailureFullTitle(test, index).toLowerCase();
 
   if (title.includes('transactions tab shows paid transaction status')) {
@@ -2227,11 +2566,13 @@ function getFailureEvidenceInfo(test) {
     : 0;
 
   if (directEvidenceCount > 0) {
+    const primaryEvidence = test.evidence.find(item => item.path) ?? test.evidence[0];
+
     return {
       status: 'Attached',
       label: `${directEvidenceCount} artifact${directEvidenceCount === 1 ? '' : 's'} attached`,
       action: 'Open Evidence',
-      href: '#evidence',
+      href: getEvidenceHref(primaryEvidence),
       available: true,
     };
   }
@@ -2253,6 +2594,314 @@ function getFailureEvidenceInfo(test) {
     href: '#evidence',
     available: false,
   };
+}
+
+function selectPrimaryFailureScreenshot(test) {
+  const evidenceItems = Array.isArray(test?.evidence) ? test.evidence : [];
+  const screenshotItems = evidenceItems.filter(item =>
+    formatEvidenceType(item.type ?? item.name) === 'Screenshot' &&
+    item.path
+  );
+
+  if (screenshotItems.length === 0) {
+    return {
+      available: false,
+      multiple: false,
+      label: 'No primary screenshot available',
+      reason: 'No screenshot evidence is attached to this failed test.',
+    };
+  }
+
+  const failedAttemptScreenshots = screenshotItems.filter(item =>
+    String(item.attemptStatus ?? '').toLowerCase() === 'failed'
+  );
+  const candidates = failedAttemptScreenshots.length > 0
+    ? failedAttemptScreenshots
+    : screenshotItems;
+  const selected =
+    candidates.find(item => /failed|failure/i.test(`${item.name ?? ''} ${item.path ?? ''}`)) ??
+    candidates.at(-1);
+  const attemptLabel = selected?.attempt
+    ? `Attempt ${selected.attempt}${selected.retry ? ` / Retry ${selected.retry}` : ''}`
+    : 'Latest failed attempt';
+
+  return {
+    available: true,
+    multiple: screenshotItems.length > 1,
+    item: selected,
+    href: getEvidenceHref(selected),
+    label: `Primary Failure Screenshot - ${attemptLabel}`,
+    reason: failedAttemptScreenshots.length > 0
+      ? 'Selected from screenshot evidence owned by a failed attempt.'
+      : 'Selected using the latest screenshot attached to this failed test.',
+  };
+}
+
+function renderPrimaryFailureScreenshot(test) {
+  const primary = selectPrimaryFailureScreenshot(test);
+
+  if (!primary.available) {
+    return `
+      <div class="primary-failure-shot empty">
+        <span>Primary Failure Screenshot</span>
+        <strong>Not available</strong>
+        <small>${escapeHtml(primary.reason)}</small>
+      </div>`;
+  }
+
+  return `
+    <a class="primary-failure-shot" href="${escapeHtml(primary.href)}" data-evidence-preview data-evidence-kind="Primary Failure Screenshot" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(primary.href)}"${tooltipAttr(primary.reason)}>
+      <span>${escapeHtml(primary.label)}</span>
+      <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
+      <small>${primary.multiple ? 'Multiple screenshots available; AIR selected the failed-attempt screenshot.' : 'Open full image'}</small>
+    </a>`;
+}
+
+function getEvidenceAbsolutePath(item = {}) {
+  const rawPath = String(item?.path ?? '');
+
+  if (!rawPath || /^(https?:|file:|#)/i.test(rawPath)) {
+    return '';
+  }
+
+  return path.isAbsolute(rawPath)
+    ? rawPath
+    : path.join(projectRoot, rawPath);
+}
+
+function getAnnotatedEvidenceFileName(test, screenshot, index = 0) {
+  const testKey = moduleSlug(test.testId || test.testName || test.title || `failure-${index}`);
+  const attemptKey = moduleSlug(screenshot.attemptId || `attempt-${screenshot.attempt || screenshot.retry || 1}`);
+  return `${testKey}-${attemptKey}-${index + 1}.svg`;
+}
+
+function createAnnotatedFailurePreview(test, screenshot, index = 0) {
+  const originalPath = getEvidenceAbsolutePath(screenshot);
+  const region = getReliableFailureRegion(screenshot);
+
+  if (!originalPath || !fs.existsSync(originalPath)) {
+    return {
+      available: false,
+      reason: 'Original screenshot file was not available for annotation.',
+    };
+  }
+
+  if (!region) {
+    return {
+      available: false,
+      reason: 'Failure location could not be determined automatically.',
+    };
+  }
+
+  const size = readPngSize(originalPath) || { width: 1440, height: 900 };
+  const safeRegion = {
+    x: Math.max(0, Math.min(region.x, size.width)),
+    y: Math.max(0, Math.min(region.y, size.height)),
+    width: Math.max(1, Math.min(region.width, size.width - Math.max(0, region.x))),
+    height: Math.max(1, Math.min(region.height, size.height - Math.max(0, region.y))),
+  };
+  const annotationDir = path.join(outputDir, 'annotated-evidence');
+  fs.mkdirSync(annotationDir, { recursive: true });
+
+  const fileName = getAnnotatedEvidenceFileName(test, screenshot, index);
+  const filePath = path.join(annotationDir, fileName);
+  const originalHrefForSvg = path
+    .relative(annotationDir, originalPath)
+    .replaceAll('\\', '/');
+  const attemptLabel = screenshot.attemptId || `Attempt ${screenshot.attempt ?? screenshot.retry ?? 1}`;
+  const markerLabel = region.expectedElementNotFound
+    ? 'Failed/Expected Area - Expected element not found'
+    : `Failed/Expected Area - ${region.label || 'Failure location'}`;
+  const expected = compactText(getFailureExpected(test, index), 130);
+  const observed = compactText(getFailureObserved(test, index), 130);
+  const title = compactText(getFailureFullTitle(test, index), 110);
+  const labelX = Math.min(Math.max(18, safeRegion.x), Math.max(18, size.width - 520));
+  const labelY = safeRegion.y > 150
+    ? Math.max(18, safeRegion.y - 132)
+    : Math.min(size.height - 132, safeRegion.y + safeRegion.height + 22);
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${size.width} ${size.height}">
+  <image href="${escapeHtml(originalHrefForSvg)}" x="0" y="0" width="${size.width}" height="${size.height}" preserveAspectRatio="xMidYMid meet"/>
+  <rect x="0" y="0" width="${size.width}" height="${size.height}" fill="rgba(0,0,0,0.18)"/>
+  <rect x="${safeRegion.x}" y="${safeRegion.y}" width="${safeRegion.width}" height="${safeRegion.height}" rx="8" fill="rgba(255,59,59,0.12)" stroke="#ff3b3b" stroke-width="6"/>
+  <circle cx="${safeRegion.x}" cy="${safeRegion.y}" r="20" fill="#ff3b3b"/>
+  <text x="${safeRegion.x}" y="${safeRegion.y + 7}" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="22" font-weight="800">1</text>
+  <line x1="${labelX + 30}" y1="${labelY + 112}" x2="${safeRegion.x + Math.min(safeRegion.width, 80)}" y2="${safeRegion.y}" stroke="#ff3b3b" stroke-width="4" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff3b3b"/>
+    </marker>
+  </defs>
+  <rect x="${labelX}" y="${labelY}" width="500" height="118" rx="14" fill="rgba(8,16,30,0.92)" stroke="rgba(255,59,59,0.75)" stroke-width="2"/>
+  <text x="${labelX + 18}" y="${labelY + 28}" fill="#ffb4b4" font-family="Arial, sans-serif" font-size="18" font-weight="800">${escapeHtml(markerLabel)}</text>
+  <text x="${labelX + 18}" y="${labelY + 54}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(title)}</text>
+  <text x="${labelX + 18}" y="${labelY + 78}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">Expected: ${escapeHtml(expected)}</text>
+  <text x="${labelX + 18}" y="${labelY + 100}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">Observed: ${escapeHtml(observed)}</text>
+  <rect x="18" y="${size.height - 52}" width="420" height="34" rx="10" fill="rgba(8,16,30,0.82)"/>
+  <text x="34" y="${size.height - 30}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="15">AIR Annotated Failure View - ${escapeHtml(attemptLabel)}</text>
+</svg>`;
+
+  fs.writeFileSync(filePath, svg, 'utf8');
+
+  return {
+    available: true,
+    href: `annotated-evidence/${fileName}`,
+    path: filePath,
+    reason: region.expectedElementNotFound
+      ? 'Annotated nearest reliable expected container. Expected element was not found.'
+      : 'Annotated from explicit failure-location metadata.',
+  };
+}
+
+function renderFailureScreenshotEvidence(test, index = 0) {
+  const primary = selectPrimaryFailureScreenshot(test);
+  const expected = getFailureExpected(test, index);
+  const observed = getFailureObserved(test, index);
+  const technicalError = getFailureTechnicalError(test);
+
+  if (!primary.available) {
+    return `
+      <div class="failure-screenshot-context">
+        <div class="failure-shot-panel annotated unavailable">
+          <span>Annotated Failure View</span>
+          <strong>Not available</strong>
+          <small>${escapeHtml(primary.reason)}</small>
+        </div>
+        <div class="failure-shot-notes">
+          <p><b>Expected:</b> ${escapeHtml(expected)}</p>
+          <p><b>Observed:</b> ${escapeHtml(observed)}</p>
+          <p><b>Technical Error:</b> ${escapeHtml(technicalError)}</p>
+        </div>
+      </div>`;
+  }
+
+  const annotated = createAnnotatedFailurePreview(test, primary.item, index);
+
+  return `
+    <div class="failure-screenshot-context">
+      <div class="failure-shot-panel ${annotated.available ? 'annotated' : 'unavailable'}">
+        <span>Annotated Failure View</span>
+        ${annotated.available
+          ? `<a href="${escapeHtml(annotated.href)}" data-evidence-preview data-evidence-kind="Annotated Failure View" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(annotated.href)}"${tooltipAttr(annotated.reason)}>
+              <img src="${escapeHtml(annotated.href)}" alt="Annotated failure view">
+              <small>${escapeHtml(annotated.reason)}</small>
+            </a>`
+          : `<strong>Not available</strong>
+             <small>Failure location could not be determined automatically.</small>`}
+      </div>
+      <div class="failure-shot-panel original">
+        <span>Original Screenshot</span>
+        <a href="${escapeHtml(primary.href)}" data-evidence-preview data-evidence-kind="Original Screenshot" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(primary.href)}"${tooltipAttr('Original Playwright screenshot. This file is never modified by AIR.')}>
+          <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
+          <small>${escapeHtml(primary.label)}</small>
+        </a>
+      </div>
+      <div class="failure-shot-notes">
+        <p><b>Expected:</b> ${escapeHtml(expected)}</p>
+        <p><b>Observed:</b> ${escapeHtml(observed)}</p>
+        <p><b>Technical Error:</b> ${escapeHtml(technicalError)}</p>
+        ${annotated.available ? '' : '<p><b>Location:</b> Failure location could not be determined automatically.</p>'}
+      </div>
+    </div>`;
+}
+
+function getEvidenceHref(item = {}) {
+  const rawPath = String(item?.path ?? '').replaceAll('\\', '/');
+
+  if (!rawPath) {
+    return hasPlaywrightReport ? '../playwright-report/index.html' : '#evidence';
+  }
+
+  if (/^(https?:|file:|#)/i.test(rawPath)) {
+    return rawPath;
+  }
+
+  if (/^[A-Za-z]:\//.test(rawPath)) {
+    const relativePath = path
+      .relative(projectRoot, rawPath)
+      .replaceAll('\\', '/');
+
+    if (relativePath && !relativePath.startsWith('..')) {
+      return `../${relativePath}`;
+    }
+  }
+
+  if (rawPath.startsWith('../')) {
+    return rawPath;
+  }
+
+  return `../${rawPath.replace(/^\.?\//, '')}`;
+}
+
+function formatEvidenceType(value) {
+  const normalized = String(value ?? 'attachment').toLowerCase();
+
+  if (normalized.includes('screen')) return 'Screenshot';
+  if (normalized.includes('video')) return 'Video';
+  if (normalized.includes('trace')) return 'Trace';
+  if (normalized.includes('log')) return 'Log';
+  if (normalized.includes('html')) return 'HTML Report';
+  if (normalized.includes('raw')) return 'Raw Results';
+
+  return 'Attachment';
+}
+
+function renderFailureEvidenceChips(test, options = {}) {
+  const includeScreenshots = options.includeScreenshots !== false;
+  const evidenceItems = (Array.isArray(test?.evidence) ? test.evidence : [])
+    .filter(item => includeScreenshots || formatEvidenceType(item.type ?? item.name) !== 'Screenshot');
+
+  if (evidenceItems.length === 0) {
+    return `<div class="failure-evidence-chips muted">
+      <span>No direct artifact attached</span>
+      ${hasPlaywrightReport ? '<a href="../playwright-report/index.html">Open Playwright Report</a>' : ''}
+    </div>`;
+  }
+
+  const grouped = evidenceItems.reduce((groups, item) => {
+    const label = formatEvidenceType(item.type ?? item.name);
+    if (!groups[label]) {
+      groups[label] = [];
+    }
+    groups[label].push(item);
+    return groups;
+  }, {});
+
+  return `<div class="failure-evidence-chips">
+    ${Object.entries(grouped).map(([label, items]) => {
+      const first = items.find(item => item.path) ?? items[0];
+      return `<a href="${escapeHtml(getEvidenceHref(first))}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="${items.length} available" data-evidence-href="${escapeHtml(getEvidenceHref(first))}">${escapeHtml(label)} <b>${items.length}</b></a>`;
+    }).join('')}
+  </div>`;
+}
+
+function getFailureArtifactLinks(test) {
+  return (Array.isArray(test?.evidence) ? test.evidence : [])
+    .filter(item => formatEvidenceType(item.type ?? item.name) !== 'Screenshot')
+    .map(item => ({
+      label: formatEvidenceType(item.type ?? item.name),
+      href: getEvidenceHref(item),
+      status: item.attemptStatus || item.type || 'Available',
+      attempt: item.attempt,
+      retry: item.retry,
+    }));
+}
+
+function getFailureSourceLabel(test) {
+  if (test?.manualDefect) {
+    return 'Manual Defect';
+  }
+
+  if (test?.failureType) {
+    return test.failureType;
+  }
+
+  if (test?.file || test?.testId) {
+    return 'Automation';
+  }
+
+  return 'AIR Review';
 }
 
 function getWarningShortTitle(test, index = 0) {
@@ -2327,8 +2976,10 @@ const failedRows = (failedSourceItems.length > 0
     const title = getFailureShortTitle(test, index);
     const moduleName = test.module ?? getModuleName(title);
     const priority = test.severity ?? 'High';
-    const reason = getFailureClientDescription(test, index);
+    const reason = test.whyFailed ?? getFailureClientDescription(test, index);
     const nextAction = getFailureNextAction(test, index);
+    const sourceLabel = getFailureSourceLabel(test);
+    const evidenceInfo = getFailureEvidenceInfo(test);
     const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
 
     return `
@@ -2336,7 +2987,9 @@ const failedRows = (failedSourceItems.length > 0
       <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(fullTitle)}</small></td>
       <td>${escapeHtml(moduleName)}</td>
       <td><span class="badge ${priority === 'High' || priority === 'Critical' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
+      <td><span class="failure-source-pill">${escapeHtml(sourceLabel)}</span></td>
       <td><strong>${escapeHtml(reason)}</strong><small>Next: ${escapeHtml(nextAction)}</small></td>
+      <td><a class="table-evidence-link" href="${escapeHtml(evidenceInfo.href)}">${escapeHtml(evidenceInfo.status)}</a></td>
     </tr>`;
   })
   .join('');
@@ -2358,9 +3011,15 @@ const failureInvestigationCards = failedSourceItems
     const moduleName = test.module ?? getModuleName(title);
     const severity = test.severity ?? 'High';
     const category = test.category ?? 'Execution';
-    const reason = getFailureClientDescription(test, index);
+    const whatFailed = test.whatFailed ?? title;
+    const reason = test.whyFailed ?? getFailureClientDescription(test, index);
+    const expected = getFailureExpected(test, index);
+    const observed = getFailureObserved(test, index);
+    const impact = getFailureImpact(test, index);
+    const cause = getFailureCauseLabel(test);
     const nextAction = getFailureNextAction(test, index);
     const evidenceInfo = getFailureEvidenceInfo(test);
+    const sourceLabel = getFailureSourceLabel(test);
     const tone = ['Critical', 'High'].includes(severity)
       ? 'red'
         : severity === 'Medium'
@@ -2378,10 +3037,31 @@ const failureInvestigationCards = failedSourceItems
           </div>
           <span class="badge ${tone}">${escapeHtml(severity)}</span>
         </div>
-        <p>${escapeHtml(reason)}</p>
+        <div class="failure-reason-block">
+          <span>What failed</span>
+          <p>${escapeHtml(whatFailed)}</p>
+          <span>Observed</span>
+          <p>${escapeHtml(observed)}</p>
+          <span>Expected</span>
+          <p>${escapeHtml(expected)}</p>
+          <span>Likely Impact</span>
+          <p>${escapeHtml(impact)}</p>
+          <span>Cause Status</span>
+          <p>${escapeHtml(cause)}</p>
+          <span>Technical Error</span>
+          <p class="technical-error">${escapeHtml(getFailureTechnicalError(test))}</p>
+          <span>Summary</span>
+          <p>${escapeHtml(reason)}</p>
+        </div>
+        ${renderFailureScreenshotEvidence(test, index)}
         <p class="failure-next-action"><b>Next:</b> ${escapeHtml(nextAction)}</p>
+        <div class="failure-artifact-group">
+          <span>Trace / Video / Logs</span>
+          ${renderFailureEvidenceChips(test, { includeScreenshots: false })}
+        </div>
         <div class="failure-card-meta">
           <span><b>${escapeHtml(test.status ?? 'failed')}</b><small>Status</small></span>
+          <span><b>${escapeHtml(sourceLabel)}</b><small>Source</small></span>
           <span><b>${escapeHtml(evidenceInfo.status)}</b><small>Evidence</small></span>
           <span><b>${escapeHtml(moduleName)}</b><small>Module</small></span>
         </div>
@@ -2428,29 +3108,25 @@ const failedTestsContent =
           <strong>${releaseLabel}</strong>
           <p>${escapeHtml(airResults?.releaseDecision?.recommendedAction ?? airResults?.release?.recommendedAction ?? 'Review failed tests before approval.')}</p>
         </div>
-        <div class="failure-summary-card">
+        <button class="failure-summary-card issue-summary-button" type="button" data-open-failure-details>
           <span>Failures</span>
           <strong>${failedSourceItems.length}</strong>
           <p>${criticalFailedCount} critical or high priority</p>
-        </div>
+          <em>Open details</em>
+        </button>
         <div class="failure-summary-card">
           <span>Modules</span>
           <strong>${failedModuleCount}</strong>
           <p>Impacted by current failures</p>
         </div>
-        <div class="failure-summary-card">
+        <button class="failure-summary-card issue-summary-button" type="button" data-open-failure-details>
           <span>Evidence</span>
           <strong>${failedEvidenceCount}/${failedSourceItems.length}</strong>
           <p>${failedEvidenceCount > 0 ? 'Evidence source available' : 'Needs attachment'}</p>
-        </div>
+          <em>Open details</em>
+        </button>
       </div>
-      <div class="failure-investigation-grid">${failureInvestigationCards}</div>
-      ${failureCardLoadMoreHtml}
-      <div class="failure-table-wrap">
-        <h2>Detailed Failure List</h2>
-        <table class="failure-detail-table"><thead><tr><th>Test Name</th><th>Module</th><th>Priority</th><th>Reason / Next Action</th></tr></thead><tbody>${failedRows}</tbody></table>
-      </div>
-      ${failureTableLoadMoreHtml}`;
+      `;
 
 const warningInvestigationCards = warningSourceItems
   .map((test, index) => {
@@ -2527,14 +3203,276 @@ const warningTestsContent = warningSourceItems.length === 0
         </div>
         <span class="release-status-badge warn compact" data-status="WARNING">${warningSourceItems.length} Warnings</span>
       </div>
-      <div class="failure-investigation-grid warning-grid">${warningInvestigationCards}</div>
-      ${warningCardLoadMoreHtml}
-      <div class="failure-table-wrap warning-table-wrap">
-        <h2>Detailed Warning List</h2>
-        <table class="failure-detail-table"><thead><tr><th>Test Name</th><th>Module</th><th>Status</th><th>Reason / Next Action</th></tr></thead><tbody>${warningRows}</tbody></table>
+      <div class="failure-command-center warning-summary-grid">
+        <button class="failure-summary-card issue-summary-button amber" type="button" data-open-warning-details>
+          <span>Warning Tests</span>
+          <strong>${warningSourceItems.length}</strong>
+          <p>Skipped, controlled, interrupted, or prerequisite-gated checks</p>
+          <em>Open details</em>
+        </button>
+        <div class="failure-summary-card">
+          <span>Coverage Signal</span>
+          <strong>Review</strong>
+          <p>These are not product failures, but they reduce release confidence.</p>
+        </div>
+        <button class="failure-summary-card issue-summary-button amber" type="button" data-open-warning-details>
+          <span>Next Step</span>
+          <strong>Prepare</strong>
+          <p>Provide missing links, OTP, fixtures, or external data.</p>
+          <em>Open details</em>
+        </button>
       </div>
-      ${warningTableLoadMoreHtml}
     </div>`;
+
+const coverageGapItems =
+  demoMode
+    ? [
+      {
+        title: 'Trial expiry scheduler validation',
+        fullTitle: 'Trial expiry scheduler validation',
+        module: 'Billing',
+        category: 'Blocked',
+        priority: 'High',
+        status: 'skipped',
+        reason: 'Requires scheduler or backend date-control support before safe UI automation.',
+        nextAction: 'Request scheduler/API support, then execute expiry and reminder scenarios.',
+        sourceIds: ['SUB-TRIAL-014'],
+      },
+      {
+        title: 'MFA trusted device automation',
+        fullTitle: 'MFA trusted device automation',
+        module: 'MFA',
+        category: 'Controlled',
+        priority: 'High',
+        status: 'skipped',
+        reason: 'Requires MFA secret, backup code, or manual OTP handoff.',
+        nextAction: 'Provide MFA_LOCAL_TOTP_SECRET or run the manual headed fallback.',
+        sourceIds: ['MFA'],
+      },
+    ]
+    : airResults?.coverageGaps?.items ?? [];
+
+const coverageGapSummary =
+  demoMode
+    ? {
+      total: coverageGapItems.length,
+      blocked: 1,
+      controlled: 1,
+      traceability: 0,
+      future: 0,
+      interrupted: 0,
+      skipped: 0,
+    }
+    : airResults?.coverageGaps?.summary ?? {
+      total: coverageGapItems.length,
+      blocked: 0,
+      controlled: 0,
+      traceability: 0,
+      future: 0,
+      interrupted: 0,
+      skipped: coverageGapItems.length,
+    };
+
+function getCoverageGapTone(category = '') {
+  const normalized = String(category).toLowerCase();
+
+  if (normalized.includes('blocked') || normalized.includes('interrupted')) return 'red';
+  if (normalized.includes('controlled') || normalized.includes('future') || normalized.includes('skipped')) return 'amber';
+  if (normalized.includes('traceability')) return 'blue';
+
+  return 'amber';
+}
+
+function getCoverageGapBadgeClass(category = '') {
+  const tone = getCoverageGapTone(category);
+
+  if (tone === 'red') return 'bad';
+  if (tone === 'blue') return 'good';
+
+  return 'warn';
+}
+
+const COVERAGE_GAPS_INITIAL_VISIBLE = 8;
+const shouldShowCoverageGapLoadMore = coverageGapItems.length > COVERAGE_GAPS_INITIAL_VISIBLE;
+
+const coverageGapCards = coverageGapItems
+  .map((gap, index) => {
+    const hiddenClass = index >= COVERAGE_GAPS_INITIAL_VISIBLE ? ' is-hidden' : '';
+    const sourceIds = Array.isArray(gap.sourceIds) && gap.sourceIds.length > 0
+      ? gap.sourceIds.join(', ')
+      : 'Not mapped';
+    const useCase = gap.useCase ?? gap.source ?? 'Execution coverage';
+
+    return `
+      <article class="coverage-gap-card ${getCoverageGapTone(gap.category)}${hiddenClass}" data-coverage-gap-card data-coverage-gap-index="${index}">
+        <div class="coverage-gap-head">
+          <span class="coverage-gap-index">G${index + 1}</span>
+          <div>
+            <strong title="${escapeHtml(gap.fullTitle ?? gap.title)}">${escapeHtml(gap.title ?? `Coverage gap ${index + 1}`)}</strong>
+            <small>${escapeHtml(useCase)} &bull; ${escapeHtml(gap.module ?? 'General')} &bull; ${escapeHtml(sourceIds)}</small>
+          </div>
+          <span class="badge ${getCoverageGapBadgeClass(gap.category)}">${escapeHtml(gap.category ?? gap.status ?? 'Skipped')}</span>
+        </div>
+        <p>${escapeHtml(gap.reason ?? 'Scenario was not executed in this run.')}</p>
+        <div class="coverage-gap-action">
+          <span>Next Action</span>
+          <strong>${escapeHtml(gap.nextAction ?? 'Confirm prerequisites and rerun this scenario.')}</strong>
+        </div>
+      </article>`;
+  })
+  .join('');
+
+const coverageGapRows = coverageGapItems
+  .map((gap, index) => {
+    const hiddenClass = index >= COVERAGE_GAPS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
+    const sourceIds = Array.isArray(gap.sourceIds) && gap.sourceIds.length > 0
+      ? gap.sourceIds.join(', ')
+      : 'Not mapped';
+    const useCase = gap.useCase ?? gap.source ?? 'Execution coverage';
+
+    return `
+      <tr${hiddenClass} data-coverage-gap-row data-coverage-gap-index="${index}">
+        <td title="${escapeHtml(gap.fullTitle ?? gap.title)}"><strong>${escapeHtml(gap.title ?? `Coverage gap ${index + 1}`)}</strong><small>${escapeHtml(useCase)} &bull; ${escapeHtml(sourceIds)}</small></td>
+        <td>${escapeHtml(gap.module ?? 'General')}</td>
+        <td><span class="badge ${getCoverageGapBadgeClass(gap.category)}">${escapeHtml(gap.category ?? gap.status ?? 'Skipped')}</span></td>
+        <td><strong>${escapeHtml(gap.reason ?? 'Scenario was not executed in this run.')}</strong><small>Next: ${escapeHtml(gap.nextAction ?? 'Confirm prerequisites and rerun this scenario.')}</small></td>
+      </tr>`;
+  })
+  .join('');
+
+const coverageGapLoadMoreHtml = shouldShowCoverageGapLoadMore
+  ? `<div class="failure-load-more" data-coverage-gap-load-more>
+      <span data-coverage-gap-count>Showing ${COVERAGE_GAPS_INITIAL_VISIBLE} of ${coverageGapItems.length} blocked/skipped scenarios</span>
+      <button type="button" data-load-more-coverage-gaps aria-label="Load more blocked and skipped scenarios">Load More</button>
+    </div>`
+  : '';
+
+const coverageGapsContent = coverageGapItems.length === 0
+  ? renderEmptyState({
+    icon: 'OK',
+    title: 'No blocked or skipped scenarios.',
+    reason: 'All scenarios included in this execution were runnable.',
+    action: 'Continue monitoring release coverage.',
+    metrics: [
+      { label: 'Blocked', value: 0 },
+      { label: 'Skipped', value: 0 },
+      { label: 'Controlled', value: 0 },
+      { label: 'Traceability', value: 0 },
+    ],
+  })
+  : `
+    <div class="coverage-gap-summary">
+      <div><span>Total Not Executed</span><strong>${coverageGapSummary.total ?? coverageGapItems.length}</strong><small>Skipped, controlled, blocked, or reference rows</small></div>
+      <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Needs dev/admin/API support</small></div>
+      <div><span>Controlled</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Needs manual link, OTP, or fixture</small></div>
+      <div><span>Traceability</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Covered by linked executable specs</small></div>
+      <div><span>Documented Matrix</span><strong>${coverageGapSummary.documented ?? 0}</strong><small>User journey and Stripe use cases</small></div>
+    </div>
+    <div class="coverage-gap-explainer">
+      <strong>Why this section exists</strong>
+      <p>These are not product failures. AIR separates blocked, skipped, controlled, and traceability-only scenarios so stakeholders can see exactly what was missed and why.</p>
+      <button class="issue-detail-button" type="button" data-open-coverage-gap-details>Open Blocked / Skipped Details</button>
+    </div>
+    `;
+
+function getFailureScreenshotContextData(test, index = 0) {
+  const primary = selectPrimaryFailureScreenshot(test);
+
+  if (!primary.available) {
+    return {
+      available: false,
+      annotatedAvailable: false,
+      originalAvailable: false,
+      originalHref: '',
+      originalLabel: 'Original screenshot not available',
+      annotatedHref: '',
+      annotationMessage: primary.reason,
+    };
+  }
+
+  const annotated = createAnnotatedFailurePreview(test, primary.item, index);
+
+  return {
+    available: true,
+    annotatedAvailable: annotated.available,
+    originalAvailable: true,
+    originalHref: primary.href,
+    originalLabel: primary.label,
+    annotatedHref: annotated.href || '',
+    annotationMessage: annotated.available
+      ? annotated.reason
+      : 'Failure location could not be determined automatically.',
+  };
+}
+
+const failureDetailDataJson =
+  JSON.stringify(failedSourceItems.map((test, index) => ({
+    index: index + 1,
+    title: getFailureShortTitle(test, index),
+    fullTitle: getFailureFullTitle(test, index),
+    module: test.module ?? getModuleName(test.title ?? test.testName ?? 'General'),
+    severity: test.severity ?? 'High',
+    status: test.status ?? 'failed',
+    category: test.category ?? 'Execution',
+    whatFailed: test.whatFailed ?? getFailureShortTitle(test, index),
+    whyFailed: test.whyFailed ?? getFailureClientDescription(test, index),
+    expected: getFailureExpected(test, index),
+    observed: getFailureObserved(test, index),
+    impact: getFailureImpact(test, index),
+    cause: getFailureCauseLabel(test),
+    technicalError: getFailureTechnicalError(test),
+    sources: {
+      summary: getFailureSummarySource(test),
+      expected: getFailureExpectedSource(test),
+      observed: getFailureObservedSource(test),
+      impact: getFailureImpactSource(test),
+      cause: getFailureCauseSource(test),
+      technicalError: getFailureTechnicalError(test) === 'Technical error was not available in the AIR model.'
+        ? 'Fallback explanation'
+        : 'Playwright error',
+    },
+    nextAction: getFailureNextAction(test, index),
+    evidence: getFailureEvidenceInfo(test).status,
+    screenshotContext: getFailureScreenshotContextData(test, index),
+    artifactLinks: getFailureArtifactLinks(test),
+    source: getFailureSourceLabel(test),
+  })))
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
+
+const warningDetailDataJson =
+  JSON.stringify(warningSourceItems.map((test, index) => ({
+    index: index + 1,
+    title: getWarningShortTitle(test, index),
+    fullTitle: String(test.title ?? test.testName ?? `Warning ${index + 1}`),
+    module: test.module ?? getModuleName(String(test.title ?? test.testName ?? 'General')),
+    status: test.status ?? 'warning',
+    reason: getWarningReason(test),
+    nextAction: getWarningNextAction(test),
+    file: test.file ?? 'Controlled coverage',
+  })))
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
+
+const coverageGapDetailDataJson =
+  JSON.stringify(coverageGapItems.map((gap, index) => ({
+    index: index + 1,
+    title: gap.title ?? `Coverage gap ${index + 1}`,
+    fullTitle: gap.fullTitle ?? gap.title ?? `Coverage gap ${index + 1}`,
+    module: gap.module ?? 'General',
+    category: gap.category ?? gap.status ?? 'Skipped',
+    priority: gap.priority ?? 'Medium',
+    status: gap.status ?? 'skipped',
+    reason: gap.reason ?? 'Scenario was not executed in this run.',
+    nextAction: gap.nextAction ?? 'Confirm prerequisites and rerun this scenario.',
+    useCase: gap.useCase ?? gap.source ?? 'Execution coverage',
+    sourceIds: Array.isArray(gap.sourceIds) ? gap.sourceIds.join(', ') : 'Not mapped',
+  })))
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026');
 
 const evidenceCards = [
   ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'IMG', '#evidence'],
@@ -2579,6 +3517,24 @@ const totalRichEvidenceArtifacts =
 const totalEvidenceArtifacts =
   totalRichEvidenceArtifacts +
   evidenceCounts.rawReports;
+const testsWithEvidenceCount =
+  evidenceData.byTest && typeof evidenceData.byTest === 'object'
+    ? Object.keys(evidenceData.byTest).length
+    : 0;
+const attemptsWithEvidenceCount =
+  [
+    ...(Array.isArray(evidenceData.screenshots) ? evidenceData.screenshots : []),
+    ...(Array.isArray(evidenceData.videos) ? evidenceData.videos : []),
+    ...(Array.isArray(evidenceData.traces) ? evidenceData.traces : []),
+    ...(Array.isArray(evidenceData.logs) ? evidenceData.logs : []),
+    ...(Array.isArray(evidenceData.attachments) ? evidenceData.attachments : []),
+  ]
+    .reduce((attempts, item) => {
+      const key = `${item.testId || item.testTitle || item.path || 'unknown'}::${item.attemptId || item.attempt || item.retry || 'attempt'}`;
+      attempts.add(key);
+      return attempts;
+    }, new Set())
+    .size;
 
 const evidenceHeroHtml = `
   <div class="evidence-hero">
@@ -2592,12 +3548,15 @@ const evidenceHeroHtml = `
         : 'This execution does not include raw reports, screenshots, videos, traces, or logs. Run tests before approval.'}</p>
     </div>
     <div class="evidence-score-card">
-      <span>Total Evidence</span>
-      <strong>${totalEvidenceArtifacts}</strong>
+      <span>Evidence Items</span>
+      <strong>${totalRichEvidenceArtifacts}</strong>
       <small>${hasPlaywrightReport ? 'Playwright report available' : 'Playwright report not linked'}</small>
     </div>
   </div>
   <div class="evidence-proof-strip">
+    <span><b>${totalRichEvidenceArtifacts}</b><small>Evidence Items</small></span>
+    <span><b>${testsWithEvidenceCount}</b><small>Tests With Evidence</small></span>
+    <span><b>${attemptsWithEvidenceCount}</b><small>Attempts With Evidence</small></span>
     <span><b>${evidenceCounts.screenshots}</b><small>Screenshots</small></span>
     <span><b>${evidenceCounts.videos}</b><small>Videos</small></span>
     <span><b>${evidenceCounts.traces}</b><small>Traces</small></span>
@@ -2624,6 +3583,12 @@ const businessHealthCards =
     })
     .join('');
 
+const airEvidenceThumbnails = Array.isArray(evidenceData.screenshots)
+  ? evidenceData.screenshots
+    .filter(item => item?.path && item?.previewable !== false)
+    .slice(0, 4)
+  : [];
+
 const evidenceThumbnailFiles =
   fs.existsSync(path.join(projectRoot, 'playwright-report', 'data'))
     ? fs
@@ -2633,15 +3598,28 @@ const evidenceThumbnailFiles =
     : [];
 
 const evidenceThumbnails =
-  evidenceThumbnailFiles.length > 0
-    ? evidenceThumbnailFiles
+  airEvidenceThumbnails.length > 0
+    ? airEvidenceThumbnails
+      .map((item, index) => {
+        const href = getEvidenceHref(item);
+        const label = item.testTitle || item.name || `Screenshot ${index + 1}`;
+
+        return `
+        <a class="thumb" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(label)}>
+          <img src="${escapeHtml(href)}" alt="${escapeHtml(label)}">
+          <span>${escapeHtml(compactText(label, 52))}</span>
+        </a>`;
+      })
+      .join('')
+    : evidenceThumbnailFiles.length > 0
+      ? evidenceThumbnailFiles
       .map((file, index) => `
         <a class="thumb" href="../playwright-report/data/${escapeHtml(file)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="Available" data-evidence-href="../playwright-report/data/${escapeHtml(file)}">
           <img src="../playwright-report/data/${escapeHtml(file)}" alt="Evidence screenshot ${index + 1}">
           <span>Screenshot ${index + 1}</span>
         </a>`)
       .join('')
-    : [1, 2, 3, 4]
+      : [1, 2, 3, 4]
       .map(index => demoMode
         ? `
           <div class="thumb placeholder">
@@ -2656,6 +3634,34 @@ const evidenceThumbnails =
         }))
       .slice(0, demoMode ? 4 : 1)
       .join('');
+
+const failureEvidenceMapHtml =
+  failedSourceItems.length === 0
+    ? `
+      <div class="panel evidence-failure-map">
+        <h2 class="icon-title"><span class="section-icon">OK</span>Failure Evidence Map</h2>
+        ${renderEmptyState({
+          icon: 'OK',
+          title: 'No failed-test evidence required.',
+          reason: 'The current execution does not contain failed tests that need investigation.',
+          action: 'Continue monitoring evidence capture for future runs.',
+        })}
+      </div>`
+    : `
+      <div class="panel evidence-failure-map">
+        <div class="evidence-map-head">
+          <div>
+            <h2 class="icon-title"><span class="section-icon">MAP</span>Failure Evidence Map</h2>
+            <p>Failed-test evidence is available for investigation. Open details only when review is needed.</p>
+          </div>
+          <button class="issue-detail-button" type="button" data-open-failure-details>Open Failed Evidence Details</button>
+        </div>
+        <div class="evidence-map-summary">
+          <div><span>Failed Tests</span><strong>${failedSourceItems.length}</strong><small>Open details for full investigation</small></div>
+          <div><span>Evidence Attached</span><strong>${failedEvidenceCount}/${failedSourceItems.length}</strong><small>Screenshot, video, trace, log, or raw report</small></div>
+          <div><span>Impacted Modules</span><strong>${failedModuleCount}</strong><small>Modules with current failed checks</small></div>
+        </div>
+      </div>`;
 
 const historySnapshots =
   Array.isArray(airResults?.history)
@@ -3286,7 +4292,14 @@ const executiveConfidence =
     ) / 3
   );
 
-const qualityFactors = [
+const configuredQualityContributors = Array.isArray(airResults?.quality?.contributors)
+  ? airResults.quality.contributors.map(contributor => [
+    contributor.label ?? contributor.factor,
+    `${contributor.value}%`,
+    `${Math.round((contributor.weight ?? 0) * 100)}% configured scoring weight.`,
+  ])
+  : [];
+const qualityFactors = configuredQualityContributors.length > 0 ? configuredQualityContributors : [
   ['Pass Rate', `${executiveData.passRate}%`, 'Execution pass percentage from the current AIR model.'],
   ['Coverage', demoMode ? 'Demo' : 'UI', demoMode ? 'Sample coverage in demo mode.' : 'Current phase uses UI automation coverage from executed tests.'],
   ['Critical Flow Health', `${executiveData.businessHealth}%`, 'Business journey health based on configured critical flow modules.'],
@@ -3330,6 +4343,13 @@ const dataFreshnessCards = `
     <span><b>Build</b>${escapeHtml(buildVersion)}</span>
     <span><b>History</b>${escapeHtml(String(Array.isArray(airResults?.history?.executions) ? airResults.history.executions.length : 0))} executions</span>
   </div>`;
+const provenanceMode =
+  airResults?.provenance?.mode ??
+  (airResults?.source?.type === 'air-history' ? 'RESTORED_HISTORY' : 'CURRENT_EXECUTION');
+const provenanceWarningHtml =
+  provenanceMode === 'RESTORED_HISTORY'
+    ? `<div class="air-provenance-warning"><strong>Restored History</strong><span>${escapeHtml(airResults?.provenance?.warning ?? 'AIR is showing restored history because current execution data was unavailable.')}</span></div>`
+    : '';
 
 const executiveNarrative =
   executiveData.releaseDecision === 'GO'
@@ -3428,7 +4448,7 @@ function getTooltip(key, fallback = '') {
 
 function helpLabel(label, keyOrText, fallback = '') {
   const helpText = tooltipMetadata[keyOrText] ?? keyOrText ?? fallback;
-  return `${escapeHtml(label)} <i class="metric-help" title="${escapeHtml(helpText)}">?</i>`;
+  return `${escapeHtml(label)} <i class="metric-help"${tooltipAttr(helpText)}>?</i>`;
 }
 
 function renderEmptyState({ title, reason, action, icon = 'AIR', metrics = [] }) {
@@ -3899,8 +4919,22 @@ const executiveProductHealthStrip = displayModules
   })
   .join('');
 const executiveEvidenceHighlights =
-  evidenceThumbnailFiles.length > 0
-    ? evidenceThumbnailFiles
+  airEvidenceThumbnails.length > 0
+    ? airEvidenceThumbnails
+      .map((item, index) => {
+        const href = getEvidenceHref(item);
+        const label = item.testTitle || item.name || `Screenshot ${index + 1}`;
+
+        return `
+        <a class="executive-evidence-card ${index === 0 && executiveData.failed > 0 ? 'attention' : ''}" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(label)}>
+          <img src="${escapeHtml(href)}" alt="${escapeHtml(label)}">
+          <span>${escapeHtml(compactText(label, 42))}</span>
+          <strong>${index === 0 && executiveData.failed > 0 ? 'Review' : 'Available'}</strong>
+        </a>`;
+      })
+      .join('')
+    : evidenceThumbnailFiles.length > 0
+      ? evidenceThumbnailFiles
       .map((file, index) => `
         <a class="executive-evidence-card ${index === 0 && executiveData.failed > 0 ? 'attention' : ''}" href="../playwright-report/data/${escapeHtml(file)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="Available" data-evidence-href="../playwright-report/data/${escapeHtml(file)}">
           <img src="../playwright-report/data/${escapeHtml(file)}" alt="Evidence screenshot ${index + 1}">
@@ -3908,7 +4942,7 @@ const executiveEvidenceHighlights =
           <strong>${index === 0 && executiveData.failed > 0 ? 'Review' : 'Available'}</strong>
         </a>`)
       .join('')
-    : `
+      : `
       <div class="executive-evidence-empty">
         <strong>Evidence not available.</strong>
         <span>Enable screenshots, videos, or traces in automation configuration.</span>
@@ -4853,6 +5887,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     .global-search{position:sticky;top:12px;z-index:30;backdrop-filter:blur(18px);background:rgba(10,17,28,.78)!important;border:1px solid rgba(148,163,184,.13)!important;border-radius:16px;margin-bottom:18px}
     .freshness-strip{margin-bottom:34px}
     .freshness-strip span{background:rgba(13,20,32,.66)!important;border:0!important;border-radius:12px;padding:13px 15px}
+    .air-provenance-warning{display:flex;align-items:center;gap:12px;margin:-18px 0 28px;padding:12px 14px;border:1px solid rgba(245,197,66,.28);border-radius:12px;background:rgba(245,197,66,.08);color:#f8fafc}
+    .air-provenance-warning strong{color:var(--amber);white-space:nowrap}
+    .air-provenance-warning span{color:#dbe5ef;line-height:1.4}
     .page{position:relative;border:0!important;background:linear-gradient(180deg,rgba(11,18,30,.88),rgba(8,14,24,.78))!important;border-radius:28px;padding:clamp(24px,2.6vw,42px);margin-bottom:42px;box-shadow:0 30px 90px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.045)}
     .page:before{content:"";position:absolute;inset:0;border:1px solid rgba(148,163,184,.09);border-radius:inherit;pointer-events:none}
     .page:after{content:"";position:absolute;left:36px;right:36px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(57,231,95,.35),transparent);pointer-events:none}
@@ -5728,6 +6765,21 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-summary-card strong{display:block;color:#f8fafc;font-size:clamp(28px,2.9vw,48px);line-height:.98;letter-spacing:-.06em;white-space:normal;overflow-wrap:anywhere}
     #failures .failure-summary-card.primary strong{color:#ff7b72}
     #failures .failure-summary-card p{margin:12px 0 0;color:#cbd5e1;font-size:14px;line-height:1.45}
+    #failures .issue-summary-button{appearance:none;text-align:left;cursor:pointer;color:inherit;font:inherit}
+    #failures .issue-summary-button:hover,#failures .issue-summary-button:focus-visible{border-color:rgba(57,231,95,.50);transform:translateY(-1px);outline:none}
+    #failures .issue-summary-button.amber:hover,#failures .issue-summary-button.amber:focus-visible{border-color:rgba(245,197,66,.55)}
+    #failures .issue-summary-button em{display:inline-flex;margin-top:14px;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.09);color:#39e75f;font-style:normal;font-size:12px;font-weight:950;padding:8px 11px}
+    #failures .warning-summary-grid{margin-top:0}
+    .issue-detail-button{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;border:1px solid rgba(57,231,95,.34);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:950;padding:10px 14px;cursor:pointer}
+    .issue-detail-button:hover,.issue-detail-button:focus-visible{border-color:rgba(57,231,95,.62);background:rgba(57,231,95,.16);outline:none}
+    .issue-modal-list{display:grid;gap:12px}
+    .issue-modal-item{border:1px solid rgba(148,163,184,.14);border-radius:14px;background:rgba(7,16,31,.70);padding:14px}
+    .issue-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .issue-modal-head strong{display:block;color:#f8fafc;font-size:15px;line-height:1.25}
+    .issue-modal-head small{display:block;color:#8fa4bb;font-size:11px;line-height:1.35;margin-top:4px}
+    .issue-modal-item p{margin:8px 0 0;color:#d8e6f3;line-height:1.5}
+    .issue-modal-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .issue-modal-meta span{border:1px solid rgba(148,163,184,.14);border-radius:999px;background:rgba(148,163,184,.06);color:#9fb0c5;font-size:11px;font-weight:850;padding:6px 9px}
     #failures .failure-investigation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-bottom:22px}
     #failures .failure-investigation-card{display:flex;flex-direction:column;gap:16px;min-width:0;border:1px solid rgba(255,107,107,.32);border-radius:28px;background:linear-gradient(180deg,rgba(30,20,27,.82),rgba(6,15,27,.90));padding:22px;box-shadow:0 22px 72px rgba(0,0,0,.18)}
     #failures .failure-investigation-card.amber{border-color:rgba(245,197,66,.35);background:linear-gradient(180deg,rgba(39,31,17,.72),rgba(6,15,27,.90))}
@@ -5737,9 +6789,19 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-card-head strong{display:block;color:#f8fafc;font-size:clamp(18px,1.4vw,24px);line-height:1.22;letter-spacing:-.03em;overflow-wrap:anywhere}
     #failures .failure-card-head small{display:block;margin-top:7px;color:#9fb0c5;font-size:12px;line-height:1.35}
     #failures .failure-investigation-card p{margin:0;color:#d8e6f3;font-size:15px;line-height:1.55}
+    #failures .failure-reason-block{border:1px solid rgba(148,163,184,.10);border-radius:16px;background:rgba(4,13,23,.46);padding:13px}
+    #failures .failure-reason-block span{display:block;color:#8fa4bb;font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;font-weight:900;margin-bottom:7px}
+    #failures .failure-reason-block p + span{margin-top:13px}
+    #failures .failure-reason-block p{color:#f3f8ff!important;overflow-wrap:break-word}
     #failures .failure-investigation-card .failure-next-action{border-left:3px solid rgba(57,231,95,.55);padding:10px 12px!important;border-radius:12px;background:rgba(57,231,95,.06);color:#cbd5e1!important;font-size:13px!important}
     #failures .failure-investigation-card .failure-next-action b{color:#39e75f}
-    #failures .failure-card-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:auto}
+    #failures .failure-evidence-chips{display:flex;flex-wrap:wrap;gap:8px}
+    #failures .failure-evidence-chips a,#failures .failure-evidence-chips span{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(57,231,95,.22);border-radius:999px;background:rgba(57,231,95,.08);color:#a7f3b7!important;font-size:11px;font-weight:900;line-height:1.2;padding:7px 10px;text-decoration:none!important;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+    #failures .failure-evidence-chips b{color:#f8fafc}
+    #failures .failure-evidence-chips.muted span{border-color:rgba(148,163,184,.18);background:rgba(148,163,184,.06);color:#9fb0c5!important}
+    #failures .failure-source-pill,#failures .table-evidence-link{display:inline-flex;align-items:center;border:1px solid rgba(148,163,184,.16);border-radius:999px;background:rgba(148,163,184,.07);color:#d8e6f3!important;font-size:11px;font-weight:900;line-height:1.2;padding:6px 9px;text-decoration:none!important;white-space:normal}
+    #failures .table-evidence-link{border-color:rgba(57,231,95,.28);background:rgba(57,231,95,.08);color:#39e75f!important}
+    #failures .failure-card-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:auto}
     #failures .failure-card-meta span{min-width:0;border:1px solid rgba(148,163,184,.10);border-radius:14px;background:rgba(4,13,23,.68);padding:12px;color:#8fa4bb;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
     #failures .failure-card-meta b{display:block;color:#f8fafc;font-size:15px;line-height:1.12;text-transform:none;letter-spacing:0;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     #failures .failure-card-meta small{display:block;color:#8fa4bb}
@@ -5748,13 +6810,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures .failure-card-action a{display:inline-flex;border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f!important;font-size:12px;font-weight:950;padding:9px 12px;text-decoration:none!important;white-space:nowrap}
     #failures .failure-table-wrap{border:1px solid rgba(57,231,95,.14);border-radius:26px;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.74));padding:22px;overflow:auto}
     #failures .failure-table-wrap h2{font-size:22px!important;margin:0 0 14px!important}
-    #failures .failure-detail-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0 8px}
+    #failures .failure-detail-table{width:100%;min-width:960px;border-collapse:separate;border-spacing:0 8px}
     #failures .failure-detail-table th{color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:0 12px 6px}
     #failures .failure-detail-table td{background:rgba(4,13,23,.68);border-top:1px solid rgba(148,163,184,.08);border-bottom:1px solid rgba(148,163,184,.08);padding:14px 12px;color:#d8e6f3;vertical-align:top}
     #failures .failure-detail-table td:first-child{border-left:1px solid rgba(148,163,184,.08);border-radius:14px 0 0 14px;color:#f8fafc;font-weight:800}
     #failures .failure-detail-table td:last-child{border-right:1px solid rgba(148,163,184,.08);border-radius:0 14px 14px 0}
     #failures .failure-detail-table td strong{display:block;color:#f8fafc;font-size:13px;line-height:1.35}
     #failures .failure-detail-table td small{display:block;margin-top:5px;color:#8fa4bb;font-size:11px;line-height:1.35;overflow:hidden;text-overflow:ellipsis}
+    #failures .failure-detail-table td{overflow-wrap:break-word}
+    #failures .detail-disclosure,#coverage-gaps .detail-disclosure{margin-top:18px;border:1px solid rgba(57,231,95,.16);border-radius:22px;background:linear-gradient(180deg,rgba(13,25,41,.62),rgba(6,15,27,.58));overflow:hidden}
+    #failures .detail-disclosure summary,#coverage-gaps .detail-disclosure summary{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;list-style:none;padding:16px 18px;color:#f8fafc;font-weight:950}
+    #failures .detail-disclosure summary::-webkit-details-marker,#coverage-gaps .detail-disclosure summary::-webkit-details-marker{display:none}
+    #failures .detail-disclosure summary:before,#coverage-gaps .detail-disclosure summary:before{content:'+';display:grid;place-items:center;width:28px;height:28px;border-radius:10px;border:1px solid rgba(57,231,95,.28);background:rgba(57,231,95,.08);color:#39e75f;font-weight:950;flex:0 0 auto}
+    #failures .detail-disclosure[open] summary:before,#coverage-gaps .detail-disclosure[open] summary:before{content:'-'}
+    #failures .detail-disclosure summary span,#coverage-gaps .detail-disclosure summary span{display:flex;align-items:center;gap:10px;min-width:0;margin-right:auto}
+    #failures .detail-disclosure summary small,#coverage-gaps .detail-disclosure summary small{color:#9fb0c5;font-size:12px;font-weight:800;white-space:nowrap}
+    #failures .detail-disclosure .failure-table-wrap,#coverage-gaps .detail-disclosure .failure-table-wrap{margin:0 16px 16px}
     #failures .failure-investigation-card.is-hidden,#failures .failure-detail-table tr.is-hidden{display:none}
     #failures .failure-load-more{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;border:1px solid rgba(57,231,95,.18);border-radius:22px;background:linear-gradient(180deg,rgba(13,25,41,.72),rgba(6,15,27,.68));padding:15px 16px}
     #failures .failure-load-more span{color:#9fb0c5;font-size:13px;font-weight:800}
@@ -5770,7 +6841,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     @media(max-width:1250px){#failures .failure-command-center,#failures .failure-investigation-grid{grid-template-columns:1fr!important}}
     @media(max-width:760px){#failures .failure-card-head{grid-template-columns:auto minmax(0,1fr)}#failures .failure-card-head .badge{grid-column:2;justify-self:start}#failures .failure-card-meta{grid-template-columns:1fr}#failures .failure-card-action{align-items:flex-start;flex-direction:column}#failures .failure-load-more,#failures .warning-section-head{align-items:flex-start;flex-direction:column}}
     @media print{#failures .failure-investigation-card.is-hidden{display:flex!important}#failures .failure-detail-table tr.is-hidden{display:table-row!important}#failures .failure-load-more{display:none!important}}
-    /* Screen 07: Evidence, styled as a proof center with artifact readiness. */
+    /* Screen 07: Blocked / Skipped Coverage, separated from product failures. */
+    #coverage-gaps{background:radial-gradient(circle at 14% 6%,rgba(245,197,66,.10),transparent 28%),radial-gradient(circle at 86% 8%,rgba(96,165,250,.10),transparent 32%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
+    #coverage-gaps .coverage-gap-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:18px}
+    #coverage-gaps .coverage-gap-summary div{background:linear-gradient(180deg,rgba(13,27,42,.86),rgba(7,16,28,.86));border:1px solid rgba(57,231,95,.14);border-radius:18px;padding:18px;min-width:0}
+    #coverage-gaps .coverage-gap-summary span,#coverage-gaps .coverage-gap-action span{display:block;color:#8fa2b6;font-size:11px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+    #coverage-gaps .coverage-gap-summary strong{display:block;color:#f8fafc;font-size:clamp(24px,2.2vw,36px);line-height:1.05;margin-top:8px}
+    #coverage-gaps .coverage-gap-summary small{display:block;color:#9fb2c6;line-height:1.35;margin-top:7px}
+    #coverage-gaps .coverage-gap-explainer{border:1px solid rgba(57,231,95,.16);border-radius:18px;background:rgba(57,231,95,.06);padding:18px 20px;margin-bottom:18px}
+    #coverage-gaps .coverage-gap-explainer strong{display:block;color:#7ee787;font-size:16px;margin-bottom:6px}
+    #coverage-gaps .coverage-gap-explainer p{margin:0;color:#c8d6e5;line-height:1.55}
+    #coverage-gaps .coverage-gap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:16px}
+    #coverage-gaps .coverage-gap-card{border:1px solid rgba(57,231,95,.14);border-radius:18px;background:linear-gradient(180deg,rgba(13,27,42,.86),rgba(7,16,28,.86));padding:18px;min-width:0;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+    #coverage-gaps .coverage-gap-card.red{border-color:rgba(255,107,107,.30)}
+    #coverage-gaps .coverage-gap-card.amber{border-color:rgba(245,197,66,.30)}
+    #coverage-gaps .coverage-gap-card.blue{border-color:rgba(96,165,250,.28)}
+    #coverage-gaps .coverage-gap-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:12px;min-width:0}
+    #coverage-gaps .coverage-gap-index{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;color:#7ee787;background:rgba(57,231,95,.10);border:1px solid rgba(57,231,95,.24);font-size:12px;font-weight:950}
+    #coverage-gaps .coverage-gap-head strong{display:block;color:#f8fafc;font-size:16px;line-height:1.2;overflow-wrap:break-word}
+    #coverage-gaps .coverage-gap-head small{display:block;color:#9fb2c6;font-size:12px;line-height:1.35;margin-top:5px;overflow-wrap:break-word}
+    #coverage-gaps .coverage-gap-card p{color:#c8d6e5;margin:0;line-height:1.5;overflow-wrap:break-word}
+    #coverage-gaps .coverage-gap-action{margin-top:auto;background:rgba(3,10,18,.45);border-radius:14px;padding:12px}
+    #coverage-gaps .coverage-gap-action strong{display:block;color:#e8f4ff;font-size:13px;line-height:1.45;margin-top:6px;overflow-wrap:break-word}
+    #coverage-gaps .coverage-gap-table-wrap{margin-top:18px;border:1px solid rgba(245,197,66,.16)}
+    #coverage-gaps .coverage-gap-card.is-hidden,#coverage-gaps .failure-detail-table tr.is-hidden{display:none}
+    #coverage-gaps .failure-load-more{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;border:1px solid rgba(57,231,95,.18);border-radius:22px;background:linear-gradient(180deg,rgba(13,25,41,.72),rgba(6,15,27,.68));padding:15px 16px}
+    #coverage-gaps .failure-load-more span{color:#9fb0c5;font-size:13px;font-weight:800}
+    #coverage-gaps .failure-load-more button{border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:950;padding:10px 16px;cursor:pointer}
+    #coverage-gaps .failure-load-more button:hover{border-color:rgba(57,231,95,.66);background:rgba(57,231,95,.17)}
+    @media(max-width:760px){#coverage-gaps .coverage-gap-head{grid-template-columns:auto minmax(0,1fr)}#coverage-gaps .coverage-gap-head .badge{grid-column:1 / -1;justify-self:start}#coverage-gaps .failure-load-more{align-items:flex-start;flex-direction:column}}
+    @media print{#coverage-gaps .coverage-gap-card.is-hidden{display:flex!important}#coverage-gaps .failure-detail-table tr.is-hidden{display:table-row!important}#coverage-gaps .failure-load-more{display:none!important}}
+    /* Screen 08: Evidence, styled as a proof center with artifact readiness. */
     #evidence{background:radial-gradient(circle at 12% 8%,rgba(56,189,248,.12),transparent 28%),radial-gradient(circle at 84% 12%,rgba(57,231,95,.12),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
     #evidence .topbar{align-items:center!important;margin-bottom:24px!important}
     #evidence .topbar h1{font-size:clamp(34px,3vw,52px)!important;letter-spacing:-.06em!important}
@@ -5801,9 +6902,23 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .thumb-grid .empty-state{border-radius:22px!important;border:1px dashed rgba(57,231,95,.30)!important;background:rgba(57,231,95,.06)!important;padding:34px!important}
     #evidence .panel:last-of-type p{color:#d8e6f3!important;line-height:1.65!important}
     #evidence p{overflow-wrap:anywhere!important}
+    #evidence .evidence-failure-map{border-radius:28px!important;background:linear-gradient(180deg,rgba(13,25,41,.82),rgba(6,15,27,.76))!important;border:1px solid rgba(57,231,95,.16)!important}
+    #evidence .evidence-map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px}
+    #evidence .evidence-map-head h2{margin:0 0 7px!important}
+    #evidence .evidence-map-head p{margin:0!important;color:#9fb0c5!important;line-height:1.5!important}
+    #evidence .evidence-map-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+    #evidence .evidence-map-summary div{border:1px solid rgba(57,231,95,.14);border-radius:14px;background:rgba(7,16,31,.64);padding:16px;min-width:0}
+    #evidence .evidence-map-summary span{display:block;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
+    #evidence .evidence-map-summary strong{display:block;color:#39e75f;font-size:clamp(24px,2.2vw,34px);line-height:1;margin-top:8px}
+    #evidence .evidence-map-summary small{display:block;color:#9fb0c5;line-height:1.35;margin-top:8px}
+    #evidence .failure-evidence-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:flex-end}
+    #evidence .failure-evidence-chips a,#evidence .failure-evidence-chips span,#evidence .table-evidence-link{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(57,231,95,.22);border-radius:999px;background:rgba(57,231,95,.08);color:#a7f3b7!important;font-size:11px;font-weight:900;line-height:1.2;padding:7px 10px;text-decoration:none!important;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+    #evidence .failure-evidence-chips.muted span{border-color:rgba(148,163,184,.18);background:rgba(148,163,184,.06);color:#9fb0c5!important}
+    #evidence .table-evidence-link{color:#39e75f!important}
+    #evidence .evidence-map-note{margin:14px 0 0!important;color:#9fb0c5!important;font-size:12px!important}
     #evidence .evidence-proof-strip small,#evidence .evidence-card strong,#evidence .evidence-icon{overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important}
-    @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}#evidence .evidence-card-body{min-height:118px}}
+    @media(max-width:1250px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#evidence .evidence-hero{grid-template-columns:1fr!important}#evidence .failure-evidence-chips{justify-items:start;justify-content:flex-start}}
+    @media(max-width:760px){#evidence .evidence-grid,#evidence .evidence-proof-strip,#evidence .thumb-grid{grid-template-columns:1fr!important}#evidence .evidence-card-body{min-height:118px}#evidence .evidence-map-head{display:grid}}
     /* Final Engineering Mode polish: unify spacing, cards, typography, chart surfaces, and controls. */
     :root{--air-gap-section:clamp(22px,2.4vw,34px);--air-gap-card:clamp(12px,1.25vw,18px);--air-card-radius:22px;--air-panel-radius:28px}
     .page{padding:clamp(24px,2.6vw,38px)!important}
@@ -6019,6 +7134,270 @@ const airGoldenDashboardHtml = `<!doctype html>
       overflow-wrap:break-word!important;
       hyphens:none!important;
     }
+    .technical-error,
+    td small,
+    .failure-card-head small,
+    .issue-modal-item small,
+    .evidence-preview-body,
+    .coverage-gap-card small,
+    .history-timeline-card small {
+      overflow-wrap:anywhere!important;
+      word-break:break-word!important;
+    }
+    [data-air-tooltip] {
+      position:relative;
+    }
+    [data-air-tooltip]:focus-visible {
+      outline:2px solid rgba(57,231,95,.72);
+      outline-offset:3px;
+    }
+    .air-tooltip {
+      position:fixed;
+      z-index:9999;
+      max-width:min(360px,calc(100vw - 28px));
+      padding:10px 12px;
+      border:1px solid rgba(57,231,95,.28);
+      border-radius:12px;
+      background:#07101f;
+      color:#e8f4ff;
+      box-shadow:0 18px 48px rgba(0,0,0,.42);
+      font-size:12px;
+      line-height:1.45;
+      pointer-events:none;
+    }
+    #health .module-filter {
+      display:grid!important;
+      grid-template-columns:repeat(5,max-content) minmax(260px,1fr)!important;
+      align-items:center!important;
+      gap:12px!important;
+    }
+    #health .module-health-card.is-hidden,
+    #health .module-status-card.is-hidden {
+      display:none!important;
+    }
+    .module-filter-search {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      justify-self:end;
+      width:min(420px,100%);
+      min-width:0;
+      margin-left:0!important;
+      border:1px solid rgba(148,163,184,.18);
+      border-radius:999px;
+      background:rgba(7,16,29,.78);
+      padding:6px 10px;
+      box-sizing:border-box;
+    }
+    .module-filter-search span {
+      color:#8fa4bb;
+      font-size:10px;
+      font-weight:900;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .module-filter-search input {
+      flex:1 1 auto;
+      width:100%;
+      min-width:0;
+      border:0;
+      background:transparent;
+      color:#e8f4ff;
+      outline:0;
+      font:inherit;
+      font-size:12px;
+    }
+    .module-filter-count {
+      margin:-6px 0 14px;
+      color:#9fb0c5;
+      font-size:12px;
+      font-weight:800;
+    }
+    .module-filter-empty {
+      margin-top:14px;
+    }
+    @media(max-width:1250px) {
+      #health .module-filter {
+        grid-template-columns:repeat(3,max-content)!important;
+      }
+      #health .module-filter-search {
+        grid-column:1 / -1;
+        justify-self:stretch;
+        width:100%;
+      }
+    }
+    @media(max-width:760px) {
+      #health .module-filter {
+        grid-template-columns:1fr!important;
+      }
+      #health .module-filter button,
+      #health .module-filter-search {
+        width:100%;
+      }
+    }
+    .primary-failure-shot {
+      display:grid;
+      gap:9px;
+      border:1px solid rgba(57,231,95,.28);
+      border-radius:16px;
+      background:rgba(57,231,95,.07);
+      padding:12px;
+      text-decoration:none;
+      color:#d8e6f3;
+    }
+    .primary-failure-shot span {
+      color:#9affac;
+      font-size:11px;
+      font-weight:950;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .primary-failure-shot img {
+      width:100%;
+      max-height:220px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid rgba(57,231,95,.24);
+      background:#050e18;
+    }
+    .primary-failure-shot small {
+      color:#9fb0c5;
+      line-height:1.35;
+    }
+    .primary-failure-shot.empty {
+      border-style:dashed;
+      background:rgba(148,163,184,.05);
+    }
+    .primary-failure-shot.empty strong {
+      color:#f8fafc;
+    }
+    .failure-screenshot-context {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+      align-items:stretch;
+    }
+    .failure-shot-panel,
+    .failure-shot-notes,
+    .failure-artifact-group {
+      min-width:0;
+      border:1px solid rgba(148,163,184,.14);
+      border-radius:18px;
+      background:rgba(5,14,24,.68);
+      padding:13px;
+    }
+    .failure-shot-panel > span,
+    .failure-artifact-group > span {
+      display:block;
+      color:#9fb1c5;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      margin-bottom:9px;
+    }
+    .failure-shot-panel a {
+      color:#d8e6f3!important;
+      text-decoration:none!important;
+      display:grid;
+      gap:8px;
+    }
+    .failure-shot-panel img {
+      width:100%;
+      height:150px;
+      object-fit:cover;
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.12);
+      background:#fff;
+    }
+    .failure-shot-panel small,
+    .failure-shot-notes p {
+      display:block;
+      margin:0;
+      color:#b8c7d9;
+      font-size:12px;
+      line-height:1.45;
+      overflow-wrap:anywhere;
+    }
+    .failure-shot-panel.unavailable {
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-height:214px;
+      border-style:dashed;
+      border-color:rgba(245,197,66,.30);
+    }
+    .failure-shot-panel.unavailable strong {
+      color:#f5c542;
+      font-size:18px;
+      margin-bottom:6px;
+    }
+    .failure-shot-panel.annotated {
+      border-color:rgba(255,59,59,.24);
+    }
+    .failure-shot-panel.original {
+      border-color:rgba(57,231,95,.18);
+    }
+    .failure-shot-notes {
+      grid-column:1/-1;
+      display:grid;
+      gap:8px;
+    }
+    .failure-shot-notes b {
+      color:#f8fafc;
+    }
+    .failure-source-notes {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      margin:10px 0 14px;
+      border:1px solid rgba(57,231,95,.16);
+      border-radius:16px;
+      background:rgba(57,231,95,.055);
+      padding:12px;
+    }
+    .failure-source-notes > span {
+      grid-column:1/-1;
+      color:#9affac;
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .failure-source-notes small {
+      min-width:0;
+      color:#b8c7d9;
+      font-size:11px;
+      line-height:1.35;
+      overflow-wrap:anywhere;
+    }
+    .failure-source-notes b {
+      color:#f8fafc;
+    }
+    .failure-artifact-group {
+      display:grid;
+      gap:10px;
+    }
+    @media(max-width:760px) {
+      .module-filter-search {
+        flex:1 1 100%;
+        margin-left:0;
+        border-radius:14px;
+      }
+      .module-filter-search span {
+        display:none;
+      }
+      .primary-failure-shot img {
+        max-height:180px;
+      }
+      .failure-screenshot-context {
+        grid-template-columns:1fr;
+      }
+      .failure-source-notes {
+        grid-template-columns:1fr;
+      }
+    }
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -6041,6 +7420,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <a href="#module-dashboard">${navIcon('modules')}<span>Modules</span></a>
       <div class="nav-section">Issues</div>
       <a href="#failures">${navIcon('failures')}<span>Failed Tests</span></a>
+      <a href="#coverage-gaps">${navIcon('analytics')}<span>Blocked / Skipped</span></a>
       <div class="nav-section">Evidence</div>
       <a href="#evidence">${navIcon('evidence')}<span>Evidence</span></a>
       <div class="nav-section">Insights</div>
@@ -6083,6 +7463,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div id="airGlobalSearchResults" class="search-results"></div>
     </div>
     ${dataFreshnessCards}
+    ${provenanceWarningHtml}
 
     <section class="page hero" id="executive">
       <div class="topbar">
@@ -6188,12 +7569,19 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Module Status</h2>
         <div class="module-filter" aria-label="Filter modules by health">
-          <button class="active" type="button" data-module-filter="all">All</button>
-          <button type="button" data-module-filter="green">Healthy</button>
-          <button type="button" data-module-filter="amber">Warning</button>
-          <button type="button" data-module-filter="red">Critical</button>
+          <button class="active" type="button" data-module-filter="all">All (${moduleStatusGroupCounts.all})</button>
+          <button type="button" data-module-filter="healthy">Healthy (${moduleStatusGroupCounts.healthy})</button>
+          <button type="button" data-module-filter="warning">Warning (${moduleStatusGroupCounts.warning})</button>
+          <button type="button" data-module-filter="critical">Critical (${moduleStatusGroupCounts.critical})</button>
+          <button type="button" data-module-filter="not-executed">Not Executed (${moduleStatusGroupCounts['not-executed']})</button>
+          <label class="module-filter-search">
+            <span>Search modules</span>
+            <input id="moduleStatusSearch" type="search" placeholder="Search module, status, risk" aria-label="Search module health cards">
+          </label>
         </div>
+        <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} modules</div>
         <div class="module-card-grid">${moduleHealthCards}</div>
+        <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching modules found in this execution.</div>
       </div>
       <br>
       <div class="grid two">
@@ -6243,10 +7631,25 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(6)}
     </section>
 
+    <section class="page" id="coverage-gaps">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">PAGE 07</div>
+          ${pageHeading('analytics', 'Blocked / Skipped Coverage')}
+          <p>What was not executed, and why?</p>
+        </div>
+        <span class="pill">${coverageGapSummary.total ?? coverageGapItems.length} Items</span>
+      </div>
+      <div class="panel">${coverageGapsContent}</div>
+      ${renderPageFooter(7)}
+    </section>
+
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">PAGE 07</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 08</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
       ${evidenceHeroHtml}
       <div class="evidence-grid">${evidenceCards}</div>
+      <br>
+      ${failureEvidenceMapHtml}
       <br>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
@@ -6254,11 +7657,11 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       <br>
       <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
-      ${renderPageFooter(7)}
+      ${renderPageFooter(8)}
     </section>
 
     <section class="page" id="insight">
-      <div class="topbar"><div><div class="eyebrow">PAGE 08</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 09</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
       <div class="ai-command-hero">
         <div>
           <span class="mission-label">AIR Recommendation</span>
@@ -6300,13 +7703,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         <span>Roadmap Context</span>
         <p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p>
       </div>
-      ${renderPageFooter(8)}
+      ${renderPageFooter(9)}
     </section>
 
     <section class="page" id="comparison">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 09</div>
+          <div class="eyebrow">PAGE 10</div>
           ${pageHeading('analytics', 'Historical Intelligence')}
           <p>How has software quality evolved over time?</p>
         </div>
@@ -6466,13 +7869,13 @@ const airGoldenDashboardHtml = `<!doctype html>
           action: 'Build comparison will appear after multiple executions.',
         })}
       `}
-      ${renderPageFooter(9)}
+      ${renderPageFooter(10)}
     </section>
 
     <section class="page" id="air-core">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 10</div>
+          <div class="eyebrow">PAGE 11</div>
           ${pageHeading('settings', 'AIR Core')}
           <p>Which intelligence engines produced this report?</p>
         </div>
@@ -6522,13 +7925,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <div class="engine-output-stack">${airCoreEngineGroupsHtml}</div>
       </div>
-      ${renderPageFooter(10)}
+      ${renderPageFooter(11)}
     </section>
 
     <section class="page" id="roadmap">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 11</div>
+          <div class="eyebrow">PAGE 12</div>
           ${pageHeading('roadmap', 'AIR Product Roadmap')}
           <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
         </div>
@@ -6570,7 +7973,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <strong>Final Engineering Mode UI → Dynamic Data Model → Dynamic Intelligence Engine</strong>
         </div>
       </div>
-      ${renderPageFooter(11)}
+      ${renderPageFooter(12)}
     </section>
     <footer class="footer">
       <span>${footerHtml}</span>
@@ -6781,6 +8184,9 @@ const airGoldenDashboardHtml = `<!doctype html>
   const recommendationDetailData = ${recommendationDetailDataJson};
   const roadmapDetailData = ${roadmapDetailDataJson};
   const airSearchIndex = ${airSearchIndexJson};
+  const failureDetailData = ${failureDetailDataJson};
+  const warningDetailData = ${warningDetailDataJson};
+  const coverageGapDetailData = ${coverageGapDetailDataJson};
   const drawer = document.getElementById('moduleDrawer');
   const drawerBackdrop = document.querySelector('.drawer-backdrop');
   const modalBackdrop = document.querySelector('.modal-backdrop');
@@ -6799,6 +8205,60 @@ const airGoldenDashboardHtml = `<!doctype html>
       element.textContent = value;
     }
   }
+
+  let activeTooltip = null;
+
+  function closeAirTooltip() {
+    if (activeTooltip) {
+      activeTooltip.remove();
+      activeTooltip = null;
+    }
+  }
+
+  function openAirTooltip(target) {
+    const text = target?.dataset?.airTooltip;
+
+    if (!text) {
+      return;
+    }
+
+    closeAirTooltip();
+    activeTooltip = document.createElement('div');
+    activeTooltip.className = 'air-tooltip';
+    activeTooltip.textContent = text;
+    activeTooltip.setAttribute('role', 'tooltip');
+    document.body.appendChild(activeTooltip);
+
+    const targetRect = target.getBoundingClientRect();
+    const tooltipRect = activeTooltip.getBoundingClientRect();
+    const margin = 12;
+    let left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+    let top = targetRect.bottom + 10;
+
+    left = Math.max(margin, Math.min(left, window.innerWidth - tooltipRect.width - margin));
+
+    if (top + tooltipRect.height > window.innerHeight - margin) {
+      top = targetRect.top - tooltipRect.height - 10;
+    }
+
+    top = Math.max(margin, top);
+    activeTooltip.style.left = left + 'px';
+    activeTooltip.style.top = top + 'px';
+  }
+
+  document.querySelectorAll('[data-air-tooltip]').forEach(element => {
+    element.addEventListener('mouseenter', () => openAirTooltip(element));
+    element.addEventListener('mouseleave', closeAirTooltip);
+    element.addEventListener('focus', () => openAirTooltip(element));
+    element.addEventListener('blur', closeAirTooltip);
+    element.addEventListener('touchstart', event => {
+      event.stopPropagation();
+      openAirTooltip(element);
+    }, { passive: true });
+  });
+
+  document.addEventListener('scroll', closeAirTooltip, true);
+  window.addEventListener('resize', closeAirTooltip);
 
   function openDrawer(moduleName) {
     const data = moduleDrawerData.find(item => item.name === moduleName);
@@ -7035,6 +8495,130 @@ const airGoldenDashboardHtml = `<!doctype html>
     openModal(detailModal);
   }
 
+  function escapeModalText(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function renderIssueModalList(items, type) {
+    if (!items || items.length === 0) {
+      return '<div class="empty-note">No detail rows available for this section.</div>';
+    }
+
+    function renderFailureScreenshotModal(item) {
+      const context = item.screenshotContext || {};
+      const artifactLinks = Array.isArray(item.artifactLinks) ? item.artifactLinks : [];
+      const artifactBlock = '<div class="failure-artifact-group modal-artifacts"><span>Trace / Video / Logs</span>' +
+        (artifactLinks.length > 0
+          ? '<div class="failure-evidence-chips">' + artifactLinks.map(link => '<a href="' + escapeModalText(link.href) + '" data-evidence-preview data-evidence-kind="' + escapeModalText(link.label) + '" data-evidence-status="' + escapeModalText(link.status) + '" data-evidence-href="' + escapeModalText(link.href) + '">' + escapeModalText(link.label) + '</a>').join('') + '</div>'
+          : '<div class="failure-evidence-chips muted"><span>No trace, video, or log artifact attached</span></div>') +
+        '</div>';
+
+      if (!context.available) {
+        return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel unavailable"><span>Annotated Failure View</span><strong>Not available</strong><small>' + escapeModalText(context.annotationMessage || 'Failure screenshot evidence was not available.') + '</small></div><div class="failure-shot-notes"><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p></div></div>' + artifactBlock;
+      }
+
+      const annotatedBlock = context.annotatedAvailable
+        ? '<a href="' + escapeModalText(context.annotatedHref) + '" data-evidence-preview data-evidence-kind="Annotated Failure View" data-evidence-status="Available" data-evidence-href="' + escapeModalText(context.annotatedHref) + '"><img src="' + escapeModalText(context.annotatedHref) + '" alt="Annotated failure view"><small>' + escapeModalText(context.annotationMessage) + '</small></a>'
+        : '<strong>Not available</strong><small>Failure location could not be determined automatically.</small>';
+      const originalBlock = context.originalAvailable
+        ? '<a href="' + escapeModalText(context.originalHref) + '" data-evidence-preview data-evidence-kind="Original Screenshot" data-evidence-status="' + escapeModalText(context.originalLabel) + '" data-evidence-href="' + escapeModalText(context.originalHref) + '"><img src="' + escapeModalText(context.originalHref) + '" alt="' + escapeModalText(context.originalLabel) + '"><small>' + escapeModalText(context.originalLabel) + '</small></a>'
+        : '<strong>Not available</strong><small>Original screenshot was not attached.</small>';
+
+      return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel ' + (context.annotatedAvailable ? 'annotated' : 'unavailable') + '"><span>Annotated Failure View</span>' + annotatedBlock + '</div><div class="failure-shot-panel original"><span>Original Screenshot</span>' + originalBlock + '</div><div class="failure-shot-notes"><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p>' + (context.annotatedAvailable ? '' : '<p><b>Location:</b> Failure location could not be determined automatically.</p>') + '</div></div>' + artifactBlock;
+    }
+
+    function renderFailureSourceNotes(item) {
+      const sources = item.sources || {};
+      const rows = [
+        ['Summary', sources.summary],
+        ['Expected', sources.expected],
+        ['Observed', sources.observed],
+        ['Impact', sources.impact],
+        ['Cause', sources.cause],
+        ['Technical Error', sources.technicalError],
+      ].filter(([, source]) => source);
+
+      if (rows.length === 0) {
+        return '';
+      }
+
+      return '<div class="failure-source-notes"><span>Why AIR thinks this</span>' +
+        rows.map(([label, source]) => '<small><b>' + escapeModalText(label) + ':</b> ' + escapeModalText(source) + '</small>').join('') +
+        '</div>';
+    }
+
+    return '<div class="issue-modal-list">' + items.map(item => {
+      const titlePrefix = type === 'failure'
+        ? 'F'
+        : type === 'warning'
+          ? 'W'
+          : 'G';
+      const mainText = type === 'failure'
+        ? '<p><b>Failure Summary:</b> ' + escapeModalText(item.whyFailed) + '</p><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Impact:</b> ' + escapeModalText(item.impact) + '</p><p><b>Cause Status:</b> ' + escapeModalText(item.cause) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p>'
+        : '<p><b>Reason:</b> ' + escapeModalText(item.reason) + '</p>';
+      const evidenceContext = type === 'failure'
+        ? renderFailureScreenshotModal(item)
+        : '';
+      const sourceNotes = type === 'failure'
+        ? renderFailureSourceNotes(item)
+        : '';
+      const nextAction = item.nextAction
+        ? '<p><b>Next:</b> ' + escapeModalText(item.nextAction) + '</p>'
+        : '';
+      const meta = [
+        item.module,
+        item.severity || item.priority || item.category,
+        item.status,
+        item.evidence,
+        item.source || item.useCase,
+        item.sourceIds,
+      ]
+        .filter(Boolean)
+        .map(value => '<span>' + escapeModalText(value) + '</span>')
+        .join('');
+
+      return '<article class="issue-modal-item"><div class="issue-modal-head"><div><strong>' + titlePrefix + item.index + ' - ' + escapeModalText(item.title) + '</strong><small>' + escapeModalText(item.fullTitle || item.file || '') + '</small></div><span class="badge ' + (type === 'failure' ? 'bad' : 'warn') + '">' + escapeModalText(item.category || item.severity || item.status || type) + '</span></div>' + mainText + sourceNotes + evidenceContext + nextAction + '<div class="issue-modal-meta">' + meta + '</div></article>';
+    }).join('') + '</div>';
+  }
+
+  document.querySelectorAll('[data-open-failure-details]').forEach(button => {
+    button.addEventListener('click', () => {
+      openDetailModal({
+        eyebrow: 'FAILED TESTS',
+        title: 'Failed Test Details',
+        summary: 'Plain-language list of what failed, why it failed, evidence status, and the next review action.',
+        body: renderIssueModalList(failureDetailData, 'failure'),
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-open-warning-details]').forEach(button => {
+    button.addEventListener('click', () => {
+      openDetailModal({
+        eyebrow: 'WARNING TESTS',
+        title: 'Warning / Controlled Test Details',
+        summary: 'Scenarios that were skipped, controlled, interrupted, or gated by missing prerequisites.',
+        body: renderIssueModalList(warningDetailData, 'warning'),
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-open-coverage-gap-details]').forEach(button => {
+    button.addEventListener('click', () => {
+      openDetailModal({
+        eyebrow: 'BLOCKED / SKIPPED',
+        title: 'Blocked and Not Executed Coverage',
+        summary: 'Matrix scenarios and controlled checks that were not executed in this run, with reason and next action.',
+        body: renderIssueModalList(coverageGapDetailData, 'gap'),
+      });
+    });
+  });
+
   function bindKeyboardOpen(elements, openCallback) {
     elements.forEach(element => {
       element.addEventListener('keydown', event => {
@@ -7121,21 +8705,69 @@ const airGoldenDashboardHtml = `<!doctype html>
     button.addEventListener('click', closePanels);
   });
 
-  document.querySelectorAll('[data-module-filter]').forEach(button => {
-    button.addEventListener('click', () => {
-      const filter = String(button.dataset.moduleFilter || 'all').toLowerCase();
-      document.querySelectorAll('[data-module-filter]').forEach(item => item.classList.remove('active'));
-      button.classList.add('active');
+  const moduleFilterButtons = Array.from(document.querySelectorAll('[data-module-filter]'));
+  const moduleFilterSearch = document.getElementById('moduleStatusSearch');
+  const moduleFilterCount = document.querySelector('[data-module-filter-count]');
+  const moduleFilterEmpty = document.querySelector('[data-module-filter-empty]');
 
-      document.querySelectorAll('.module-health-card[data-module], .module-dashboard-card[data-module]').forEach(card => {
-        const moduleStatus = String(card.dataset.moduleStatus || '').toLowerCase();
-        const matches =
-          filter === 'all' ||
-          moduleStatus === filter;
-        card.style.display = matches ? '' : 'none';
+  function getActiveModuleFilter() {
+    return String(document.querySelector('[data-module-filter].active')?.dataset.moduleFilter || 'all').toLowerCase();
+  }
+
+  function updateModuleFilter() {
+    const activeFilter = getActiveModuleFilter();
+    const query = String(moduleFilterSearch?.value || '').trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('#health .module-health-card[data-module]'));
+    let visible = 0;
+
+    cards.forEach(card => {
+      const statusGroup = String(card.dataset.moduleStatusGroup || '').toLowerCase();
+      const searchText = String(card.dataset.moduleSearch || card.textContent || '').toLowerCase();
+      const matchesStatus = activeFilter === 'all' || statusGroup === activeFilter;
+      const matchesSearch = !query || searchText.includes(query);
+      const matches = matchesStatus && matchesSearch;
+      card.hidden = !matches;
+      card.classList.toggle('is-hidden', !matches);
+      card.setAttribute('aria-hidden', String(!matches));
+      if (matches) {
+        visible += 1;
+      }
+    });
+
+    if (moduleFilterCount) {
+      const label = activeFilter === 'all'
+        ? 'modules'
+        : activeFilter.replace('-', ' ') + ' modules';
+      moduleFilterCount.textContent = 'Showing ' + visible + ' of ' + cards.length + ' ' + label;
+    }
+
+    if (moduleFilterEmpty) {
+      moduleFilterEmpty.hidden = visible !== 0;
+      moduleFilterEmpty.textContent = 'No ' + (activeFilter === 'all' ? '' : activeFilter.replace('-', ' ') + ' ') + 'modules found in this execution.';
+    }
+  }
+
+  moduleFilterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      moduleFilterButtons.forEach(item => {
+        item.classList.remove('active');
+        item.setAttribute('aria-pressed', 'false');
       });
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+      updateModuleFilter();
     });
   });
+
+  moduleFilterButtons.forEach(button => {
+    button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
+  });
+
+  if (moduleFilterSearch) {
+    moduleFilterSearch.addEventListener('input', updateModuleFilter);
+  }
+
+  updateModuleFilter();
 
   document.querySelectorAll('[data-load-more-failures]').forEach(button => {
     const target = button.dataset.failureTarget === 'rows' ? 'rows' : 'cards';
@@ -7197,6 +8829,40 @@ const airGoldenDashboardHtml = `<!doctype html>
     });
 
     updateWarningVisibility();
+  });
+
+  document.querySelectorAll('[data-load-more-coverage-gaps]').forEach(button => {
+    const cardItems = Array.from(document.querySelectorAll('[data-coverage-gap-card]'));
+    const rowItems = Array.from(document.querySelectorAll('[data-coverage-gap-row]'));
+    const countLabel = document.querySelector('[data-coverage-gap-count]');
+    const loadMoreWrap = button.closest('[data-coverage-gap-load-more]');
+    const totalItems = Math.max(cardItems.length, rowItems.length);
+    let visibleItems = Math.min(${COVERAGE_GAPS_INITIAL_VISIBLE}, totalItems);
+    const batchSize = ${FAILED_TESTS_LOAD_BATCH};
+
+    const updateCoverageGapVisibility = () => {
+      cardItems.forEach((item, index) => {
+        item.classList.toggle('is-hidden', index >= visibleItems);
+      });
+      rowItems.forEach((item, index) => {
+        item.classList.toggle('is-hidden', index >= visibleItems);
+      });
+
+      if (countLabel) {
+        countLabel.textContent = 'Showing ' + Math.min(visibleItems, totalItems) + ' of ' + totalItems + ' blocked/skipped scenarios';
+      }
+
+      if (visibleItems >= totalItems && loadMoreWrap) {
+        loadMoreWrap.remove();
+      }
+    };
+
+    button.addEventListener('click', () => {
+      visibleItems = Math.min(visibleItems + batchSize, totalItems);
+      updateCoverageGapVisibility();
+    });
+
+    updateCoverageGapVisibility();
   });
 
   const airSearch = document.getElementById('airSearch');

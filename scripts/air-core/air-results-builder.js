@@ -12,6 +12,7 @@ const { buildHistory } = require('./engine/history-engine');
 const { buildReleaseDecision } = require('./engine/release-engine');
 const { schemaVersion, createFutureValidation } = require('./model/air-results.schema');
 const { validateAirResults } = require('./model/air-results-validator');
+const { buildDataIntegrityAudit } = require('./engine/data-integrity-audit');
 
 function readGitValue(projectRoot, command, fallback) {
   try {
@@ -79,6 +80,21 @@ function buildAirResults(projectRoot = path.resolve(__dirname, '..', '..'), opti
       hasResults: loaded.hasResults,
       framework: loaded.framework,
       adapterWarning: loaded.adapterWarning,
+      rawTestCount: loaded.rawTestCount ?? tests.length,
+      duplicateCount: loaded.duplicateCount ?? 0,
+      duplicateCanonicalTestIds: loaded.duplicateCanonicalTestIds ?? [],
+    },
+    provenance: {
+      mode: 'CURRENT_EXECUTION',
+      sourceArtifact: loaded.source === 'json-reporter'
+        ? 'test-results/results.json'
+        : loaded.source === 'html-report'
+          ? 'playwright-report/index.html'
+          : 'missing',
+      sourceFramework: loaded.framework,
+      generatedAt: generatedAt.toISOString(),
+      restoredFromHistory: false,
+      warning: '',
     },
     executionContext: {},
     summary: {},
@@ -99,6 +115,18 @@ function buildAirResults(projectRoot = path.resolve(__dirname, '..', '..'), opti
     tests,
     failedTests: [],
     failures: [],
+    coverageGaps: {
+      summary: {
+        total: 0,
+        blocked: 0,
+        controlled: 0,
+        traceability: 0,
+        future: 0,
+        interrupted: 0,
+        skipped: 0,
+      },
+      items: [],
+    },
     evidence: {},
     recommendations: [],
     searchIndex: [],
@@ -130,6 +158,10 @@ function buildAirResults(projectRoot = path.resolve(__dirname, '..', '..'), opti
     path,
   });
 
+  airResults.dataIntegrity = buildDataIntegrityAudit(airResults, {
+    loaded,
+    config,
+  });
   airResults.validation = validateAirResults(airResults);
 
   return airResults;
@@ -314,6 +346,8 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     ...(restoredAirResults.summary ?? {}),
     total: (restoredAirResults.summary?.total ?? 0) + manualFailures.length,
     failed: (restoredAirResults.summary?.failed ?? 0) + manualFailures.length,
+    attemptCount: (restoredAirResults.summary?.attemptCount ?? restoredAirResults.summary?.total ?? 0) + manualFailures.length,
+    executed: (restoredAirResults.summary?.executed ?? restoredAirResults.summary?.passed ?? 0) + manualFailures.length,
     passRate: Math.round(((restoredAirResults.summary?.passed ?? 0) / ((restoredAirResults.summary?.total ?? 0) + manualFailures.length)) * 100),
     failureRate: Math.round((((restoredAirResults.summary?.failed ?? 0) + manualFailures.length) / ((restoredAirResults.summary?.total ?? 0) + manualFailures.length)) * 100),
     executionStatus: 'Failed',
@@ -330,6 +364,28 @@ function applyManualDefectsToRestoredResults(restoredAirResults, config = {}) {
     reasons: [
       'Full regression baseline passed from restored execution history.',
       `${manualFailures.length} confirmed product defect(s) require resolution before approval.`,
+    ],
+    reasonTraceability: [
+      {
+        reason: 'Full regression baseline passed from restored execution history.',
+        source: 'summary',
+        references: [
+          {
+            type: 'Execution Summary',
+            name: 'Restored execution',
+            value: restoredAirResults.summary?.total ?? 0,
+          },
+        ],
+      },
+      {
+        reason: `${manualFailures.length} confirmed product defect(s) require resolution before approval.`,
+        source: 'blockers',
+        references: manualFailures.map(failure => ({
+          type: 'Manual Defect',
+          name: failure.testName,
+          detail: failure.businessImpact,
+        })),
+      },
     ],
     warnings: [],
     blockers: manualFailures.map(failure => ({
@@ -425,16 +481,22 @@ function normalizeEvidenceForRestore(evidence = {}) {
     rawReports: summary.rawReports ?? normalized.rawReports.length,
   };
 
-  normalized.summary.total =
-    summary.total ??
+  normalized.summary.perTestEvidence =
+    summary.perTestEvidence ??
     (
       normalized.summary.screenshots +
       normalized.summary.videos +
       normalized.summary.traces +
       normalized.summary.logs +
-      normalized.summary.attachments +
-      normalized.summary.rawReports
+      normalized.summary.attachments
     );
+  normalized.summary.executionArtifacts = summary.executionArtifacts ?? normalized.summary.rawReports;
+  normalized.summary.total =
+    summary.total ??
+    normalized.summary.perTestEvidence;
+  normalized.summary.totalWithRawReports =
+    summary.totalWithRawReports ??
+    normalized.summary.perTestEvidence + normalized.summary.executionArtifacts;
 
   normalized.playwrightReport =
     evidence.playwrightReport ??
@@ -554,6 +616,16 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
       framework: sanitizedSnapshot.source?.framework ?? 'AIR History',
       note: 'AIR reused the strongest valid execution snapshot because the available Playwright output was missing or older than history.',
     },
+    provenance: {
+      mode: 'RESTORED_HISTORY',
+      sourceArtifact: 'execution-report/history/air-history.json',
+      sourceFramework: sanitizedSnapshot.source?.framework ?? 'AIR History',
+      generatedAt: new Date().toISOString(),
+      restoredFromHistory: true,
+      restoredExecutionId: sanitizedSnapshot.execution?.id ?? sanitizedSnapshot.id ?? '',
+      restoredGeneratedAt: sanitizedSnapshot.generatedAt ?? sanitizedSnapshot.reportInfo?.generatedAt ?? '',
+      warning: 'AIR restored a previous execution snapshot because current execution data was unavailable or history restore was requested.',
+    },
     summary: restoredSummary,
     executionContext: sanitizedSnapshot.executionContext ?? {
       type: 'Historical Snapshot',
@@ -571,6 +643,18 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
     tests: restoredTests,
     failedTests: restoredFailedTests,
     failures: restoredFailedTests,
+    coverageGaps: sanitizedSnapshot.coverageGaps ?? {
+      summary: {
+        total: 0,
+        blocked: 0,
+        controlled: 0,
+        traceability: 0,
+        future: 0,
+        interrupted: 0,
+        skipped: 0,
+      },
+      items: [],
+    },
     evidence: restoredEvidence,
     quality: restoredQuality,
     recommendations: [
@@ -684,6 +768,22 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
     );
 
     if (restoredAirResults) {
+      restoredAirResults.dataIntegrity = buildDataIntegrityAudit(restoredAirResults, {
+        loaded: {
+          hasResults: false,
+          source: 'air-history',
+          raw: {
+            suites: [],
+          },
+        },
+        config,
+      });
+      restoredAirResults.validation = validateAirResults(restoredAirResults);
+      fs.writeFileSync(outputPath, `${JSON.stringify(restoredAirResults, null, 2)}\n`);
+      fs.writeFileSync(
+        path.join(outputDir, 'air-data-integrity-audit.json'),
+        `${JSON.stringify(restoredAirResults.dataIntegrity, null, 2)}\n`
+      );
       return {
         outputPath,
         airResults: restoredAirResults,
@@ -693,6 +793,10 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
 
   fs.writeFileSync(outputPath, `${JSON.stringify(airResults, null, 2)}\n`);
   fs.writeFileSync(historyPath, `${JSON.stringify(airResults.history, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(outputDir, 'air-data-integrity-audit.json'),
+    `${JSON.stringify(airResults.dataIntegrity, null, 2)}\n`
+  );
 
   return {
     outputPath,

@@ -52,6 +52,14 @@ function validateAirResults(airResults) {
     addWarning(warnings, 'failedTests', 'Failed tests must be an array.');
   }
 
+  if (!isPlainObject(airResults.coverageGaps)) {
+    addWarning(warnings, 'coverageGaps', 'Coverage gaps must be an object.');
+  }
+
+  if (!Array.isArray(airResults.coverageGaps?.items)) {
+    addWarning(warnings, 'coverageGaps', 'Coverage gap items must be an array.');
+  }
+
   if (!Array.isArray(airResults.businessJourneys)) {
     addWarning(warnings, 'businessJourneys', 'Business journeys must be an array.');
   }
@@ -76,8 +84,24 @@ function validateAirResults(airResults) {
     addWarning(warnings, 'history', 'History must be an object.');
   }
 
+  if (!isPlainObject(airResults.provenance)) {
+    addWarning(warnings, 'provenance', 'Provenance must be an object.');
+  }
+
+  if (!['CURRENT_EXECUTION', 'RESTORED_HISTORY'].includes(airResults.provenance?.mode)) {
+    addWarning(warnings, 'provenance', 'Provenance mode must be CURRENT_EXECUTION or RESTORED_HISTORY.');
+  }
+
   if (!Array.isArray(airResults.history?.executions)) {
     addWarning(warnings, 'history', 'History executions must be an array.');
+  }
+
+  if (!isPlainObject(airResults.dataIntegrity)) {
+    addWarning(warnings, 'dataIntegrity', 'Data integrity audit must be an object.');
+  }
+
+  if (!airResults.dataIntegrity?.reconciliation?.status) {
+    addWarning(warnings, 'dataIntegrity', 'Data integrity reconciliation status is required.');
   }
 
   if (!Array.isArray(airResults.engineLog)) {

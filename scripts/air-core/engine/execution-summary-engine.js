@@ -43,9 +43,14 @@ function buildExecutionSummary(tests = []) {
   const skipped = countByStatus(tests, 'skipped');
   const interrupted = countByStatus(tests, 'interrupted');
   const flaky = tests.filter(hasFlakySignal).length;
+  const attemptCount = tests.reduce((sum, test) => sum + Math.max(1, test.attemptCount ?? test.attempts?.length ?? 1), 0);
+  const retryCount = tests.reduce((sum, test) => sum + Math.max(0, (test.attemptCount ?? test.attempts?.length ?? 1) - 1), 0);
   const durationMs = tests.reduce((sum, test) => sum + (test.durationMs ?? 0), 0);
   const passRate = calculateRate(passed, total);
   const failureRate = calculateRate(failed, total);
+  const executed = passed + failed + interrupted + flaky;
+  const executionHealth = calculateRate(passed + flaky, executed);
+  const executionCoverage = calculateRate(executed, total);
 
   return {
     total,
@@ -54,10 +59,15 @@ function buildExecutionSummary(tests = []) {
     skipped,
     flaky,
     interrupted,
+    attemptCount,
+    retryCount,
+    executed,
     durationMs,
     duration: formatDuration(durationMs),
     passRate,
     failureRate,
+    executionHealth,
+    executionCoverage,
     executionStatus: getExecutionStatus({ total, failed, interrupted }),
   };
 }

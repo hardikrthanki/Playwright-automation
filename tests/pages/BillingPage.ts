@@ -479,6 +479,53 @@ async validatePlanActionControls() {
   );
 }
 
+async validatePaidSubscriberTrialCtaIsNotOffered() {
+
+  Logger.info(
+    'Validating paid subscriber is not offered Overlay Strategists trial CTA'
+  );
+
+  await this.validateOverview();
+
+  if (
+    await this.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.plansTab,
+      'Open Plans Tab'
+    );
+  }
+
+  await this.validateBillingUrl();
+
+  await expect(
+    this.page.getByText(
+      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial|upgrade|downgrade/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000,
+  });
+
+  await expect(
+    this.page.getByRole(
+      'button',
+      {
+        name: /try 30 days free/i
+      }
+    )
+  ).toHaveCount(
+    0
+  );
+
+  Logger.success(
+    'Paid subscriber trial CTA is not offered'
+  );
+}
+
 async validateOverviewContract() {
 
   Logger.info(
@@ -733,13 +780,23 @@ async openSubscriptionPortal() {
     'domcontentloaded'
   );
 
-  await expect(
+  const portalOverview =
     portalPage.getByText(
       /current subscription|payment method|billing information|invoice history/i
-    ).first()
-  ).toBeVisible({
-    timeout: 30000
-  });
+    ).first();
+
+  const portalOverviewVisible =
+    await portalOverview.isVisible({
+      timeout: 30000
+    }).catch(
+      () => false
+    );
+
+  if (!portalOverviewVisible) {
+    throw new Error(
+      `Stripe billing portal did not show the subscription overview. URL: ${portalPage.url()}`
+    );
+  }
 
   Logger.success(
     'Subscription management portal opened'

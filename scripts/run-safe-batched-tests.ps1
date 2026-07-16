@@ -124,6 +124,32 @@ $batches = @(
     Files = @(
       'tests/onboarding.spec.ts'
     )
+  },
+  @{
+    Name = '08-controlled-gated'
+    Files = @(
+      'tests/forgotpassword.spec.ts',
+      'tests/UnlockAccount.spec.ts',
+      'tests/AuthConfigurationLimits.spec.ts',
+      'tests/MfaUserFlow.spec.ts',
+      'tests/PermissionAccess.spec.ts',
+      'tests/DirectSubscriptionPurchase.spec.ts',
+      'tests/PaymentNegative.spec.ts'
+    )
+  },
+  @{
+    Name = '09-coverage-matrix'
+    Files = @(
+      'tests/UserJourneyCoverageMatrix.spec.ts',
+      'tests/OverlayStrategistsTrialMatrix.spec.ts',
+      'tests/NewSubscriptionPurchaseMatrix.spec.ts',
+      'tests/UpgradeSubscriptionMatrix.spec.ts',
+      'tests/DowngradeSubscriptionMatrix.spec.ts',
+      'tests/MonthlyAnnualBillingChangeMatrix.spec.ts',
+      'tests/AnnualMonthlyBillingChangeMatrix.spec.ts',
+      'tests/SubscriptionCancellationMatrix.spec.ts',
+      'tests/FailedPaymentDunningMatrix.spec.ts'
+    )
   }
 )
 
@@ -147,7 +173,7 @@ foreach ($batch in $batches) {
   Write-Host "Running batch: $name" -ForegroundColor Green
   Set-Item -Path Env:PLAYWRIGHT_JSON_OUTPUT_NAME -Value $outputFile
 
-  $args = @('test') + $batch.Files
+  $args = @('test') + $batch.Files + @('--pass-with-no-tests')
   if ($Headed) {
     $args += '--headed'
   }

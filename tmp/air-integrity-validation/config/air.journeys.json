@@ -1,0 +1,9 @@
+{
+  "businessJourneys": [
+    {
+      "name": "AIR Integrity Validation",
+      "modules": ["AIR Integrity"],
+      "critical": true
+    }
+  ]
+}

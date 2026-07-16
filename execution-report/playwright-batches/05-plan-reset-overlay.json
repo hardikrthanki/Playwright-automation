@@ -94,14 +94,14 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 164896,
+                      "duration": 111427,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Overlay Trial Email: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                          "text": "Overlay Trial Email: imhardikthanki+overlay-trial-discovery-1784117003293@gmail.com\n"
                         },
                         {
-                          "text": "Overlay Trial Mobile: 2015553076\n"
+                          "text": "Overlay Trial Mobile: 2015553293\n"
                         },
                         {
                           "text": "[INFO] Opening application\n"
@@ -113,10 +113,10 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[STEP] Registering: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                          "text": "[STEP] Registering: imhardikthanki+overlay-trial-discovery-1784117003293@gmail.com\n"
                         },
                         {
-                          "text": "Registration Email: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                          "text": "Registration Email: imhardikthanki+overlay-trial-discovery-1784117003293@gmail.com\n"
                         },
                         {
                           "text": "[CLICK] Send Code via SMS\n"
@@ -140,7 +140,7 @@
                           "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                         },
                         {
-                          "text": "Verify email sent to: imhardikthanki+overlay-trial-discovery-1784029543076@gmail.com\n"
+                          "text": "Verify email sent to: imhardikthanki+overlay-trial-discovery-1784117003293@gmail.com\n"
                         },
                         {
                           "text": "Open Gmail and click the verification link.\n"
@@ -153,24 +153,6 @@
                         },
                         {
                           "text": "Login Attempt 1\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/login\n"
-                        },
-                        {
-                          "text": "Login Attempt 2\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/login\n"
-                        },
-                        {
-                          "text": "Login Attempt 3\n"
                         },
                         {
                           "text": "[CLICK] Submit Login\n"
@@ -373,22 +355,22 @@
                       "steps": [
                         {
                           "title": "Register new user",
-                          "duration": 18921
+                          "duration": 19291
                         },
                         {
                           "title": "Verify email manually when enabled",
-                          "duration": 5
+                          "duration": 9666
                         },
                         {
                           "title": "Login and complete onboarding prerequisites",
-                          "duration": 124337
+                          "duration": 58745
                         },
                         {
                           "title": "Validate Overlay Strategists trial availability",
-                          "duration": 72
+                          "duration": 124
                         }
                       ],
-                      "startTime": "2026-07-14T11:45:41.588Z",
+                      "startTime": "2026-07-15T12:03:20.677Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -433,14 +415,14 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 161083,
+                      "duration": 112705,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Overlay Terms Validation Email: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                          "text": "Overlay Terms Validation Email: imhardikthanki+overlay-terms-required-1784117097152@gmail.com\n"
                         },
                         {
-                          "text": "Overlay Terms Validation Mobile: 2015559990\n"
+                          "text": "Overlay Terms Validation Mobile: 2015557152\n"
                         },
                         {
                           "text": "[INFO] Opening application\n"
@@ -452,10 +434,10 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[STEP] Registering: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                          "text": "[STEP] Registering: imhardikthanki+overlay-terms-required-1784117097152@gmail.com\n"
                         },
                         {
-                          "text": "Registration Email: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                          "text": "Registration Email: imhardikthanki+overlay-terms-required-1784117097152@gmail.com\n"
                         },
                         {
                           "text": "[CLICK] Send Code via SMS\n"
@@ -479,7 +461,7 @@
                           "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                         },
                         {
-                          "text": "Verify email sent to: imhardikthanki+overlay-terms-required-1784029689990@gmail.com\n"
+                          "text": "Verify email sent to: imhardikthanki+overlay-terms-required-1784117097152@gmail.com\n"
                         },
                         {
                           "text": "Open Gmail and click the verification link.\n"
@@ -492,24 +474,6 @@
                         },
                         {
                           "text": "Login Attempt 1\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Boverlay-terms-required-1784029689990%40gmail.com\n"
-                        },
-                        {
-                          "text": "Login Attempt 2\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/login\n"
-                        },
-                        {
-                          "text": "Login Attempt 3\n"
                         },
                         {
                           "text": "[CLICK] Submit Login\n"
@@ -727,22 +691,22 @@
                       "steps": [
                         {
                           "title": "Register new user",
-                          "duration": 17971
+                          "duration": 18620
                         },
                         {
                           "title": "Verify email manually when enabled",
-                          "duration": 3
+                          "duration": 13964
                         },
                         {
                           "title": "Login and complete onboarding prerequisites",
-                          "duration": 122662
+                          "duration": 57540
                         },
                         {
                           "title": "Validate terms are required before trial can start",
-                          "duration": 705
+                          "duration": 786
                         }
                       ],
-                      "startTime": "2026-07-14T11:48:09.607Z",
+                      "startTime": "2026-07-15T12:04:56.445Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -768,7 +732,7 @@
               ],
               "id": "b24ed9020043c8797020-9d52aeb8fc509aff5e5c",
               "file": "OverlayStrategistsTrial.spec.ts",
-              "line": 594,
+              "line": 844,
               "column": 11
             }
           ]
@@ -785,12 +749,12 @@
         {
           "title": "Plan Selection Validation",
           "file": "PlanSelectionValidation.spec.ts",
-          "line": 253,
+          "line": 260,
           "column": 8,
           "specs": [
             {
               "title": "Plan catalog, feature summary, and billing toggle are visible",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -803,9 +767,28 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14298,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 47418,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:272:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:272:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-toggle-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -823,69 +806,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Validating plan catalog and feature summary\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Curious Explorer plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Curious Explorer plan is visible\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Income Builder plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Income Builder plan is visible\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Portfolio Hedger plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Portfolio Hedger plan is visible\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Marketplace plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Marketplace plan is visible\n"
-                        },
-                        {
-                          "text": "[PASS] Plan catalog and feature summary validated\n"
-                        },
-                        {
-                          "text": "[INFO] Validating monthly and annual billing toggle\n"
-                        },
-                        {
-                          "text": "[CLICK] Annual Toggle\n"
-                        },
-                        {
-                          "text": "[CLICK] Monthly Toggle\n"
-                        },
-                        {
-                          "text": "[PASS] Monthly and annual billing toggle validated\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:50:34.496Z",
+                      "startTime": "2026-07-15T12:06:33.474Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -893,24 +828,34 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5fb23--billing-toggle-are-visible-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-d011001dd02c63a5f6c5",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 262,
+              "line": 269,
               "column": 11
             },
             {
               "title": "Complete Setup initial state is safe before checkout",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -921,11 +866,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14616,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 48299,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:291:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:291:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-complete-setup-guard Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -943,27 +907,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Complete Setup initial state\n"
-                        },
-                        {
-                          "text": "[PASS] Complete Setup initial state is safe\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:50:49.090Z",
+                      "startTime": "2026-07-15T12:07:25.153Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -971,24 +929,34 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-40117-ate-is-safe-before-checkout-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-77818c2074263e00ac4b",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 281,
+              "line": 288,
               "column": 11
             },
             {
-              "title": "Overlay Strategists with-card trial modal content and cancel behavior",
-              "ok": true,
+              "title": "Overlay Strategists feature limits and premium benefits are displayed",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -999,11 +967,131 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 16089,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 47314,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:308:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:308:9\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "plan-overlay-feature-summary Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
+                        },
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Mobile verification step not shown\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T12:08:16.338Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-387fc-mium-benefits-are-displayed-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-387fc-mium-benefits-are-displayed-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-387fc-mium-benefits-are-displayed-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-387fc-mium-benefits-are-displayed-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3aa2b315b3252db18d70-c50ef92eba60e65995b1",
+              "file": "PlanSelectionValidation.spec.ts",
+              "line": 305,
+              "column": 11
+            },
+            {
+              "title": "Overlay Strategists with-card trial modal content and cancel behavior",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 1200000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 48223,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:325:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:325:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-with-card-modal-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -1021,54 +1109,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Opening Overlay Strategists with-card trial modal\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists trial options\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
-                        },
-                        {
-                          "text": "[CLICK] Try 30 days free with card\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists with-card trial modal content\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists with-card trial modal content validated\n"
-                        },
-                        {
-                          "text": "[CLICK] Cancel Trial Modal\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:51:04.152Z",
+                      "startTime": "2026-07-15T12:09:06.737Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1076,24 +1131,34 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-2f3bf-content-and-cancel-behavior-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-36d0fb04eacc72b6fd68",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 298,
+              "line": 322,
               "column": 11
             },
             {
               "title": "Overlay Strategists without-card trial modal content and close behavior",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1104,11 +1169,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 4,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14282,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 54476,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:352:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:352:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-without-card-modal-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -1126,54 +1210,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Opening Overlay Strategists without-card trial modal\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists trial options\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
-                        },
-                        {
-                          "text": "[CLICK] Try 30 days free without card\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists without-card trial modal content\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists without-card trial modal content validated\n"
-                        },
-                        {
-                          "text": "[CLICK] Close Trial Modal\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:51:20.572Z",
+                      "startTime": "2026-07-15T12:09:58.026Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1181,24 +1232,34 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-22d0c--content-and-close-behavior-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-179a8482edecab3a72e5",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 325,
+              "line": 349,
               "column": 11
             },
             {
               "title": "Overlay Strategists trial start requires terms acceptance",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1209,11 +1270,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 5,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14157,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 50119,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:379:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:379:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-terms-validation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -1231,48 +1311,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Opening Overlay Strategists without-card trial modal\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists trial options\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Overlay Strategists plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists plan is visible\n"
-                        },
-                        {
-                          "text": "[PASS] Overlay Strategists with-card and without-card trial options are visible\n"
-                        },
-                        {
-                          "text": "[CLICK] Try 30 days free without card\n"
-                        },
-                        {
-                          "text": "[INFO] Validating trial terms are required\n"
-                        },
-                        {
-                          "text": "[CLICK] Accept Trial Terms\n"
-                        },
-                        {
-                          "text": "[PASS] Trial terms required validation passed\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:51:35.213Z",
+                      "startTime": "2026-07-15T12:10:55.518Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1280,24 +1333,34 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-c3a18-t-requires-terms-acceptance-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-2ae38a25e905e7c84169",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 352,
+              "line": 376,
               "column": 11
             },
             {
               "title": "Curious Explorer free plan completes onboarding without Stripe",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1308,11 +1371,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 6,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 23260,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 48864,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:405:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                          "column": 7,
+                          "line": 167
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                            "column": 7,
+                            "line": 167
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/choose your plan|select a plan|get started/i).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/choose your plan|select a plan|get started/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 165 |\u001b[39m         \u001b[35m/choose your plan|select a plan|get started/i\u001b[39m\n \u001b[90m 166 |\u001b[39m       )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m\n \u001b[90m 169 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 170 |\u001b[39m\u001b[0m\n\u001b[2m    at openPlanSelection (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:167:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts:405:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "plan-free-activation Existing plan-selection email: imhardikthanki+plan-selection-prepared@gmail.com\n"
@@ -1330,45 +1412,21 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/onboarding\n"
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Mobile verification step not shown\n"
-                        },
-                        {
-                          "text": "[INFO] Selecting Curious Explorer Plan\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Curious Explorer plan visibility\n"
-                        },
-                        {
-                          "text": "[PASS] Curious Explorer plan is visible\n"
-                        },
-                        {
-                          "text": "[CLICK] Curious Explorer Plan\n"
-                        },
-                        {
-                          "text": "[CLICK] Complete Setup\n"
-                        },
-                        {
-                          "text": "[PASS] Curious Explorer selected\n"
-                        },
-                        {
-                          "text": "[INFO] Validating Dashboard\n"
-                        },
-                        {
-                          "text": "[PASS] Dashboard Loaded\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:51:49.588Z",
+                      "startTime": "2026-07-15T12:11:48.772Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1376,19 +1434,29 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\PlanSelectionValidation-Pl-5a878-s-onboarding-without-Stripe-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\PlanSelectionValidation.spec.ts",
+                        "column": 7,
+                        "line": 167
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "3aa2b315b3252db18d70-f2a85a41ba6f1514b53b",
               "file": "PlanSelectionValidation.spec.ts",
-              "line": 373,
+              "line": 397,
               "column": 11
             }
           ]
@@ -1414,15 +1482,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 0,
+                  "workerIndex": 7,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2266,
+                  "duration": 6047,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-07-14T11:52:13.189Z",
+                  "startTime": "2026-07-15T12:12:40.560Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1456,11 +1524,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-14T11:45:40.078Z",
-    "duration": 397317.334,
-    "expected": 9,
+    "startTime": "2026-07-15T12:03:15.893Z",
+    "duration": 572216.534,
+    "expected": 3,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 7,
     "flaky": 0
   }
 }

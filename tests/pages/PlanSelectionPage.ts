@@ -267,12 +267,13 @@ hasText:/complete setup|continue to payment/i
     });
 
     await expect(
-      this.trialDialog().getByText(
-        /try overlay strategists free for 30 days/i
-      )
-    ).toBeVisible({
-      timeout: 15000
-    });
+      this.trialDialog()
+    ).toContainText(
+      /try out pro|try overlay strategists free|overlay strategists free for 30 days/i,
+      {
+        timeout: 15000
+      }
+    );
 
     await this.acceptTrialTermsIfNeeded();
 
@@ -427,6 +428,51 @@ hasText:/complete setup|continue to payment/i
 
     Logger.success(
       'Overlay Strategists with-card and without-card trial options are visible'
+    );
+  }
+
+
+
+  async validateOverlayStrategistsFeatureSummary() {
+
+    Logger.info(
+      'Validating Overlay Strategists feature summary'
+    );
+
+    await this.validatePlanVisible(
+      'Overlay Strategists'
+    );
+
+    const pageText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    const expectedFeatures = [
+      /broker integration\s*\(5\)/i,
+      /account linked\s*\(10\)/i,
+      /positions\s*\(500\)/i,
+      /ctas\s*&\s*simulations unlimited/i,
+      /covered calls\/puts ctas/i,
+      /earnings\s*&\s*dividends notifications/i,
+      /itm\/atm resolve suggestions/i,
+      /portfolio analytics/i,
+      /bulk portfolio load/i,
+      /ools score/i
+    ];
+
+    for (const feature of expectedFeatures) {
+      expect(
+        pageText
+      ).toMatch(
+        feature
+      );
+    }
+
+    Logger.success(
+      'Overlay Strategists feature summary validated'
     );
   }
 

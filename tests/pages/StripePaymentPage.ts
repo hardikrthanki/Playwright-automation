@@ -7,6 +7,7 @@ import { safeClick } from '../helpers/safeClick';
 
 import {
   STRIPE_CARD,
+  STRIPE_DECLINED_CARD,
   STRIPE_EXPIRY,
   STRIPE_CVC
 } from '../config/testData';
@@ -150,6 +151,237 @@ export class StripePaymentPage
 
     Logger.success(
       'Stripe checkout stayed open and displayed card validation'
+    );
+  }
+
+  async validateTrialCheckoutDetails(
+    expectedEmail?: string
+  ) {
+    Logger.info(
+      'Validating Stripe trial checkout details'
+    );
+
+    await this.waitForCheckoutReady();
+
+    await expect(
+      this.page.locator(
+        'body'
+      )
+    ).toContainText(
+      /30 days free|start trial|free trial|trial/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    if (expectedEmail) {
+      await expect(
+        this.page.locator(
+          'body'
+        )
+      ).toContainText(
+        expectedEmail,
+        {
+          timeout: 15000
+        }
+      );
+    }
+
+    await expect(
+      this.page.locator(
+        '#cardNumber'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.locator(
+        '#cardExpiry'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.locator(
+        '#cardCvc'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.locator(
+        'body'
+      )
+    ).toContainText(
+      /INR|USD|cardholder name|country or region/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    Logger.success(
+      'Stripe trial checkout details validated'
+    );
+  }
+
+  async validateSubscriptionCheckoutDetails(
+    options: {
+      expectedEmail?: string;
+      expectedPlan?: string;
+      expectedBillingCopy?: RegExp;
+    } = {}
+  ) {
+    Logger.info(
+      'Validating Stripe subscription checkout details'
+    );
+
+    await this.waitForCheckoutReady();
+
+    const body =
+      this.page.locator(
+        'body'
+      );
+
+    if (options.expectedEmail) {
+      await expect(
+        body
+      ).toContainText(
+        options.expectedEmail,
+        {
+          timeout: 15000
+        }
+      );
+    }
+
+    if (options.expectedPlan) {
+      await expect(
+        body
+      ).toContainText(
+        new RegExp(
+          options.expectedPlan,
+          'i'
+        ),
+        {
+          timeout: 15000
+        }
+      );
+    }
+
+    await expect(
+      body
+    ).toContainText(
+      options.expectedBillingCopy ??
+        /per month|per year|monthly|annual|subscription|total|due/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    await expect(
+      this.page.locator(
+        '#cardNumber'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.locator(
+        '#cardExpiry'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      this.page.locator(
+        '#cardCvc'
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      body
+    ).toContainText(
+      /INR|USD|cardholder name|country or region/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    Logger.success(
+      'Stripe subscription checkout details validated'
+    );
+  }
+
+  async validateDeclinedCardRejected() {
+    Logger.info(
+      'Validating Stripe rejects declined card'
+    );
+
+    await this.waitForCheckoutReady();
+
+    await this.page.locator(
+      '#cardNumber'
+    ).fill(
+      STRIPE_DECLINED_CARD
+    );
+
+    Logger.success(
+      'Declined card number entered'
+    );
+
+    await this.page.locator(
+      '#cardExpiry'
+    ).fill(
+      STRIPE_EXPIRY
+    );
+
+    await this.page.locator(
+      '#cardCvc'
+    ).fill(
+      STRIPE_CVC
+    );
+
+    await this.fillBasicBillingDetails();
+
+    const payButton =
+      this.paymentButton();
+
+    await expect(
+      payButton
+    ).toBeEnabled({
+      timeout: 30000
+    });
+
+    await safeClick(
+      payButton,
+      'Submit Declined Stripe Card'
+    );
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /checkout\.stripe\.com/,
+      {
+        timeout: 30000
+      }
+    );
+
+    await expect(
+      this.page.getByText(
+        /declined|card was declined|payment failed|try another card/i
+      ).first()
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    Logger.success(
+      'Stripe declined card validation displayed'
     );
   }
 

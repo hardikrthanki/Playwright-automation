@@ -69,6 +69,20 @@ npx playwright test --headed
 npm run report:execution
 ```
 
+Recommended full AIR client run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run-safe-batched-tests.ps1 -Headed
+start execution-report\index.html
+```
+
+Use this when you want the best complete AIR report. It runs the executable
+automation in smaller batches, includes controlled/gated specs, includes the
+user-journey and Stripe coverage matrices, merges completed batch results, and
+then generates AIR. This lets AIR show executed, passed, failed, skipped,
+blocked, and not-executed coverage together instead of losing progress if one
+long Playwright process gets stuck.
+
 Run the broadest practical suite with safe controlled gates enabled:
 
 ```powershell
@@ -983,8 +997,7 @@ npm run report:pdf
 Recommended before sharing a report:
 
 ```powershell
-npm run test:stable -- --headed
-npm run report:execution
+powershell -ExecutionPolicy Bypass -File scripts\run-safe-batched-tests.ps1 -Headed
 npm run typecheck
 start execution-report\index.html
 ```

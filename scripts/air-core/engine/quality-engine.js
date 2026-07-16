@@ -39,14 +39,13 @@ function getJourneyCoverageScore(businessJourneys = []) {
 
 function getEvidenceReadinessScore(evidence = {}) {
   const summary = evidence.summary ?? {};
-  const rawReports = summary.rawReports ?? 0;
-  const total = summary.total ?? 0;
+  const perTestEvidence = summary.perTestEvidence ?? summary.total ?? 0;
 
-  if (total === 0) {
+  if (perTestEvidence === 0) {
     return 0;
   }
 
-  return rawReports > 0 ? 100 : 0;
+  return 100;
 }
 
 function getFailureSeverityScore(failedTests = [], config = {}) {
@@ -89,14 +88,35 @@ function calculateWeightedScore(factors, weights) {
   );
 }
 
-function buildQualityExplanation(score, grade, factors) {
+function getFactorLabel(factor) {
+  return String(factor)
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, char => char.toUpperCase());
+}
+
+function buildFactorDetails(factors, weights, includeWeighted) {
+  return Object.entries(factors)
+    .filter(([factor]) => {
+      const weight = weights[factor] ?? 0;
+
+      return includeWeighted ? weight > 0 : weight <= 0;
+    })
+    .map(([factor, value]) => ({
+      factor,
+      label: getFactorLabel(factor),
+      value,
+      weight: weights[factor] ?? 0,
+    }));
+}
+
+function buildQualityExplanation(score, grade, contributors) {
+  const contributorLines = contributors.map(contributor =>
+    `${contributor.label} is ${contributor.value}% with ${Math.round(contributor.weight * 100)}% weight.`
+  );
+
   return [
     `Quality score is ${score} (${grade}).`,
-    `Pass rate is ${factors.passRate}%.`,
-    `Business health is ${factors.businessHealth}%.`,
-    `Module health is ${factors.moduleHealth}%.`,
-    `Journey coverage is ${factors.journeyCoverage}%.`,
-    `Evidence readiness is ${factors.evidenceReadiness}%.`,
+    ...contributorLines,
   ];
 }
 
@@ -105,6 +125,8 @@ function calculateQuality({ summary = {}, modules = [], businessJourneys = [], e
   const factors = buildQualityFactors({ summary, modules, businessJourneys, evidence, failedTests }, config);
   const score = calculateWeightedScore(factors, weights);
   const grade = getGrade(score, config);
+  const contributors = buildFactorDetails(factors, weights, true);
+  const informationalFactors = buildFactorDetails(factors, weights, false);
 
   return {
     score,
@@ -112,7 +134,9 @@ function calculateQuality({ summary = {}, modules = [], businessJourneys = [], e
     grade,
     factors,
     weights,
-    explanation: buildQualityExplanation(score, grade, factors),
+    contributors,
+    informationalFactors,
+    explanation: buildQualityExplanation(score, grade, contributors),
   };
 }
 
@@ -125,6 +149,7 @@ module.exports = {
   calculateQuality,
   calculateQualityScore,
   calculateWeightedScore,
+  buildFactorDetails,
   getEvidenceReadinessScore,
   getFailureSeverityScore,
   getGrade,

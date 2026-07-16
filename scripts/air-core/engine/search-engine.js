@@ -188,6 +188,29 @@ function buildFailureEntries(airResults = {}, entries, seen) {
   }
 }
 
+function buildCoverageGapEntries(airResults = {}, entries, seen) {
+  for (const gap of airResults.coverageGaps?.items ?? []) {
+    addEntry(entries, seen, {
+      id: `coverage-gap-${slug(gap.id ?? gap.title)}`,
+      type: 'coverage-gap',
+      title: gap.title,
+      target: '#coverage-gaps',
+      status: gap.category ?? gap.status,
+      module: gap.module,
+      priority: gap.priority,
+      category: gap.category,
+      keywords: ['coverage gap', 'blocked', 'skipped', 'controlled', 'not executed', gap.category, gap.sourceIds],
+      text: [
+        gap.fullTitle,
+        gap.file,
+        gap.reason,
+        gap.nextAction,
+        gap.sourceIds,
+      ],
+    });
+  }
+}
+
 function isSearchableEvidenceCollection(type, items) {
   return Array.isArray(items) && !['byTest', 'byModule'].includes(type);
 }
@@ -313,6 +336,7 @@ function buildSearchIndex(airResults = {}) {
   buildJourneyEntries(airResults, entries, seen);
   buildTestEntries(airResults, entries, seen);
   buildFailureEntries(airResults, entries, seen);
+  buildCoverageGapEntries(airResults, entries, seen);
   buildEvidenceEntries(airResults, entries, seen);
   buildRecommendationEntries(airResults, entries, seen);
   buildDiscoveryEntries(airResults, entries, seen);

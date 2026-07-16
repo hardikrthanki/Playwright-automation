@@ -25,6 +25,10 @@ function buildEvidenceItem(attachment, test) {
     testId: test.id,
     testTitle: test.title,
     module: test.module ?? 'General',
+    attempt: attachment.attempt,
+    retry: attachment.retry,
+    attemptId: attachment.attemptId,
+    attemptStatus: attachment.attemptStatus,
     type: classifyEvidence(attachment),
     previewable: isPreviewableEvidence(attachment),
   };
@@ -92,6 +96,14 @@ function createRawReports(projectRoot, fs, path, evidenceConfig = {}) {
 }
 
 function buildEvidenceSummary(evidence) {
+  const perTestEvidence =
+    evidence.screenshots.length +
+    evidence.videos.length +
+    evidence.traces.length +
+    evidence.logs.length +
+    evidence.attachments.length;
+  const executionArtifacts = evidence.rawReports.length;
+
   return {
     screenshots: evidence.screenshots.length,
     videos: evidence.videos.length,
@@ -99,13 +111,10 @@ function buildEvidenceSummary(evidence) {
     logs: evidence.logs.length,
     attachments: evidence.attachments.length,
     rawReports: evidence.rawReports.length,
-    total:
-      evidence.screenshots.length +
-      evidence.videos.length +
-      evidence.traces.length +
-      evidence.logs.length +
-      evidence.attachments.length +
-      evidence.rawReports.length,
+    perTestEvidence,
+    executionArtifacts,
+    total: perTestEvidence,
+    totalWithRawReports: perTestEvidence + executionArtifacts,
   };
 }
 
@@ -138,6 +147,16 @@ function mapEvidence(tests, projectRoot, fs, path, evidenceConfig = {}) {
     ...evidence.logs,
     ...evidence.attachments,
   ];
+
+  for (const test of tests) {
+    test.attempts = (test.attempts ?? []).map(attempt => ({
+      ...attempt,
+      evidence: allEvidenceItems.filter(item =>
+        item.testId === test.id &&
+        item.retry === attempt.retry
+      ),
+    }));
+  }
 
   evidence.byTest = groupEvidenceBy(allEvidenceItems, 'testId');
   evidence.byModule = groupEvidenceBy(allEvidenceItems, 'module');

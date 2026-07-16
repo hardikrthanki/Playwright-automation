@@ -94,17 +94,17 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 165367,
+                      "duration": 153359,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Generated Email: imhardikthanki+1784030333272@gmail.com\n"
+                          "text": "Generated Email: imhardikthanki+1784118153500@gmail.com\n"
                         },
                         {
-                          "text": "Generated Mobile: 2015553272\n"
+                          "text": "Generated Mobile: 2015553500\n"
                         },
                         {
-                          "text": "Test Email: imhardikthanki+1784030333272@gmail.com\n"
+                          "text": "Test Email: imhardikthanki+1784118153500@gmail.com\n"
                         },
                         {
                           "text": "[INFO] Opening application\n"
@@ -116,10 +116,10 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[STEP] Registering: imhardikthanki+1784030333272@gmail.com\n"
+                          "text": "[STEP] Registering: imhardikthanki+1784118153500@gmail.com\n"
                         },
                         {
-                          "text": "Registration Email: imhardikthanki+1784030333272@gmail.com\n"
+                          "text": "Registration Email: imhardikthanki+1784118153500@gmail.com\n"
                         },
                         {
                           "text": "[CLICK] Send Code via SMS\n"
@@ -143,7 +143,7 @@
                           "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                         },
                         {
-                          "text": "Verify email sent to: imhardikthanki+1784030333272@gmail.com\n"
+                          "text": "Verify email sent to: imhardikthanki+1784118153500@gmail.com\n"
                         },
                         {
                           "text": "Open Gmail and click the verification link.\n"
@@ -368,7 +368,7 @@
                           "text": "[PASS] Complete Setup Clicked\n"
                         },
                         {
-                          "text": "[URL] https://checkout.stripe.com/c/pay/cs_test_a1PVwud0zIZcmLtAJ6IAma8Omt0xziRnytuBtrfwbZjf602HGClvIrVyWF#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRRRzU9UkRoTDZzZjI9azxccFVLbU9GRms9ZFZiZkY1UUJrN2Bwfzc9Q0I3X0E0PUJAdDVkMUBxVk1PZlRxQDV%2FNXc0c1xRTVU2cTNHX2RDV3FiX2c8PD01NT1qckNXUz1QJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl\n"
+                          "text": "[URL] https://checkout.stripe.com/c/pay/cs_test_a1Nwjli8YkuTx3SXxZTLxoLTRLNhjKnvHTDLXUECMlSzALehMv0dTyzlNu#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRRRzU9UkRoTDZzZjI9azxccFVLbU9GRms9ZFZiZkY1UUJrN2Bwfzc9Q0I3X0E0PUJAdDVkMUBxVk1PZlRxQDV%2FNXc0c1xRTVU2cTNHX2RDV3FiX2c8PD01NT1qckNXUz1QJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl\n"
                         },
                         {
                           "text": "[INFO] Completing Stripe Payment\n"
@@ -401,7 +401,7 @@
                           "text": "[PASS] Payment Submitted\n"
                         },
                         {
-                          "text": "[URL] https://checkout.stripe.com/c/pay/cs_test_a1PVwud0zIZcmLtAJ6IAma8Omt0xziRnytuBtrfwbZjf602HGClvIrVyWF#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRRRzU9UkRoTDZzZjI9azxccFVLbU9GRms9ZFZiZkY1UUJrN2Bwfzc9Q0I3X0E0PUJAdDVkMUBxVk1PZlRxQDV%2FNXc0c1xRTVU2cTNHX2RDV3FiX2c8PD01NT1qckNXUz1QJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl\n"
+                          "text": "[URL] https://checkout.stripe.com/c/pay/cs_test_a1Nwjli8YkuTx3SXxZTLxoLTRLNhjKnvHTDLXUECMlSzALehMv0dTyzlNu#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWnFgdnFaMDRRRzU9UkRoTDZzZjI9azxccFVLbU9GRms9ZFZiZkY1UUJrN2Bwfzc9Q0I3X0E0PUJAdDVkMUBxVk1PZlRxQDV%2FNXc0c1xRTVU2cTNHX2RDV3FiX2c8PD01NT1qckNXUz1QJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl\n"
                         },
                         {
                           "text": "[DONE] Payment Completed\n"
@@ -430,19 +430,19 @@
                       "steps": [
                         {
                           "title": "Step 1 - Registration",
-                          "duration": 20039
+                          "duration": 19442
                         },
                         {
                           "title": "Step 2 - Verify Email",
-                          "duration": 29940
+                          "duration": 9687
                         },
                         {
                           "title": "Step 3 - Login",
-                          "duration": 8818
+                          "duration": 7655
                         },
                         {
                           "title": "Step 4 - Mobile Verification",
-                          "duration": 5060
+                          "duration": 5082
                         },
                         {
                           "title": "Step 5 - Risk Profile",
@@ -450,22 +450,22 @@
                         },
                         {
                           "title": "Step 6 - Compliance",
-                          "duration": 41491
+                          "duration": 43120
                         },
                         {
                           "title": "Step 7 - Plan Selection",
-                          "duration": 8721
+                          "duration": 8932
                         },
                         {
                           "title": "Step 8 - Stripe Payment",
-                          "duration": 17447
+                          "duration": 16348
                         },
                         {
                           "title": "Step 9 - Dashboard Validation",
-                          "duration": 1544
+                          "duration": 11243
                         }
                       ],
-                      "startTime": "2026-07-14T11:58:50.234Z",
+                      "startTime": "2026-07-15T12:22:30.816Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -491,8 +491,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-14T11:58:49.078Z",
-    "duration": 144288.10700000002,
+    "startTime": "2026-07-15T12:22:27.300Z",
+    "duration": 135607.79,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

@@ -1,0 +1,9 @@
+{
+  "modules": [
+    {
+      "name": "AIR Integrity",
+      "patterns": ["Retry Validation", "Failure Evidence"],
+      "critical": true
+    }
+  ]
+}

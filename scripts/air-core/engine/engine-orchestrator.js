@@ -10,6 +10,7 @@ const { buildReleaseDecision } = require('./release-engine');
 const { buildRecommendations } = require('../services/recommendation-engine');
 const { buildHistory } = require('./history-engine');
 const { buildSearchIndex } = require('./search-engine');
+const { buildCoverageGaps } = require('./coverage-gap-engine');
 
 function createEngine(name, execute, options = {}) {
   return {
@@ -38,6 +39,74 @@ function buildManualDefectTests(manualDefects = []) {
     }));
 }
 
+function averagePercent(values = []) {
+  const numericValues = values.filter(value => typeof value === 'number');
+
+  if (numericValues.length === 0) {
+    return 0;
+  }
+
+  return Math.round(numericValues.reduce((sum, value) => sum + value, 0) / numericValues.length);
+}
+
+function getDedupeStatusPriority(status) {
+  const priorities = {
+    failed: 5,
+    interrupted: 4,
+    flaky: 3,
+    passed: 2,
+    skipped: 1,
+    unknown: 0,
+  };
+
+  return priorities[status] ?? priorities.unknown;
+}
+
+function dedupeAirTests(tests = []) {
+  const groups = tests.reduce((map, test) => {
+    const id = test.canonicalId ?? test.id;
+
+    if (!map.has(id)) {
+      map.set(id, []);
+    }
+
+    map.get(id).push(test);
+
+    return map;
+  }, new Map());
+  const duplicateCanonicalTestIds = [];
+  const dedupedTests = [];
+
+  for (const [id, records] of groups.entries()) {
+    const preferred = [...records].sort((left, right) =>
+      getDedupeStatusPriority(right.status) - getDedupeStatusPriority(left.status)
+    )[0];
+
+    if (records.length > 1) {
+      duplicateCanonicalTestIds.push({
+        id,
+        count: records.length,
+      });
+    }
+
+    dedupedTests.push({
+      ...preferred,
+      attempts: records.flatMap(record => record.attempts ?? []),
+      attemptCount: records.reduce((sum, record) => sum + Math.max(1, record.attemptCount ?? record.attempts?.length ?? 1), 0),
+      durationMs: records.reduce((sum, record) => sum + (record.durationMs ?? 0), 0),
+      attachments: records.flatMap(record => record.attachments ?? []),
+      duplicateSourceRecords: records.length,
+      deduplicated: records.length > 1,
+    });
+  }
+
+  return {
+    tests: dedupedTests,
+    duplicateCanonicalTestIds,
+    duplicateCount: duplicateCanonicalTestIds.reduce((sum, duplicate) => sum + duplicate.count - 1, 0),
+  };
+}
+
 function getDefaultEnginePipeline() {
   return [
     createEngine('Manual Defect Engine', (model, context) => {
@@ -61,6 +130,18 @@ function getDefaultEnginePipeline() {
           ...model.tests,
           ...manualDefectTests,
         ],
+      };
+    }),
+    createEngine('Canonical Test Dedupe Engine', model => {
+      const deduped = dedupeAirTests(model.tests);
+
+      return {
+        ...model,
+        tests: deduped.tests,
+        deduplication: {
+          canonicalTestIds: deduped.duplicateCanonicalTestIds,
+          duplicateCount: deduped.duplicateCount,
+        },
       };
     }),
     createEngine('Execution Summary Engine', model => {
@@ -101,6 +182,14 @@ function getDefaultEnginePipeline() {
         failures: failedTests,
       };
     }),
+    createEngine('Coverage Gap Engine', (model, context) => ({
+      ...model,
+      coverageGaps: buildCoverageGaps(model.tests, {
+        fs: context.fs,
+        path: context.path,
+        projectRoot: context.projectRoot,
+      }),
+    })),
     createEngine('Execution Context Engine', (model, context) => ({
       ...model,
       executionContext: buildExecutionContext({
@@ -132,6 +221,12 @@ function getDefaultEnginePipeline() {
         summary: {
           ...model.summary,
           businessHealth,
+          journeyCoverage: averagePercent(businessJourneys.map(journey => journey.coverage)),
+          criticalJourneyCoverage: averagePercent(
+            businessJourneys
+              .filter(journey => journey.critical)
+              .map(journey => journey.coverage)
+          ),
         },
       };
     }),
@@ -246,6 +341,7 @@ function runEnginePipeline(initialModel, context = {}, engines = getDefaultEngin
 module.exports = {
   buildManualDefectTests,
   createEngine,
+  dedupeAirTests,
   getDefaultEnginePipeline,
   runEnginePipeline,
 };

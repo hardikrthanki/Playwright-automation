@@ -81,6 +81,15 @@ test.describe(
     );
 
     test(
+      'Paid subscriber is not offered Overlay Strategists trial CTA',
+      async ({ page }) => {
+        await new BillingPage(
+          page
+        ).validatePaidSubscriberTrialCtaIsNotOffered();
+      }
+    );
+
+    test(
       'Stripe portal shows paid invoice history',
       async ({ page }) => {
         await new BillingPage(

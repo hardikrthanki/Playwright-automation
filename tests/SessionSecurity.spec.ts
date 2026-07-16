@@ -178,6 +178,58 @@ test.describe(
     );
 
     test(
+      'Logged-out protected deep links with query parameters redirect to login',
+      async ({ page }) => {
+        test.setTimeout(
+          120000
+        );
+
+        const protectedDeepLinks = [
+          '/dashboard/profile/?source=bookmark',
+          '/dashboard/billing/?tab=history',
+          '/dashboard/risk-compliance/?section=compliance',
+          '/dashboard/settings/?source=direct',
+          '/dashboard/security/?source=direct',
+          '/dashboard/subscription/?source=direct'
+        ];
+
+        for (const route of protectedDeepLinks) {
+          await page.goto(
+            `${BASE_URL}${route}`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            page
+          ).toHaveURL(
+            /\/login/,
+            {
+              timeout: 30000
+            }
+          );
+
+          await expect(
+            page.locator(
+              'input[type="email"]'
+            ).first()
+          ).toBeVisible({
+            timeout: 10000
+          });
+
+          await expect(
+            page.locator(
+              'body'
+            )
+          ).not.toContainText(
+            /current subscription|risk profile|personal information|security settings/i
+          );
+        }
+      }
+    );
+
+    test(
       'Authenticated session can open dashboard in a new tab',
       async ({ page, context }) => {
         test.setTimeout(

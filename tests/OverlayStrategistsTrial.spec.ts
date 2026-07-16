@@ -324,6 +324,132 @@ if (
 
     if (
       envEnabled(
+        'OVERLAY_STRATEGISTS_STRIPE_CHECKOUT_DETAILS_ENABLED'
+      )
+    ) {
+      test(
+        'Overlay Strategists with-card trial opens Stripe checkout with trial details',
+        async ({ page }) => {
+
+        const email =
+          generateEmail(
+            'overlay-stripe-checkout-details'
+          );
+
+        const mobileNumber =
+          generateMobileNumber();
+
+        console.log(
+          'Overlay Stripe Checkout Details Email:',
+          email
+        );
+
+        console.log(
+          'Overlay Stripe Checkout Details Mobile:',
+          mobileNumber
+        );
+
+        await test.step(
+          'Register new user',
+          async () => {
+            const registration =
+              new RegistrationPage(
+                page
+              );
+
+            await registration.open();
+
+            await registration.register(
+              email,
+              mobileNumber
+            );
+          }
+        );
+
+        await test.step(
+          'Verify email manually when enabled',
+          async () => {
+            if (
+              AUTH_SETTINGS.emailVerificationRequired
+            ) {
+              console.log(
+                '\nMANUAL EMAIL VERIFICATION REQUIRED'
+              );
+              console.log(
+                `Verify email sent to: ${email}`
+              );
+              console.log(
+                'Open Gmail and click the verification link.'
+              );
+              console.log(
+                'After verification, resume Playwright.'
+              );
+
+              await page.pause();
+            }
+          }
+        );
+
+        await test.step(
+          'Login and complete onboarding prerequisites',
+          async () => {
+            const login =
+              new LoginPage(
+                page
+              );
+
+            await login.login(
+              email,
+              TEST_USERS.onboarding.password
+            );
+
+            await new MobileVerificationPage(
+              page
+            ).completeIfVisible(
+              mobileNumber
+            );
+
+            await new RiskProfilePage(
+              page
+            ).fill();
+
+            await new CompliancePage(
+              page
+            ).fill();
+          }
+        );
+
+        await test.step(
+          'Open Stripe checkout for Overlay Strategists trial',
+          async () => {
+            const planPage =
+              new PlanSelectionPage(
+                page
+              );
+
+            await planPage.selectOverlayStrategistsTrialWithCard();
+          }
+        );
+
+        await test.step(
+          'Validate Stripe checkout trial details without payment',
+          async () => {
+            const stripe =
+              new StripePaymentPage(
+                page
+              );
+
+            await stripe.validateTrialCheckoutDetails(
+              email
+            );
+          }
+        );
+        }
+      );
+    }
+
+    if (
+      envEnabled(
         'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
       )
     ) {
@@ -440,6 +566,130 @@ if (
               );
 
             await stripe.validateMissingCardDetailsBlocked();
+          }
+        );
+        }
+      );
+    }
+
+    if (
+      envEnabled(
+        'OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED'
+      )
+    ) {
+      test(
+        'Overlay Strategists with-card trial rejects declined Stripe card',
+        async ({ page }) => {
+
+        const email =
+          generateEmail(
+            'overlay-declined-card'
+          );
+
+        const mobileNumber =
+          generateMobileNumber();
+
+        console.log(
+          'Overlay Declined Card Email:',
+          email
+        );
+
+        console.log(
+          'Overlay Declined Card Mobile:',
+          mobileNumber
+        );
+
+        await test.step(
+          'Register new user',
+          async () => {
+            const registration =
+              new RegistrationPage(
+                page
+              );
+
+            await registration.open();
+
+            await registration.register(
+              email,
+              mobileNumber
+            );
+          }
+        );
+
+        await test.step(
+          'Verify email manually when enabled',
+          async () => {
+            if (
+              AUTH_SETTINGS.emailVerificationRequired
+            ) {
+              console.log(
+                '\nMANUAL EMAIL VERIFICATION REQUIRED'
+              );
+              console.log(
+                `Verify email sent to: ${email}`
+              );
+              console.log(
+                'Open Gmail and click the verification link.'
+              );
+              console.log(
+                'After verification, resume Playwright.'
+              );
+
+              await page.pause();
+            }
+          }
+        );
+
+        await test.step(
+          'Login and complete onboarding prerequisites',
+          async () => {
+            const login =
+              new LoginPage(
+                page
+              );
+
+            await login.login(
+              email,
+              TEST_USERS.onboarding.password
+            );
+
+            await new MobileVerificationPage(
+              page
+            ).completeIfVisible(
+              mobileNumber
+            );
+
+            await new RiskProfilePage(
+              page
+            ).fill();
+
+            await new CompliancePage(
+              page
+            ).fill();
+          }
+        );
+
+        await test.step(
+          'Open Stripe checkout for Overlay Strategists trial',
+          async () => {
+            const planPage =
+              new PlanSelectionPage(
+                page
+              );
+
+            await planPage.selectOverlayStrategistsTrialWithCard();
+          }
+        );
+
+        await test.step(
+          'Validate Stripe rejects declined card',
+          async () => {
+            const stripe =
+              new StripePaymentPage(
+                page
+              );
+
+            await stripe.validateDeclinedCardRejected();
           }
         );
         }

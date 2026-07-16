@@ -94,14 +94,14 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 162353,
+                      "duration": 134866,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "fast-risk-compliance-validation Email: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                          "text": "fast-risk-compliance-validation Email: imhardikthanki+fast-risk-compliance-validation-1784115830353@gmail.com\n"
                         },
                         {
-                          "text": "fast-risk-compliance-validation Mobile: 2015559418\n"
+                          "text": "fast-risk-compliance-validation Mobile: 2015550353\n"
                         },
                         {
                           "text": "[INFO] Opening application\n"
@@ -113,10 +113,10 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[STEP] Registering: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                          "text": "[STEP] Registering: imhardikthanki+fast-risk-compliance-validation-1784115830353@gmail.com\n"
                         },
                         {
-                          "text": "Registration Email: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                          "text": "Registration Email: imhardikthanki+fast-risk-compliance-validation-1784115830353@gmail.com\n"
                         },
                         {
                           "text": "[CLICK] Send Code via SMS\n"
@@ -140,7 +140,7 @@
                           "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                         },
                         {
-                          "text": "Verify email sent to: imhardikthanki+fast-risk-compliance-validation-1784027769418@gmail.com\n"
+                          "text": "Verify email sent to: imhardikthanki+fast-risk-compliance-validation-1784115830353@gmail.com\n"
                         },
                         {
                           "text": "Open Gmail and click the verification link.\n"
@@ -153,24 +153,6 @@
                         },
                         {
                           "text": "Login Attempt 1\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bfast-risk-compliance-validation-1784027769418%40gmail.com\n"
-                        },
-                        {
-                          "text": "Login Attempt 2\n"
-                        },
-                        {
-                          "text": "[CLICK] Submit Login\n"
-                        },
-                        {
-                          "text": "Current URL: https://puat.ooltool.com/login\n"
-                        },
-                        {
-                          "text": "Login Attempt 3\n"
                         },
                         {
                           "text": "[CLICK] Submit Login\n"
@@ -319,7 +301,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:16:07.991Z",
+                      "startTime": "2026-07-15T11:43:47.632Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -372,14 +354,14 @@
                           "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 122438,
+                          "duration": 70854,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-validation Email: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                              "text": "risk-validation Email: imhardikthanki+risk-validation-1784115942783@gmail.com\n"
                             },
                             {
-                              "text": "risk-validation Mobile: 2015554207\n"
+                              "text": "risk-validation Mobile: 2015552783\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -391,10 +373,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-validation-1784115942783@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-validation-1784115942783@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -418,7 +400,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-validation-1784027914207@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-validation-1784115942783@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -431,24 +413,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -543,7 +507,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:18:33.776Z",
+                          "startTime": "2026-07-15T11:45:41.916Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -588,14 +552,14 @@
                           "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 163083,
+                          "duration": 108642,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-validation Email: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                              "text": "compliance-validation Email: imhardikthanki+compliance-validation-1784115996655@gmail.com\n"
                             },
                             {
-                              "text": "compliance-validation Mobile: 2015559539\n"
+                              "text": "compliance-validation Mobile: 2015556655\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -607,10 +571,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-validation-1784115996655@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-validation-1784115996655@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -634,7 +598,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-validation-1784028019539@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-validation-1784115996655@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -647,24 +611,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-validation-1784028019539%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -861,7 +807,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:20:19.124Z",
+                          "startTime": "2026-07-15T11:46:35.777Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -906,14 +852,14 @@
                           "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 119601,
+                          "duration": 64921,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-experience-required Email: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                              "text": "risk-experience-required Email: imhardikthanki+risk-experience-required-1784116088699@gmail.com\n"
                             },
                             {
-                              "text": "risk-experience-required Mobile: 2015555577\n"
+                              "text": "risk-experience-required Mobile: 2015558699\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -925,10 +871,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-experience-required-1784116088699@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-experience-required-1784116088699@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -952,7 +898,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-experience-required-1784028165577@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-experience-required-1784116088699@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -965,24 +911,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-experience-required-1784028165577%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1017,7 +945,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:22:45.210Z",
+                          "startTime": "2026-07-15T11:48:08.179Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1048,7 +976,7 @@
                 },
                 {
                   "title": "Risk Profile strategy selection is required",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -1061,34 +989,15 @@
                         {
                           "workerIndex": 0,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 107355,
-                          "error": {
-                            "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n",
-                            "stack": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 25,
-                              "line": 347
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 25,
-                                "line": 347
-                              },
-                              "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 72727,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-strategy-required Email: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                              "text": "risk-strategy-required Email: imhardikthanki+risk-strategy-required-1784116136105@gmail.com\n"
                             },
                             {
-                              "text": "risk-strategy-required Mobile: 2015558004\n"
+                              "text": "risk-strategy-required Mobile: 2015556105\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1100,10 +1009,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-strategy-required-1784116136105@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-strategy-required-1784116136105@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1127,7 +1036,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-strategy-required-1784028268004@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-strategy-required-1784116136105@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1145,27 +1054,48 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-strategy-required-1784028268004%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile strategy selection is required\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Allowed Strategy\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile strategy selection is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:24:27.610Z",
+                          "startTime": "2026-07-15T11:48:55.540Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -1173,24 +1103,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 25,
-                            "line": 347
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-1bd2a2d688cd3b545570",
@@ -1211,17 +1131,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 1,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 120642,
+                          "duration": 62557,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-account-type-required Email: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                              "text": "risk-account-type-required Email: imhardikthanki+risk-account-type-required-1784116189761@gmail.com\n"
                             },
                             {
-                              "text": "risk-account-type-required Mobile: 2015551117\n"
+                              "text": "risk-account-type-required Mobile: 2015559761\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1233,10 +1153,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-account-type-required-1784116189761@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-account-type-required-1784116189761@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1260,7 +1180,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-account-type-required-1784028361117@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-account-type-required-1784116189761@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1273,24 +1193,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-account-type-required-1784028361117%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1331,7 +1233,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:25:59.769Z",
+                          "startTime": "2026-07-15T11:49:48.867Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1373,17 +1275,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 1,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 130825,
+                          "duration": 99299,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-persistence Email: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                              "text": "risk-persistence Email: imhardikthanki+risk-persistence-1784116235694@gmail.com\n"
                             },
                             {
-                              "text": "risk-persistence Mobile: 2015553865\n"
+                              "text": "risk-persistence Mobile: 2015555694\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1395,10 +1297,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-persistence-1784116235694@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-persistence-1784116235694@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1422,7 +1324,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-persistence-1784028463865@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-persistence-1784116235694@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1435,24 +1337,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-persistence-1784028463865%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1538,7 +1422,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:27:43.422Z",
+                          "startTime": "2026-07-15T11:50:34.647Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1580,17 +1464,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 1,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 173499,
+                          "duration": 116266,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-compliance-update Email: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                              "text": "risk-compliance-update Email: imhardikthanki+risk-compliance-update-1784116311500@gmail.com\n"
                             },
                             {
-                              "text": "risk-compliance-update Mobile: 2015558014\n"
+                              "text": "risk-compliance-update Mobile: 2015551500\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1602,10 +1486,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-compliance-update-1784116311500@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-compliance-update-1784116311500@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1629,7 +1513,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-compliance-update-1784028578014@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-compliance-update-1784116311500@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1642,24 +1526,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-compliance-update-1784028578014%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1811,7 +1677,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:29:37.342Z",
+                          "startTime": "2026-07-15T11:51:50.529Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1853,17 +1719,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 1,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 156450,
+                          "duration": 101636,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-state-required Email: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                              "text": "compliance-state-required Email: imhardikthanki+compliance-state-required-1784116407825@gmail.com\n"
                             },
                             {
-                              "text": "compliance-state-required Mobile: 2015557893\n"
+                              "text": "compliance-state-required Mobile: 2015557825\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1875,10 +1741,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-state-required-1784116407825@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-state-required-1784116407825@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1902,7 +1768,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-state-required-1784028727893@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-state-required-1784116407825@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1915,24 +1781,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-state-required-1784028727893%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -2090,7 +1938,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:32:07.444Z",
+                          "startTime": "2026-07-15T11:53:26.901Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -2121,7 +1969,7 @@
                 },
                 {
                   "title": "Compliance disclosures are required",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -2132,36 +1980,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 1,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 108042,
-                          "error": {
-                            "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n",
-                            "stack": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 25,
-                              "line": 347
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 25,
-                                "line": 347
-                              },
-                              "message": "Error: page.goto: net::ERR_CONNECTION_CLOSED at https://puat.ooltool.com/login\nCall log:\n\u001b[2m  - navigating to \"https://puat.ooltool.com/login\", waiting until \"domcontentloaded\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:347\n\n\u001b[0m \u001b[90m 345 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 346 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m         \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\u001b[33m.\u001b[39mgoto(\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m           \u001b[32m`${BASE_URL}/login`\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 349 |\u001b[39m           {\n \u001b[90m 350 |\u001b[39m             waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:347:25)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 69427,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-disclosures-required Email: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                              "text": "compliance-disclosures-required Email: imhardikthanki+compliance-disclosures-required-1784116492705@gmail.com\n"
                             },
                             {
-                              "text": "compliance-disclosures-required Mobile: 2015556060\n"
+                              "text": "compliance-disclosures-required Mobile: 2015552705\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2173,10 +2002,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosures-required-1784116492705@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-disclosures-required-1784116492705@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2200,7 +2029,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-disclosures-required-1784028866060@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosures-required-1784116492705@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2218,27 +2047,114 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosures-required-1784028866060%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance disclosures are required\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Without Disclosures\n"
+                            },
+                            {
+                              "text": "[PASS] Compliance disclosures are required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:34:25.713Z",
+                          "startTime": "2026-07-15T11:54:52.030Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -2246,24 +2162,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 25,
-                            "line": 347
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-83a06ac4f94184bf1652",
@@ -2273,7 +2179,7 @@
                 },
                 {
                   "title": "Every Compliance disclosure must be accepted",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -2284,36 +2190,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 2,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 147593,
-                          "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:338:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 338
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:338\n\n\u001b[0m \u001b[90m 336 |\u001b[39m\n \u001b[90m 337 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 338 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 339 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 340 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 341 |\u001b[39m         }\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 338
-                              },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:338\n\n\u001b[0m \u001b[90m 336 |\u001b[39m\n \u001b[90m 337 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 338 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 339 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 340 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 341 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:338:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 98081,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-each-disclosure-required Email: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                              "text": "compliance-each-disclosure-required Email: imhardikthanki+compliance-each-disclosure-required-1784116545208@gmail.com\n"
                             },
                             {
-                              "text": "compliance-each-disclosure-required Mobile: 2015551484\n"
+                              "text": "compliance-each-disclosure-required Mobile: 2015555208\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2325,10 +2212,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-each-disclosure-required-1784116545208@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-each-disclosure-required-1784116545208@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2352,7 +2239,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-each-disclosure-required-1784028961484@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-each-disclosure-required-1784116545208@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2370,36 +2257,165 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-each-disclosure-required-1784028961484%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://puat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
+                              "text": "[INFO] Filling Risk Profile\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[STEP] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-each-disclosure-required-1784028961484%40gmail.com\n"
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating each Compliance disclosure is required\n"
+                            },
+                            {
+                              "text": "[CLICK] Open State Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select State\n"
+                            },
+                            {
+                              "text": "Selected State: Alabama\n"
+                            },
+                            {
+                              "text": "[PASS] State Selected\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 4\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 4 Accepted\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance With One Disclosure Missing\n"
+                            },
+                            {
+                              "text": "[PASS] Every Compliance disclosure is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:35:59.789Z",
+                          "startTime": "2026-07-15T11:55:44.411Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -2407,24 +2423,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 338
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-63f89be022e7b6edffb7",
@@ -2445,17 +2451,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 3,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 127640,
+                          "duration": 79142,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-disclosure-cancel Email: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                              "text": "compliance-disclosure-cancel Email: imhardikthanki+compliance-disclosure-cancel-1784116626812@gmail.com\n"
                             },
                             {
-                              "text": "compliance-disclosure-cancel Mobile: 2015551974\n"
+                              "text": "compliance-disclosure-cancel Mobile: 2015556812\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2467,10 +2473,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosure-cancel-1784116626812@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-disclosure-cancel-1784116626812@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2494,7 +2500,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-disclosure-cancel-1784029091974@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosure-cancel-1784116626812@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2507,24 +2513,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosure-cancel-1784029091974%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -2634,7 +2622,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:38:10.319Z",
+                          "startTime": "2026-07-15T11:57:06.247Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -2676,17 +2664,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 3,
+                          "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 162982,
+                          "duration": 111596,
                           "errors": [],
                           "stdout": [
                             {
-                              "text": "compliance-persistence Email: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                              "text": "compliance-persistence Email: imhardikthanki+compliance-persistence-1784116688811@gmail.com\n"
                             },
                             {
-                              "text": "compliance-persistence Mobile: 2015551551\n"
+                              "text": "compliance-persistence Mobile: 2015558811\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2698,10 +2686,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-persistence-1784116688811@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-persistence-1784116688811@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2725,7 +2713,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-persistence-1784029201551@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-persistence-1784116688811@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2738,24 +2726,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-persistence-1784029201551%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://puat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -2943,7 +2913,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-07-14T11:40:01.221Z",
+                          "startTime": "2026-07-15T11:58:08.259Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -3004,10 +2974,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21020,
+                      "duration": 18614,
                       "errors": [],
                       "stdout": [
                         {
@@ -3055,7 +3025,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:42:27.363Z",
+                      "startTime": "2026-07-15T11:59:44.023Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3097,10 +3067,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18444,
+                      "duration": 21328,
                       "errors": [],
                       "stdout": [
                         {
@@ -3139,7 +3109,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:42:48.626Z",
+                      "startTime": "2026-07-15T12:00:03.133Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3181,10 +3151,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19300,
+                      "duration": 19195,
                       "errors": [],
                       "stdout": [
                         {
@@ -3226,7 +3196,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:43:07.341Z",
+                      "startTime": "2026-07-15T12:00:25.273Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3268,10 +3238,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24182,
+                      "duration": 25030,
                       "errors": [],
                       "stdout": [
                         {
@@ -3328,7 +3298,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:43:26.940Z",
+                      "startTime": "2026-07-15T12:00:44.973Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3370,10 +3340,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22027,
+                      "duration": 24671,
                       "errors": [],
                       "stdout": [
                         {
@@ -3415,7 +3385,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:43:51.768Z",
+                      "startTime": "2026-07-15T12:01:10.810Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3457,10 +3427,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22201,
+                      "duration": 22467,
                       "errors": [],
                       "stdout": [
                         {
@@ -3520,7 +3490,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:44:14.272Z",
+                      "startTime": "2026-07-15T12:01:36.292Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3572,10 +3542,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 17607,
+                      "duration": 19055,
                       "errors": [],
                       "stdout": [
                         {
@@ -3614,7 +3584,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:44:36.883Z",
+                      "startTime": "2026-07-15T12:01:59.524Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3676,10 +3646,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 19364,
+                      "duration": 17596,
                       "errors": [],
                       "stdout": [
                         {
@@ -3718,7 +3688,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:44:54.817Z",
+                      "startTime": "2026-07-15T12:02:19.033Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3780,10 +3750,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 18280,
+                      "duration": 18963,
                       "errors": [],
                       "stdout": [
                         {
@@ -3822,7 +3792,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:45:14.427Z",
+                      "startTime": "2026-07-15T12:02:37.294Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3868,11 +3838,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-14T11:16:06.840Z",
-    "duration": 1768302.429,
-    "expected": 16,
+    "startTime": "2026-07-15T11:43:43.417Z",
+    "duration": 1163694.652,
+    "expected": 19,
     "skipped": 3,
-    "unexpected": 3,
+    "unexpected": 0,
     "flaky": 0
   }
 }

@@ -94,7 +94,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16355,
+                      "duration": 19306,
                       "errors": [],
                       "stdout": [
                         {
@@ -127,7 +127,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:52:22.267Z",
+                      "startTime": "2026-07-15T12:12:53.918Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -172,7 +172,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13334,
+                      "duration": 12705,
                       "errors": [],
                       "stdout": [
                         {
@@ -214,7 +214,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:52:39.528Z",
+                      "startTime": "2026-07-15T12:13:15.263Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -259,7 +259,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14580,
+                      "duration": 18872,
                       "errors": [],
                       "stdout": [
                         {
@@ -304,7 +304,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:52:53.213Z",
+                      "startTime": "2026-07-15T12:13:28.568Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -349,7 +349,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20140,
+                      "duration": 18982,
                       "errors": [],
                       "stdout": [
                         {
@@ -394,7 +394,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:53:08.564Z",
+                      "startTime": "2026-07-15T12:13:48.107Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -405,12 +405,12 @@
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video-1.webm"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video-1.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingDeep-Billing-Deep-V-2cb4b-voice-page-with-paid-status-chromium\\video.webm"
                         },
                         {
                           "name": "trace",
@@ -444,7 +444,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13797,
+                      "duration": 14483,
                       "errors": [],
                       "stdout": [
                         {
@@ -489,7 +489,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:53:29.176Z",
+                      "startTime": "2026-07-15T12:14:08.038Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -551,7 +551,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 11649,
+                      "duration": 11815,
                       "errors": [],
                       "stdout": [
                         {
@@ -596,7 +596,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:53:43.410Z",
+                      "startTime": "2026-07-15T12:14:23.204Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -641,7 +641,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12435,
+                      "duration": 14365,
                       "errors": [],
                       "stdout": [
                         {
@@ -680,7 +680,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:53:55.401Z",
+                      "startTime": "2026-07-15T12:14:35.745Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -725,7 +725,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15170,
+                      "duration": 15582,
                       "errors": [],
                       "stdout": [
                         {
@@ -782,7 +782,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:54:08.160Z",
+                      "startTime": "2026-07-15T12:14:50.759Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -827,7 +827,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14309,
+                      "duration": 12677,
                       "errors": [],
                       "stdout": [
                         {
@@ -896,7 +896,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:54:23.787Z",
+                      "startTime": "2026-07-15T12:15:07.074Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -941,7 +941,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 17261,
+                      "duration": 33682,
                       "errors": [],
                       "stdout": [
                         {
@@ -980,7 +980,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:54:38.529Z",
+                      "startTime": "2026-07-15T12:15:20.299Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1025,7 +1025,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15053,
+                      "duration": 33204,
                       "errors": [],
                       "stdout": [
                         {
@@ -1076,7 +1076,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:54:56.245Z",
+                      "startTime": "2026-07-15T12:15:54.688Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1124,7 +1124,7 @@
           "specs": [
             {
               "title": "Manage subscription opens Stripe portal with subscription details",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1137,9 +1137,28 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 20494,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 55030,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i\u001b[39m\nReceived string:  \u001b[31m\"Ools Inc sandbox\u001b[39m\n\u001b[31mSandbox\u001b[39m\n\u001b[31mOols Inc sandbox partners with Stripe for simplified billing.\u001b[39m\n\u001b[31mReturn to Ools Inc sandbox\u001b[39m\n\u001b[31mPowered by\u001b[39m\n\u001b[31mTerms\u001b[39m\n\u001b[31mPrivacy\u001b[39m\n\u001b[31mCURRENT SUBSCRIPTION\u001b[39m\n\u001b[31m1-Starter\u001b[39m\n\u001b[31m$29.00 per month\u001b[39m\n\u001b[31mCharged in INR\u001b[39m\n\u001b[31mYour next billing date is August 14, 2026.\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mCancel subscription\u001b[39m\n\u001b[31mPAYMENT METHOD\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mExpires 10/2030\u001b[39m\n\u001b[31mMore options\u001b[39m\n\u001b[31mAdd payment method\u001b[39m\n\u001b[31mBILLING INFORMATION\u001b[39m\n\u001b[31mEmail\u001b[39m\n\u001b[31mimhardikthanki+plantest@gmail.com\u001b[39m\n\u001b[31mUpdate information\u001b[39m\n\u001b[31mINVOICE HISTORY\u001b[39m\n\u001b[31mJul 14, 2026\u001b[39m\n\u001b[31m₹2,900.11\u001b[39m\n\u001b[31m$29.00\u001b[39m\n\u001b[31mPaid·\u001b[39m\n\u001b[31m1-Starter\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i\u001b[39m\nReceived string:  \u001b[31m\"Ools Inc sandbox\u001b[39m\n\u001b[31mSandbox\u001b[39m\n\u001b[31mOols Inc sandbox partners with Stripe for simplified billing.\u001b[39m\n\u001b[31mReturn to Ools Inc sandbox\u001b[39m\n\u001b[31mPowered by\u001b[39m\n\u001b[31mTerms\u001b[39m\n\u001b[31mPrivacy\u001b[39m\n\u001b[31mCURRENT SUBSCRIPTION\u001b[39m\n\u001b[31m1-Starter\u001b[39m\n\u001b[31m$29.00 per month\u001b[39m\n\u001b[31mCharged in INR\u001b[39m\n\u001b[31mYour next billing date is August 14, 2026.\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mCancel subscription\u001b[39m\n\u001b[31mPAYMENT METHOD\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mExpires 10/2030\u001b[39m\n\u001b[31mMore options\u001b[39m\n\u001b[31mAdd payment method\u001b[39m\n\u001b[31mBILLING INFORMATION\u001b[39m\n\u001b[31mEmail\u001b[39m\n\u001b[31mimhardikthanki+plantest@gmail.com\u001b[39m\n\u001b[31mUpdate information\u001b[39m\n\u001b[31mINVOICE HISTORY\u001b[39m\n\u001b[31mJul 14, 2026\u001b[39m\n\u001b[31m₹2,900.11\u001b[39m\n\u001b[31m$29.00\u001b[39m\n\u001b[31mPaid·\u001b[39m\n\u001b[31m1-Starter\"\u001b[39m\n    at BillingPage.validateSubscriptionPortalOverview (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:870:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:68:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                          "column": 7,
+                          "line": 870
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mpages\\BillingPage.ts:870\n\n\u001b[0m \u001b[90m 868 |\u001b[39m     expect(\n \u001b[90m 869 |\u001b[39m       portalText\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 870 |\u001b[39m     )\u001b[33m.\u001b[39mtoMatch(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 871 |\u001b[39m       \u001b[35m/income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i\u001b[39m\n \u001b[90m 872 |\u001b[39m     )\u001b[33m;\u001b[39m\n \u001b[90m 873 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                            "column": 7,
+                            "line": 870
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i\u001b[39m\nReceived string:  \u001b[31m\"Ools Inc sandbox\u001b[39m\n\u001b[31mSandbox\u001b[39m\n\u001b[31mOols Inc sandbox partners with Stripe for simplified billing.\u001b[39m\n\u001b[31mReturn to Ools Inc sandbox\u001b[39m\n\u001b[31mPowered by\u001b[39m\n\u001b[31mTerms\u001b[39m\n\u001b[31mPrivacy\u001b[39m\n\u001b[31mCURRENT SUBSCRIPTION\u001b[39m\n\u001b[31m1-Starter\u001b[39m\n\u001b[31m$29.00 per month\u001b[39m\n\u001b[31mCharged in INR\u001b[39m\n\u001b[31mYour next billing date is August 14, 2026.\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mCancel subscription\u001b[39m\n\u001b[31mPAYMENT METHOD\u001b[39m\n\u001b[31mVisa •••• 4242\u001b[39m\n\u001b[31mExpires 10/2030\u001b[39m\n\u001b[31mMore options\u001b[39m\n\u001b[31mAdd payment method\u001b[39m\n\u001b[31mBILLING INFORMATION\u001b[39m\n\u001b[31mEmail\u001b[39m\n\u001b[31mimhardikthanki+plantest@gmail.com\u001b[39m\n\u001b[31mUpdate information\u001b[39m\n\u001b[31mINVOICE HISTORY\u001b[39m\n\u001b[31mJul 14, 2026\u001b[39m\n\u001b[31m₹2,900.11\u001b[39m\n\u001b[31m$29.00\u001b[39m\n\u001b[31mPaid·\u001b[39m\n\u001b[31m1-Starter\"\u001b[39m\n\n\u001b[90m   at \u001b[39mpages\\BillingPage.ts:870\n\n\u001b[0m \u001b[90m 868 |\u001b[39m     expect(\n \u001b[90m 869 |\u001b[39m       portalText\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 870 |\u001b[39m     )\u001b[33m.\u001b[39mtoMatch(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 871 |\u001b[39m       \u001b[35m/income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i\u001b[39m\n \u001b[90m 872 |\u001b[39m     )\u001b[33m;\u001b[39m\n \u001b[90m 873 |\u001b[39m   }\u001b[0m\n\u001b[2m    at BillingPage.validateSubscriptionPortalOverview (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:870:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:68:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "[INFO] Logging in\n"
@@ -1179,20 +1198,17 @@
                         },
                         {
                           "text": "[INFO] Validating subscription portal overview\n"
-                        },
-                        {
-                          "text": "[PASS] Subscription portal overview validated\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:55:11.732Z",
+                      "startTime": "2026-07-15T12:16:28.664Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1200,14 +1216,24 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-3aa78-l-with-subscription-details-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                        "column": 7,
+                        "line": 870
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "8af4e923bcaeed27d4a8-72d9355237e73b1a8094",
@@ -1217,7 +1243,7 @@
             },
             {
               "title": "Billing plans show plan action or status controls",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1228,11 +1254,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 13102,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 28283,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/billing/\u001b[39m\nReceived string:  \u001b[31m\"https://puat.ooltool.com/dashboard/portfolio\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    18 × unexpected value \"https://puat.ooltool.com/dashboard/portfolio\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/billing/\u001b[39m\nReceived string:  \u001b[31m\"https://puat.ooltool.com/dashboard/portfolio\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    18 × unexpected value \"https://puat.ooltool.com/dashboard/portfolio\"\u001b[22m\n\n    at BillingPage.validateBillingUrl (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:393:5)\n    at BillingPage.validatePlanActionControls (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:455:14)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:77:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                          "column": 5,
+                          "line": 393
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mpages\\BillingPage.ts:393\n\n\u001b[0m \u001b[90m 391 |\u001b[39m   \u001b[36mawait\u001b[39m expect(\n \u001b[90m 392 |\u001b[39m     \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 393 |\u001b[39m   )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 394 |\u001b[39m     \u001b[35m/billing/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 395 |\u001b[39m     {\n \u001b[90m 396 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                            "column": 5,
+                            "line": 393
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/billing/\u001b[39m\nReceived string:  \u001b[31m\"https://puat.ooltool.com/dashboard/portfolio\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 15000ms\u001b[22m\n\u001b[2m    18 × unexpected value \"https://puat.ooltool.com/dashboard/portfolio\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\BillingPage.ts:393\n\n\u001b[0m \u001b[90m 391 |\u001b[39m   \u001b[36mawait\u001b[39m expect(\n \u001b[90m 392 |\u001b[39m     \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 393 |\u001b[39m   )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 394 |\u001b[39m     \u001b[35m/billing/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 395 |\u001b[39m     {\n \u001b[90m 396 |\u001b[39m       timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at BillingPage.validateBillingUrl (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:393:5)\u001b[22m\n\u001b[2m    at BillingPage.validatePlanActionControls (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:455:14)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:77:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "[INFO] Logging in\n"
@@ -1266,20 +1311,17 @@
                         },
                         {
                           "text": "[CLICK] Open Plans Tab\n"
-                        },
-                        {
-                          "text": "[PASS] Billing Plan Action Controls Visible\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:55:32.767Z",
+                      "startTime": "2026-07-15T12:17:28.811Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1287,9 +1329,106 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-4a490-n-action-or-status-controls-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
+                        "column": 5,
+                        "line": 393
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8af4e923bcaeed27d4a8-528cb3a16c15db08f204",
+              "file": "BillingSubscriptionManagement.spec.ts",
+              "line": 74,
+              "column": 9
+            },
+            {
+              "title": "Paid subscriber is not offered Overlay Strategists trial CTA",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 180000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14517,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Logging in\n"
+                        },
+                        {
+                          "text": "Login Attempt 1\n"
+                        },
+                        {
+                          "text": "[CLICK] Submit Login\n"
+                        },
+                        {
+                          "text": "[PASS] Logged in successfully\n"
+                        },
+                        {
+                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                        },
+                        {
+                          "text": "[INFO] Validating paid subscriber is not offered Overlay Strategists trial CTA\n"
+                        },
+                        {
+                          "text": "[INFO] Validating Billing Overview\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Profile Menu\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Billing\n"
+                        },
+                        {
+                          "text": "[PASS] Billing Page Opened\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Plans Tab\n"
+                        },
+                        {
+                          "text": "[PASS] Paid subscriber trial CTA is not offered\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T12:18:00.885Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-ed9a4-erlay-Strategists-trial-CTA-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-ed9a4-erlay-Strategists-trial-CTA-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\BillingSubscriptionManagem-ed9a4-erlay-Strategists-trial-CTA-chromium\\trace.zip"
                         }
                       ]
                     }
@@ -1297,9 +1436,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "8af4e923bcaeed27d4a8-528cb3a16c15db08f204",
+              "id": "8af4e923bcaeed27d4a8-f22ee1cabf87191d886a",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 74,
+              "line": 83,
               "column": 9
             },
             {
@@ -1315,10 +1454,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21029,
+                      "duration": 22602,
                       "errors": [],
                       "stdout": [
                         {
@@ -1366,7 +1505,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:55:46.388Z",
+                      "startTime": "2026-07-15T12:18:17.101Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1392,7 +1531,7 @@
               ],
               "id": "8af4e923bcaeed27d4a8-873fd3e951508d26226e",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 83,
+              "line": 92,
               "column": 9
             },
             {
@@ -1408,10 +1547,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24443,
+                      "duration": 22035,
                       "errors": [],
                       "stdout": [
                         {
@@ -1462,7 +1601,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:56:07.919Z",
+                      "startTime": "2026-07-15T12:18:40.471Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1488,7 +1627,7 @@
               ],
               "id": "8af4e923bcaeed27d4a8-72cbf8d30c6a2489b61b",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 92,
+              "line": 101,
               "column": 9
             },
             {
@@ -1504,10 +1643,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 26734,
+                      "duration": 24030,
                       "errors": [],
                       "stdout": [
                         {
@@ -1558,7 +1697,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:56:32.816Z",
+                      "startTime": "2026-07-15T12:19:03.233Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1584,7 +1723,7 @@
               ],
               "id": "8af4e923bcaeed27d4a8-17794fe655c711167110",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 102,
+              "line": 111,
               "column": 11
             },
             {
@@ -1600,10 +1739,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22977,
+                      "duration": 58309,
                       "errors": [],
                       "stdout": [
                         {
@@ -1654,7 +1793,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:57:00.152Z",
+                      "startTime": "2026-07-15T12:19:28.367Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1680,7 +1819,7 @@
               ],
               "id": "8af4e923bcaeed27d4a8-30699fe679a8c0b771cb",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 111,
+              "line": 120,
               "column": 11
             },
             {
@@ -1696,28 +1835,28 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 39442,
+                      "duration": 77023,
                       "error": {
                         "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1205:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:123:11",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1252:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:132:11",
                         "location": {
                           "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
                           "column": 5,
-                          "line": 1205
+                          "line": 1252
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1205\n\n\u001b[0m \u001b[90m 1203 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1204 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1205 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1206 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1207 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1208 |\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1252\n\n\u001b[0m \u001b[90m 1250 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1251 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1252 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1253 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1254 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1255 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
                             "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
                             "column": 5,
-                            "line": 1205
+                            "line": 1252
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1205\n\n\u001b[0m \u001b[90m 1203 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1204 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1205 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1206 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1207 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1208 |\u001b[39m\u001b[0m\n\u001b[2m    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1205:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:123:11\u001b[22m"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByText(/current subscription|payment method|billing information/i).first()\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/current subscription|payment method|billing information/i).first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\BillingPage.ts:1252\n\n\u001b[0m \u001b[90m 1250 |\u001b[39m       \u001b[35m/current subscription|payment method|billing information/i\u001b[39m\n \u001b[90m 1251 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1252 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m      |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 1253 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 1254 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 1255 |\u001b[39m\u001b[0m\n\u001b[2m    at BillingPage.validateCancelSubscriptionFormWithoutCancelling (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts:1252:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\BillingSubscriptionManagement.spec.ts:132:11\u001b[22m"
                         }
                       ],
                       "stdout": [
@@ -1769,7 +1908,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-14T11:57:24.160Z",
+                      "startTime": "2026-07-15T12:20:27.761Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1796,7 +1935,7 @@
                       "errorLocation": {
                         "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\BillingPage.ts",
                         "column": 5,
-                        "line": 1205
+                        "line": 1252
                       }
                     }
                   ],
@@ -1805,7 +1944,7 @@
               ],
               "id": "8af4e923bcaeed27d4a8-bf22512348ca4915d01d",
               "file": "BillingSubscriptionManagement.spec.ts",
-              "line": 120,
+              "line": 129,
               "column": 11
             }
           ]
@@ -1831,10 +1970,10 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 36490,
+                  "duration": 31457,
                   "errors": [],
                   "stdout": [
                     {
@@ -1933,7 +2072,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-07-14T11:58:08.026Z",
+                  "startTime": "2026-07-15T12:21:48.847Z",
                   "annotations": [],
                   "attachments": [
                     {
@@ -1977,11 +2116,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-14T11:52:20.946Z",
-    "duration": 385158.387,
-    "expected": 18,
+    "startTime": "2026-07-15T12:12:51.000Z",
+    "duration": 572502.0669999999,
+    "expected": 17,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 3,
     "flaky": 0
   }
 }

@@ -132,11 +132,12 @@ function getJourneyRecommendation(journey) {
 function buildBusinessJourneys(input, legacyConfig) {
   const { modules, failedTests, config, thresholds, executionScope } = normalizeJourneyInput(input, legacyConfig);
 
-  return (config.businessJourneys ?? []).map(journey => {
+  const journeys = (config.businessJourneys ?? []).map(journey => {
     const journeyModules = getJourneyModules(journey, modules);
     const journeyModuleRecords = getJourneyModuleRecords(journeyModules, modules);
     const failedDependencies = getFailedDependencies(journeyModules, failedTests);
     const notExecutedSteps = getNotExecutedModules(journeyModules, modules);
+    const testIds = [...new Set(journeyModuleRecords.flatMap(module => module.tests ?? []))];
     const total = journeyModuleRecords.reduce((sum, module) => sum + (module.total ?? 0), 0);
     const passed = journeyModuleRecords.reduce((sum, module) => sum + (module.passed ?? 0), 0);
     const failed = journeyModuleRecords.reduce((sum, module) => sum + (module.failed ?? 0), 0);
@@ -171,6 +172,9 @@ function buildBusinessJourneys(input, legacyConfig) {
       productFailedCount: productFailed,
       reviewFailedCount: reviewFailed,
       modules: journeyModules,
+      testIds,
+      uniqueTestCount: testIds.length,
+      testReferenceCount: testIds.length,
       affectedModules: getAffectedModules(journeyModuleRecords, failedDependencies),
       failedDependencies: failedDependencies.map(failure => ({
         testId: failure.testId,
@@ -205,6 +209,23 @@ function buildBusinessJourneys(input, legacyConfig) {
         ...enrichedJourney,
         status,
       }),
+    };
+  });
+  const referenceCounts = journeys.reduce((map, journey) => {
+    for (const testId of journey.testIds ?? []) {
+      map.set(testId, (map.get(testId) ?? 0) + 1);
+    }
+
+    return map;
+  }, new Map());
+
+  return journeys.map(journey => {
+    const sharedTests = (journey.testIds ?? []).filter(testId => (referenceCounts.get(testId) ?? 0) > 1);
+
+    return {
+      ...journey,
+      sharedTests,
+      sharedTestCount: sharedTests.length,
     };
   });
 }

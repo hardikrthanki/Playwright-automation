@@ -1,0 +1,437 @@
+{
+  "generatedAt": "2026-07-15T18:54:34.867Z",
+  "provenance": {
+    "mode": "CURRENT_EXECUTION",
+    "sourceArtifact": "test-results/results.json",
+    "sourceFramework": "Playwright",
+    "generatedAt": "2026-07-15T18:54:34.380Z",
+    "restoredFromHistory": false,
+    "warning": ""
+  },
+  "sourceExecution": {
+    "source": "json-reporter",
+    "total": 573,
+    "rawTestCount": 573,
+    "attempts": 573,
+    "passed": 148,
+    "failed": 2,
+    "skipped": 423,
+    "flaky": 0,
+    "interrupted": 0,
+    "statuses": {
+      "expected": 148,
+      "skipped": 423,
+      "unexpected": 2
+    }
+  },
+  "airExecution": {
+    "total": 573,
+    "attempts": 573,
+    "passed": 148,
+    "failed": 2,
+    "skipped": 423,
+    "flaky": 0,
+    "interrupted": 0,
+    "retryCount": 0
+  },
+  "reconciliation": {
+    "status": "PASS",
+    "sourceTotal": 573,
+    "expectedAirTotal": 573,
+    "airTotal": 573,
+    "difference": 0
+  },
+  "duplicates": {
+    "canonicalTestIds": [],
+    "count": 0,
+    "sourceDuplicateExtraCount": 0,
+    "pipelineDuplicateExtraCount": 0
+  },
+  "orphanEvidence": [],
+  "evidenceClassification": {
+    "perTestEvidence": 440,
+    "executionArtifacts": 2,
+    "rawReports": 2,
+    "totalWithRawReports": 442,
+    "rawReportsCountAsFailureEvidence": false
+  },
+  "invalidModuleReferences": [],
+  "invalidJourneyReferences": [],
+  "historicalContaminationDetected": false,
+  "evidenceTraceability": {
+    "failedTests": [
+      {
+        "testId": "chromium > BillingSubscriptionManagement.spec.ts > Billing Subscription Management > Manage subscription opens Stripe portal with subscription details",
+        "testName": "Billing Subscription Management > Manage subscription opens Stripe portal with subscription details",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > BillingSubscriptionManagement.spec.ts > Billing Subscription Management > Stripe portal shows paid invoice history",
+        "testName": "Billing Subscription Management > Stripe portal shows paid invoice history",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      }
+    ]
+  },
+  "releaseTraceability": {
+    "status": "PASS",
+    "reasons": [
+      "Critical journeys are not blocked",
+      "Warnings require review",
+      "Release can proceed after evidence review"
+    ],
+    "reasonTraceability": [
+      {
+        "reason": "Critical journeys are not blocked",
+        "source": "warnings",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Manage subscription opens Stripe portal with subscription details",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Stripe portal shows paid invoice history",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ]
+      },
+      {
+        "reason": "Warnings require review",
+        "source": "warnings",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Manage subscription opens Stripe portal with subscription details",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Stripe portal shows paid invoice history",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ]
+      },
+      {
+        "reason": "Release can proceed after evidence review",
+        "source": "warnings",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Manage subscription opens Stripe portal with subscription details",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Stripe portal shows paid invoice history",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+          }
+        ]
+      }
+    ],
+    "warnings": 22,
+    "blockers": 0
+  }
+}

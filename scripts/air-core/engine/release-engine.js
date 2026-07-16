@@ -245,6 +245,56 @@ function calculateReleaseConfidence(decision, quality = {}, summary = {}) {
   return summary.passRate ?? 0;
 }
 
+function buildReasonTraceability(reasons = [], { blockers = [], warnings = [], summary = {}, quality = {}, evidence = {} }) {
+  return asArray(reasons).map(reason => {
+    if (blockers.length > 0) {
+      return {
+        reason,
+        source: 'blockers',
+        references: blockers.map(blocker => ({
+          type: blocker.type,
+          name: blocker.name,
+          detail: blocker.reason,
+        })),
+      };
+    }
+
+    if (warnings.length > 0) {
+      return {
+        reason,
+        source: 'warnings',
+        references: warnings.map(warning => ({
+          type: warning.type,
+          name: warning.name,
+          detail: warning.reason,
+        })),
+      };
+    }
+
+    return {
+      reason,
+      source: 'summary',
+      references: [
+        {
+          type: 'Execution Summary',
+          name: 'Pass rate',
+          value: summary.passRate ?? 0,
+        },
+        {
+          type: 'Quality',
+          name: 'Quality score',
+          value: quality.score ?? 0,
+        },
+        {
+          type: 'Evidence',
+          name: 'Per-test evidence',
+          value: evidence.summary?.perTestEvidence ?? evidence.summary?.total ?? 0,
+        },
+      ],
+    };
+  });
+}
+
 function buildReleaseDecision({
   summary = {},
   failedTests = [],
@@ -326,6 +376,13 @@ function buildReleaseDecision({
   const requiredAction = getConfiguredAction(decision, rules);
   const confidence = calculateReleaseConfidence(decision, quality, summary);
   const risk = RISK_BY_DECISION[decision] ?? 'HIGH';
+  const reasonTraceability = buildReasonTraceability(reasons, {
+    blockers,
+    warnings,
+    summary,
+    quality,
+    evidence,
+  });
 
   return {
     decision,
@@ -334,6 +391,7 @@ function buildReleaseDecision({
     risk,
     riskLevel: risk,
     reasons,
+    reasonTraceability,
     warnings,
     blockers,
     requiredActions: decision === 'GO' ? [] : [requiredAction],
@@ -357,4 +415,5 @@ module.exports = {
   getReleaseRules,
   hasPartialExecution,
   normalizeDecision,
+  buildReasonTraceability,
 };
