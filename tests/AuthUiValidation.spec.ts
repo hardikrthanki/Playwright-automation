@@ -151,6 +151,57 @@ test.describe(
     );
 
     test(
+      'Login password draft is cleared after refresh',
+      async ({ page }) => {
+
+        await page.goto(
+          `${BASE_URL}/login`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        const passwordInput =
+          page.getByLabel(
+            /^password$/i
+          ).or(
+            page.locator(
+              'input[name="password"], input[type="password"]'
+            )
+          ).first();
+
+        await expect(
+          passwordInput
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        await passwordInput.fill(
+          'DraftPassword123!'
+        );
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          passwordInput
+        ).toHaveValue(
+          ''
+        );
+      }
+    );
+
+    test(
       'Forgot password back to login clears reset-only navigation state',
       async ({ page }) => {
 
@@ -193,6 +244,40 @@ test.describe(
     );
 
     test(
+      'Forgot password email draft is cleared after refresh',
+      async ({ page }) => {
+
+        const forgotPassword =
+          new ForgotPasswordPage(page);
+
+        await forgotPassword.open();
+
+        await forgotPassword.emailInput.fill(
+          'draft-reset@example.com'
+        );
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/forgot-password/,
+          {
+            timeout: 10000
+          }
+        );
+
+        await expect(
+          forgotPassword.emailInput
+        ).toHaveValue(
+          ''
+        );
+      }
+    );
+
+    test(
       'Forgot password direct link remains usable after refresh',
       async ({ page }) => {
 
@@ -231,6 +316,74 @@ test.describe(
         await expect(
           forgotPassword.sendResetButton
         ).toBeVisible();
+      }
+    );
+
+    test(
+      'Public auth routes tolerate trailing slash and unknown query parameters',
+      async ({ page }) => {
+
+        const publicRoutes = [
+          {
+            url:
+              `${BASE_URL}/login/?unknown=automation-safe-check`,
+
+            expectedUrl:
+              /\/login/,
+
+            content:
+              /sign in|continue with email/i
+          },
+          {
+            url:
+              `${BASE_URL}/forgot-password/?unknown=automation-safe-check`,
+
+            expectedUrl:
+              /\/forgot-password/,
+
+            content:
+              /forgot password|reset password|email/i
+          },
+          {
+            url:
+              `${BASE_URL}/register/?unknown=automation-safe-check`,
+
+            expectedUrl:
+              /\/register|\/signup/,
+
+            content:
+              /create account|sign up|mobile number/i
+          }
+        ];
+
+        for (const route of publicRoutes) {
+          await page.goto(
+            route.url,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            page
+          ).toHaveURL(
+            route.expectedUrl,
+            {
+              timeout: 10000
+            }
+          );
+
+          await expect(
+            page.locator(
+              'body'
+            )
+          ).toContainText(
+            route.content,
+            {
+              timeout: 10000
+            }
+          );
+        }
       }
     );
 

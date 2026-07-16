@@ -80,14 +80,14 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 | --- | --- | --- | --- | --- | --- |
 | 1 | Start trial without payment details | Critical | Started | Manual email verification | Controlled without-card activation test validates dashboard redirect and Overlay Strategists in Billing |
 | 2 | Trial is displayed as available | High | Started | Manual email verification | `OverlayStrategistsTrial.spec.ts` validates both with-card and without-card trial CTAs after onboarding prerequisites |
-| 3 | Broker account limit is one | Critical | Blocked | Broker test integration/data | Requires broker connection automation |
-| 4 | Linked account limit is five | Critical | Blocked | Broker linked account data | Requires connected broker fixture |
-| 5 | Portfolio position limit is 100 | Critical | Blocked | Portfolio import fixture | Requires broker or portfolio seed data |
+| 3 | Broker account limit is one | Critical | Known Bug | Product fix required | Confirmed issue: manual entry is currently counted as broker integration. Expected behavior is that manual entry should not consume broker integration limit |
+| 4 | Linked account limit is ten | Critical | Manual Verified | Broker linked account data for automation | Manually verified that 10 broker accounts can be linked. Full automation requires connected broker fixture or backend/API support |
+| 5 | Portfolio position limit is 100 | Critical | Blocked | Portfolio import/API seed fixture | UI can display the limit, but enforcement is impractical through UI because it requires safely creating/importing hundreds of positions |
 | 6 | Premium Overlay Strategists features available | High | Started | Runtime entitlement checks need feature-specific pages | Plan-selection validation confirms the Overlay Strategists premium benefit and limit summary is displayed before trial activation |
-| 7 | Start trial with valid card | Critical | Started | Manual email verification and Stripe test checkout | Controlled with-card checkout test added behind `OVERLAY_STRATEGISTS_WITH_CARD_ENABLED`; read-only Stripe checkout details validation added behind `OVERLAY_STRATEGISTS_STRIPE_CHECKOUT_DETAILS_ENABLED` |
+| 7 | Start trial with valid card | Critical | Known Bug | Product fix required | With-card trial activation succeeds, but Billing incorrectly continues to show Free Plan and does not show the saved payment method. Expected Billing state: active Free Trial with associated payment method |
 | 7A | Authorization failure handling | Critical | Started | Manual email verification and Stripe test checkout | Declined-card authorization failure is automated behind `OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED`; trial is not activated and Stripe displays a failure message |
 | 8 | No subscription charge during trial | Critical | Blocked | Stripe/Admin access | Cannot verify payment ledger without Stripe/API access |
-| 9 | Card information securely saved | High | Blocked | Stripe/customer payment method access | Need backend/admin/API validation |
+| 9 | Card information securely saved | High | Known Bug | Product fix required, then Stripe/API validation | Saved card details are not shown on Billing after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence |
 | 10 | Existing paid subscriber cannot start trial | Critical | Started | Existing paid account fixture | Billing plans validation confirms paid subscriber is not offered the Overlay Strategists trial CTA |
 | 11 | Same email cannot receive another trial | Critical | Future | Repeat-trial fixture | Needs deterministic previously-used account |
 | 12 | Same phone cannot receive another trial | Critical | Future | Repeat phone fixture | Need safe duplicate-phone data |

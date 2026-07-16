@@ -801,7 +801,10 @@ if (
                 page
               );
 
+            await planPage.validateOverlayStrategistsTrialOptions();
+            await planPage.validateOverlayStrategistsFeatureSummary();
             await planPage.selectOverlayStrategistsTrialWithoutCard();
+            await planPage.validateNotRedirectedToStripeCheckout();
           }
         );
 
@@ -830,6 +833,8 @@ if (
             await billing.validatePlanVisible(
               'Overlay Strategists'
             );
+
+            await billing.validatePlansTabStable();
           }
         );
         }

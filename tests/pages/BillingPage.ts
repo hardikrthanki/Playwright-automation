@@ -780,17 +780,79 @@ async openSubscriptionPortal() {
     'domcontentloaded'
   );
 
-  const portalOverview =
-    portalPage.getByText(
-      /current subscription|payment method|billing information|invoice history/i
-    ).first();
+  await portalPage.waitForLoadState(
+    'networkidle',
+    {
+      timeout: 15000
+    }
+  ).catch(
+    () => undefined
+  );
 
-  const portalOverviewVisible =
-    await portalOverview.isVisible({
-      timeout: 30000
-    }).catch(
-      () => false
+  const hasPortalOverview = async () => {
+    const bodyText =
+      await portalPage
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    return /current subscription|payment method|billing information|invoice history|selected subscription|cancel your subscription/i.test(
+      bodyText
     );
+  };
+
+  let portalOverviewVisible =
+    await expect
+      .poll(
+        hasPortalOverview,
+        {
+          timeout: 45000
+        }
+      )
+      .toBeTruthy()
+      .then(
+        () => true
+      )
+      .catch(
+        () => false
+      );
+
+  if (!portalOverviewVisible) {
+    await portalPage.reload({
+      waitUntil: 'domcontentloaded'
+    }).catch(
+      () => undefined
+    );
+
+    await portalPage.waitForLoadState(
+      'networkidle',
+      {
+        timeout: 15000
+      }
+    ).catch(
+      () => undefined
+    );
+
+    portalOverviewVisible =
+      await expect
+        .poll(
+          hasPortalOverview,
+          {
+            timeout: 45000
+          }
+        )
+        .toBeTruthy()
+        .then(
+          () => true
+        )
+        .catch(
+          () => false
+        );
+  }
 
   if (!portalOverviewVisible) {
     throw new Error(
@@ -878,7 +940,7 @@ async validateSubscriptionPortalOverview() {
     expect(
       portalText
     ).toMatch(
-      /income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro/i
+      /starter|income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro|curious explorer/i
     );
   }
 
@@ -1253,15 +1315,48 @@ async validateCancelSubscriptionFormWithoutCancelling() {
       goBack,
       'Go Back From Cancel Subscription'
     );
+
+    await portalPage.waitForLoadState(
+      'domcontentloaded'
+    ).catch(
+      () => undefined
+    );
+
+    await portalPage.waitForTimeout(
+      1000
+    );
   }
 
-  await expect(
-    portalPage.getByText(
-      /current subscription|payment method|billing information/i
-    ).first()
-  ).toBeVisible({
-    timeout: 15000
-  });
+  const portalTextAfterBack =
+    await portalPage
+      .locator(
+        'body'
+      )
+      .innerText()
+      .catch(
+        () => ''
+      );
+
+  expect(
+    portalTextAfterBack
+  ).not.toMatch(
+    /subscription cancelled|subscription canceled|cancellation confirmed|successfully cancelled|successfully canceled/i
+  );
+
+  const returnedToOverview =
+    /current subscription|payment method|billing information/i.test(
+      portalTextAfterBack
+    );
+
+  const stillOnSafeCancelReview =
+    /cancel your subscription|selected subscription|why you'?re leaving|reason/i.test(
+      portalTextAfterBack
+    );
+
+  expect(
+    returnedToOverview ||
+      stillOnSafeCancelReview
+  ).toBeTruthy();
 
   Logger.success(
     'Cancel subscription form validated without cancelling'

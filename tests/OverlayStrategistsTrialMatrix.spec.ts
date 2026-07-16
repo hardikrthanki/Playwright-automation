@@ -28,7 +28,7 @@ type UseCaseScenario = {
   sourceIds?: string[];
   title: string;
   priority: 'Critical' | 'High' | 'Medium' | 'Low';
-  status: 'automated' | 'blocked' | 'future';
+  status: 'automated' | 'blocked' | 'future' | 'known-bug' | 'manual-verified';
   automation?: string;
   dependency?: string;
 };
@@ -64,20 +64,20 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Broker account limit is one',
     priority: 'Critical',
-    status: 'blocked',
+    status: 'known-bug',
     dependency:
-      'Requires broker test integration and a trial account with broker connection controls.'
+      'Confirmed product bug: manual entry is currently counted as broker integration. Expected behavior is that manual entry must not consume broker-integration limit.'
   },
   {
     id: 'SC-04',
     sourceIds: [
       'SUB-TRIAL-005'
     ],
-    title: 'Linked account limit is five',
+    title: 'Linked account limit is ten',
     priority: 'Critical',
-    status: 'blocked',
+    status: 'manual-verified',
     dependency:
-      'Requires broker linked-account fixture and UI/API support to add linked accounts.'
+      'Manually verified that 10 broker accounts can be linked. Full automation requires a connected broker fixture or backend/API support.'
   },
   {
     id: 'SC-05',
@@ -88,7 +88,7 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     priority: 'Critical',
     status: 'blocked',
     dependency:
-      'Requires broker or portfolio seed data to create more than 100 positions safely.'
+      'UI can display the position limit, but enforcement is impractical through UI because it requires safely creating/importing hundreds of positions. Needs broker/API/database seed support.'
   },
   {
     id: 'SC-06',
@@ -109,9 +109,11 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Start trial with valid card',
     priority: 'Critical',
-    status: 'automated',
+    status: 'known-bug',
     automation:
-      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial with card'
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial with card',
+    dependency:
+      'Confirmed product bug: after activating the free trial with a valid payment card, Billing still displays Free Plan and does not show the saved payment method. Expected Billing state is active Free Trial with associated payment method.'
   },
   {
     id: 'SC-08',
@@ -132,9 +134,9 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Card information is securely saved',
     priority: 'High',
-    status: 'blocked',
+    status: 'known-bug',
     dependency:
-      'Requires Stripe customer/payment-method API or admin access.'
+      'Confirmed product bug: saved card details are not displayed on Billing after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence.'
   },
   {
     id: 'SC-10',

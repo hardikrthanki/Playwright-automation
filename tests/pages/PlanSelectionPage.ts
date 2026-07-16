@@ -839,6 +839,28 @@ hasText:/complete setup|continue to payment/i
 
 
 
+  async validateNotRedirectedToStripeCheckout() {
+
+    Logger.info(
+      'Validating no Stripe checkout redirect occurred'
+    );
+
+    await expect(
+      this.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com|billing\.stripe\.com/i,
+      {
+        timeout: 5000
+      }
+    );
+
+    Logger.success(
+      'No Stripe checkout redirect occurred'
+    );
+  }
+
+
+
   async selectPlan(
     planName: string
   ) {
