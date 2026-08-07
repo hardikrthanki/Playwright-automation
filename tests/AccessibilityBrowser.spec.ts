@@ -391,7 +391,18 @@ test.describe(
         const registration =
           new RegistrationPage(page);
 
-        await registration.open();
+        await page.goto(
+          `${BASE_URL}/register`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await expect(
+          registration.firstNameInput
+        ).toBeVisible({
+          timeout: 15000
+        });
 
         await page.reload({
           waitUntil: 'domcontentloaded'

@@ -3744,6 +3744,7 @@ const hasPreviousComparison = historyComparison.status === 'Compared' && history
 const comparisonMetrics = historyComparison.metrics ?? {};
 const historyFailureComparison = historyComparison.failures ?? {};
 const historyReleaseComparison = historyComparison.release ?? {};
+const executionIntelligence = airResults?.history?.executionIntelligence ?? {};
 
 function formatComparisonValue(metricName, value) {
   if (value === undefined || value === null) {
@@ -3880,7 +3881,25 @@ function renderComparisonList(items = [], emptyText = 'No changes detected') {
 function getComparisonItemText(item = {}) {
   return item.currentScore !== undefined
     ? `${item.previousScore}% -> ${item.currentScore}%`
-    : item.status ?? item.direction ?? '';
+    : item.summary ??
+      item.status ??
+      item.classification ??
+      item.direction ??
+      (
+        item.occurrenceRate !== undefined
+          ? `${item.occurrenceRate}% occurrence rate`
+          : ''
+      );
+}
+
+function getReadableHistoryName(item = {}) {
+  const rawName = item.name ?? item.testName ?? item.title ?? item.metric ?? 'History item';
+  const parts = String(rawName)
+    .split('>')
+    .map(part => part.trim())
+    .filter(Boolean);
+
+  return parts.at(-1) ?? rawName;
 }
 
 function renderHistorySignalCard(title, items = [], emptyText = 'No changes detected', tone = 'neutral') {
@@ -3897,7 +3916,7 @@ function renderHistorySignalCard(title, items = [], emptyText = 'No changes dete
         <ul>
           ${preview.map(item => `
             <li>
-              <b>${escapeHtml(item.name ?? item.testName ?? item.title ?? item.metric)}</b>
+              <b title="${escapeHtml(item.name ?? item.testName ?? item.title ?? item.metric ?? '')}">${escapeHtml(getReadableHistoryName(item))}</b>
               <small>${escapeHtml(getComparisonItemText(item))}</small>
             </li>`).join('')}
         </ul>
@@ -4024,6 +4043,11 @@ const historicalWinItems = [
     status: getComparisonDeltaLabel('confidence', '%'),
   },
 ];
+const recurringFailurePatterns = executionIntelligence.recurringFailures ?? [];
+const activeRecurringFailurePatterns = executionIntelligence.activeRecurringFailures ?? [];
+const flakyHistoryPatterns = executionIntelligence.flakyTests ?? [];
+const failureTimelinePatterns = executionIntelligence.failureTimelines ?? [];
+const executionFocusItems = executionIntelligence.focus ?? [];
 
 const currentModulesExecuted = (airResults?.modules ?? []).filter(module => (module.total ?? 0) > 0).length;
 const previousModulesExecuted = (historyComparison.previous?.modules ?? []).filter(module => (module.total ?? 0) > 0).length;
@@ -4062,13 +4086,16 @@ const mostStableJourney = [...(airResults?.businessJourneys ?? [])]
 const longestRunningModule = [...(airResults?.modules ?? [])]
   .sort((left, right) => (right.durationMs ?? 0) - (left.durationMs ?? 0))[0];
 const engineeringInsightItems = [
-  { name: 'Top Improvements', status: moduleComparison.improved.length ? `${moduleComparison.improved.length} module improvements` : 'No module improvements detected' },
+  ...executionFocusItems.map(item => ({
+    name: item.type,
+    status: `${item.summary} ${item.action}`,
+  })),
+  { name: 'Active Recurring Failures', status: activeRecurringFailurePatterns.length ? `${activeRecurringFailurePatterns.length} active recurring pattern(s) require root-cause review` : 'No active recurring failure pattern detected' },
+  { name: 'Flaky Test Patterns', status: flakyHistoryPatterns.length ? `${flakyHistoryPatterns.length} flaky pattern(s) detected` : 'No flaky pattern detected' },
   { name: 'Top Regressions', status: moduleComparison.regressed.length ? `${moduleComparison.regressed.length} module regressions` : 'No module regressions detected' },
   { name: 'Most Improved Module', status: mostImprovedModule ? `${mostImprovedModule.name} (${mostImprovedModule.previousScore}% -> ${mostImprovedModule.currentScore}%)` : 'No improvement trend yet' },
   { name: 'Highest Risk Module', status: highestRiskModule ? `${highestRiskModule.name} (${highestRiskModule.risk})` : 'No module risk data' },
-  { name: 'Fastest Growing Failure Area', status: newFailures.length ? `${newFailures.length} new failure(s)` : 'No growing failure area' },
   { name: 'Most Stable Journey', status: mostStableJourney ? `${mostStableJourney.name} (${mostStableJourney.score}%)` : 'No stable journey trend yet' },
-  { name: 'Longest Running Test Area', status: longestRunningModule ? `${longestRunningModule.name} (${formatDuration(longestRunningModule.durationMs ?? 0)})` : 'No duration data' },
 ];
 const timelineRows = historySnapshots
   .map((snapshot, index) => `
@@ -4151,6 +4178,7 @@ function getComparisonDeltaLabel(metricName, suffix = '') {
 
 function renderHistoryTrendCard(title, trendKey, formatter = value => `${value}%`, options = {}) {
   const points = airResults?.history?.trends?.[trendKey]?.points ?? [];
+  const trendSummary = airResults?.history?.trends?.[trendKey]?.summary ?? {};
   const latestPoints = points.slice(-8);
   const trendDescriptions = {
     quality: 'Quality score by recent AIR execution.',
@@ -4204,6 +4232,54 @@ function renderHistoryTrendCard(title, trendKey, formatter = value => `${value}%
             </div>`;
         }).join('')}
       </div>
+      <div class="history-trend-summary">
+        <span>${escapeHtml(trendSummary.direction ?? 'No Trend')}</span>
+        <small>Avg ${escapeHtml(formatter(trendSummary.average ?? 0))} &bull; High ${escapeHtml(formatter(trendSummary.highest ?? 0))} &bull; Low ${escapeHtml(formatter(trendSummary.lowest ?? 0))}</small>
+      </div>
+    </div>`;
+}
+
+function renderFailureTimelinePreview(items = []) {
+  const visibleItems = items.slice(0, 4);
+
+  if (!hasPreviousComparison) {
+    return renderEmptyState({
+      title: 'Failure timeline not available.',
+      reason: 'AIR needs at least two executions to build per-test failure timelines.',
+      action: 'Run another execution and regenerate the AIR report.',
+      icon: 'FT',
+    });
+  }
+
+  if (visibleItems.length === 0) {
+    return renderEmptyState({
+      title: 'No failure timeline patterns detected.',
+      reason: 'No failed tests were found across stored historical executions.',
+      action: 'Continue monitoring future executions.',
+      icon: 'FT',
+    });
+  }
+
+  return `
+    <div class="failure-timeline-preview">
+      <div class="failure-timeline-count">Showing ${escapeHtml(String(visibleItems.length))} of ${escapeHtml(String(items.length))} historical failure pattern(s)</div>
+      ${visibleItems.map(item => `
+        <div class="failure-timeline-row">
+          <div>
+            <strong title="${escapeHtml(item.name ?? item.testName ?? 'Failure')}">${escapeHtml(getReadableHistoryName(item))}</strong>
+            <span>${escapeHtml(String(item.failedCount ?? 0))} failed occurrence(s) across history &bull; ${escapeHtml(String(item.occurrenceRate ?? 0))}% occurrence rate</span>
+          </div>
+          <div class="failure-timeline-meta">
+            <em class="${String(item.currentStatus ?? '').toLowerCase() === 'failed' ? 'bad' : 'good'}">${escapeHtml(item.classification ?? 'Historical')}</em>
+            <small>${escapeHtml(item.currentStatus === 'failed' ? 'Current run failed' : 'Current run passed')}</small>
+          </div>
+          <div class="failure-timeline-dots" aria-label="${escapeHtml(item.summary ?? 'Failure timeline')}">
+            ${(item.timeline ?? []).slice(-8).map(point => `
+              <i class="${point.status === 'failed' ? 'bad' : 'good'}" title="${escapeHtml(getHistoryTooltip(point, point.index - 1, point.status))}"></i>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
     </div>`;
 }
 
@@ -4318,7 +4394,7 @@ const qualityFactorRows =
       </tr>`)
     .join('');
 
-const totalAirPages = 11;
+const totalAirPages = 13;
 const currentBranch =
   airResults?.project?.branch ??
   process.env.GITHUB_REF_NAME ??
@@ -4449,6 +4525,29 @@ function getTooltip(key, fallback = '') {
 function helpLabel(label, keyOrText, fallback = '') {
   const helpText = tooltipMetadata[keyOrText] ?? keyOrText ?? fallback;
   return `${escapeHtml(label)} <i class="metric-help"${tooltipAttr(helpText)}>?</i>`;
+}
+
+function statusTone(status) {
+  const normalized = String(status ?? '').toLowerCase();
+
+  if (normalized === 'passed') return 'good';
+  if (normalized === 'failed' || normalized === 'timedout') return 'bad';
+  if (normalized === 'skipped' || normalized === 'blocked') return 'warn';
+  if (normalized === 'flaky') return 'info';
+
+  return 'info';
+}
+
+function statusLabel(status) {
+  const normalized = String(status ?? '').toLowerCase();
+
+  if (normalized === 'passed') return 'Passed';
+  if (normalized === 'failed') return 'Failed';
+  if (normalized === 'timedout') return 'Timed Out';
+  if (normalized === 'skipped') return 'Skipped';
+  if (normalized === 'flaky') return 'Flaky';
+
+  return status ? String(status) : 'Review';
 }
 
 function renderEmptyState({ title, reason, action, icon = 'AIR', metrics = [] }) {
@@ -4690,6 +4789,98 @@ const engineStatusItems = [
     metrics: [['Engines', 14], ['Pipeline', 'Operational']],
   },
 ];
+
+const validationIntelligence = airResults?.validationIntelligence ?? {};
+const validationStatusCounts = validationIntelligence.summary?.byStatus ?? {};
+const validationAreaCounts = validationIntelligence.summary?.byArea ?? {};
+const validationTests = Array.isArray(airResults?.tests) ? airResults.tests : [];
+const validationTopAreas = Object.entries(validationAreaCounts)
+  .sort((left, right) => Number(right[1]) - Number(left[1]))
+  .slice(0, 6);
+const validationStatusCards = Object.entries(validationStatusCounts)
+  .sort(([left], [right]) => left.localeCompare(right))
+  .map(([status, count]) => `
+    <div class="validation-stat ${statusTone(status)}">
+      <span>${escapeHtml(statusLabel(status))}</span>
+      <strong>${escapeHtml(count)}</strong>
+      <small>Validation result</small>
+    </div>`)
+  .join('') || `
+    <div class="validation-stat info">
+      <span>No Data</span>
+      <strong>0</strong>
+      <small>Run tests to populate this section</small>
+    </div>`;
+const validationAreaCards = validationTopAreas
+  .map(([area, count]) => `
+    <article class="validation-area-card">
+      <span>${escapeHtml(area)}</span>
+      <strong>${escapeHtml(count)}</strong>
+      <small>validated scenario${Number(count) === 1 ? '' : 's'}</small>
+    </article>`)
+  .join('') || `
+    <article class="validation-area-card">
+      <span>No Area Data</span>
+      <strong>0</strong>
+      <small>Validation areas unavailable</small>
+    </article>`;
+const validationAreaGroups = validationTests.reduce((groups, test) => {
+  const validation = test.validation ?? {};
+  const area = validation.area ?? test.module ?? 'General';
+
+  if (!groups[area]) {
+    groups[area] = [];
+  }
+
+  groups[area].push(test);
+
+  return groups;
+}, {});
+const validationGroupCards = Object.entries(validationAreaGroups)
+  .sort((left, right) => right[1].length - left[1].length)
+  .slice(0, 8)
+  .map(([area, testsInArea]) => {
+    const passedInArea = testsInArea.filter(test => String(test.status).toLowerCase() === 'passed').length;
+    const failedInArea = testsInArea.filter(test => String(test.status).toLowerCase() === 'failed').length;
+    const sampleScenarios = testsInArea
+      .slice(0, 4)
+      .map(test => `<li>${escapeHtml(test.validation?.scenario ?? test.title ?? 'Validation scenario')}</li>`)
+      .join('');
+
+    return `
+      <article class="validation-group-card">
+        <div class="validation-group-head">
+          <div>
+            <span>${escapeHtml(area)}</span>
+            <strong>${testsInArea.length} scenario${testsInArea.length === 1 ? '' : 's'}</strong>
+          </div>
+          <em>${passedInArea} pass${failedInArea ? ` / ${failedInArea} fail` : ''}</em>
+        </div>
+        <ul>${sampleScenarios}</ul>
+      </article>`;
+  })
+  .join('') || '<div class="empty-note">No validation records were found in this AIR execution.</div>';
+const validationDetailRows = validationTests
+  .map(test => {
+    const validation = test.validation ?? {};
+    return `
+      <tr>
+        <td><span class="badge ${statusTone(test.status)}">${escapeHtml(statusLabel(test.status))}</span></td>
+        <td>${escapeHtml(validation.area ?? test.module ?? 'General')}</td>
+        <td>${escapeHtml(validation.scenario ?? test.title ?? 'Validation scenario')}</td>
+        <td>${escapeHtml(validation.expectedOutcome ?? 'Expected outcome was not provided.')}</td>
+      </tr>`;
+  })
+  .join('') || '<tr><td colspan="4">No validation records were found.</td></tr>';
+const validationCoverageGapCards = (airResults?.coverageGaps?.items ?? [])
+  .slice(0, 6)
+  .map(item => `
+    <article class="validation-gap-card">
+      <span>${escapeHtml(item.category ?? item.status ?? 'Review')}</span>
+      <strong>${escapeHtml(item.title ?? item.fullTitle ?? 'Coverage item')}</strong>
+      <p>${escapeHtml(compactText(item.reason ?? item.dependency ?? item.nextAction ?? 'Review required.', 150))}</p>
+    </article>`)
+  .join('');
 function getAirCoreEngineGroup(index) {
   return index <= 1
     ? 'Input'
@@ -5568,12 +5759,32 @@ const airGoldenDashboardHtml = `<!doctype html>
     .history-spark{flex:1;position:relative;display:flex;justify-content:center;align-items:flex-end;height:100%}
     .history-spark span{width:70%;max-width:34px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);box-shadow:0 10px 22px rgba(57,231,95,.14)}
     .history-spark small{position:absolute;bottom:-23px;color:var(--muted);font-size:10px}
+    .history-trend-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid rgba(148,163,184,.12);padding-top:10px;color:#9fb0c5;font-size:11px;line-height:1.35}
+    .history-trend-summary span{color:#39e75f;font-weight:900;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+    .history-trend-summary small{color:#8fa2ba;text-align:right;line-height:1.35}
+    .history-panel-subsection{margin-top:16px;border-top:1px solid rgba(148,163,184,.12);padding-top:16px}
+    .history-panel-head.compact{margin-bottom:10px}
+    .history-panel-head.compact h3{margin:4px 0;color:#f8fafc;font-size:18px;line-height:1.2}
+    .failure-timeline-preview{display:grid;gap:10px;margin-top:12px}
+    .failure-timeline-count{color:#8fa2ba;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .failure-timeline-row{display:grid;grid-template-columns:minmax(0,1fr) max-content auto;gap:14px;align-items:center;border:1px solid rgba(148,163,184,.12);border-radius:14px;background:rgba(3,10,18,.42);padding:12px}
+    .failure-timeline-row strong{display:block;color:#f8fafc;font-size:13px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .failure-timeline-row span{display:block;margin-top:5px;color:#9fb0c5;font-size:11px;line-height:1.3}
+    .failure-timeline-meta{display:grid;gap:5px;justify-items:end;min-width:112px}
+    .failure-timeline-meta em{display:inline-flex;align-items:center;justify-content:center;max-width:132px;border:1px solid rgba(148,163,184,.14);border-radius:999px;background:rgba(148,163,184,.08);color:#cbd5e1;font-size:10px;font-style:normal;font-weight:950;letter-spacing:.05em;text-transform:uppercase;padding:6px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .failure-timeline-meta em.bad{border-color:rgba(255,107,107,.28);background:rgba(127,29,29,.18);color:#ff9b9b}
+    .failure-timeline-meta em.good{border-color:rgba(57,231,95,.24);background:rgba(20,83,45,.18);color:#9affac}
+    .failure-timeline-meta small{color:#8fa2ba;font-size:10px;white-space:nowrap}
+    .failure-timeline-dots{display:flex;gap:6px;align-items:center}
+    .failure-timeline-dots i{display:block;width:10px;height:10px;border-radius:999px;border:1px solid rgba(148,163,184,.2)}
+    .failure-timeline-dots i.good{background:#39e75f;box-shadow:0 0 14px rgba(57,231,95,.28)}
+    .failure-timeline-dots i.bad{background:#ff6b6b;box-shadow:0 0 14px rgba(255,107,107,.28)}
     .release-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px}
     .release-timeline div{border:1px solid rgba(57,231,95,.22);border-radius:12px;background:rgba(7,16,31,.74);padding:10px;display:grid;gap:8px;justify-items:start}
     .release-timeline small{color:var(--muted);font-size:11px}
     .history-section-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
     @media(max-width:1100px){.history-hero-grid,.history-section-grid{grid-template-columns:1fr}.history-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){.history-metric-grid{grid-template-columns:1fr}.history-sparkline{gap:7px;padding-inline:10px}.history-trend-card{min-height:auto}}
+    @media(max-width:760px){.history-metric-grid{grid-template-columns:1fr}.history-sparkline{gap:7px;padding-inline:10px}.history-trend-card{min-height:auto}.failure-timeline-row{grid-template-columns:1fr}.failure-timeline-meta{justify-items:start}.failure-timeline-dots{justify-content:flex-start}.history-trend-summary{align-items:flex-start;flex-direction:column}}
     .module-card-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
     .module-card-head{min-width:0}
     .module-title{min-width:0}
@@ -7208,6 +7419,224 @@ const airGoldenDashboardHtml = `<!doctype html>
       font:inherit;
       font-size:12px;
     }
+    /* Client presentation safety: final layout hardening for long labels and dense cards. */
+    #health .module-filter {
+      grid-template-columns:repeat(5,max-content) minmax(360px,1fr)!important;
+      column-gap:14px!important;
+      row-gap:12px!important;
+    }
+    #health .module-filter button {
+      min-width:0!important;
+      padding-inline:18px!important;
+    }
+    #health .module-filter-search {
+      justify-self:end!important;
+      width:min(460px,100%)!important;
+      height:48px!important;
+      padding:0 16px!important;
+      background:rgba(5,14,24,.88)!important;
+      border-color:rgba(148,163,184,.22)!important;
+    }
+    #health .module-filter-search span {
+      flex:0 0 auto!important;
+      max-width:118px!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      white-space:nowrap!important;
+      letter-spacing:.08em!important;
+    }
+    #health .module-filter-search input {
+      min-width:0!important;
+      font-size:13px!important;
+      color:#f8fafc!important;
+    }
+    #health .module-filter-search input::placeholder {
+      color:#6f8095!important;
+    }
+    #health .module-status-card {
+      min-height:288px!important;
+      padding:26px!important;
+    }
+    #health .module-status-card .module-card-head {
+      grid-template-columns:minmax(0,1fr) max-content!important;
+    }
+    #health .module-title {
+      grid-template-columns:56px minmax(0,1fr)!important;
+      gap:16px!important;
+    }
+    #health .module-icon {
+      width:54px!important;
+      height:54px!important;
+      min-width:54px!important;
+      border-radius:18px!important;
+    }
+    #health .module-title strong {
+      font-size:clamp(18px,1.55vw,26px)!important;
+      line-height:1.15!important;
+      overflow-wrap:break-word!important;
+    }
+    #health .module-status-card .badge {
+      max-width:124px!important;
+      min-width:86px!important;
+      padding-inline:12px!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+    #health .module-health-score strong {
+      font-size:clamp(42px,4vw,64px)!important;
+    }
+    #health .module-health-score span {
+      max-width:170px!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+    #validation-summary .validation-command-panel {
+      grid-template-columns:minmax(0,1fr) minmax(320px,.78fr)!important;
+      align-items:start!important;
+      gap:28px!important;
+      min-height:0!important;
+    }
+    #validation-summary .validation-story {
+      align-content:start!important;
+      gap:18px!important;
+    }
+    #validation-summary .validation-story h2 {
+      max-width:720px!important;
+      font-size:clamp(22px,2vw,34px)!important;
+      line-height:1.12!important;
+      letter-spacing:-.035em!important;
+    }
+    #validation-summary .validation-story p {
+      max-width:720px!important;
+      font-size:15px!important;
+    }
+    #validation-summary .validation-stat-grid {
+      grid-template-columns:repeat(auto-fit,minmax(150px,190px))!important;
+      gap:12px!important;
+    }
+    #validation-summary .validation-stat,
+    #validation-summary .validation-area-card {
+      min-height:142px!important;
+      padding:18px!important;
+    }
+    #validation-summary .validation-area-grid {
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important;
+    }
+    #validation-summary .validation-area-card span,
+    #validation-summary .validation-stat span {
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+      overflow-wrap:break-word!important;
+      line-height:1.25!important;
+    }
+    #validation-summary .validation-group-grid,
+    #validation-summary .validation-gap-grid {
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr))!important;
+    }
+    #validation-summary .validation-gap-card {
+      min-height:0!important;
+      padding:18px!important;
+    }
+    #validation-summary .validation-gap-card strong {
+      display:block!important;
+      font-size:clamp(15px,1.08vw,19px)!important;
+      line-height:1.3!important;
+    }
+    #validation-summary .validation-gap-card p {
+      font-size:13px!important;
+      line-height:1.55!important;
+      margin-top:8px!important;
+    }
+    #validation-summary .validation-details {
+      overflow:auto!important;
+    }
+    #insight .topbar {
+      align-items:center!important;
+    }
+    #insight .topbar .btn {
+      max-width:280px!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+    #insight .ai-command-hero {
+      grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr)!important;
+      align-items:stretch!important;
+    }
+    #insight .ai-command-hero strong {
+      font-size:clamp(24px,2.15vw,38px)!important;
+      line-height:1.12!important;
+      max-width:860px!important;
+    }
+    #insight .ai-signal-grid {
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+      align-content:center!important;
+    }
+    #insight .ai-signal-card {
+      min-height:112px!important;
+      padding:18px!important;
+      overflow:hidden!important;
+    }
+    #insight .ai-signal-card span {
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+    #insight .ai-signal-card strong {
+      display:block!important;
+      max-width:100%!important;
+      font-size:clamp(18px,1.35vw,24px)!important;
+      line-height:1.12!important;
+      white-space:normal!important;
+      overflow-wrap:break-word!important;
+      word-break:normal!important;
+      letter-spacing:-.025em!important;
+    }
+    #comparison .release-timeline {
+      grid-template-columns:repeat(auto-fit,minmax(128px,1fr))!important;
+      gap:12px!important;
+    }
+    #comparison .release-timeline>div {
+      justify-items:start!important;
+      overflow:hidden!important;
+      padding:12px!important;
+      min-height:96px!important;
+    }
+    #comparison .release-timeline .release-status-badge {
+      width:100%!important;
+      min-width:0!important;
+      max-width:100%!important;
+      justify-content:center!important;
+      white-space:normal!important;
+      overflow-wrap:break-word!important;
+      text-overflow:clip!important;
+      font-size:10px!important;
+      line-height:1.1!important;
+      padding:7px 8px!important;
+    }
+    #comparison .release-timeline small {
+      max-width:100%!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      white-space:nowrap!important;
+    }
+    @media(max-width:1350px) {
+      #health .module-filter {
+        grid-template-columns:repeat(3,max-content) minmax(260px,1fr)!important;
+      }
+      #health .module-filter-search {
+        grid-column:1 / -1!important;
+        justify-self:stretch!important;
+        width:100%!important;
+      }
+      #validation-summary .validation-command-panel,
+      #insight .ai-command-hero {
+        grid-template-columns:1fr!important;
+      }
+    }
     .module-filter-count {
       margin:-6px 0 14px;
       color:#9fb0c5;
@@ -7379,7 +7808,214 @@ const airGoldenDashboardHtml = `<!doctype html>
       display:grid;
       gap:10px;
     }
+    .validation-command-panel {
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);
+      gap:18px;
+      align-items:stretch;
+    }
+    .validation-story {
+      min-width:0;
+      display:grid;
+      gap:14px;
+      align-content:start;
+    }
+    .validation-story h2 {
+      margin:0;
+      font-size:26px;
+      line-height:1.08;
+    }
+    .validation-story p {
+      margin:0;
+      color:#b8c7d9;
+      line-height:1.55;
+      max-width:72ch;
+    }
+    .validation-stat-grid {
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+    }
+    .validation-stat,
+    .validation-area-card,
+    .validation-gap-card {
+      min-width:0;
+      border:1px solid rgba(57,231,95,.14);
+      border-radius:18px;
+      background:rgba(5,14,25,.58);
+      padding:14px;
+    }
+    .validation-stat span,
+    .validation-area-card span,
+    .validation-gap-card span {
+      display:block;
+      color:#93a4b8;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      overflow-wrap:anywhere;
+    }
+    .validation-stat strong,
+    .validation-area-card strong {
+      display:block;
+      margin-top:8px;
+      color:#39e75f;
+      font-size:28px;
+      line-height:1;
+    }
+    .validation-stat small,
+    .validation-area-card small {
+      display:block;
+      margin-top:6px;
+      color:#a8b6c8;
+      line-height:1.35;
+    }
+    .validation-stat.bad strong { color:#ff6b6b; }
+    .validation-stat.warn strong { color:#fbbf24; }
+    .validation-stat.info strong { color:#60a5fa; }
+    .validation-area-grid {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+    .validation-group-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .validation-group-card {
+      min-width:0;
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:20px;
+      background:linear-gradient(145deg,rgba(15,23,42,.72),rgba(6,18,30,.68));
+      padding:16px;
+    }
+    .validation-group-head {
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+    .validation-group-head div {
+      min-width:0;
+    }
+    .validation-group-head span {
+      display:block;
+      color:#93a4b8;
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .validation-group-head strong {
+      display:block;
+      color:#f8fafc;
+      font-size:20px;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+    .validation-group-head em {
+      flex:0 0 auto;
+      border:1px solid rgba(57,231,95,.22);
+      border-radius:999px;
+      background:rgba(57,231,95,.08);
+      color:#9affac;
+      font-size:12px;
+      font-style:normal;
+      font-weight:900;
+      padding:6px 10px;
+      white-space:nowrap;
+    }
+    .validation-group-card ul {
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:8px;
+    }
+    .validation-group-card li {
+      position:relative;
+      padding-left:16px;
+      color:#cbd5e1;
+      line-height:1.4;
+      overflow-wrap:anywhere;
+    }
+    .validation-group-card li::before {
+      content:'';
+      position:absolute;
+      left:0;
+      top:.58em;
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:#39e75f;
+      box-shadow:0 0 14px rgba(57,231,95,.45);
+    }
+    .validation-gap-card strong {
+      color:#f8fafc;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+    .validation-gap-card p {
+      margin:0;
+      color:#9fb0c5;
+      line-height:1.45;
+    }
+    .validation-details {
+      margin-top:16px;
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:18px;
+      background:rgba(15,23,42,.36);
+      padding:12px;
+    }
+    .validation-details summary {
+      cursor:pointer;
+      color:#9affac;
+      font-weight:900;
+    }
+    .validation-toggle {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .validation-toggle summary {
+      list-style:none;
+    }
+    .validation-toggle summary::-webkit-details-marker {
+      display:none;
+    }
+    .validation-toggle summary::after {
+      content:'Open detailed validation list';
+      display:inline-flex;
+      align-items:center;
+      min-height:38px;
+      border:1px solid rgba(57,231,95,.35);
+      border-radius:999px;
+      background:rgba(57,231,95,.09);
+      color:#9affac;
+      padding:0 16px;
+      font-size:13px;
+      font-weight:950;
+    }
+    .validation-toggle[open] summary::after {
+      content:'Hide detailed validation list';
+    }
+    .validation-gap-grid {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
     @media(max-width:760px) {
+      .validation-command-panel,
+      .validation-area-grid,
+      .validation-group-grid,
+      .validation-gap-grid,
+      .validation-stat-grid {
+        grid-template-columns:1fr;
+      }
       .module-filter-search {
         flex:1 1 100%;
         margin-left:0;
@@ -7398,6 +8034,45 @@ const airGoldenDashboardHtml = `<!doctype html>
         grid-template-columns:1fr;
       }
     }
+    /* Final presentation overrides: keep long labels from breaking client-facing layouts. */
+    #health .module-filter{display:grid!important;grid-template-columns:repeat(5,max-content) minmax(360px,1fr)!important;align-items:center!important;gap:12px 14px!important}
+    #health .module-filter-search{justify-self:end!important;width:min(460px,100%)!important;height:48px!important;margin-left:0!important;padding:0 16px!important;background:rgba(5,14,24,.9)!important;border:1px solid rgba(148,163,184,.22)!important}
+    #health .module-filter-search span{flex:0 0 auto!important;max-width:118px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #health .module-filter-search input{min-width:0!important;color:#f8fafc!important}
+    #health .module-status-card{min-height:288px!important;padding:26px!important}
+    #health .module-status-card .module-card-head{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;gap:16px!important;align-items:start!important}
+    #health .module-title{display:grid!important;grid-template-columns:56px minmax(0,1fr)!important;gap:16px!important;align-items:center!important}
+    #health .module-icon{width:54px!important;height:54px!important;min-width:54px!important;border-radius:18px!important}
+    #health .module-title strong{font-size:clamp(18px,1.55vw,26px)!important;line-height:1.15!important;overflow-wrap:break-word!important}
+    #health .module-status-card .badge{justify-self:end!important;min-width:86px!important;max-width:124px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #health .module-health-score strong{font-size:clamp(42px,4vw,64px)!important}
+    #health .module-health-score span{max-width:170px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #validation-summary .validation-command-panel{grid-template-columns:minmax(0,1fr) minmax(320px,.78fr)!important;align-items:start!important;gap:28px!important;min-height:0!important}
+    #validation-summary .validation-story{gap:18px!important;align-content:start!important}
+    #validation-summary .validation-story h2{font-size:clamp(22px,2vw,34px)!important;line-height:1.12!important;max-width:720px!important}
+    #validation-summary .validation-story p{max-width:720px!important;font-size:15px!important}
+    #validation-summary .validation-stat-grid{grid-template-columns:repeat(auto-fit,minmax(150px,190px))!important;gap:12px!important}
+    #validation-summary .validation-area-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+    #validation-summary .validation-stat,#validation-summary .validation-area-card{min-height:142px!important;padding:18px!important}
+    #validation-summary .validation-area-card span,#validation-summary .validation-stat span{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:break-word!important;line-height:1.25!important}
+    #validation-summary .validation-group-grid,#validation-summary .validation-gap-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))!important}
+    #validation-summary .validation-gap-card{min-height:0!important;padding:18px!important}
+    #validation-summary .validation-gap-card strong{display:block!important;font-size:clamp(15px,1.08vw,19px)!important;line-height:1.3!important}
+    #validation-summary .validation-gap-card p{font-size:13px!important;line-height:1.55!important;margin-top:8px!important}
+    #insight .topbar{align-items:center!important}
+    #insight .topbar .btn{max-width:280px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #insight .ai-command-hero{grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr)!important;align-items:stretch!important}
+    #insight .ai-command-hero strong{font-size:clamp(24px,2.15vw,38px)!important;line-height:1.12!important;max-width:860px!important}
+    #insight .ai-signal-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-content:center!important}
+    #insight .ai-signal-card{min-height:112px!important;padding:18px!important;overflow:hidden!important}
+    #insight .ai-signal-card span{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    #insight .ai-signal-card strong{display:block!important;max-width:100%!important;font-size:clamp(18px,1.35vw,24px)!important;line-height:1.12!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
+    #comparison .release-timeline{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))!important;gap:12px!important}
+    #comparison .release-timeline>div{justify-items:start!important;overflow:hidden!important;padding:12px!important;min-height:96px!important}
+    #comparison .release-timeline .release-status-badge{width:100%!important;min-width:0!important;max-width:100%!important;justify-content:center!important;white-space:normal!important;overflow-wrap:break-word!important;text-overflow:clip!important;font-size:10px!important;line-height:1.1!important;padding:7px 8px!important}
+    #comparison .release-timeline small{max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+    @media(max-width:1350px){#health .module-filter{grid-template-columns:repeat(3,max-content) minmax(260px,1fr)!important}#health .module-filter-search{grid-column:1/-1!important;justify-self:stretch!important;width:100%!important}#validation-summary .validation-command-panel,#insight .ai-command-hero{grid-template-columns:1fr!important}}
+    @media(max-width:760px){#health .module-filter{grid-template-columns:1fr!important}#health .module-status-card .module-card-head,#health .module-title,#insight .ai-signal-grid{grid-template-columns:1fr!important}#health .module-status-card .badge{justify-self:start!important}}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -7421,6 +8096,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="nav-section">Issues</div>
       <a href="#failures">${navIcon('failures')}<span>Failed Tests</span></a>
       <a href="#coverage-gaps">${navIcon('analytics')}<span>Blocked / Skipped</span></a>
+      <a href="#validation-summary">${navIcon('analytics')}<span>Validation Summary</span></a>
       <div class="nav-section">Evidence</div>
       <a href="#evidence">${navIcon('evidence')}<span>Evidence</span></a>
       <div class="nav-section">Insights</div>
@@ -7644,8 +8320,59 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(7)}
     </section>
 
+    <section class="page" id="validation-summary">
+      <div class="topbar">
+        <div>
+          <div class="eyebrow">PAGE 08</div>
+          ${pageHeading('analytics', 'Validation Summary')}
+          <p>What did this automation execution validate?</p>
+        </div>
+        <a class="btn" href="validation-summary.md" target="_blank" rel="noopener">Open Full Summary</a>
+      </div>
+      <div class="panel validation-command-panel">
+        <div class="validation-story">
+          <span class="mission-label">Automation Coverage Narrative</span>
+          <h2>AIR translated test execution into business-readable validation coverage.</h2>
+          <p>${escapeHtml(validationIntelligence.purpose ?? 'This section explains what the latest automation execution validated in plain business language.')}</p>
+          <div class="validation-stat-grid">${validationStatusCards}</div>
+        </div>
+        <div>
+          <h2>Area Coverage</h2>
+          <div class="validation-area-grid">${validationAreaCards}</div>
+        </div>
+      </div>
+      <br>
+      <div class="panel">
+        <div class="section-heading-row">
+          <div>
+            <h2>What Was Validated</h2>
+            <p>Grouped by product area so stakeholders can quickly understand coverage without reading every test case.</p>
+          </div>
+        </div>
+        <div class="validation-group-grid">${validationGroupCards}</div>
+        <details class="validation-details validation-toggle">
+          <summary></summary>
+          <table>
+            <thead><tr><th>Result</th><th>Area</th><th>Scenario</th><th>Expected Outcome</th></tr></thead>
+            <tbody>${validationDetailRows}</tbody>
+          </table>
+        </details>
+      </div>
+      ${validationCoverageGapCards ? `
+        <br>
+        <div class="panel">
+          <h2>Not Executed / Controlled Coverage</h2>
+          <div class="validation-gap-grid">${validationCoverageGapCards}</div>
+          <details class="validation-details">
+            <summary>Open complete Blocked / Skipped section</summary>
+            <p>See the Blocked / Skipped Coverage page for the full reason list and next actions.</p>
+          </details>
+        </div>` : ''}
+      ${renderPageFooter(8)}
+    </section>
+
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">PAGE 08</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 09</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
       ${evidenceHeroHtml}
       <div class="evidence-grid">${evidenceCards}</div>
       <br>
@@ -7657,11 +8384,11 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       <br>
       <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
-      ${renderPageFooter(8)}
+      ${renderPageFooter(9)}
     </section>
 
     <section class="page" id="insight">
-      <div class="topbar"><div><div class="eyebrow">PAGE 09</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
+      <div class="topbar"><div><div class="eyebrow">PAGE 10</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
       <div class="ai-command-hero">
         <div>
           <span class="mission-label">AIR Recommendation</span>
@@ -7703,13 +8430,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         <span>Roadmap Context</span>
         <p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p>
       </div>
-      ${renderPageFooter(9)}
+      ${renderPageFooter(10)}
     </section>
 
     <section class="page" id="comparison">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 10</div>
+          <div class="eyebrow">PAGE 11</div>
           ${pageHeading('analytics', 'Historical Intelligence')}
           <p>How has software quality evolved over time?</p>
         </div>
@@ -7732,6 +8459,7 @@ const airGoldenDashboardHtml = `<!doctype html>
               <div class="compare-card"><span>Release Change</span>${renderReleaseBadge(getCurrentReleaseValue(), { compact: true })}<small>Previous: ${escapeHtml(getSnapshotRelease(historyComparison.previous))}</small></div>
               <div class="compare-card"><span>Quality Change</span><strong>${escapeHtml(getComparisonDeltaLabel('quality', '%'))}</strong><small>Current: ${executiveData.qualityScore}%</small></div>
               <div class="compare-card"><span>Failure Change</span><strong>${escapeHtml(getComparisonDeltaLabel('failures'))}</strong><small>Current failed tests: ${executiveData.failed}</small></div>
+              <div class="compare-card"><span>Flaky Change</span><strong>${escapeHtml(getComparisonDeltaLabel('flaky'))}</strong><small>Current flaky tests: ${airResults?.summary?.flaky ?? 0}</small></div>
               <div class="compare-card"><span>Duration Change</span><strong>${escapeHtml(getComparisonDirection('durationMs'))}</strong><small>Current: ${escapeHtml(executiveData.duration)}</small></div>
             </div>
           </div>
@@ -7752,6 +8480,7 @@ const airGoldenDashboardHtml = `<!doctype html>
             ${renderComparisonMetric('Pass Rate', 'passRate')}
             ${renderComparisonMetric('Execution Time', 'durationMs')}
             ${renderComparisonMetric('Failed Tests', 'failures')}
+            ${renderComparisonMetric('Flaky Tests', 'flaky')}
             ${renderComparisonMetric('Module Coverage', 'moduleCoverage')}
             ${renderComparisonMetric('Evidence', 'evidence')}
               <div class="compare-card"><span>Modules Executed</span><strong>${currentModulesExecuted}</strong><small>Previous: ${previousModulesExecuted}</small></div>
@@ -7765,6 +8494,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           ${renderHistoryTrendCard('Quality Trend', 'quality')}
           ${renderReleaseTrendCard()}
           ${renderHistoryTrendCard('Failure Trend', 'failures', value => `${value} failed`, { max: Math.max(5, ...(airResults?.history?.trends?.failures?.points ?? []).map(point => Number(point.value) || 0)) })}
+          ${renderHistoryTrendCard('Flaky Trend', 'flaky', value => `${value} flaky`, { max: Math.max(5, ...(airResults?.history?.trends?.flaky?.points ?? []).map(point => Number(point.value) || 0)) })}
         </div>
         <div class="history-test-change-panel">
           <div class="history-panel-head">
@@ -7823,6 +8553,16 @@ const airGoldenDashboardHtml = `<!doctype html>
               ${renderHistorySignalCard('Resolved', resolvedFailures, 'No resolved failures', 'good')}
               ${renderHistorySignalCard('Recurring', recurringFailures, 'No recurring failures', 'warn')}
               ${renderHistorySignalCard('Severity', severityChanges, 'No severity changes', 'info')}
+              ${renderHistorySignalCard('Active Recurrence', activeRecurringFailurePatterns, 'No active recurring failure patterns', 'warn')}
+              ${renderHistorySignalCard('Flaky', flakyHistoryPatterns, 'No flaky history patterns', 'info')}
+            </div>
+            <div class="history-panel-subsection">
+              <div class="history-panel-head compact">
+                <span>Per-Test Memory</span>
+                <h3>Failure Timeline</h3>
+                <p>Shows whether failures are new, recurring, persistent, historical, or recently fixed.</p>
+              </div>
+              ${renderFailureTimelinePreview(failureTimelinePatterns)}
             </div>
           </div>
           <div class="panel release-timeline-panel">
@@ -7869,13 +8609,13 @@ const airGoldenDashboardHtml = `<!doctype html>
           action: 'Build comparison will appear after multiple executions.',
         })}
       `}
-      ${renderPageFooter(10)}
+      ${renderPageFooter(11)}
     </section>
 
     <section class="page" id="air-core">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 11</div>
+          <div class="eyebrow">PAGE 12</div>
           ${pageHeading('settings', 'AIR Core')}
           <p>Which intelligence engines produced this report?</p>
         </div>
@@ -7925,13 +8665,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <div class="engine-output-stack">${airCoreEngineGroupsHtml}</div>
       </div>
-      ${renderPageFooter(11)}
+      ${renderPageFooter(12)}
     </section>
 
     <section class="page" id="roadmap">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 12</div>
+          <div class="eyebrow">PAGE 13</div>
           ${pageHeading('roadmap', 'AIR Product Roadmap')}
           <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
         </div>
@@ -7973,7 +8713,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <strong>Final Engineering Mode UI → Dynamic Data Model → Dynamic Intelligence Engine</strong>
         </div>
       </div>
-      ${renderPageFooter(12)}
+      ${renderPageFooter(13)}
     </section>
     <footer class="footer">
       <span>${footerHtml}</span>

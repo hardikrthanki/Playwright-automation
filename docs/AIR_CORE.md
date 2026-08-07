@@ -191,8 +191,10 @@ Responsibilities:
 
 - Store execution history.
 - Calculate quality, release, business health, module, journey, pass rate, failure, failure rate, duration, coverage, and evidence trends.
+- Generate trend summaries with direction, delta, average, high, and low values.
 - Compare current execution with previous execution.
 - Detect regressions and improvements.
+- Detect recurring failures, active recurring failures, flaky test patterns, and per-test failure timelines.
 - Return `First Execution` when there is no previous history.
 - Provide the data used by the Historical Intelligence dashboard.
 

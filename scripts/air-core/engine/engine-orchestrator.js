@@ -11,6 +11,7 @@ const { buildRecommendations } = require('../services/recommendation-engine');
 const { buildHistory } = require('./history-engine');
 const { buildSearchIndex } = require('./search-engine');
 const { buildCoverageGaps } = require('./coverage-gap-engine');
+const { buildValidationIntelligence } = require('./validation-intelligence-engine');
 
 function createEngine(name, execute, options = {}) {
   return {
@@ -278,6 +279,7 @@ function getDefaultEnginePipeline() {
       ...model,
       history: buildHistory(model, context.existingHistory, context.config),
     })),
+    createEngine('Validation Intelligence Engine', model => buildValidationIntelligence(model)),
     createEngine('Search Engine', model => ({
       ...model,
       searchIndex: buildSearchIndex(model),

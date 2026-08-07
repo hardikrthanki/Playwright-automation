@@ -566,6 +566,42 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     priority: 'Medium',
     status: 'automated',
     automation: 'Profile.spec.ts and DashboardNavigation.spec.ts'
+  },
+  {
+    id: 'UJ-059',
+    title: 'Authenticated dashboard footer exposes legal and support destinations',
+    module: 'Legal Links',
+    journey: 'Legal / Terms',
+    priority: 'Medium',
+    status: 'automated',
+    automation: 'DashboardNavigation.spec.ts > Dashboard footer legal and support links expose usable targets'
+  },
+  {
+    id: 'UJ-060',
+    title: 'Authenticated dashboard routes tolerate trailing slash and unknown query parameters',
+    module: 'Dashboard',
+    journey: 'Dashboard Navigation',
+    priority: 'Medium',
+    status: 'automated',
+    automation: 'DashboardNavigation.spec.ts > Authenticated direct routes tolerate trailing slash and unknown query parameters'
+  },
+  {
+    id: 'UJ-061',
+    title: 'Public login, forgot-password, and registration routes tolerate trailing slash and unknown query parameters',
+    module: 'Authentication',
+    journey: 'Login',
+    priority: 'Medium',
+    status: 'automated',
+    automation: 'AuthUiValidation.spec.ts > Public auth routes tolerate trailing slash and unknown query parameters'
+  },
+  {
+    id: 'UJ-062',
+    title: 'Dashboard notification panel can be opened, dismissed, reopened, and used after refresh',
+    module: 'Dashboard',
+    journey: 'Dashboard Navigation',
+    priority: 'Medium',
+    status: 'automated',
+    automation: 'DashboardNavigation.spec.ts > Notification panel opens and closes without disrupting dashboard; Notification panel remains usable after dashboard refresh'
   }
 ];
 

@@ -1,43 +1,43 @@
 {
-  "generatedAt": "2026-07-16T13:50:25.689Z",
+  "generatedAt": "2026-08-06T12:36:19.262Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-07-16T13:50:25.126Z",
+    "generatedAt": "2026-08-06T12:36:18.604Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 607,
-    "rawTestCount": 607,
-    "attempts": 607,
-    "passed": 174,
-    "failed": 0,
-    "skipped": 433,
+    "total": 153,
+    "rawTestCount": 153,
+    "attempts": 153,
+    "passed": 145,
+    "failed": 8,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 174,
-      "skipped": 433
+      "expected": 145,
+      "unexpected": 8
     }
   },
   "airExecution": {
-    "total": 607,
-    "attempts": 607,
-    "passed": 174,
-    "failed": 0,
-    "skipped": 433,
+    "total": 153,
+    "attempts": 153,
+    "passed": 145,
+    "failed": 8,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 607,
-    "expectedAirTotal": 607,
-    "airTotal": 607,
+    "sourceTotal": 153,
+    "expectedAirTotal": 153,
+    "airTotal": 153,
     "difference": 0
   },
   "duplicates": {
@@ -48,346 +48,155 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 540,
+    "perTestEvidence": 455,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 542,
+    "totalWithRawReports": 457,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
   "invalidJourneyReferences": [],
   "historicalContaminationDetected": false,
   "evidenceTraceability": {
-    "failedTests": []
+    "failedTests": [
+      {
+        "testId": "chromium > AccessibilityBrowser.spec.ts > Accessibility And Browser Behavior > Register page keeps form visible after browser refresh",
+        "testName": "Accessibility And Browser Behavior > Register page keeps form visible after browser refresh",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > BillingDeep.spec.ts > Billing Deep Validation > Billing page remains available after refresh",
+        "testName": "Billing Deep Validation > Billing page remains available after refresh",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > BillingDeep.spec.ts > Billing Deep Validation > Plans tab shows expected Income Builder plan",
+        "testName": "Billing Deep Validation > Plans tab shows expected Income Builder plan",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
+        "testName": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Dashboard top navigation tabs are visible",
+        "testName": "Dashboard Navigation > Dashboard top navigation tabs are visible",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Dashboard top navigation links open without load errors",
+        "testName": "Dashboard Navigation > Dashboard top navigation links open without load errors",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Dashboard top navigation destinations render usable content",
+        "testName": "Dashboard Navigation > Dashboard top navigation destinations render usable content",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Dashboard top navigation destinations stay usable after refresh",
+        "testName": "Dashboard Navigation > Dashboard top navigation destinations stay usable after refresh",
+        "evidenceCount": 4,
+        "status": "Evidence Available"
+      }
+    ]
   },
   "releaseTraceability": {
     "status": "PASS",
     "reasons": [
-      "Critical journeys are not blocked",
-      "Warnings require review",
-      "Release can proceed after evidence review"
+      "Release thresholds were not met",
+      "Failures or missing critical data require review",
+      "Resolve blockers before release approval"
     ],
     "reasonTraceability": [
       {
-        "reason": "Critical journeys are not blocked",
-        "source": "warnings",
+        "reason": "Release thresholds were not met",
+        "source": "blockers",
         "references": [
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Journey status is Warning."
+            "type": "Failure",
+            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Access Control",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Subscription",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Payment",
-            "detail": "Journey status is Warning."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Module",
-            "name": "Access Control",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Accessibility",
-            "detail": "Module risk is Medium."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Module",
             "name": "Authentication",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Billing",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "General",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Profile",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Execution",
-            "name": "Partial execution",
-            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+            "detail": "Critical module risk is High."
           }
         ]
       },
       {
-        "reason": "Warnings require review",
-        "source": "warnings",
+        "reason": "Failures or missing critical data require review",
+        "source": "blockers",
         "references": [
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Journey status is Warning."
+            "type": "Failure",
+            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Access Control",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Subscription",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Payment",
-            "detail": "Journey status is Warning."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Module",
-            "name": "Access Control",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Accessibility",
-            "detail": "Module risk is Medium."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Module",
             "name": "Authentication",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Billing",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "General",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Profile",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Execution",
-            "name": "Partial execution",
-            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+            "detail": "Critical module risk is High."
           }
         ]
       },
       {
-        "reason": "Release can proceed after evidence review",
-        "source": "warnings",
+        "reason": "Resolve blockers before release approval",
+        "source": "blockers",
         "references": [
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Journey status is Warning."
+            "type": "Failure",
+            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Access Control",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Subscription",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Payment",
-            "detail": "Journey status is Warning."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Warning."
-          },
-          {
-            "type": "Module",
-            "name": "Access Control",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Accessibility",
-            "detail": "Module risk is Medium."
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Module",
             "name": "Authentication",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Billing",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "General",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Profile",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
-            "detail": "Module risk is Medium."
-          },
-          {
-            "type": "Execution",
-            "name": "Partial execution",
-            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
+            "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 20,
-    "blockers": 0
+    "warnings": 14,
+    "blockers": 4
   }
 }

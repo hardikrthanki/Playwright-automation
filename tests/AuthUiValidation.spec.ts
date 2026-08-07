@@ -35,6 +35,19 @@ async function findPasswordToggle(
   passwordInput: Locator
 ) {
 
+  const localToggle =
+    passwordInput.locator(
+      'xpath=ancestor::*[.//input][1]//button[contains(@aria-label,"password") or .//*[name()="svg"]]'
+    ).first();
+
+  if (
+    await localToggle.isVisible().catch(
+      () => false
+    )
+  ) {
+    return localToggle;
+  }
+
   const namedToggle =
     page.getByRole(
       'button',
@@ -51,27 +64,60 @@ async function findPasswordToggle(
     return namedToggle;
   }
 
-  const localToggle =
-    passwordInput.locator(
-      'xpath=ancestor::div[contains(@class,"relative")][1]//button'
-    ).first();
-
-  if (
-    await localToggle.isVisible().catch(
-      () => false
-    )
-  ) {
-    return localToggle;
-  }
-
   return page.locator(
     'button'
   ).filter({
     has:
       page.locator(
         'svg'
-      )
+    )
   }).last();
+}
+
+async function expectPasswordToggleResponds(
+  passwordInput: Locator,
+  toggle: Locator
+) {
+  const initialType =
+    await passwordInput.getAttribute(
+      'type'
+    );
+
+  const initialLabel =
+    await toggle.getAttribute(
+      'aria-label'
+    );
+
+  await safeClick(
+    toggle,
+    'Toggle Password Visibility'
+  );
+
+  await expect
+    .poll(
+      async () => {
+        const currentType =
+          await passwordInput.getAttribute(
+            'type'
+          );
+
+        const currentLabel =
+          await toggle.getAttribute(
+            'aria-label'
+          );
+
+        return currentType !== initialType ||
+          Boolean(
+            initialLabel &&
+            currentLabel &&
+            currentLabel !== initialLabel
+          );
+      },
+      {
+        timeout: 5000
+      }
+    )
+    .toBeTruthy();
 }
 
 test.describe(
@@ -541,29 +587,10 @@ test.describe(
           timeout: 10000
         });
 
-        const initialType =
-          await passwordInput.getAttribute(
-            'type'
-          );
-
-        await safeClick(
-          toggle,
-          'Toggle Login Password Visibility'
+        await expectPasswordToggleResponds(
+          passwordInput,
+          toggle
         );
-
-        await expect
-          .poll(
-            async () =>
-              await passwordInput.getAttribute(
-                'type'
-              ),
-            {
-              timeout: 5000
-            }
-          )
-          .not.toBe(
-            initialType
-          );
 
         await expect(
           page
@@ -574,6 +601,12 @@ test.describe(
         await expect(
           passwordInput
         ).toBeVisible();
+
+        await expect(
+          passwordInput
+        ).toHaveValue(
+          'DraftPassword123!'
+        );
       }
     );
 
@@ -636,34 +669,21 @@ test.describe(
           );
 
         await expect(
-          toggle
+          toggle,
         ).toBeVisible({
           timeout: 10000
         });
 
-        const initialType =
-          await registration.passwordInput.getAttribute(
-            'type'
-          );
-
-        await safeClick(
-          toggle,
-          'Toggle Register Password Visibility'
+        await expectPasswordToggleResponds(
+          registration.passwordInput,
+          toggle
         );
 
-        await expect
-          .poll(
-            async () =>
-              await registration.passwordInput.getAttribute(
-                'type'
-              ),
-            {
-              timeout: 5000
-            }
-          )
-          .not.toBe(
-            initialType
-          );
+        await expect(
+          registration.passwordInput
+        ).toHaveValue(
+          'DraftPassword123!'
+        );
       }
     );
 

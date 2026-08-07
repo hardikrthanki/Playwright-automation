@@ -13,6 +13,7 @@ const { buildReleaseDecision } = require('./engine/release-engine');
 const { schemaVersion, createFutureValidation } = require('./model/air-results.schema');
 const { validateAirResults } = require('./model/air-results-validator');
 const { buildDataIntegrityAudit } = require('./engine/data-integrity-audit');
+const { buildValidationSummaryMarkdown } = require('./services/validation-summary-writer');
 
 function readGitValue(projectRoot, command, fallback) {
   try {
@@ -722,6 +723,7 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
   const outputPath = path.join(outputDir, 'air-results.json');
   const historyDir = path.join(outputDir, 'history');
   const historyPath = path.join(historyDir, 'air-history.json');
+  const validationSummaryPath = path.join(outputDir, 'validation-summary.md');
   fs.mkdirSync(outputDir, { recursive: true });
   fs.mkdirSync(historyDir, { recursive: true });
 
@@ -784,6 +786,10 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
         path.join(outputDir, 'air-data-integrity-audit.json'),
         `${JSON.stringify(restoredAirResults.dataIntegrity, null, 2)}\n`
       );
+      fs.writeFileSync(
+        validationSummaryPath,
+        buildValidationSummaryMarkdown(restoredAirResults)
+      );
       return {
         outputPath,
         airResults: restoredAirResults,
@@ -796,6 +802,10 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
   fs.writeFileSync(
     path.join(outputDir, 'air-data-integrity-audit.json'),
     `${JSON.stringify(airResults.dataIntegrity, null, 2)}\n`
+  );
+  fs.writeFileSync(
+    validationSummaryPath,
+    buildValidationSummaryMarkdown(airResults)
   );
 
   return {

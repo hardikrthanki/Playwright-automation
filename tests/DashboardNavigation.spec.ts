@@ -493,24 +493,39 @@ test.describe(
 
         const topNavigationItems = [
           'Dashboard',
-          'Analytics',
+          'Opportunities',
           'Portfolio',
-          'Accounts',
-          'Academy'
+          'Research',
+          'Academy',
+          'Support'
         ];
 
         for (const item of topNavigationItems) {
+          const itemPattern =
+            new RegExp(
+              item.replace(
+                /[.*+?^${}()|[\]\\]/g,
+                '\\$&'
+              ),
+              'i'
+            );
+
           await expect(
             page
-              .locator(
-                'a, button'
+              .getByRole(
+                'link',
+                {
+                  name: itemPattern
+                }
               )
-              .filter({
-                hasText: new RegExp(
-                  `^${item}$`,
-                  'i'
+              .or(
+                page.getByRole(
+                  'button',
+                  {
+                    name: itemPattern
+                  }
                 )
-              })
+              )
               .first()
           ).toBeVisible({
             timeout: 10000

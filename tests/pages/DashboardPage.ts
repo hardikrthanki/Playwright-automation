@@ -28,20 +28,24 @@ export class DashboardPage
       url: /\/dashboard/
     },
     {
-      label: 'Analytics',
-      url: /\/analytics|\/dashboard/
+      label: 'Opportunities',
+      url: /\/opportunities|\/dashboard/
     },
     {
       label: 'Portfolio',
       url: /\/portfolio|\/dashboard/
     },
     {
-      label: 'Accounts',
-      url: /\/accounts|\/dashboard/
+      label: 'Research',
+      url: /\/research|\/dashboard/
     },
     {
       label: 'Academy',
       url: /\/academy|\/dashboard/
+    },
+    {
+      label: 'Support',
+      url: /\/support|\/dashboard/
     }
   ];
 
@@ -67,16 +71,39 @@ export class DashboardPage
   private topNavigationControl(
     label: string
   ) {
+    const labelPattern =
+      new RegExp(
+        label.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        ),
+        'i'
+      );
+
     return this.page
-      .locator(
-        'a, button'
+      .getByRole(
+        'link',
+        {
+          name: labelPattern
+        }
       )
-      .filter({
-        hasText: new RegExp(
-          `^${label}$`,
-          'i'
+      .or(
+        this.page.getByRole(
+          'button',
+          {
+            name: labelPattern
+          }
         )
-      })
+      )
+      .or(
+        this.page
+          .locator(
+            'nav a, nav button'
+          )
+          .filter({
+            hasText: labelPattern
+          })
+        )
       .first();
   }
 
@@ -87,7 +114,7 @@ export class DashboardPage
         'body'
       )
     ).toContainText(
-      /dashboard|analytics|portfolio|accounts|academy|ooltool/i,
+      /dashboard|opportunities|portfolio|research|academy|support|ooltool/i,
       {
         timeout: 15000
       }

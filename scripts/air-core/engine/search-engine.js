@@ -160,7 +160,17 @@ function buildTestEntries(airResults = {}, entries, seen) {
       status: test.status,
       module: test.module,
       keywords: ['test', test.status, test.module],
-      text: [test.file, test.project, test.error, test.duration],
+      text: [
+        test.file,
+        test.project,
+        test.error,
+        test.duration,
+        test.validation?.summary,
+        test.validation?.businessPurpose,
+        test.validation?.expectedOutcome,
+        test.validation?.outcome,
+        test.validation?.evidenceExpectation,
+      ],
     });
   }
 }
@@ -182,6 +192,11 @@ function buildFailureEntries(airResults = {}, entries, seen) {
         failure.errorMessage ?? failure.error,
         failure.businessImpact,
         failure.recommendedInvestigationAction,
+        failure.validation?.summary,
+        failure.validation?.businessPurpose,
+        failure.validation?.expectedOutcome,
+        failure.validation?.outcome,
+        failure.validation?.evidenceExpectation,
         failure.evidence?.map(item => item.name || item.path),
       ],
     });
@@ -321,6 +336,58 @@ function buildHistoryEntries(airResults = {}, entries, seen) {
         item.summary?.total,
         item.summary?.passRate,
         item.releaseDecision?.status ?? item.summary?.releaseDecision,
+      ],
+    });
+  }
+
+  for (const item of airResults.history?.executionIntelligence?.recurringFailures ?? []) {
+    addEntry(entries, seen, {
+      id: `history-recurring-failure-${slug(item.key ?? item.name)}`,
+      type: 'history',
+      title: `Recurring failure: ${item.name}`,
+      target: '#comparison',
+      status: `${item.occurrences} occurrence(s)`,
+      module: item.module,
+      priority: item.severity,
+      keywords: ['history', 'recurring failure', 'execution intelligence', item.module, item.category],
+      text: [
+        item.firstSeen,
+        item.lastSeen,
+        item.executionIndexes,
+      ],
+    });
+  }
+
+  for (const item of airResults.history?.executionIntelligence?.flakyTests ?? []) {
+    addEntry(entries, seen, {
+      id: `history-flaky-test-${slug(item.key ?? item.name)}`,
+      type: 'history',
+      title: `Flaky test: ${item.name}`,
+      target: '#comparison',
+      status: `${item.occurrences} occurrence(s)`,
+      module: item.module,
+      priority: 'Flaky',
+      keywords: ['history', 'flaky test', 'execution intelligence', item.module],
+      text: [
+        item.firstSeen,
+        item.lastSeen,
+        item.executionIndexes,
+      ],
+    });
+  }
+
+  for (const item of airResults.history?.executionIntelligence?.focus ?? []) {
+    addEntry(entries, seen, {
+      id: `history-focus-${slug(item.type)}-${slug(item.summary)}`,
+      type: 'history',
+      title: `Execution focus: ${item.type}`,
+      target: '#comparison',
+      status: item.priority,
+      priority: item.priority,
+      keywords: ['history', 'execution intelligence', 'focus', item.type],
+      text: [
+        item.summary,
+        item.action,
       ],
     });
   }

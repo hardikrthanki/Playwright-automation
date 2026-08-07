@@ -15,6 +15,9 @@ The History Engine supports:
 - Module trend analysis.
 - Journey trend analysis.
 - Failure trend analysis.
+- Per-test failure timeline analysis.
+- Recurring failure pattern detection.
+- Flaky test detection across executions.
 - Evidence trend analysis.
 - Historical timeline data.
 
@@ -80,6 +83,14 @@ Execution history is stored in `execution-report/history/air-history.json` when 
     "regressions": [],
     "improvements": [],
     "releaseTimeline": [],
+    "executionIntelligence": {
+      "failureTimelines": [],
+      "recurringFailures": [],
+      "activeRecurringFailures": [],
+      "flakyTests": [],
+      "focus": [],
+      "summary": {}
+    },
     "whatChanged": {
       "status": "First Execution | Compared",
       "summary": "",
@@ -125,6 +136,16 @@ Each trend point should include explicit execution context so the UI never has t
 
 The dashboard should display `Build <value>` or compact `B<value>` when build metadata exists. If build metadata is unavailable, display `Execution <index>` or compact `E<index>`. Hover tooltips should include build/execution label, execution date/time, quality score, and release decision.
 
+Each numeric trend includes a summary object with:
+
+- `highest`
+- `lowest`
+- `average`
+- `direction`
+- `delta`
+
+For failure, flaky, failure-rate, and duration trends, lower values are treated as better when calculating direction.
+
 ## Build Comparison
 
 AIR compares:
@@ -143,6 +164,37 @@ The current engine calculates comparison metrics for quality, confidence, pass r
 The engine also owns structured comparison data for tests, modules, journeys, failures, and release reason changes. The dashboard should prefer these History Engine fields before calculating display-only fallbacks.
 
 The Historical Intelligence dashboard reads from `history.comparison` and must display `This is the first recorded execution` when `history.comparison.status` is `First Execution`.
+
+## Execution Intelligence
+
+The History Engine also produces `history.executionIntelligence`.
+
+This layer answers:
+
+- Which failure patterns are new, recurring, persistent, historical, or recently fixed?
+- Which recurring failures are still active in the current execution?
+- Which tests appear flaky because their status changes across executions?
+- What should the team focus on next based on historical movement?
+
+Failure timeline records include:
+
+- Test identity.
+- Module, severity, and category.
+- Timeline points across stored executions.
+- Failed occurrence count.
+- Occurrence rate.
+- Consecutive failure count.
+- Current status.
+- Classification.
+- Human-readable summary.
+
+Flaky records include:
+
+- Status timeline.
+- Status-change count.
+- Flakiness percentage.
+- Confidence.
+- Recommendation.
 
 ## Historical Intelligence
 

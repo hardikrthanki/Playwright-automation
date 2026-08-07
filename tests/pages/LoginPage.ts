@@ -19,7 +19,8 @@ import {
 } from '../config/constants';
 
 import {
-  BASE_URL
+  BASE_URL,
+  AUTH_SETTINGS
 } from '../config/testData';
 
 /* =============================================================================
@@ -174,7 +175,107 @@ export class LoginPage
     });
   }
 
-  private async waitForLoginRedirect() {
+  private async completePostLoginMobileVerificationIfVisible() {
+
+    const heading =
+      this.page.getByRole(
+        'heading',
+        {
+          name: /verify your mobile number/i
+        }
+      );
+
+    if (
+      !await heading.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      return false;
+    }
+
+    Logger.info(
+      'Completing post-login mobile verification'
+    );
+
+    const otpInput =
+      this.page
+        .locator(
+          'input[inputmode="numeric"], input[name="otp"], input[placeholder="123456"]'
+        )
+        .first();
+
+    if (
+      !await otpInput.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      const mobileInput =
+        this.page
+          .locator(
+            'input[type="tel"], input[inputmode="tel"]'
+          )
+          .first();
+
+      if (
+        await mobileInput.isVisible()
+          .catch(
+            () => false
+          ) &&
+        await mobileInput.isEditable()
+          .catch(
+            () => false
+          )
+      ) {
+        await mobileInput.fill(
+          process.env.SUBSCRIBER_MOBILE ??
+            '2015550123'
+        );
+      }
+
+      const sendCodeButton =
+        this.page.getByRole(
+          'button',
+          {
+            name: /send code via sms/i
+          }
+        ).first();
+
+      if (
+        await sendCodeButton.isVisible()
+          .catch(
+            () => false
+          )
+      ) {
+        await safeClick(
+          sendCodeButton,
+          'Send Post-login Mobile OTP'
+        );
+      }
+    }
+
+    await expect(
+      otpInput
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await otpInput.fill(
+      AUTH_SETTINGS.otpCode
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /^verify$/i
+        }
+      ).first(),
+      'Verify Post-login Mobile OTP'
+    );
 
     await this.page.waitForURL(
       /\/(dashboard|onboarding)/,
@@ -182,6 +283,24 @@ export class LoginPage
         timeout: 30000
       }
     );
+
+    Logger.success(
+      'Post-login mobile verification completed'
+    );
+
+    return true;
+  }
+
+  private async waitForLoginRedirect() {
+
+    await this.page.waitForURL(
+      /\/(dashboard|onboarding|verify-mobile|mobile-verification)/,
+      {
+        timeout: 30000
+      }
+    );
+
+    await this.completePostLoginMobileVerificationIfVisible();
   }
 
   async handleLockedAccount(
@@ -294,6 +413,21 @@ export class LoginPage
       return;
     }
 
+    if (
+      await this.completePostLoginMobileVerificationIfVisible()
+    ) {
+      Logger.success(
+        'Logged in successfully'
+      );
+
+      console.log(
+        'Current URL:',
+        this.page.url()
+      );
+
+      return;
+    }
+
     await this.waitForLoginFormReady();
 
     for (let attempt = 1; attempt <= 3; attempt++) {
@@ -350,6 +484,21 @@ export class LoginPage
             waitUntil: 'domcontentloaded'
           }
         );
+
+        if (
+          await this.completePostLoginMobileVerificationIfVisible()
+        ) {
+          Logger.success(
+            'Logged in successfully'
+          );
+
+          console.log(
+            'Current URL:',
+            this.page.url()
+          );
+
+          return;
+        }
 
         await this.waitForLoginFormReady();
       }

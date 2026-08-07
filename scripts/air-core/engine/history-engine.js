@@ -44,6 +44,46 @@ function normalizeStatus(value, fallback = 'No Data Available') {
   return value ?? fallback;
 }
 
+function normalizeTestStatus(value) {
+  const status = String(value ?? 'unknown').toLowerCase();
+
+  if (status.includes('pass')) return 'passed';
+  if (status.includes('fail')) return 'failed';
+  if (status.includes('flaky')) return 'flaky';
+  if (status.includes('skip')) return 'skipped';
+  if (status.includes('interrupt')) return 'interrupted';
+
+  return status || 'unknown';
+}
+
+function trendDirectionFromValues(values = [], higherIsBetter = true) {
+  const numericValues = values
+    .map(value => Number(value))
+    .filter(value => Number.isFinite(value));
+
+  if (numericValues.length < 2) {
+    return {
+      direction: 'No Trend',
+      delta: 0,
+      first: numericValues[0] ?? 0,
+      latest: numericValues.at(-1) ?? 0,
+    };
+  }
+
+  const first = numericValues[0];
+  const latest = numericValues.at(-1);
+  const delta = Math.round((latest - first) * 100) / 100;
+  const improved = higherIsBetter ? delta > 0 : delta < 0;
+  const regressed = higherIsBetter ? delta < 0 : delta > 0;
+
+  return {
+    direction: delta === 0 ? 'Stable' : improved ? 'Improving' : regressed ? 'Declining' : 'Changed',
+    delta,
+    first,
+    latest,
+  };
+}
+
 function getFailureRate(item = {}) {
   const total = item.summary?.total ?? 0;
 
@@ -52,6 +92,10 @@ function getFailureRate(item = {}) {
   }
 
   return Math.round(((item.summary?.failed ?? 0) / total) * 10000) / 100;
+}
+
+function getFlakyCount(item = {}) {
+  return item.summary?.flaky ?? asArray(item.tests).filter(test => test.status === 'flaky' || test.flaky).length;
 }
 
 function createExecutionSnapshot(airResults = {}) {
@@ -93,6 +137,7 @@ function createExecutionSnapshot(airResults = {}) {
       file: test.file,
       module: test.module,
       status: test.status,
+      flaky: test.flaky,
     })),
     failedTests: asArray(airResults.failedTests).map(failure => ({
       testId: failure.testId,
@@ -123,18 +168,47 @@ function sortExecutions(executions = []) {
 }
 
 function buildTrend(executions = [], name, reader) {
+  const points = sortExecutions(executions).map((execution, index) => ({
+    index: index + 1,
+    build: execution.project?.build ?? execution.execution?.build,
+    generatedAt: execution.generatedAt,
+    generatedAtDisplay: execution.generatedAtDisplay,
+    releaseDecision: getReleaseStatus(execution),
+    qualityScore: getQualityScore(execution),
+    label: execution.generatedAtDisplay ?? execution.generatedAt ?? `Execution ${index + 1}`,
+    value: reader(execution),
+  }));
+
   return {
     name,
-    points: sortExecutions(executions).map((execution, index) => ({
-      index: index + 1,
-      build: execution.project?.build ?? execution.execution?.build,
-      generatedAt: execution.generatedAt,
-      generatedAtDisplay: execution.generatedAtDisplay,
-      releaseDecision: getReleaseStatus(execution),
-      qualityScore: getQualityScore(execution),
-      label: execution.generatedAtDisplay ?? execution.generatedAt ?? `Execution ${index + 1}`,
-      value: reader(execution),
-    })),
+    points,
+    summary: summarizeTrendPoints(points),
+  };
+}
+
+function summarizeTrendPoints(points = [], higherIsBetter = true) {
+  const values = asArray(points)
+    .map(point => Number(point.value))
+    .filter(value => Number.isFinite(value));
+
+  if (values.length === 0) {
+    return {
+      highest: 0,
+      lowest: 0,
+      average: 0,
+      direction: 'No Trend',
+      delta: 0,
+    };
+  }
+
+  const direction = trendDirectionFromValues(values, higherIsBetter);
+
+  return {
+    highest: Math.max(...values),
+    lowest: Math.min(...values),
+    average: Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 100) / 100,
+    direction: direction.direction,
+    delta: direction.delta,
   };
 }
 
@@ -197,6 +271,7 @@ function compareBuilds(executions = []) {
     passRate: compareNumber(current.summary?.passRate ?? 0, previous.summary?.passRate ?? 0),
     failureRate: compareNumber(getFailureRate(current), getFailureRate(previous), 'lower-is-better'),
     failures: compareNumber(current.summary?.failed ?? 0, previous.summary?.failed ?? 0, 'lower-is-better'),
+    flaky: compareNumber(getFlakyCount(current), getFlakyCount(previous), 'lower-is-better'),
     durationMs: compareNumber(current.summary?.durationMs ?? 0, previous.summary?.durationMs ?? 0, 'lower-is-better'),
     moduleCoverage: compareNumber(getAverageModuleCoverage(current), getAverageModuleCoverage(previous)),
     journeyCoverage: compareNumber(getAverageJourneyCoverage(current), getAverageJourneyCoverage(previous)),
@@ -456,13 +531,14 @@ function detectImprovements(comparison = {}) {
 }
 
 function buildTrends(executions = []) {
-  return {
+  const trends = {
     quality: buildTrend(executions, 'Quality Trend', getQualityScore),
     release: buildTrend(executions, 'Release Trend', getReleaseStatus),
     testCount: buildTrend(executions, 'Test Count Trend', execution => execution.summary?.total ?? 0),
     passRate: buildTrend(executions, 'Pass Rate Trend', execution => execution.summary?.passRate ?? 0),
     businessHealth: buildTrend(executions, 'Business Health Trend', execution => execution.summary?.businessHealth ?? 0),
     failures: buildTrend(executions, 'Failure Trend', execution => execution.summary?.failed ?? 0),
+    flaky: buildTrend(executions, 'Flaky Trend', getFlakyCount),
     failureRate: buildTrend(executions, 'Failure Rate Trend', getFailureRate),
     duration: buildTrend(executions, 'Execution Duration Trend', execution => execution.summary?.durationMs ?? 0),
     moduleCoverage: buildTrend(executions, 'Module Coverage Trend', getAverageModuleCoverage),
@@ -471,6 +547,327 @@ function buildTrends(executions = []) {
     modules: buildNamedHealthTrends(executions, 'modules'),
     businessJourneys: buildNamedHealthTrends(executions, 'businessJourneys'),
   };
+
+  trends.failures.summary = summarizeTrendPoints(trends.failures.points, false);
+  trends.flaky.summary = summarizeTrendPoints(trends.flaky.points, false);
+  trends.failureRate.summary = summarizeTrendPoints(trends.failureRate.points, false);
+  trends.duration.summary = summarizeTrendPoints(trends.duration.points, false);
+
+  return trends;
+}
+
+function detectRecurringFailurePatterns(executions = []) {
+  const sortedExecutions = sortExecutions(executions);
+  const failureMap = new Map();
+  const executionCount = sortedExecutions.length;
+
+  sortedExecutions.forEach((execution, executionIndex) => {
+    asArray(execution.failedTests).forEach(failure => {
+      const key = getFailureKey(failure);
+
+      if (!failureMap.has(key)) {
+        failureMap.set(key, {
+          key,
+          name: failure.testName ?? failure.title ?? key,
+          module: failure.module ?? 'General',
+          severity: failure.severity ?? failure.priority ?? 'Review',
+          category: failure.category ?? 'Functional',
+          occurrences: 0,
+          firstSeen: execution.generatedAtDisplay ?? execution.generatedAt,
+          lastSeen: execution.generatedAtDisplay ?? execution.generatedAt,
+          executionIndexes: [],
+          timeline: [],
+        });
+      }
+
+      const item = failureMap.get(key);
+      item.occurrences += 1;
+      item.lastSeen = execution.generatedAtDisplay ?? execution.generatedAt;
+      item.executionIndexes.push(executionIndex + 1);
+    });
+  });
+
+  for (const item of failureMap.values()) {
+    item.timeline = sortedExecutions.map((execution, index) => {
+      const failed = asArray(execution.failedTests)
+        .some(failure => getFailureKey(failure) === item.key);
+
+      return {
+        index: index + 1,
+        build: execution.project?.build ?? execution.execution?.build,
+        generatedAt: execution.generatedAt,
+        generatedAtDisplay: execution.generatedAtDisplay,
+        status: failed ? 'failed' : 'passed',
+      };
+    });
+
+    item.consecutiveExecutions = countTrailingStatus(item.timeline, 'failed');
+    item.occurrenceRate = executionCount
+      ? Math.round((item.occurrences / executionCount) * 100)
+      : 0;
+    item.classification =
+      item.consecutiveExecutions >= 3
+        ? 'Persistent'
+        : item.occurrences > 1
+          ? 'Recurring'
+          : 'New';
+    item.summary = `${item.classification}: appeared in ${item.occurrences} of ${executionCount} execution(s).`;
+  }
+
+  return [...failureMap.values()]
+    .filter(item => item.occurrences > 1)
+    .sort((left, right) => right.occurrences - left.occurrences || left.name.localeCompare(right.name));
+}
+
+function detectFlakyTests(executions = []) {
+  const sortedExecutions = sortExecutions(executions);
+  const testMap = new Map();
+
+  sortedExecutions.forEach((execution, executionIndex) => {
+    asArray(execution.tests).forEach(test => {
+      const key = getTestKey(test);
+
+      if (!testMap.has(key)) {
+        testMap.set(key, {
+            key,
+            name: test.title ?? key,
+            module: test.module ?? 'General',
+            occurrences: 0,
+            firstSeen: execution.generatedAtDisplay ?? execution.generatedAt,
+            lastSeen: execution.generatedAtDisplay ?? execution.generatedAt,
+            executionIndexes: [],
+            timeline: [],
+          });
+      }
+
+      const item = testMap.get(key);
+      const status = normalizeTestStatus(test.status);
+
+      item.timeline.push({
+        index: executionIndex + 1,
+        build: execution.project?.build ?? execution.execution?.build,
+        generatedAt: execution.generatedAt,
+        generatedAtDisplay: execution.generatedAtDisplay,
+        status,
+      });
+
+      if (status === 'failed' || status === 'flaky' || test.flaky) {
+        item.occurrences += 1;
+        item.lastSeen = execution.generatedAtDisplay ?? execution.generatedAt;
+        item.executionIndexes.push(executionIndex + 1);
+      }
+    });
+  });
+
+  return [...testMap.values()]
+    .map(item => {
+      const statuses = item.timeline.map(point => point.status);
+      const uniqueStatuses = new Set(statuses);
+      const statusChanges = statuses
+        .slice(1)
+        .filter((status, index) => status !== statuses[index]).length;
+      const flakyExecutions = statuses.filter(status => status === 'failed' || status === 'flaky').length;
+      const flakinessPercentage = statuses.length
+        ? Math.round((flakyExecutions / statuses.length) * 100)
+        : 0;
+      const isFlaky =
+        uniqueStatuses.has('passed') &&
+        (uniqueStatuses.has('failed') || uniqueStatuses.has('flaky')) &&
+        statusChanges > 0;
+
+      return {
+        ...item,
+        statusChanges,
+        flakinessPercentage,
+        confidence: Math.min(100, Math.round((statusChanges / Math.max(1, statuses.length - 1)) * 100)),
+        classification: isFlaky ? 'Flaky Test' : item.timeline.at(-1)?.status === 'flaky' ? 'Flaky Test' : 'Stable',
+        recommendation: isFlaky
+          ? 'Review test data, timing, and environment dependencies before using this test as a release gate.'
+          : 'Continue monitoring.',
+      };
+    })
+    .filter(item => item.classification === 'Flaky Test')
+    .sort((left, right) => right.flakinessPercentage - left.flakinessPercentage || left.name.localeCompare(right.name));
+}
+
+function countTrailingStatus(timeline = [], status) {
+  let count = 0;
+
+  for (let index = timeline.length - 1; index >= 0; index--) {
+    if (timeline[index].status !== status) {
+      break;
+    }
+
+    count += 1;
+  }
+
+  return count;
+}
+
+function buildExecutionIntelligence(executions = [], comparison = {}) {
+  const recurringFailures = detectRecurringFailurePatterns(executions);
+  const failureTimelines = buildFailureTimelines(executions);
+  const currentFailureKeys = new Set(
+    asArray(sortExecutions(executions).at(-1)?.failedTests).map(getFailureKey)
+  );
+  const activeRecurringFailures = recurringFailures.filter(item => currentFailureKeys.has(item.key));
+  const flakyTests = detectFlakyTests(executions);
+  const newFailures = comparison.failures?.added ?? [];
+  const resolvedFailures = comparison.failures?.resolved ?? [];
+  const regressedModules = comparison.modules?.regressed ?? [];
+  const regressedJourneys = comparison.businessJourneys?.regressed ?? [];
+  const focus = [];
+
+  if (newFailures.length > 0) {
+    focus.push({
+      type: 'New Failures',
+      priority: 'High',
+      summary: `${newFailures.length} new failure(s) appeared in the current execution.`,
+      action: 'Review new failure evidence before release approval.',
+    });
+  }
+
+  if (activeRecurringFailures.length > 0) {
+    focus.push({
+      type: 'Recurring Failures',
+      priority: 'High',
+      summary: `${activeRecurringFailures.length} current failure pattern(s) also appeared in previous executions.`,
+      action: 'Prioritize recurring failures for root-cause investigation.',
+    });
+  }
+
+  if (flakyTests.length > 0) {
+    focus.push({
+      type: 'Flaky Tests',
+      priority: 'Medium',
+      summary: `${flakyTests.length} flaky test pattern(s) detected across history.`,
+      action: 'Stabilize flaky tests before using them as release confidence signals.',
+    });
+  }
+
+  if (regressedModules.length > 0 || regressedJourneys.length > 0) {
+    focus.push({
+      type: 'Regression',
+      priority: 'High',
+      summary: `${regressedModules.length} module and ${regressedJourneys.length} journey regression(s) detected.`,
+      action: 'Compare failed areas with recent product or test-data changes.',
+    });
+  }
+
+  if (resolvedFailures.length > 0) {
+    focus.push({
+      type: 'Resolved Failures',
+      priority: 'Positive',
+      summary: `${resolvedFailures.length} failure(s) resolved compared with the previous execution.`,
+      action: 'Keep resolved scenarios in regression monitoring.',
+    });
+  }
+
+  if (focus.length === 0) {
+    focus.push({
+      type: 'Stable Execution',
+      priority: 'Monitor',
+      summary: 'No new, recurring, flaky, or regression signals were detected in the latest comparison.',
+      action: 'Continue monitoring historical quality and expand coverage where gaps remain.',
+    });
+  }
+
+  return {
+    failureTimelines,
+    recurringFailures,
+    activeRecurringFailures,
+    flakyTests,
+    focus,
+    summary: {
+      recurringFailureCount: activeRecurringFailures.length,
+      historicalRecurringFailureCount: recurringFailures.length,
+      flakyTestCount: flakyTests.length,
+      failureTimelineCount: failureTimelines.length,
+      newFailureCount: newFailures.length,
+      resolvedFailureCount: resolvedFailures.length,
+      moduleRegressionCount: regressedModules.length,
+      journeyRegressionCount: regressedJourneys.length,
+    },
+  };
+}
+
+function buildFailureTimelines(executions = []) {
+  const sortedExecutions = sortExecutions(executions);
+  const failureKeys = new Map();
+
+  sortedExecutions.forEach(execution => {
+    asArray(execution.failedTests).forEach(failure => {
+      const key = getFailureKey(failure);
+
+      if (!failureKeys.has(key)) {
+        failureKeys.set(key, {
+          key,
+          name: failure.testName ?? failure.title ?? key,
+          module: failure.module ?? 'General',
+          severity: failure.severity ?? failure.priority ?? 'Review',
+          category: failure.category ?? 'Functional',
+        });
+      }
+    });
+  });
+
+  return [...failureKeys.values()]
+    .map(item => {
+      const timeline = sortedExecutions.map((execution, index) => {
+        const failure = asArray(execution.failedTests)
+          .find(candidate => getFailureKey(candidate) === item.key);
+
+        return {
+          index: index + 1,
+          build: execution.project?.build ?? execution.execution?.build,
+          generatedAt: execution.generatedAt,
+          generatedAtDisplay: execution.generatedAtDisplay,
+          status: failure ? 'failed' : 'passed',
+          releaseDecision: getReleaseStatus(execution),
+          qualityScore: getQualityScore(execution),
+        };
+      });
+      const failedCount = timeline.filter(point => point.status === 'failed').length;
+      const currentStatus = timeline.at(-1)?.status ?? 'unknown';
+      const previousStatus = timeline.at(-2)?.status ?? 'unknown';
+      const consecutiveFailures = countTrailingStatus(timeline, 'failed');
+      const classification =
+        currentStatus === 'passed' && previousStatus === 'failed'
+          ? 'Recently Fixed'
+          : currentStatus === 'failed' && failedCount === 1
+            ? 'New'
+            : currentStatus === 'failed' && consecutiveFailures >= 3
+              ? 'Persistent'
+              : currentStatus === 'failed'
+                ? 'Recurring'
+                : 'Historical';
+
+      return {
+        ...item,
+        timeline,
+        failedCount,
+        occurrenceRate: timeline.length
+          ? Math.round((failedCount / timeline.length) * 100)
+          : 0,
+        consecutiveFailures,
+        currentStatus,
+        classification,
+        summary: `${classification}: ${failedCount} failed occurrence(s) across ${timeline.length} execution(s).`,
+      };
+    })
+    .sort((left, right) => {
+      const weights = {
+        Persistent: 4,
+        Recurring: 3,
+        New: 2,
+        'Recently Fixed': 1,
+        Historical: 0,
+      };
+
+      return (weights[right.classification] ?? 0) - (weights[left.classification] ?? 0) ||
+        right.failedCount - left.failedCount ||
+        left.name.localeCompare(right.name);
+    });
 }
 
 function buildNamedHealthTrends(executions = [], collectionName) {
@@ -485,9 +882,8 @@ function buildNamedHealthTrends(executions = [], collectionName) {
     }
   }
 
-  return [...names].map(name => ({
-    name,
-    points: sortedExecutions.map((execution, index) => {
+  return [...names].map(name => {
+    const points = sortedExecutions.map((execution, index) => {
       const item = asArray(execution[collectionName]).find(candidate => candidate.name === name);
 
       return {
@@ -503,8 +899,20 @@ function buildNamedHealthTrends(executions = [], collectionName) {
         total: item?.total ?? 0,
         failed: item?.failed ?? 0,
       };
-    }),
-  }));
+    });
+    const scores = points.map(point => point.score);
+    const trend = trendDirectionFromValues(scores);
+
+    return {
+      name,
+      points,
+      direction: trend.direction,
+      delta: trend.delta,
+      firstScore: trend.first,
+      latestScore: trend.latest,
+      summary: `${name} is ${trend.direction.toLowerCase()} (${trend.first}% -> ${trend.latest}%).`,
+    };
+  });
 }
 
 function buildReleaseTimeline(executions = []) {
@@ -558,6 +966,7 @@ function buildHistory(airResults = {}, existingHistory = [], config = {}) {
     snapshot,
   ].slice(-maxExecutions);
   const comparison = compareBuilds(executions);
+  const executionIntelligence = buildExecutionIntelligence(executions, comparison);
 
   return {
     executions,
@@ -567,6 +976,7 @@ function buildHistory(airResults = {}, existingHistory = [], config = {}) {
     improvements: detectImprovements(comparison),
     releaseTimeline: buildReleaseTimeline(executions),
     whatChanged: buildExecutiveWhatChanged(comparison),
+    executionIntelligence,
     summary: {
       status: comparison.status,
       totalExecutions: executions.length,
@@ -576,6 +986,8 @@ function buildHistory(airResults = {}, existingHistory = [], config = {}) {
       releaseChanged: comparison.previous
         ? `${getReleaseStatus(comparison.previous)} -> ${getReleaseStatus(comparison.current)}`
         : 'First Execution',
+      recurringFailureCount: executionIntelligence.summary.recurringFailureCount,
+      flakyTestCount: executionIntelligence.summary.flakyTestCount,
     },
   };
 }
@@ -599,7 +1011,10 @@ module.exports = {
   compareTests,
   createExecutionSnapshot,
   buildExecutiveWhatChanged,
+  buildExecutionIntelligence,
   detectImprovements,
+  detectFlakyTests,
+  detectRecurringFailurePatterns,
   detectRegressions,
   execute,
   getHistoryExecutions,

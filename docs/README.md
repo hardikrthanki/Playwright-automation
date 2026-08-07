@@ -4,6 +4,8 @@ AIR is the Automation Intelligence Platform inside this repository. It converts 
 
 This documentation set explains AIR as a product and as an engineering system. Start here, then follow the engine-specific documents as work moves into AIR Core.
 
+AIR is also part of the longer-term PIOS ecosystem: Product Intelligence Operating System. PIOS is the shared platform layer for RIE, AIR, RI, and future OI.
+
 ## Current Status
 
 - AIR v1.0 UI is frozen.
@@ -15,6 +17,31 @@ This documentation set explains AIR as a product and as an engineering system. S
 - Future work should improve intelligence and integrations, not redesign the UI.
 
 ## Documentation Map
+
+### PIOS Ecosystem
+
+| Document | Purpose |
+| --- | --- |
+| [PIOS_ARCHITECTURE.md](PIOS_ARCHITECTURE.md) | Product Intelligence Operating System platform vision, boundaries, and development sequence |
+| [SHARED_DOMAIN_MODEL.md](SHARED_DOMAIN_MODEL.md) | Shared entities and ownership across RIE, AIR, RI, OI, and PIOS |
+| [KNOWLEDGE_GRAPH_SPEC.md](KNOWLEDGE_GRAPH_SPEC.md) | Relationship engine and traceability model |
+| [AIR_PRODUCT_SPEC.md](AIR_PRODUCT_SPEC.md) | Automation Intelligence Report product scope and ownership |
+| [RIE_PRODUCT_SPEC.md](RIE_PRODUCT_SPEC.md) | Requirements Intelligence Engine product scope |
+| [RI_PRODUCT_SPEC.md](RI_PRODUCT_SPEC.md) | Release Intelligence product scope |
+| [PRODUCT_BOUNDARIES.md](PRODUCT_BOUNDARIES.md) | Rules for deciding where functionality belongs |
+| [INTEGRATION_CONTRACTS.md](INTEGRATION_CONTRACTS.md) | Cross-product data exchange contracts |
+
+### Architecture Decisions
+
+| Document | Decision |
+| --- | --- |
+| [ADR-001-PIOS-as-Platform.md](adr/ADR-001-PIOS-as-Platform.md) | PIOS is the platform layer, not another business application |
+| [ADR-002-Knowledge-Graph.md](adr/ADR-002-Knowledge-Graph.md) | Knowledge Graph is the shared relationship engine |
+| [ADR-003-Independent-Products.md](adr/ADR-003-Independent-Products.md) | RIE, AIR, RI, and future OI remain independently valuable |
+| [ADR-004-Data-Ownership.md](adr/ADR-004-Data-Ownership.md) | No product owns another product's data |
+| [ADR-005-Evidence-First.md](adr/ADR-005-Evidence-First.md) | Evidence-first intelligence is required across the ecosystem |
+
+### AIR
 
 | Document | Purpose |
 | --- | --- |
