@@ -14,8 +14,9 @@ TEST SUITE: Failed Payment And Dunning Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 8 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report payment-failure coverage,
-dunning dependencies, and backend/webhook gaps without forcing live payment debt.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report payment-failure coverage, dunning
+dependencies, and backend/webhook gaps without forcing live payment debt.
 
 RUN
 ---
@@ -135,7 +136,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Add payment method screen opens from Stripe portal',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details'
+    automation: 'BillingSubscriptionManagement.spec.ts > Stripe portal exposes payment recovery entry points without saving'
   },
   {
     id: 'SC-314',
@@ -143,7 +144,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Billing information update screen opens from Stripe portal',
     priority: 'Medium',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details'
+    automation: 'BillingSubscriptionManagement.spec.ts > Stripe portal exposes payment recovery entry points without saving'
   },
   {
     id: 'SC-315',
@@ -310,16 +311,16 @@ const dunningScenarios: DunningScenario[] = [
     sourceIds: ['SUB-DUN-035'],
     title: 'Insufficient funds card is handled during checkout',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires Stripe insufficient-funds test card path in safe checkout fixture.'
+    status: 'automated',
+    automation: 'PaymentNegative.spec.ts > Stripe Checkout rejects insufficient funds card without activating subscription'
   },
   {
     id: 'SC-336',
     sourceIds: ['SUB-DUN-036'],
     title: 'Authentication-required payment is handled gracefully',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires Stripe 3DS/authentication-required test card fixture.'
+    status: 'automated',
+    automation: 'PaymentNegative.spec.ts > Stripe Checkout opens authentication-required flow without losing checkout context'
   },
   {
     id: 'SC-337',
@@ -327,7 +328,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Issuer unavailable payment failure is handled gracefully',
     priority: 'Medium',
     status: 'future',
-    dependency: 'Requires Stripe issuer-unavailable test card fixture.'
+    dependency: 'Processing-error checkout is covered in PaymentNegative.spec.ts; a dedicated issuer-unavailable fixture still requires Stripe/API support.'
   },
   {
     id: 'SC-338',
@@ -335,7 +336,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Fraud-blocked payment does not activate subscription',
     priority: 'High',
     status: 'future',
-    dependency: 'Requires Stripe fraud test card fixture.'
+    dependency: 'Stolen-card checkout decline is covered in PaymentNegative.spec.ts; a true fraud/Radar blocked-payment fixture still requires Stripe/API support.'
   },
   {
     id: 'SC-339',

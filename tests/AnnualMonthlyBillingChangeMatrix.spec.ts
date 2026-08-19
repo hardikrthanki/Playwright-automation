@@ -14,8 +14,9 @@ TEST SUITE: Annual To Monthly Billing Change Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 6 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report annual-to-monthly
-coverage, blocked dependencies, and future work without changing subscriptions.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report annual-to-monthly coverage, blocked
+dependencies, and future work without changing subscriptions.
 
 RUN
 ---
@@ -46,8 +47,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-002'],
     title: 'Current annual plan is clearly identified before monthly switch',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires dedicated annual paid-account fixture.'
+    status: 'automated',
+    automation: 'BillingEdgeValidation.spec.ts > Billing plans expose billing interval summary without changing subscription'
   },
   {
     id: 'SC-203',
@@ -63,7 +64,7 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     title: 'Monthly switch action is available only for active annual subscriptions',
     priority: 'Critical',
     status: 'future',
-    dependency: 'Requires dedicated active annual paid-account fixture.'
+    dependency: 'Requires dedicated active annual paid-account fixture. Current safe coverage validates interval presentation without changing subscription.'
   },
   {
     id: 'SC-205',

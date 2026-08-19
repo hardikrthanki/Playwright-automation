@@ -218,6 +218,14 @@ Validated coverage:
 
 - Plan selection page displays available plans.
 - Monthly and annual toggle changes pricing display.
+- Paid-plan monthly and annual pricing presentation is validated without
+  activating checkout.
+- Paid-plan entitlement limits are displayed before checkout for Income
+  Builder, Overlay Strategists, Portfolio Hedger, and Marketplace.
+- Users can switch between available plan selections without launching Stripe
+  checkout until setup is submitted.
+- Multi-plan Stripe checkout summaries are validated before payment for
+  selected safe plan and billing interval combinations.
 - Curious Explorer free plan completes onboarding without Stripe where enabled.
 - Paid plan redirects to Stripe checkout.
 - Overlay Strategists 30-day trial options.
@@ -243,9 +251,18 @@ Validated coverage:
 - Country/region.
 - Payment submission.
 - Redirect back to OOLTool dashboard.
+- Checkout refresh preserves selected subscription context before payment.
+- Browser back from Stripe checkout returns safely before payment.
+- Currency, exchange-rate, and conversion-fee copy is validated before payment
+  for non-USD checkout presentation.
 - Incomplete card number validation.
 - Expired card validation.
 - Invalid CVC validation.
+- Generic declined-card validation.
+- Insufficient-funds card validation.
+- Processing-error card validation.
+- Stolen-card decline validation.
+- Authentication-required checkout context validation.
 
 Controlled behavior:
 
@@ -349,6 +366,10 @@ Validated coverage:
 - Billing page remains available after refresh.
 - Plans tab opens.
 - Expected plan is visible.
+- Plan lifecycle action/status summary is validated without clicking upgrade,
+  downgrade, or subscription-changing actions.
+- Billing interval presentation is validated without switching plans or
+  submitting billing changes.
 - Plans and history tabs can be revisited safely without launching checkout.
 - History tab opens.
 - Transactions tab opens.
@@ -374,18 +395,29 @@ Validated coverage:
 - Portal shows paid invoice history.
 - Portal return link opens application content.
 - Add payment method screen opens without saving.
+- Payment recovery entry points are visible without saving payment changes.
 - Billing information update screen opens without saving.
+- Cancellation lifecycle state is readable without cancelling.
 - Cancel subscription form accepts reason and feedback without completing destructive cancellation.
 - Already scheduled cancellation state is validated without changing it.
+- End-to-end subscription lifecycle is mapped across trial, paid purchase,
+  upgrade, downgrade, billing interval change, cancellation, refund, expiry,
+  renewal, dunning, and audit/reporting expectations.
+- Lifecycle rows clearly identify what is executable now, what is a known
+  product issue, and what remains blocked by Stripe/admin/scheduler fixtures.
 
 Controlled behavior:
 
 - Destructive cancellation is not executed by default.
 - Portal tests require a prepared paid/trial subscriber.
+- Immediate cancellation, refunds, renewal, expiry, Stripe proration, and audit
+  validation require dedicated controlled fixtures before execution.
 
 Primary spec:
 
 - `tests/BillingSubscriptionManagement.spec.ts`
+- `tests/SubscriptionLifecycleExecution.spec.ts`
+- `tests/SubscriptionLifecycleE2EMatrix.spec.ts`
 
 ### 15. Permission and Access Control
 
@@ -576,7 +608,7 @@ start execution-report\index.html
 | Risk Profile | Covered | Initial completion, validation, update, persistence. |
 | Compliance | Covered | Initial completion, disclosures, update, persistence. |
 | Plan Selection | Covered | Monthly/annual, free plan, paid plan, trial options. |
-| Stripe Checkout | Covered/Controlled | Positive checkout and negative payment validation. |
+| Stripe Checkout | Covered/Controlled | Positive checkout plus controlled negative payment validation for incomplete card data, declined cards, insufficient funds, processing errors, stolen-card decline, and authentication-required checkout context. |
 | Dashboard | Covered | Load, refresh, navigation, menus, utilities. |
 | Profile | Covered | Data loading, read-only email, safe personal-info controls, draft refresh behavior, password/mobile validations. |
 | MFA | Controlled | Backup code, invalid OTP, trusted device, enable/disable flows prepared. |
@@ -612,4 +644,4 @@ Controlled areas:
 
 ## Client-Ready Summary
 
-The current Playwright automation suite validates OOLTool across authentication, onboarding, risk/compliance, plan selection, payment, dashboard, profile, billing, subscription management, session security, accessibility, and AIR reporting. Controlled tests are available for MFA, email-link flows, rate limits, and Stripe portal actions where execution depends on external systems or prepared account state.
+The current Playwright automation suite validates OOLTool across authentication, onboarding, risk/compliance, plan selection, payment, dashboard, profile, billing, subscription management, session security, accessibility, and AIR reporting. Controlled tests are available for MFA, email-link flows, rate limits, Stripe checkout edge cases, and Stripe portal actions where execution depends on external systems or prepared account state.

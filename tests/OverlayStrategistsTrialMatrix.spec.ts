@@ -13,7 +13,8 @@ TEST SUITE: Overlay Strategists Trial Matrix
 
 PURPOSE
 -------
-Documents all 35 FRD Use Case 1 scenarios in executable Playwright form.
+Documents all 36 FRD Use Case 1 scenarios in executable Playwright form.
+Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx.
 Browser-safe cases are implemented in the linked specs. Backend, scheduler,
 Stripe-admin, broker, portfolio, and audit scenarios are intentionally skipped
 with explicit dependency messages until dev/admin support is available.
@@ -55,7 +56,7 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     priority: 'High',
     status: 'automated',
     automation:
-      'OverlayStrategistsTrial.spec.ts > New user can reach Overlay Strategists trial option'
+      'OverlayStrategistsTrial.spec.ts > New user can reach Overlay Strategists trial option after email/mobile onboarding prerequisites; PlanSelectionValidation.spec.ts validates both with-card and without-card lifecycle messaging'
   },
   {
     id: 'SC-03',
@@ -73,22 +74,22 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     sourceIds: [
       'SUB-TRIAL-005'
     ],
-    title: 'Linked account limit is ten',
+    title: 'No-card trial linked-account limit requires confirmation',
     priority: 'Critical',
-    status: 'manual-verified',
+    status: 'blocked',
     dependency:
-      'Manually verified that 10 broker accounts can be linked. Full automation requires a connected broker fixture or backend/API support.'
+      'FRD says no-card trial has 5 linked accounts, but paid Overlay Strategists UI displays Account Linked (10). Confirm whether no-card trial should remain reduced at 5 or match paid-plan limit of 10 before automating enforcement. Requires connected broker fixture or backend/API support.'
   },
   {
     id: 'SC-05',
     sourceIds: [
       'SUB-TRIAL-006'
     ],
-    title: 'Portfolio position limit is 100',
+    title: 'No-card trial portfolio position limit is 100',
     priority: 'Critical',
     status: 'blocked',
     dependency:
-      'UI can display the position limit, but enforcement is impractical through UI because it requires safely creating/importing hundreds of positions. Needs broker/API/database seed support.'
+      'FRD expected limit is 100 positions for no-card trial. Enforcement requires safely creating/importing portfolio positions through a seed fixture or backend/API support.'
   },
   {
     id: 'SC-06',
@@ -111,7 +112,7 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     priority: 'Critical',
     status: 'known-bug',
     automation:
-      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial with card',
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial with card; PlanSelectionValidation.spec.ts > with-card trial explains card collection, auto-renewal, and cancellation',
     dependency:
       'Confirmed product bug: after activating the free trial with a valid payment card, Billing still displays Free Plan and does not show the saved payment method. Expected Billing state is active Free Trial with associated payment method.'
   },
@@ -156,17 +157,17 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Same email cannot receive another trial',
     priority: 'Critical',
-    status: 'future',
+    status: 'blocked',
     dependency:
-      'Requires deterministic account that has already consumed the Overlay Strategists trial.'
+      'FRD rule: trial is available once per user lifetime and eligibility should use identifiers such as email address, payment method fingerprint, and other platform-specific identifiers. Requires deterministic account that has already consumed the Overlay Strategists trial.'
   },
   {
     id: 'SC-12',
-    title: 'Same phone cannot receive another trial',
+    title: 'Same verified mobile number cannot receive another trial',
     priority: 'Critical',
-    status: 'future',
+    status: 'blocked',
     dependency:
-      'Requires confirmed business rule for phone-based trial eligibility and a safe repeat-phone fixture.'
+      'Platform rule aligned to FRD identity controls: verified mobile is treated as a platform-specific identifier for one-time trial eligibility. Requires a safe repeat-phone fixture that already consumed the Overlay Strategists trial.'
   },
   {
     id: 'SC-13',
@@ -239,6 +240,8 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     title: 'No-card trial downgrades to Free after expiry',
     priority: 'Critical',
     status: 'blocked',
+    automation:
+      'PlanSelectionValidation.spec.ts > without-card trial explains Free plan fallback after expiry',
     dependency:
       'Requires admin/API expiry control or scheduler trigger for trial expiry.'
   },
@@ -291,6 +294,8 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     title: 'With-card trial converts to paid after expiry',
     priority: 'Critical',
     status: 'blocked',
+    automation:
+      'PlanSelectionValidation.spec.ts > with-card trial explains auto-renewal after expiry',
     dependency:
       'Requires trial expiry scheduler plus Stripe subscription/invoice validation.'
   },
@@ -316,7 +321,7 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     priority: 'Critical',
     status: 'future',
     dependency:
-      'Requires active trial fixture and controlled paid checkout path.'
+      'Requires active trial fixture and controlled upgrade/plan-change checkout path.'
   },
   {
     id: 'SC-27',
@@ -355,7 +360,7 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     priority: 'Medium',
     status: 'future',
     dependency:
-      'Requires active with-card trial account and payment-method management UI/API.'
+      'Requires active with-card trial account and payment-method management UI/API. Business rule: user can cancel any time but keeps plan access until trial expiry.'
   },
   {
     id: 'SC-31',

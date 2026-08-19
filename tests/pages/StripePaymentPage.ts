@@ -318,6 +318,43 @@ export class StripePaymentPage
     );
   }
 
+  async validateCurrencyAndConversionDetails() {
+    Logger.info(
+      'Validating Stripe currency and conversion details'
+    );
+
+    await this.waitForCheckoutReady();
+
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    expect(
+      bodyText
+    ).toMatch(
+      /INR/i
+    );
+
+    expect(
+      bodyText
+    ).toMatch(
+      /USD/i
+    );
+
+    expect(
+      bodyText
+    ).toMatch(
+      /conversion fee|exchange rate|charges will vary|based on exchange rates/i
+    );
+
+    Logger.success(
+      'Stripe currency and conversion details validated'
+    );
+  }
+
   async validateDeclinedCardRejected() {
     Logger.info(
       'Validating Stripe rejects declined card'

@@ -478,6 +478,60 @@ hasText:/complete setup|continue to payment/i
 
 
 
+  async validatePaidPlanEntitlementSummaries() {
+
+    Logger.info(
+      'Validating paid plan entitlement summaries'
+    );
+
+    const expectedEntitlements = [
+      /income builder[\s\S]*broker integration\s*\(1\)/i,
+      /income builder[\s\S]*account linked\s*\(1\)/i,
+      /income builder[\s\S]*positions\s*\(100\)/i,
+      /overlay strategists[\s\S]*broker integration\s*\(5\)/i,
+      /overlay strategists[\s\S]*account linked\s*\(10\)/i,
+      /overlay strategists[\s\S]*positions\s*\(500\)/i,
+      /portfolio hedger[\s\S]*broker integration\s*\(10\)/i,
+      /portfolio hedger[\s\S]*account linked\s*\(20\)/i,
+      /portfolio hedger[\s\S]*positions\s*\(1000\)/i,
+      /marketplace[\s\S]*broker integration\s*\(20\)/i,
+      /marketplace[\s\S]*account linked\s*\(100\)/i,
+      /marketplace[\s\S]*positions\s*\(10000\)/i
+    ];
+
+    for (const planName of [
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger',
+      'Marketplace'
+    ]) {
+      await this.validatePlanVisible(
+        planName
+      );
+    }
+
+    const pageText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    for (const entitlement of expectedEntitlements) {
+      expect(
+        pageText
+      ).toMatch(
+        entitlement
+      );
+    }
+
+    Logger.success(
+      'Paid plan entitlement summaries validated'
+    );
+  }
+
+
+
   async validateBillingToggle() {
 
     Logger.info(
@@ -555,6 +609,152 @@ hasText:/complete setup|continue to payment/i
 
 
 
+  async selectAnnualBilling() {
+
+    Logger.info(
+      'Selecting annual billing'
+    );
+
+    await expect(
+      this.annualToggle()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await safeClick(
+      this.annualToggle(),
+      'Annual Toggle'
+    );
+
+    await expect(
+      this.page.locator(
+        'body'
+      )
+    ).toContainText(
+      /annual|year|yr|\/y/i,
+      {
+        timeout: 10000
+      }
+    );
+
+    Logger.success(
+      'Annual billing selected'
+    );
+  }
+
+
+
+  async selectMonthlyBilling() {
+
+    Logger.info(
+      'Selecting monthly billing'
+    );
+
+    await expect(
+      this.monthlyToggle()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await safeClick(
+      this.monthlyToggle(),
+      'Monthly Toggle'
+    );
+
+    await expect(
+      this.page.locator(
+        'body'
+      )
+    ).toContainText(
+      /monthly|\/mo|per month/i,
+      {
+        timeout: 10000
+      }
+    );
+
+    Logger.success(
+      'Monthly billing selected'
+    );
+  }
+
+
+
+  async validatePaidPlanPricingAcrossBillingPeriods() {
+
+    Logger.info(
+      'Validating paid plan pricing across billing periods'
+    );
+
+    await this.selectMonthlyBilling();
+
+    const monthlyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    const monthlyPrices = [
+      /\$\s*29\s*\/\s*mo/i,
+      /\$\s*79\s*\/\s*mo/i,
+      /\$\s*149\s*\/\s*mo/i,
+      /\$\s*249\s*\/\s*mo/i
+    ];
+
+    for (const price of monthlyPrices) {
+      expect(
+        monthlyText
+      ).toMatch(
+        price
+      );
+    }
+
+    await this.validateOverlayStrategistsTrialOptions();
+
+    await this.selectAnnualBilling();
+
+    const annualText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    const annualPrices = [
+      /\$\s*290\b/i,
+      /\$\s*790\b/i,
+      /\$\s*1,?490\b/i,
+      /\$\s*2,?490\b/i
+    ];
+
+    for (const price of annualPrices) {
+      expect(
+        annualText
+      ).toMatch(
+        price
+      );
+    }
+
+    for (const planName of [
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger',
+      'Marketplace'
+    ]) {
+      await this.validatePlanVisible(
+        planName
+      );
+    }
+
+    await this.selectMonthlyBilling();
+
+    Logger.success(
+      'Paid plan pricing across billing periods validated'
+    );
+  }
+
+
+
   async validateCompleteSetupRequiresPlanSelection() {
 
     Logger.info(
@@ -615,14 +815,70 @@ hasText:/complete setup|continue to payment/i
 
 
 
+  async validatePlanSelectionCanSwitchWithoutCheckout() {
+
+    Logger.info(
+      'Validating plan selection can switch without launching checkout'
+    );
+
+    const planNames = [
+      'Curious Explorer',
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger',
+      'Marketplace'
+    ];
+
+    await this.validatePlanCatalog();
+
+    for (const planName of planNames) {
+      await safeClick(
+        this.planByName(
+          planName
+        ),
+        `Select ${planName} without checkout`
+      );
+
+      await expect(
+        this.completeSetupButton
+      ).toBeVisible({
+        timeout: 15000
+      });
+
+      await expect(
+        this.page
+      ).not.toHaveURL(
+        /checkout\.stripe\.com|billing\.stripe\.com/i
+      );
+    }
+
+    Logger.success(
+      'Plan selection can switch without launching checkout'
+    );
+  }
+
+
+
   async validateOverlayStrategistsTrialModalContent(
     mode: 'with-card' | 'without-card'
   ) {
 
-    const expectedCopy =
+    const expectedCopy: RegExp[] =
       mode === 'with-card'
-        ? /securely save your card|auto-renews|after the trial|\$79|card/i
-        : /no card needed|moves to the free plan|without card/i;
+        ? [
+          /securely save your card|payment details|card/i,
+          /30-?day|30 days/i,
+          /no charge today|free trial/i,
+          /after the trial|\$79|auto-renews|automatically/i,
+          /unless you cancel|cancel/i
+        ]
+        : [
+          /no card needed|without card/i,
+          /30-?day|30 days/i,
+          /overlay strategists/i,
+          /afterwards|after the trial|subscription end/i,
+          /moves to the free plan|free plan/i
+        ];
 
     Logger.info(
       `Validating Overlay Strategists ${mode} trial modal content`
@@ -640,11 +896,13 @@ hasText:/complete setup|continue to payment/i
       /try out pro|try overlay strategists free/i
     );
 
-    await expect(
-      this.trialDialog()
-    ).toContainText(
-      expectedCopy
-    );
+    for (const expectedRule of expectedCopy) {
+      await expect(
+        this.trialDialog()
+      ).toContainText(
+        expectedRule
+      );
+    }
 
     Logger.success(
       `Overlay Strategists ${mode} trial modal content validated`

@@ -2,6 +2,11 @@
 
 This document maps the complete OOLTool user journey to Playwright automation.
 
+Subscription and Stripe coverage is governed by
+`OOLTool_Subscription_FRD_Detailed (1).docx`. If older manual notes, observed
+behavior, or pasted matrices conflict with that FRD, the FRD remains the
+expected requirement until a business-approved change is documented.
+
 ## Journey Goal
 
 Validate the user path from account creation through subscription, account
@@ -17,7 +22,7 @@ management, billing, security, password recovery, and logout.
 | 4 | Mobile verification | Completes if mobile verification screen appears | `onboarding.spec.ts`, `OverlayStrategistsTrial.spec.ts` | Stable |
 | 5 | Risk profile | Completes required risk profile fields and validates missing required fields, investing experience, strategy, account type, editable controls, update-before-save, post-onboarding dashboard updates, additional field persistence, and refresh persistence | `onboarding.spec.ts`, `OnboardingFieldValidation.spec.ts`, `RiskComplianceUpdate.spec.ts` | Stable prerequisite + controlled validation |
 | 6 | Compliance profile | Completes state/disclosures and validates state required, disclosures required, every disclosure required, cancel behavior, editable controls, update-before-save, post-onboarding dashboard updates, additional field persistence, and refresh persistence | `onboarding.spec.ts`, `OnboardingFieldValidation.spec.ts`, `RiskComplianceUpdate.spec.ts` | Stable prerequisite + controlled validation |
-| 7 | Plan selection | Selects Income Builder plan and validates plan catalog, feature summaries, monthly/annual toggle, Complete Setup guardrail, and Overlay Strategists trial modals without starting checkout | `onboarding.spec.ts`, `PlanSelectionValidation.spec.ts` | Stable + controlled validation |
+| 7 | Plan selection | Selects Income Builder plan and validates plan catalog, feature summaries, monthly/annual toggle, paid-plan pricing across billing periods, Complete Setup guardrail, and Overlay Strategists trial modals without starting checkout | `onboarding.spec.ts`, `PlanSelectionValidation.spec.ts` | Stable + controlled validation |
 | 8 | Stripe payment | Completes Stripe checkout using test card | `onboarding.spec.ts` | Stable |
 | 9 | Dashboard validation | Verifies dashboard loads after payment and does not show load-error screen | `onboarding.spec.ts`, `DashboardHealth.spec.ts` | Stable |
 | 10 | Dashboard navigation | Authenticated dashboard, top navigation tabs, top navigation route health, destination content rendering, destination refresh resilience, key authenticated route refresh resilience, dashboard refresh utility, dashboard quick-action menu, notification panel behavior, notification/theme/fullscreen controls, profile-menu navigation, profile-menu dismissal, profile-menu sign out, profile, billing, Risk & Compliance, menu, and browser-back navigation | `DashboardNavigation.spec.ts` | Stable |
@@ -31,9 +36,10 @@ management, billing, security, password recovery, and logout.
 | 18 | Account unlock | Locked-account email unlock and login | `UnlockAccount.spec.ts` | Controlled, only when account is locked |
 | 19 | MFA / 2FA | TOTP, backup code, trusted-device, manual OTP fallback | `MfaUserFlow.spec.ts` | Controlled by env flags |
 | 20 | Trusted device | TOTP-based remember-device validation | `MfaUserFlow.spec.ts` | Requires `MFA_LOCAL_TOTP_SECRET` |
-| 21 | Stripe / Subscription extension | Overlay Strategists with-card, without-card, terms, Stripe negative, customer portal, subscription management | `OverlayStrategistsTrial.spec.ts`, `BillingSubscriptionManagement.spec.ts`, `PaymentNegative.spec.ts` | Paused for Stripe phase |
+| 21 | Stripe / Subscription extension | Overlay Strategists with-card, without-card, terms, Stripe negative, customer portal, subscription management, and multi-plan Stripe checkout-summary validation before payment | `OverlayStrategistsTrial.spec.ts`, `DirectSubscriptionPurchase.spec.ts`, `BillingSubscriptionManagement.spec.ts`, `PaymentNegative.spec.ts` | Stripe phase |
 | 22 | Permission access | Prepared allowed/restricted users validate route and action access by permission | `PermissionAccess.spec.ts` | Controlled by env flags |
 | 23 | Auth configuration limits | Login lockout after configured failed attempts and password-reset email request limit | `AuthConfigurationLimits.spec.ts` | Controlled by env flags; use dedicated accounts |
+| 24 | Trial eligibility | Overlay Strategists free trial is restricted to one verified user identity | `OverlayStrategistsTrialMatrix.spec.ts`, `UserJourneyCoverageMatrix.spec.ts` | FRD rule; blocked until repeat-trial fixtures exist |
 
 ## Stable Journey Command
 
@@ -277,23 +283,43 @@ MFA:
 
 Stripe:
 
-- Stripe testing now follows the Subscription Management testcase matrix in
+- Stripe testing now follows `OOLTool_Subscription_FRD_Detailed (1).docx`,
+  with traceability maintained in
   `docs/SUBSCRIPTION_STRIPE_COVERAGE_MATRIX.md`.
+- End-to-end subscription lifecycle traceability is captured in
+  `tests/SubscriptionLifecycleE2EMatrix.spec.ts`, covering trial, paid
+  subscription, upgrade, downgrade, billing interval, cancellation, refund,
+  renewal, dunning, and audit/reporting expectations.
 - Browser-safe coverage is automated first: trial presentation, with-card and
   without-card trial paths, terms guardrails, checkout validation, portal
   overview, plan controls, invoice history, payment-method and billing-info
   screens, and non-destructive cancellation-state validation.
+- Overlay Strategists with-card trial messaging validates that card details are
+  required, no charge is taken today, the plan auto-renews after trial expiry,
+  and the user can cancel before renewal.
+- Overlay Strategists without-card trial messaging validates that no card is
+  required and the account moves back to the Free plan after trial expiry.
+- Overlay Strategists limit clarification is open: the FRD says the no-card
+  trial has 5 linked accounts, while the paid Overlay Strategists UI displays
+  Account Linked (10). Do not automate that enforcement until business confirms
+  the intended trial limit.
+- Free-trial eligibility rule is confirmed by the FRD: the trial is allowed
+  once per user lifetime and should be validated with identifiers such as email
+  address, payment method fingerprint, and platform-specific identifiers such
+  as verified mobile number.
 - Declined-card checkout validation is available with a fresh Stripe Checkout
   URL through `PaymentNegative.spec.ts`.
 - Lifecycle cases that require scheduler/time travel, Stripe ledger validation,
-  admin/audit access, refund approval, or dunning webhooks remain documented
-  until those controls are available.
+  repeat-trial fixtures, admin/audit access, refund approval, or dunning
+  webhooks remain documented until those controls are available.
 
 Plan Selection:
 
 - Plan catalog visibility is automated for Curious Explorer, Income Builder,
   Overlay Strategists, Portfolio Hedger, and Marketplace.
 - Monthly/annual toggle behavior is automated.
+- Paid-plan monthly and annual pricing presentation is automated without
+  activating checkout.
 - Complete Setup guardrail before selecting a plan is automated.
 - Overlay Strategists with-card and without-card trial modal copy and cancel
   behavior are automated without completing checkout.
@@ -343,5 +369,9 @@ Billing Subscription Management:
   without saving changes.
 - Cancel subscription form display, reason, feedback, or already-scheduled
   cancellation state are automated without submitting cancellation.
-- Remaining: destructive final cancellation and upgrade/downgrade checkout
-  should stay opt-in with dedicated test accounts.
+- Upgrade business rule is confirmed: active users can upgrade to any plan at
+  any time; the upgrade starts a new billing cycle and charges the prorated
+  amount.
+- Remaining: destructive final cancellation, upgrade checkout submission,
+  prorated invoice validation, and billing-cycle anchor validation should stay
+  opt-in with dedicated test accounts and Stripe/admin visibility.

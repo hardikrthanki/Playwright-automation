@@ -602,6 +602,15 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     priority: 'Medium',
     status: 'automated',
     automation: 'DashboardNavigation.spec.ts > Notification panel opens and closes without disrupting dashboard; Notification panel remains usable after dashboard refresh'
+  },
+  {
+    id: 'UJ-063',
+    title: 'Overlay Strategists free trial is limited to one verified email and mobile identity',
+    module: 'Plan Selection',
+    journey: 'Trial Eligibility',
+    priority: 'Critical',
+    status: 'blocked',
+    dependency: 'Business rule confirmed: a new user must have verified email/mobile identity, and the free trial is allowed only once per unique user identity. Requires safe repeat-trial fixtures for already-used email and already-used mobile.'
   }
 ];
 

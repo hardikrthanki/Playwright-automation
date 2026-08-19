@@ -14,8 +14,9 @@ TEST SUITE: New Subscription Purchase Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 2 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report automated, blocked, and
-future coverage with clear reasons while avoiding unsafe Stripe/customer changes.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report automated, blocked, and future coverage
+with clear reasons while avoiding unsafe Stripe/customer changes.
 
 RUN
 ---
@@ -52,26 +53,26 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
   {
     id: 'SC-38',
     sourceIds: ['SUB-NEW-003'],
-    title: 'Portfolio Hedger monthly subscription can be purchased from plan selection',
+    title: 'Portfolio Hedger annual checkout shows selected plan before payment',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires dedicated fresh user and safe paid-checkout fixture for Portfolio Hedger.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Portfolio Hedger annual checkout shows subscription summary before payment'
   },
   {
     id: 'SC-39',
     sourceIds: ['SUB-NEW-004'],
-    title: 'Marketplace monthly subscription can be purchased from plan selection',
+    title: 'Marketplace monthly checkout shows selected plan before payment',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires dedicated fresh user and safe paid-checkout fixture for Marketplace.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Marketplace monthly checkout shows subscription summary before payment'
   },
   {
     id: 'SC-40',
     sourceIds: ['SUB-NEW-005'],
-    title: 'Annual paid subscription can be purchased from plan selection',
+    title: 'Annual paid checkout displays selected plan and billing interval before payment',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires dedicated annual-plan fixture and safe Stripe checkout execution.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Income Builder annual and Portfolio Hedger annual checkout summaries before payment'
   },
   {
     id: 'SC-41',
@@ -79,7 +80,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Paid subscription can be started from onboarding plan selection',
     priority: 'Critical',
     status: 'automated',
-    automation: 'onboarding.spec.ts and DirectSubscriptionPurchase.spec.ts'
+    automation: 'PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts and DirectSubscriptionPurchase.spec.ts'
   },
   {
     id: 'SC-42',
@@ -262,8 +263,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-029'],
     title: 'Payment currency and conversion details are displayed correctly',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable Stripe currency text expectations for configured region/currency.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Income Builder checkout shows currency and conversion details before payment'
   },
   {
     id: 'SC-65',
@@ -374,16 +375,16 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-043'],
     title: 'Browser back from Stripe checkout returns without activating subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe checkout-cancel fixture and post-return billing state validation.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Income Builder checkout preserves context on refresh and returns safely before payment'
   },
   {
     id: 'SC-75D',
     sourceIds: ['SUB-NEW-044'],
     title: 'Refreshing Stripe checkout keeps selected plan and customer context',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable Stripe hosted-checkout session behavior and selectors.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Income Builder checkout preserves context on refresh and returns safely before payment'
   },
   {
     id: 'SC-75E',
@@ -446,8 +447,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-052'],
     title: 'Currency and conversion-fee copy remains visible for non-USD checkout',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable Stripe currency/country fixture and copy expectations.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > Income Builder checkout shows currency and conversion details before payment'
   }
 ];
 

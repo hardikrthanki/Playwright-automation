@@ -297,6 +297,20 @@ if (
       );
 
       test(
+        'Paid plan prices and actions remain available across billing periods',
+        async ({ page }) => {
+        await openPlanSelection(
+          page,
+          'plan-paid-pricing-periods'
+        );
+
+        await new PlanSelectionPage(
+          page
+        ).validatePaidPlanPricingAcrossBillingPeriods();
+        }
+      );
+
+      test(
         'Complete Setup initial state is safe before checkout',
         async ({ page }) => {
         await openPlanSelection(
@@ -331,7 +345,41 @@ if (
       );
 
       test(
-        'Overlay Strategists with-card trial modal content and cancel behavior',
+        'Paid plan entitlement limits are displayed before checkout',
+        async ({ page }) => {
+        await openPlanSelection(
+          page,
+          'plan-paid-entitlement-limits'
+        );
+
+        const planPage =
+          new PlanSelectionPage(
+            page
+          );
+
+        await planPage.validatePaidPlanEntitlementSummaries();
+        }
+      );
+
+      test(
+        'User can switch plan selections without launching Stripe checkout',
+        async ({ page }) => {
+        await openPlanSelection(
+          page,
+          'plan-selection-switching'
+        );
+
+        const planPage =
+          new PlanSelectionPage(
+            page
+          );
+
+        await planPage.validatePlanSelectionCanSwitchWithoutCheckout();
+        }
+      );
+
+      test(
+        'Overlay Strategists with-card trial explains card collection auto-renewal and cancellation',
         async ({ page }) => {
         await openPlanSelection(
           page,
@@ -358,7 +406,7 @@ if (
       );
 
       test(
-        'Overlay Strategists without-card trial modal content and close behavior',
+        'Overlay Strategists without-card trial explains Free plan fallback after expiry',
         async ({ page }) => {
         await openPlanSelection(
           page,

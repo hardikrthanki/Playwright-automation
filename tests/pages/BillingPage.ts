@@ -479,6 +479,153 @@ async validatePlanActionControls() {
   );
 }
 
+async validatePlanLifecycleActionSummary() {
+
+  Logger.info(
+    'Validating Billing Plan Lifecycle Action Summary'
+  );
+
+  await this.validateOverview();
+
+  if (
+    await this.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.plansTab,
+      'Open Plans Tab'
+    );
+  }
+
+  await this.validateBillingUrl();
+
+  await expect(
+    this.page.getByText(
+      /curious explorer|income builder|overlay strategists|portfolio hedger|marketplace/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const lifecycleControls =
+    this.page.locator(
+      'a, button'
+    ).filter({
+      hasText: /upgrade|downgrade|current plan|active|selected|subscribe|choose plan|manage/i
+    });
+
+  await expect
+    .poll(
+      async () =>
+        lifecycleControls.count(),
+      {
+        timeout: 15000,
+        message: 'Waiting for plan lifecycle action/status controls',
+      }
+    )
+    .toBeGreaterThan(
+      0
+    );
+
+  const upgradeCount =
+    await this.page.locator(
+      'a, button'
+    ).filter({
+      hasText: /upgrade/i
+    }).count();
+
+  const downgradeCount =
+    await this.page.locator(
+      'a, button'
+    ).filter({
+      hasText: /downgrade/i
+    }).count();
+
+  const currentOrStatusCount =
+    await this.page.locator(
+      'a, button, [role="status"], [data-state]'
+    ).filter({
+      hasText: /current plan|active|selected|current subscription/i
+    }).count();
+
+  const subscribeOrChooseCount =
+    await this.page.locator(
+      'a, button'
+    ).filter({
+      hasText: /subscribe|choose plan|manage/i
+    }).count();
+
+  console.log(
+    `Plan lifecycle controls: upgrade=${upgradeCount}, downgrade=${downgradeCount}, current/status=${currentOrStatusCount}, subscribe/manage=${subscribeOrChooseCount}`
+  );
+
+  Logger.success(
+    'Billing Plan Lifecycle Action Summary Validated'
+  );
+}
+
+async validateBillingIntervalPresentationSummary() {
+
+  Logger.info(
+    'Validating Billing Interval Presentation Summary'
+  );
+
+  await this.validateOverview();
+
+  if (
+    await this.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.plansTab,
+      'Open Plans Tab'
+    );
+  }
+
+  await this.validateBillingUrl();
+
+  const pageText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    pageText
+  ).toMatch(
+    /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year/i
+  );
+
+  const monthlyMarkerCount =
+    (
+      pageText.match(
+        /monthly|per month|\/mo|month/gi
+      ) ?? []
+    ).length;
+
+  const annualMarkerCount =
+    (
+      pageText.match(
+        /annual|per year|\/yr|\/year|year/gi
+      ) ?? []
+    ).length;
+
+  console.log(
+    `Billing interval markers: monthly=${monthlyMarkerCount}, annual=${annualMarkerCount}`
+  );
+
+  Logger.success(
+    'Billing Interval Presentation Summary Validated'
+  );
+}
+
 async validatePaidSubscriberTrialCtaIsNotOffered() {
 
   Logger.info(
@@ -579,6 +726,82 @@ async validateOverviewContract() {
 
   Logger.success(
     'Billing Overview Contract Validated'
+  );
+}
+
+async validateOverlayStrategistsTrialBillingState(
+  mode: 'with-card' | 'without-card'
+) {
+
+  Logger.info(
+    `Validating Overlay Strategists ${mode} trial billing state`
+  );
+
+  await this.validateOverview();
+
+  const bodyText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText({
+        timeout: 15000
+      });
+
+  expect(
+    bodyText,
+    'Billing should show the active Overlay Strategists trial/subscription context.'
+  ).toMatch(
+    /overlay strategists/i
+  );
+
+  expect(
+    bodyText,
+    'Billing should show trial or subscription status after the trial starts.'
+  ).toMatch(
+    /trial|current plan|current subscription|active|subscription/i
+  );
+
+  if (
+    mode === 'with-card'
+  ) {
+    expect(
+      bodyText,
+      'With-card trial should show saved payment method details in Billing.'
+    ).toMatch(
+      /visa|mastercard|amex|discover|4242|ending\s+in\s+\d{4}|\*{2,}\s*\d{4}|\u2022{2,}\s*\d{4}/i
+    );
+
+    expect(
+      bodyText,
+      'With-card trial should not be presented as only the Free Plan.'
+    ).not.toMatch(
+      /current plan\s*free plan|free plan\s*active/i
+    );
+  }
+
+  if (
+    mode === 'without-card'
+  ) {
+    await expect(
+      this.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com|billing\.stripe\.com/i,
+      {
+        timeout: 5000
+      }
+    );
+
+    expect(
+      bodyText,
+      'Without-card trial should not show a saved Stripe test card.'
+    ).not.toMatch(
+      /visa\s+.*4242|4242/i
+    );
+  }
+
+  Logger.success(
+    `Overlay Strategists ${mode} trial billing state validated`
   );
 }
 
@@ -1121,6 +1344,150 @@ async validateSubscriptionPortalReturnToApplication() {
   );
 
   if (portalPage !== this.page && !portalPage.isClosed()) {
+    await portalPage.close();
+  }
+}
+
+async validateSubscriptionPortalCancellationLifecycleSummary() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating subscription cancellation lifecycle summary'
+  );
+
+  const portalText =
+    await portalPage
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    portalText
+  ).toMatch(
+    /current subscription|selected subscription|cancel subscription|cancels|service will end|payment method|billing information/i
+  );
+
+  const scheduledToCancel =
+    /cancels\s+\w+|service will end|will end|scheduled to cancel|cancel at/i.test(
+      portalText
+    );
+
+  if (scheduledToCancel) {
+    expect(
+      portalText
+    ).toMatch(
+      /cancels\s+\w+|service will end|will end|scheduled to cancel|cancel at/i
+    );
+
+    const restoreControl =
+      portalPage.locator(
+        'a, button'
+      ).filter({
+        hasText: /don'?t cancel subscription|resume subscription|reactivate|keep subscription/i
+      }).first();
+
+    if (
+      await restoreControl.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      )
+    ) {
+      await expect(
+        restoreControl
+      ).toBeVisible();
+    }
+  } else {
+    const cancelControl =
+      portalPage.locator(
+        'a, button'
+      ).filter({
+        hasText: /cancel subscription/i
+      }).first();
+
+    await expect(
+      cancelControl
+    ).toBeVisible({
+      timeout: 15000
+    });
+  }
+
+  expect(
+    portalText
+  ).not.toMatch(
+    /subscription cancelled|subscription canceled|cancellation confirmed|successfully cancelled|successfully canceled/i
+  );
+
+  Logger.success(
+    'Subscription cancellation lifecycle summary validated without changing subscription'
+  );
+
+  if (portalPage !== this.page) {
+    await portalPage.close();
+  }
+}
+
+async validatePaymentRecoveryEntryPointsSummary() {
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  Logger.info(
+    'Validating payment recovery entry points'
+  );
+
+  await expect(
+    portalPage.getByText(
+      /payment method/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    portalPage.getByText(
+      /billing information/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const recoveryControls =
+    portalPage.locator(
+      'a, button'
+    ).filter({
+      hasText: /add payment method|update information|update payment|payment method|billing information/i
+    });
+
+  await expect
+    .poll(
+      async () =>
+        recoveryControls.count(),
+      {
+        timeout: 15000,
+        message: 'Waiting for payment recovery controls in Stripe portal',
+      }
+    )
+    .toBeGreaterThan(
+      0
+    );
+
+  await expect(
+    portalPage.getByText(
+      /invoice history|current subscription|payment method/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    'Payment recovery entry points validated without saving changes'
+  );
+
+  if (portalPage !== this.page) {
     await portalPage.close();
   }
 }

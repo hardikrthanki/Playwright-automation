@@ -194,6 +194,245 @@ if (
         );
       }
     );
+
+    test(
+      'Portfolio Hedger annual checkout shows subscription summary before payment',
+      async ({ page }) => {
+        const user =
+          await openPlanSelectionForFreshUser(
+            page,
+            'direct-portfolio-hedger-annual-summary'
+          );
+
+        await test.step(
+          'Open Portfolio Hedger annual checkout',
+          async () => {
+            const planPage =
+              new PlanSelectionPage(
+                page
+              );
+
+            await planPage.selectAnnualBilling();
+
+            await planPage.selectPlan(
+              'Portfolio Hedger'
+            );
+          }
+        );
+
+        await test.step(
+          'Validate Stripe annual checkout summary before payment',
+          async () => {
+            await new StripePaymentPage(
+              page
+            ).validateSubscriptionCheckoutDetails({
+              expectedEmail:
+                user.email,
+              expectedPlan:
+                'Portfolio Hedger',
+              expectedBillingCopy:
+                /1,?490|per year|annual|subscription|total|due/i
+            });
+          }
+        );
+      }
+    );
+
+    test(
+      'Income Builder annual checkout shows subscription summary before payment',
+      async ({ page }) => {
+        const user =
+          await openPlanSelectionForFreshUser(
+            page,
+            'direct-income-builder-annual-summary'
+          );
+
+        await test.step(
+          'Open Income Builder annual checkout',
+          async () => {
+            const planPage =
+              new PlanSelectionPage(
+                page
+              );
+
+            await planPage.selectAnnualBilling();
+
+            await planPage.selectPlan(
+              'Income Builder'
+            );
+          }
+        );
+
+        await test.step(
+          'Validate Stripe annual checkout summary before payment',
+          async () => {
+            await new StripePaymentPage(
+              page
+            ).validateSubscriptionCheckoutDetails({
+              expectedEmail:
+                user.email,
+              expectedPlan:
+                'Income Builder',
+              expectedBillingCopy:
+                /290|per year|annual|subscription|total|due/i
+            });
+          }
+        );
+      }
+    );
+
+    test(
+      'Marketplace monthly checkout shows subscription summary before payment',
+      async ({ page }) => {
+        const user =
+          await openPlanSelectionForFreshUser(
+            page,
+            'direct-marketplace-monthly-summary'
+          );
+
+        await test.step(
+          'Open Marketplace monthly checkout',
+          async () => {
+            await new PlanSelectionPage(
+              page
+            ).selectPlan(
+              'Marketplace'
+            );
+          }
+        );
+
+        await test.step(
+          'Validate Stripe monthly checkout summary before payment',
+          async () => {
+            await new StripePaymentPage(
+              page
+            ).validateSubscriptionCheckoutDetails({
+              expectedEmail:
+                user.email,
+              expectedPlan:
+                'Marketplace',
+              expectedBillingCopy:
+                /249|per month|monthly|subscription|total/i
+            });
+          }
+        );
+      }
+    );
+
+    test(
+      'Income Builder checkout shows currency and conversion details before payment',
+      async ({ page }) => {
+        await openPlanSelectionForFreshUser(
+          page,
+          'direct-income-builder-currency-summary'
+        );
+
+        await test.step(
+          'Open Income Builder checkout',
+          async () => {
+            await new PlanSelectionPage(
+              page
+            ).selectPlan(
+              'Income Builder'
+            );
+          }
+        );
+
+        await test.step(
+          'Validate Stripe currency and conversion copy',
+          async () => {
+            await new StripePaymentPage(
+              page
+            ).validateCurrencyAndConversionDetails();
+          }
+        );
+      }
+    );
+
+    test(
+      'Income Builder checkout preserves context on refresh and returns safely before payment',
+      async ({ page }) => {
+        const user =
+          await openPlanSelectionForFreshUser(
+            page,
+            'direct-income-builder-refresh-back'
+          );
+
+        await test.step(
+          'Open Income Builder checkout',
+          async () => {
+            await new PlanSelectionPage(
+              page
+            ).selectPlan(
+              'Income Builder'
+            );
+          }
+        );
+
+        const stripePage =
+          new StripePaymentPage(
+            page
+          );
+
+        await test.step(
+          'Validate checkout context before refresh',
+          async () => {
+            await stripePage.validateSubscriptionCheckoutDetails({
+              expectedEmail:
+                user.email,
+              expectedPlan:
+                'Income Builder',
+              expectedBillingCopy:
+                /29|per month|monthly|subscription|total/i
+            });
+          }
+        );
+
+        await test.step(
+          'Refresh Stripe checkout and validate context remains',
+          async () => {
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await stripePage.validateSubscriptionCheckoutDetails({
+              expectedEmail:
+                user.email,
+              expectedPlan:
+                'Income Builder',
+              expectedBillingCopy:
+                /29|per month|monthly|subscription|total/i
+            });
+          }
+        );
+
+        await test.step(
+          'Navigate back before payment without activating checkout',
+          async () => {
+            await page.goBack({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).not.toHaveURL(
+              /checkout\.stripe\.com|billing\.stripe\.com/i,
+              {
+                timeout: 15000
+              }
+            );
+
+            await expect(
+              page.getByText(
+                /choose your plan|select a plan|get started/i
+              ).first()
+            ).toBeVisible({
+              timeout: 30000
+            });
+          }
+        );
+      }
+    );
     }
   );
 }

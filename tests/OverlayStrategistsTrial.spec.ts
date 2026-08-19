@@ -296,12 +296,16 @@ if (
         );
 
         await test.step(
-          'Complete Stripe trial checkout',
+          'Validate and complete Stripe trial checkout',
           async () => {
             const stripe =
               new StripePaymentPage(
                 page
               );
+
+            await stripe.validateTrialCheckoutDetails(
+              email
+            );
 
             await stripe.completePayment();
           }
@@ -316,6 +320,17 @@ if (
               );
 
             await dashboard.validateLoaded();
+          }
+        );
+
+        await test.step(
+          'Validate Overlay Strategists with-card trial in billing',
+          async () => {
+            await new BillingPage(
+              page
+            ).validateOverlayStrategistsTrialBillingState(
+              'with-card'
+            );
           }
         );
         }
@@ -823,18 +838,11 @@ if (
         await test.step(
           'Validate Overlay Strategists plan in billing',
           async () => {
-            const billing =
-              new BillingPage(
-                page
-              );
-
-            await billing.validateOverview();
-
-            await billing.validatePlanVisible(
-              'Overlay Strategists'
+            await new BillingPage(
+              page
+            ).validateOverlayStrategistsTrialBillingState(
+              'without-card'
             );
-
-            await billing.validatePlansTabStable();
           }
         );
         }

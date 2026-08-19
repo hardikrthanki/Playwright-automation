@@ -14,8 +14,9 @@ TEST SUITE: Upgrade Subscription Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 3 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report upgrade coverage,
-blocked dependencies, and future work without changing live subscription state.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report upgrade coverage, blocked dependencies,
+and future work without changing live subscription state.
 
 RUN
 ---
@@ -47,7 +48,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Eligible higher-tier plans show upgrade action',
     priority: 'Critical',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls'
+    automation: 'BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription'
   },
   {
     id: 'SC-78',
@@ -55,7 +56,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Current plan does not show upgrade action for itself',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls'
+    automation: 'BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription'
   },
   {
     id: 'SC-79',
@@ -63,7 +64,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from Income Builder to Overlay Strategists is available',
     priority: 'Critical',
     status: 'future',
-    dependency: 'Requires dedicated lower-tier paid account fixture with active Income Builder subscription.'
+    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated lower-tier paid account fixture with active Income Builder subscription.'
   },
   {
     id: 'SC-80',
@@ -71,7 +72,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from Overlay Strategists to Portfolio Hedger is available',
     priority: 'High',
     status: 'future',
-    dependency: 'Requires dedicated Overlay Strategists paid account fixture.'
+    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Overlay Strategists paid account fixture.'
   },
   {
     id: 'SC-81',
@@ -79,7 +80,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from Portfolio Hedger to Marketplace is available',
     priority: 'High',
     status: 'future',
-    dependency: 'Requires dedicated Portfolio Hedger paid account fixture.'
+    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Portfolio Hedger paid account fixture.'
   },
   {
     id: 'SC-82',
@@ -111,15 +112,15 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade screen displays prorated amount before confirmation',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires Stripe API/admin visibility for prorated invoice preview.'
+    dependency: 'Business rule confirmed: user pays the prorated amount on upgrade. Requires Stripe API/admin visibility for prorated invoice preview.'
   },
   {
     id: 'SC-86',
     sourceIds: ['SUB-UPG-011'],
-    title: 'Upgrade screen displays next renewal date',
+    title: 'Upgrade starts a new billing cycle and displays next renewal date',
     priority: 'High',
     status: 'blocked',
-    dependency: 'Requires stable billing-cycle fixture or Stripe subscription API access.'
+    dependency: 'Business rule confirmed: upgrade starts a new billing cycle. Requires stable billing-cycle fixture or Stripe subscription API access.'
   },
   {
     id: 'SC-87',
@@ -175,7 +176,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Successful upgrade creates invoice with correct prorated amount',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires Stripe invoice API/admin access and deterministic proration.'
+    dependency: 'Business rule confirmed: prorated charge is required on upgrade. Requires Stripe invoice API/admin access and deterministic proration.'
   },
   {
     id: 'SC-94',
@@ -231,7 +232,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from monthly lower plan to monthly higher plan is handled correctly',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires lower monthly plan account and Stripe proration validation.'
+    dependency: 'Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires lower monthly plan account and Stripe proration validation.'
   },
   {
     id: 'SC-101',
@@ -239,7 +240,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from annual lower plan to annual higher plan is handled correctly',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires annual lower-plan account and Stripe proration validation.'
+    dependency: 'Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires annual lower-plan account and Stripe proration validation.'
   },
   {
     id: 'SC-102',
@@ -247,7 +248,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade from monthly lower plan to annual higher plan is handled correctly',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires confirmed business rule for interval change plus Stripe proration visibility.'
+    dependency: 'Business rule confirmed: upgrade across billing interval is allowed and starts a new billing cycle with prorated charge. Requires Stripe proration visibility.'
   },
   {
     id: 'SC-103',
@@ -303,7 +304,7 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Upgrade is available for subscription scheduled to cancel before end date when allowed',
     priority: 'Medium',
     status: 'blocked',
-    dependency: 'Requires confirmed business rule and scheduled-cancellation fixture.'
+    dependency: 'Business rule confirmed: users can upgrade any time while access is active. Requires scheduled-cancellation fixture to verify behavior before access end date.'
   },
   {
     id: 'SC-110',

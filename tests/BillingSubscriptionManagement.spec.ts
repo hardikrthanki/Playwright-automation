@@ -118,6 +118,15 @@ test.describe(
       );
 
       test(
+        'Stripe portal exposes payment recovery entry points without saving',
+        async ({ page }) => {
+          await new BillingPage(
+            page
+          ).validatePaymentRecoveryEntryPointsSummary();
+        }
+      );
+
+      test(
         'Stripe billing information update screen opens without saving',
         async ({ page }) => {
           await new BillingPage(
@@ -132,6 +141,15 @@ test.describe(
           await new BillingPage(
             page
           ).validateCancelSubscriptionFormWithoutCancelling();
+        }
+      );
+
+      test(
+        'Stripe portal cancellation lifecycle state is readable without cancelling',
+        async ({ page }) => {
+          await new BillingPage(
+            page
+          ).validateSubscriptionPortalCancellationLifecycleSummary();
         }
       );
     }

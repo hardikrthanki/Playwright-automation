@@ -14,8 +14,9 @@ TEST SUITE: Subscription Cancellation Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 7 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report cancellation coverage,
-blocked dependencies, and future work without cancelling live subscriptions.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report cancellation coverage, blocked
+dependencies, and future work without cancelling live subscriptions.
 
 RUN
 ---
@@ -175,7 +176,7 @@ const cancellationScenarios: CancellationScenario[] = [
     title: 'Already scheduled cancellation state is detected safely',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling'
+    automation: 'BillingSubscriptionManagement.spec.ts > Stripe portal cancellation lifecycle state is readable without cancelling'
   },
   {
     id: 'SC-259',
@@ -359,7 +360,7 @@ const cancellationScenarios: CancellationScenario[] = [
     title: 'Upgrade is blocked or clearly handled after subscription is scheduled to cancel',
     priority: 'Medium',
     status: 'future',
-    dependency: 'Requires scheduled-cancel fixture.'
+    dependency: 'Safe cancellation lifecycle state is readable in the Stripe portal; exact upgrade behavior after scheduled cancellation still requires a scheduled-cancel fixture.'
   },
   {
     id: 'SC-282',

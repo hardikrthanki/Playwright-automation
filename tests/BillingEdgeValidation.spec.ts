@@ -81,6 +81,28 @@ test.describe(
     );
 
     test(
+      'Billing plans expose lifecycle action summary without changing subscription',
+      async ({ page }) => {
+
+        const billing =
+          new BillingPage(page);
+
+        await billing.validatePlanLifecycleActionSummary();
+      }
+    );
+
+    test(
+      'Billing plans expose billing interval summary without changing subscription',
+      async ({ page }) => {
+
+        const billing =
+          new BillingPage(page);
+
+        await billing.validateBillingIntervalPresentationSummary();
+      }
+    );
+
+    test(
       'Billing history and transactions remain stable after refresh',
       async ({ page }) => {
 

@@ -1,20 +1,48 @@
 # Subscription And Stripe Coverage Matrix
 
-This matrix maps the Subscription Management test cases to automation status.
-The pasted Stripe matrix is the source of truth for subscription coverage.
-Browser-safe validations are automated first; lifecycle validations that require
-Stripe/admin state, billing time travel, scheduler jobs, broker fixtures, or
-audit-log access remain documented until those controls are available.
+This matrix maps the Subscription Management FRD to automation status.
+`OOLTool_Subscription_FRD_Detailed (1).docx` is the source of truth for
+subscription coverage. Browser-safe validations are automated first; lifecycle
+validations that require Stripe/admin state, billing time travel, scheduler
+jobs, broker fixtures, or audit-log access remain documented until those
+controls are available.
 
 ## Current Inputs
 
-- Source FRD: `OOLTool_Subscription_FRD_Detailed.docx`
-- Source test plan: `Test Plan_stripe.docx`
-- Source test matrix: pasted Subscription Management test cases
+- Source of truth FRD: `OOLTool_Subscription_FRD_Detailed (1).docx`
+- Supporting test plan: `Test Plan_stripe.docx`
+- Supporting test matrix: pasted Subscription Management test cases
+- Dedicated fixture plan: `docs/SUBSCRIPTION_TEST_FIXTURES.md`
 - Environment: PUAT Stripe test mode
 - User strategy: create a new user for every safe trial/purchase run
 - Email validation: manual or deferred until mailbox automation is confirmed
 - Stripe/Admin dashboard access: not available
+
+## Source Authority
+
+The FRD owns the subscription lifecycle rules. If a manual observation, pasted
+test matrix, or current product behavior conflicts with the FRD, the FRD should
+be treated as the expected requirement until the business approves a documented
+requirement change.
+
+Key FRD rules currently driving coverage:
+
+- Trial is available once per user lifetime.
+- Overlay Strategists trial duration is 30 days.
+- The FRD states no-card trial limits as Broker Integration: 1, Linked
+  Accounts: 5, and Positions: 100.
+- Current paid Overlay Strategists UI displays Broker Integration: 5, Account
+  Linked: 10, and Positions: 500. If the no-card trial should use the same paid
+  limits, the FRD needs a business-approved correction.
+- With-card trial provides full Overlay Strategists access and converts to
+  paid Overlay Strategists monthly billing after expiry.
+- Users may subscribe to any paid plan during trial; the selected plan becomes
+  active immediately and starts a new billing cycle.
+- Upgrades are immediate and use Stripe proration.
+- Downgrades become effective on the next renewal date.
+- Monthly to annual billing change is immediate.
+- Annual to monthly billing change is effective on the next renewal date.
+- Refunds are manual and admin-approved only.
 
 ## Automation Status Legend
 
@@ -31,13 +59,13 @@ audit-log access remain documented until those controls are available.
 | Use Case | Scenario Range | Current Automation | Status | Dependency For Full Coverage |
 | --- | --- | --- | --- | --- |
 | Overlay Strategists Trial Experience | SC 1-36 | Trial availability, with-card checkout, Stripe checkout details, declined-card authorization failure, without-card trial, terms guardrail, missing-card validation, paid-subscriber eligibility guard | Started | Email handoff, Stripe/admin validation, scheduler/time travel, broker fixtures |
-| New Subscription Purchase | SC 36-75 | Income Builder purchase through onboarding, Stripe successful checkout, selected plan checkout, invoice/PDF evidence, declined-card checkout validation | Started | Dedicated plan fixtures, Stripe ledger/API, duplicate checkout session visibility |
-| Upgrade Subscription | SC 76-112 | Full matrix documented in AIR; safe plan action/status controls are detected without changing subscription | Started | Dedicated lower-tier paid account, Stripe checkout/payment fixture, proration visibility |
-| Downgrade Subscription | SC 113-164 | Full matrix documented in AIR; safe plan action/status controls are detected without changing subscription | Started | Dedicated higher-tier paid account, downgrade confirmation UI, data-limit fixture |
-| Monthly To Annual Billing Change | SC 165-200 | Full matrix documented in AIR; monthly/annual plan toggle and billing frequency presentation are validated | Started | Dedicated monthly paid account, Stripe proration checkout, invoice validation |
-| Annual To Monthly Billing Change | SC 201-240 | Full matrix documented in AIR; annual/monthly plan presentation and interval-change expectations are traceable | Started | Dedicated annual paid account, scheduled-change UI, renewal-date fixture |
-| Subscription Cancellation | SC 241-300 | Full matrix documented in AIR; Stripe portal cancellation form, reason, feedback, and already-scheduled state are validated without final cancellation | Started | Dedicated cancellable account, destructive cancellation approval, refund/admin workflow |
-| Failed Payment And Dunning Management | SC 301-352 | Full matrix documented in AIR; checkout payment failures and portal recovery entry points are mapped | Started | Stripe dunning configuration, failed renewal fixture, scheduler/webhook/admin access |
+| New Subscription Purchase | SC 36-75 | Income Builder purchase through onboarding, paid-plan selection switching, paid-plan entitlement presentation, Stripe successful checkout, multi-plan checkout-summary validation, checkout refresh/back safety before payment, currency/conversion-fee presentation, invoice/PDF evidence, and controlled checkout-negative validation | Started | Dedicated plan fixtures, Stripe ledger/API, duplicate checkout session visibility |
+| Upgrade Subscription | SC 76-112 | Full matrix documented in AIR; safe plan lifecycle action/status summary is detected without changing subscription | Started | Dedicated lower-tier paid account, Stripe checkout/payment fixture, proration visibility |
+| Downgrade Subscription | SC 113-164 | Full matrix documented in AIR; safe plan lifecycle action/status summary is detected without changing subscription | Started | Dedicated higher-tier paid account, downgrade confirmation UI, data-limit fixture |
+| Monthly To Annual Billing Change | SC 165-200 | Full matrix documented in AIR; monthly/annual plan toggle, paid-plan pricing, and billing interval presentation are validated without changing subscription | Started | Dedicated monthly paid account, Stripe proration checkout, invoice validation |
+| Annual To Monthly Billing Change | SC 201-240 | Full matrix documented in AIR; annual/monthly plan presentation, paid-plan pricing, and interval-change expectations are traceable without changing subscription | Started | Dedicated annual paid account, scheduled-change UI, renewal-date fixture |
+| Subscription Cancellation | SC 241-300 | Full matrix documented in AIR; Stripe portal cancellation form, reason, feedback, cancellation lifecycle state, and already-scheduled state are validated without final cancellation | Started | Dedicated cancellable account, destructive cancellation approval, refund/admin workflow |
+| Failed Payment And Dunning Management | SC 301-352 | Full matrix documented in AIR; checkout payment failures, authentication-required checkout context, and Stripe portal payment-recovery entry points are validated without saving payment changes | Started | Stripe dunning configuration, failed renewal fixture, scheduler/webhook/admin access |
 
 ## Automation Boundary
 
@@ -47,6 +75,31 @@ should not validate final cancellation, real upgrade/downgrade submission, trial
 expiry, retry schedules, refunds, audit logs, or data deletion until dedicated
 test accounts and backend controls are available.
 
+## End-to-End Subscription Lifecycle Coverage
+
+The high-level lifecycle is now captured in
+`tests/SubscriptionLifecycleE2EMatrix.spec.ts`. This matrix ties the detailed
+FRD use cases together into one client-readable journey:
+
+1. New user completes onboarding prerequisites and reaches plan selection.
+2. Overlay Strategists trial is offered with both without-card and with-card
+   paths.
+3. Without-card trial redirects to the product and should move to Free after
+   expiry.
+4. With-card trial reaches Stripe Checkout and should auto-renew after expiry.
+5. Paid plan subscription paths remain covered across plan selection, Stripe
+   checkout, billing overview, and invoice evidence.
+6. Upgrade and billing-cycle-change rules are documented with blocked Stripe
+   proration dependencies.
+7. Downgrade, cancel-at-period-end, immediate cancellation, and refund rules are
+   documented with explicit destructive-test dependencies.
+8. Renewal, dunning, audit, and AIR reporting coverage gaps remain visible in
+   AIR until backend/admin validation support exists.
+
+This lifecycle matrix does not replace the detailed Use Case 1-8 matrices. It
+gives AIR one end-to-end view of what is validated now and what is blocked by
+external billing, scheduler, refund, or audit dependencies.
+
 ## AIR Traceability Matrix Files
 
 These matrix specs are intentionally executable Playwright files. Most rows are
@@ -55,7 +108,7 @@ without mutating billing state.
 
 | Area | File | Rows |
 | --- | --- | --- |
-| User journey coverage | `tests/UserJourneyCoverageMatrix.spec.ts` | 58 |
+| User journey coverage | `tests/UserJourneyCoverageMatrix.spec.ts` | 63 |
 | Use Case 1 - Overlay Strategists Trial | `tests/OverlayStrategistsTrialMatrix.spec.ts` | 36 |
 | Use Case 2 - New Subscription Purchase | `tests/NewSubscriptionPurchaseMatrix.spec.ts` | 52 |
 | Use Case 3 - Upgrade Subscription | `tests/UpgradeSubscriptionMatrix.spec.ts` | 37 |
@@ -64,8 +117,9 @@ without mutating billing state.
 | Use Case 6 - Annual To Monthly Billing Change | `tests/AnnualMonthlyBillingChangeMatrix.spec.ts` | 40 |
 | Use Case 7 - Subscription Cancellation | `tests/SubscriptionCancellationMatrix.spec.ts` | 60 |
 | Use Case 8 - Failed Payment And Dunning | `tests/FailedPaymentDunningMatrix.spec.ts` | 52 |
+| End-to-End Subscription Lifecycle | `tests/SubscriptionLifecycleE2EMatrix.spec.ts` | 45 |
 
-Total documented matrix coverage: 423 rows.
+Total documented matrix coverage: 473 rows.
 
 ## Use Case 1 - Overlay Strategists Trial Experience
 
@@ -79,32 +133,32 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 | SC | Scenario | Priority | Automation Status | Blocker / Dependency | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Start trial without payment details | Critical | Started | Manual email verification | Controlled without-card activation test validates dashboard redirect and Overlay Strategists in Billing |
-| 2 | Trial is displayed as available | High | Started | Manual email verification | `OverlayStrategistsTrial.spec.ts` validates both with-card and without-card trial CTAs after onboarding prerequisites |
+| 2 | Trial is displayed as available | High | Started | Manual email verification | `OverlayStrategistsTrial.spec.ts` validates both with-card and without-card trial CTAs after email/mobile onboarding prerequisites. `PlanSelectionValidation.spec.ts` validates both customer-facing lifecycle messages |
 | 3 | Broker account limit is one | Critical | Known Bug | Product fix required | Confirmed issue: manual entry is currently counted as broker integration. Expected behavior is that manual entry should not consume broker integration limit |
-| 4 | Linked account limit is ten | Critical | Manual Verified | Broker linked account data for automation | Manually verified that 10 broker accounts can be linked. Full automation requires connected broker fixture or backend/API support |
-| 5 | Portfolio position limit is 100 | Critical | Blocked | Portfolio import/API seed fixture | UI can display the limit, but enforcement is impractical through UI because it requires safely creating/importing hundreds of positions |
+| 4 | No-card trial linked-account limit requires confirmation | Critical | Blocked | Business clarification and broker linked account data | FRD says no-card trial has 5 linked accounts, but paid Overlay Strategists UI displays Account Linked (10). Confirm whether no-card trial should remain reduced at 5 or match paid-plan limit of 10 before automating enforcement |
+| 5 | No-card trial portfolio position limit is 100 | Critical | Blocked | Portfolio import/API seed fixture | FRD expected limit is 100 positions for no-card trial. Enforcement needs a safe portfolio import/API seed fixture |
 | 6 | Premium Overlay Strategists features available | High | Started | Runtime entitlement checks need feature-specific pages | Plan-selection validation confirms the Overlay Strategists premium benefit and limit summary is displayed before trial activation |
-| 7 | Start trial with valid card | Critical | Known Bug | Product fix required | With-card trial activation succeeds, but Billing incorrectly continues to show Free Plan and does not show the saved payment method. Expected Billing state: active Free Trial with associated payment method |
+| 7 | Start trial with valid card | Critical | Known Bug | Product fix required | With-card trial activation validates Stripe trial details, submits the test card, and now checks Billing for active Overlay Strategists trial plus saved payment method. Product bug remains if Billing shows Free Plan or omits card details |
 | 7A | Authorization failure handling | Critical | Started | Manual email verification and Stripe test checkout | Declined-card authorization failure is automated behind `OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED`; trial is not activated and Stripe displays a failure message |
 | 8 | No subscription charge during trial | Critical | Blocked | Stripe/Admin access | Cannot verify payment ledger without Stripe/API access |
-| 9 | Card information securely saved | High | Known Bug | Product fix required, then Stripe/API validation | Saved card details are not shown on Billing after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence |
+| 9 | Card information securely saved | High | Known Bug | Product fix required, then Stripe/API validation | UI-level Billing validation now expects saved card/payment-method evidence after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence |
 | 10 | Existing paid subscriber cannot start trial | Critical | Started | Existing paid account fixture | Billing plans validation confirms paid subscriber is not offered the Overlay Strategists trial CTA |
-| 11 | Same email cannot receive another trial | Critical | Future | Repeat-trial fixture | Needs deterministic previously-used account |
-| 12 | Same phone cannot receive another trial | Critical | Future | Repeat phone fixture | Need safe duplicate-phone data |
+| 11 | Same verified email cannot receive another trial | Critical | Blocked | Repeat-trial fixture | Business rule confirmed: free trial is allowed only once for a verified email identity. Needs deterministic previously-used trial account |
+| 12 | Same verified mobile number cannot receive another trial | Critical | Blocked | Repeat phone fixture | Business rule confirmed: free trial is allowed only once for a verified mobile identity. Needs safe repeat-phone trial fixture |
 | 13 | Same payment method cannot receive another trial | Critical | Blocked | Stripe payment method reuse visibility | Need Stripe/API confirmation |
 | 14 | Trial lasts exactly 30 days | Critical | Blocked | Time travel/scheduler/admin controls | Cannot wait 30 real days in automation |
 | 15 | Day 25 reminder no-card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
 | 16 | Day 28 reminder no-card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
 | 17 | Day 29 final reminder no-card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
 | 18 | Day 29 reminder with card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
-| 19 | No-card trial downgrades to Free | Critical | Blocked | Trial expiry/time control | Needs admin or API time control |
+| 19 | No-card trial downgrades to Free | Critical | Blocked | Trial expiry/time control | UI message is automated: without-card trial moves to Free plan after expiry. Actual expiry transition needs admin/API time control |
 | 20 | Broker integrations disconnected after expiry | Critical | Blocked | Trial expiry + broker data | Needs broker fixture and scheduler |
 | 21 | Imported positions deleted after expiry | Critical | Blocked | Trial expiry + portfolio fixture | Needs data seed and DB/admin validation |
 | 22 | Premium features unavailable after expiry | Critical | Blocked | Trial expiry/time control | Needs expired trial fixture |
 | 23 | Subscribe prompt after expiry | Medium | Blocked | Trial expiry/time control | Needs expired trial fixture |
-| 24 | With-card trial converts to paid | Critical | Blocked | Trial expiry + Stripe validation | Needs scheduler and Stripe/API access |
+| 24 | With-card trial converts to paid | Critical | Blocked | Trial expiry + Stripe validation | UI message is automated: with-card trial auto-renews after trial unless cancelled. Actual conversion needs scheduler and Stripe/API access |
 | 25 | Billing starts automatically | Critical | Blocked | Stripe/Admin access | Needs Stripe/API validation |
-| 26 | Upgrade before trial ends | Critical | Future | Active trial fixture | Automate after basic trial activation |
+| 26 | Upgrade before trial ends | Critical | Future | Active trial fixture | Business rule confirmed: user can upgrade any time. Automate after active trial fixture and controlled plan-change path are available |
 | 27 | Billing cycle resets after upgrade | High | Blocked | Stripe/Admin access | Needs billing date validation source |
 | 28 | Failed payment enters grace period | Critical | Blocked | Trial expiry + declined card at renewal | Declined-card authorization is covered during checkout; renewal grace-period validation still needs scheduler and Stripe test control |
 | 29 | Failed billing reminder | High | Blocked | Email/in-app notification access | Needs notification validation strategy |
@@ -119,26 +173,36 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 
 | SC | Scenario Group | Automation Status | Current Coverage | Gap / Dependency |
 | --- | --- | --- | --- | --- |
-| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens Income Builder checkout and validates summary before payment | Other plans need dedicated fresh users and safe Stripe runs |
-| 41-44 | Purchase entry points | Future | Onboarding plan-selection entry point covered | Pricing, expiry, upgrade prompt, and settings entry points need selectors/fixtures |
-| 45-49 | Subscription summary before payment | Started | Stripe checkout loads selected plan/payment page, validates selected plan/email/billing copy/card fields, and plan-selection toggle is validated | Exact renewal/auto-renew summary needs stable Stripe copy expectations |
+| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens Income Builder monthly, Income Builder annual, Portfolio Hedger annual, and Marketplace monthly checkout summaries before payment | Other full-payment plan completions need dedicated fresh users and safe Stripe runs |
+| 41-44 | Purchase entry points | Started | Onboarding plan-selection entry point and safe plan switching are covered before checkout | Pricing, expired-trial upgrade prompt, and deeper settings entry points need selectors/fixtures |
+| 45-49 | Subscription summary before payment | Started | Stripe checkout loads selected plan/payment page, validates selected plan/email/billing copy/card fields across multiple plan/interval combinations, currency/conversion-fee copy, plan-selection billing toggle, paid-plan pricing across billing periods, and paid-plan entitlement limits before checkout | Exact renewal/auto-renew summary needs stable Stripe copy expectations |
 | 50-51 | Terms acceptance | Started | Overlay trial terms guardrail is automated | Paid plan terms guardrail needs confirmation if separate modal exists |
 | 52-56 | Successful payment activation and invoice | Started | Checkout success, dashboard redirect, billing invoice/PDF links, and portal invoice history are automated | Email receipt needs mailbox strategy |
-| 57-62 | Payment failure and retry | Started | Declined-card checkout validation is automated with `PaymentNegative.spec.ts` | Retry from same/different method needs a fresh checkout recovery fixture |
+| 57-62 | Payment failure and retry | Started | Checkout-negative validation is automated with `PaymentNegative.spec.ts` for incomplete card data, declined card, insufficient funds, processing error, stolen-card decline, and authentication-required checkout context | Retry from same/different method needs a fresh checkout recovery fixture |
 | 63-66 | Auto-renew and reminders | Blocked | Portal can show current subscription details | Renewal reminders require scheduler/time travel/email validation |
 | 67-72 | Cancellation/audit logging | Started | Non-destructive portal cancellation form/state is automated | Final cancellation and audit logging require controlled admin access |
-| 73-75 | Duplicate/expired checkout protection | Future | Missing-card and declined-card checkout validation exist | Duplicate checkout/session expiry need backend/session observability |
+| 73-75 | Duplicate/expired checkout protection | Started | Missing-card, declined-card, checkout refresh, and browser-back safety validation exist | Duplicate checkout/session expiry need backend/session observability |
 
 ## Use Cases 3-8 - Lifecycle Coverage Strategy
 
+### Use Case 3 - Upgrade Subscription Business Rule
+
+Confirmed behavior:
+
+- User can upgrade to any plan at any time while subscription access is active.
+- On upgrade, a new billing cycle starts.
+- User pays the prorated amount at upgrade time.
+- Final validation of prorated invoice amount and billing-cycle anchor requires
+  Stripe API/admin visibility or a deterministic Stripe fixture.
+
 | Use Case | Browser-Safe Tests To Add Next | Blocked Until |
 | --- | --- | --- |
-| Upgrade Subscription | Matrix completed; next executable slice is safe checkout-open and failed-checkout state validation | Dedicated lower-tier accounts and Stripe proration visibility |
+| Upgrade Subscription | Matrix completed; current safe coverage validates plan lifecycle action/status summary; next executable slice is safe upgrade checkout-open and failed-checkout state validation | Dedicated lower-tier accounts and Stripe proration/billing-cycle visibility |
 | Downgrade Subscription | Matrix completed; next executable slice is lost-feature warning and acknowledgement guardrail validation | Dedicated higher-tier accounts and data-limit fixtures |
-| Monthly To Annual | Matrix completed; next executable slice is safe checkout-open and failed-checkout interval preservation | Dedicated monthly accounts and Stripe proration validation |
-| Annual To Monthly | Matrix completed; next executable slice is effective-date and pending-change messaging validation | Dedicated annual accounts and renewal-date fixtures |
-| Subscription Cancellation | Matrix completed; safe portal form validation exists; destructive final-cancel remains blocked | Dedicated destructive cancellation account and refund/admin workflow |
-| Dunning Management | Matrix completed; checkout negatives exist; renewal/dunning remains blocked | Stripe dunning test fixture, webhook/scheduler/admin controls |
+| Monthly To Annual | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is safe checkout-open and failed-checkout interval preservation | Dedicated monthly accounts and Stripe proration validation |
+| Annual To Monthly | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is effective-date and pending-change messaging validation | Dedicated annual accounts and renewal-date fixtures |
+| Subscription Cancellation | Matrix completed; safe portal form and cancellation lifecycle-state validation exists; destructive final-cancel remains blocked | Dedicated destructive cancellation account and refund/admin workflow |
+| Dunning Management | Matrix completed; checkout negatives, authentication-required checkout context, and payment-recovery portal entry points exist; renewal/dunning remains blocked | Stripe dunning test fixture, webhook/scheduler/admin controls |
 
 ## First Automation Slice
 
@@ -184,6 +248,38 @@ npm run test:controlled:coverage-matrix
 $env:AIR_REPORT_SCOPE="latest"
 npm run report:execution
 ```
+
+Run only the end-to-end subscription lifecycle matrix:
+
+```powershell
+npm run test:controlled:subscription-lifecycle-matrix
+$env:AIR_REPORT_SCOPE="latest"
+npm run report:execution
+```
+
+Run controlled end-to-end lifecycle execution slices:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+
+# Enable only the slice you want to execute:
+$env:SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED="true"
+$env:SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED="true"
+$env:SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
+$env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
+
+# Prepared paid-user slices need:
+$env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
+$env:SUB_LIFECYCLE_PAID_PASSWORD="PASTE_TEST_PASSWORD"
+
+npm run test:controlled:subscription-lifecycle-execution -- --headed
+$env:AIR_REPORT_SCOPE="latest"
+npm run report:execution
+```
+
+Enable one lifecycle slice at a time when creating disposable users. Do not run
+with-card, paid purchase, or cancellation-form flows against shared accounts.
 
 Run the without-card trial:
 

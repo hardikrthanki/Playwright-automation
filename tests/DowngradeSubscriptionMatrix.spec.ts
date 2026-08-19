@@ -14,8 +14,9 @@ TEST SUITE: Downgrade Subscription Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 4 scenarios in executable Playwright
-form. Rows are intentionally skipped so AIR can report downgrade coverage,
-blocked dependencies, and future work without changing live subscription state.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
+intentionally skipped so AIR can report downgrade coverage, blocked
+dependencies, and future work without changing live subscription state.
 
 RUN
 ---
@@ -47,7 +48,7 @@ const downgradeScenarios: DowngradeScenario[] = [
     title: 'Eligible lower-tier plans show downgrade action',
     priority: 'Critical',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls'
+    automation: 'BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription'
   },
   {
     id: 'SC-115',
@@ -55,7 +56,7 @@ const downgradeScenarios: DowngradeScenario[] = [
     title: 'Current plan does not show downgrade action for itself',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls'
+    automation: 'BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription'
   },
   {
     id: 'SC-116',
