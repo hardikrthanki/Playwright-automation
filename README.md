@@ -93,7 +93,7 @@ $env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"
 npm run test:controlled:onboarding-fields -- --headed
 ```
 
-If PUAT registration SMS OTP is throttled, run the same validation with a
+If UAT registration SMS OTP is throttled, run the same validation with a
 prepared verified user that is still in onboarding:
 
 ```powershell
@@ -242,7 +242,7 @@ Controlled tests need fresh external URLs, so they are not part of the normal ex
 Run reset-password negative tests:
 
 ```powershell
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 npm run test:controlled:reset -- --headed
 ```
 
@@ -259,7 +259,7 @@ npm run controlled
 Run both controlled areas:
 
 ```powershell
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 $env:STRIPE_CHECKOUT_URL="https://checkout.stripe.com/c/pay/..."
 npm run controlled
 ```
@@ -267,7 +267,7 @@ npm run controlled
 Run only reset-password controlled tests:
 
 ```powershell
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 npm run test:controlled:reset
 ```
 
@@ -318,7 +318,7 @@ npm run test:controlled:stripe-overlay -- --headed -g "missing Stripe card"
 ```
 
 The Overlay Strategists file starts Subscription Management Use Case 1. It is
-gated because PUAT still needs manual email verification and trial eligibility
+gated because UAT still needs manual email verification and trial eligibility
 can be consumed by a created user.
 
 Generated Overlay test users use scenario-specific Gmail aliases such as

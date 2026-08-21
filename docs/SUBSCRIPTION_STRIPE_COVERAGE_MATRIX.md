@@ -13,7 +13,7 @@ controls are available.
 - Supporting test plan: `Test Plan_stripe.docx`
 - Supporting test matrix: pasted Subscription Management test cases
 - Dedicated fixture plan: `docs/SUBSCRIPTION_TEST_FIXTURES.md`
-- Environment: PUAT Stripe test mode
+- Environment: UAT Stripe test mode
 - User strategy: create a new user for every safe trial/purchase run
 - Email validation: manual or deferred until mailbox automation is confirmed
 - Stripe/Admin dashboard access: not available

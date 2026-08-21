@@ -30,7 +30,7 @@ Why controlled:
 Required data:
 
 ```powershell
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 ```
 
 Forgot-password flow also needs:

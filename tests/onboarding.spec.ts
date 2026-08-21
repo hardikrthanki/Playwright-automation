@@ -55,8 +55,8 @@ npx playwright show-report
 ## TEST ENVIRONMENT
 
 Application : OOLTool
-Environment : PUAT
-URL         : https://puat.ooltool.com
+Environment : UAT
+URL         : https://uat.ooltool.com
 Browser     : Chromium
 
 FLOW COVERED
@@ -115,7 +115,7 @@ Shared Reusable Utilities
    CONFIGURATION
 ============================================================================ */
 
-const BASE_URL = 'https://puat.ooltool.com';
+const BASE_URL = 'https://uat.ooltool.com';
 const PASSWORD = 'Test@123456';
 
 

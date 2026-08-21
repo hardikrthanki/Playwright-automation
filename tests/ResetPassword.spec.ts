@@ -22,7 +22,7 @@ npx playwright test tests/ResetPassword.spec.ts --headed
 NOTE
 ----
 Set RESET_URL before running this file:
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 npx playwright test tests/ResetPassword.spec.ts --headed
 
 ============================================================================= */

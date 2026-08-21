@@ -17,7 +17,7 @@ PURPOSE
 Validate reset-password form guardrails with a fresh reset URL.
 
 Run:
-$env:RESET_URL="https://puat.ooltool.com/reset-password/..."
+$env:RESET_URL="https://uat.ooltool.com/reset-password/..."
 npx playwright test tests/ResetPasswordNegative.spec.ts --headed
 
 NOTE

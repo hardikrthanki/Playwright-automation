@@ -27,8 +27,8 @@ npx playwright show-report
 ## TEST ENVIRONMENT
 
 Application : OOLTool
-Environment : PUAT
-URL         : https://puat.ooltool.com
+Environment : UAT
+URL         : https://uat.ooltool.com
 Browser     : Chromium
 
 ## FLOW COVERED
@@ -63,7 +63,7 @@ Step 10 - Logout Validation
 
 Subscriber Email : [imhardikthanki+plantest@gmail.com](mailto:imhardikthanki+plantest@gmail.com)
 Subscription Plan : Income Builder
-Environment       : PUAT
+Environment       : UAT
 
 ## DEPENDENCIES
 

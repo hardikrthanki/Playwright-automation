@@ -138,7 +138,7 @@ Logger.info(
 
 
 await this.page.goto(
-'https://puat.ooltool.com/register'
+'https://uat.ooltool.com/register'
 );
 
 await expect(

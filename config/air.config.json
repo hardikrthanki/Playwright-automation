@@ -2,7 +2,7 @@
   "productName": "AIR",
   "productFullName": "Automation Intelligence Reporting",
   "projectName": "OOLTool",
-  "environment": "PUAT",
+  "environment": "UAT",
   "buildVersion": "Playwright JSON",
   "preparedBy": "QA Automation",
   "theme": "air-30-page-dashboard",

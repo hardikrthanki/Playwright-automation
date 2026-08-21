@@ -395,7 +395,7 @@ const interrupted = airResults?.summary?.interrupted ?? tests.filter(test => tes
 const totalDuration = airResults?.summary?.durationMs ?? tests.reduce((sum, test) => sum + test.duration, 0);
 const generatedAt = airResults?.generatedAtDisplay ?? new Date().toLocaleString();
 const projectName = airResults?.project?.name ?? airConfig.projectName ?? 'OOLTool';
-const environment = airResults?.project?.environment ?? airConfig.environment ?? 'PUAT';
+const environment = airResults?.project?.environment ?? airConfig.environment ?? 'UAT';
 const buildVersion = airResults?.project?.buildVersion ?? airConfig.buildVersion ?? 'Playwright JSON';
 const productName = airConfig.productName || 'AIR';
 const passRate =
@@ -1192,7 +1192,7 @@ const html = `<!doctype html>
       <a href="#summary"><small>12</small>AIR Summary</a>
     </nav>
     <div class="side-controls">
-      <label>Environment</label><div class="select">PUAT</div>
+      <label>Environment</label><div class="select">UAT</div>
       <label>Build Version</label><div class="select">Generated Report</div>
     </div>
     <div class="user"><div class="avatar">QA</div><div><strong>OOLTool QA</strong><br><span>Automation Lead</span></div></div>
@@ -1205,7 +1205,7 @@ const html = `<!doctype html>
           <div class="filters">
             <div class="filter">${escapeHtml(generatedAt)}</div>
             <div class="filter">Build: Playwright JSON</div>
-            <div class="filter">Environment: PUAT</div>
+            <div class="filter">Environment: UAT</div>
             <a class="filter" href="../playwright-report/index.html">Share Report</a>
             <a class="btn primary" href="javascript:window.print()">Export PDF</a>
           </div>
@@ -1652,8 +1652,8 @@ const goldenHtml = `<!doctype html>
 <body>
 <div class="report">
   <section class="page cover">
-    <div><div class="logo">AIR</div><h1>Automation Intelligence Platform</h1><p>OOLTool PUAT execution report using the AIR Golden Design direction: premium dark theme, business-first insights, evidence-driven decisions, and client-ready reporting.</p></div>
-    <div class="meta"><div><span>Report Type</span><b>Execution Report</b></div><div><span>Environment</span><b>PUAT</b></div><div><span>Generated</span><b>${escapeHtml(generatedAt)}</b></div><div><span>Status</span><b class="${failed === 0 ? 'good' : 'warn'}">${failed === 0 ? 'Ready' : 'Review'}</b></div></div>
+    <div><div class="logo">AIR</div><h1>Automation Intelligence Platform</h1><p>OOLTool UAT execution report using the AIR Golden Design direction: premium dark theme, business-first insights, evidence-driven decisions, and client-ready reporting.</p></div>
+    <div class="meta"><div><span>Report Type</span><b>Execution Report</b></div><div><span>Environment</span><b>UAT</b></div><div><span>Generated</span><b>${escapeHtml(generatedAt)}</b></div><div><span>Status</span><b class="${failed === 0 ? 'good' : 'warn'}">${failed === 0 ? 'Ready' : 'Review'}</b></div></div>
   </section>
 
   <section class="page">

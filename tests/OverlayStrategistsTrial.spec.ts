@@ -38,7 +38,7 @@ PURPOSE
 Starts the Subscription Management coverage from Use Case 1: Overlay
 Strategists Trial Experience. The file is gated because trial creation can
 consume eligibility for the generated user and still requires manual email
-verification in PUAT.
+verification in UAT.
 
 Run:
 $env:OVERLAY_STRATEGISTS_FLOW_ENABLED="true"

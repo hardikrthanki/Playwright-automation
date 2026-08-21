@@ -31,7 +31,7 @@ PURPOSE
 -------
 Validates required-field guardrails for Risk Profile and Compliance onboarding
 steps. These tests use fresh users because onboarding state is one-time per
-account in PUAT.
+account in UAT.
 
 Run:
 $env:ONBOARDING_FIELD_VALIDATION_ENABLED="true"

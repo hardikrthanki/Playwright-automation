@@ -9,7 +9,7 @@ Stores reusable test data used across Playwright tests.
 
 export const BASE_URL =
   process.env.BASE_URL ??
-  'https://puat.ooltool.com';
+  'https://uat.ooltool.com';
 
 function getBooleanEnv(
   name: string,

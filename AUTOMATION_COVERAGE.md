@@ -1,6 +1,6 @@
 # OOLTool Automation Coverage Summary
 
-This document explains the automation coverage currently available for the OOLTool PUAT test suite. It is written for QA, product, engineering, and client stakeholders so they can quickly understand what the automation validates.
+This document explains the automation coverage currently available for the OOLTool UAT test suite. It is written for QA, product, engineering, and client stakeholders so they can quickly understand what the automation validates.
 
 ## Executive Summary
 

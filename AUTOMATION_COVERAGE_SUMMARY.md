@@ -2,14 +2,14 @@
 
 ## Purpose
 
-This document summarizes the automated validation coverage implemented for the OOLTool PUAT application using Playwright.
+This document summarizes the automated validation coverage implemented for the OOLTool UAT application using Playwright.
 
 It is intended for QA, product, engineering, and client stakeholders. A reader should be able to understand what has been validated without reading the automation code.
 
 ## Application Under Test
 
 - Product: OOLTool
-- Environment: PUAT
+- Environment: UAT
 - Automation Framework: Playwright with TypeScript
 - Primary Browser: Chromium
 - Reporting: Playwright HTML Report and AIR Automation Intelligence Report

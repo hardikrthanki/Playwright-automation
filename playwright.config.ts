@@ -14,7 +14,7 @@ export default defineConfig({
     ['dot'],
     ['html', {
       open: 'never',
-      title: 'OOLTool PUAT Automation Report',
+      title: 'OOLTool UAT Automation Report',
     }],
     ['json', {
       outputFile:
