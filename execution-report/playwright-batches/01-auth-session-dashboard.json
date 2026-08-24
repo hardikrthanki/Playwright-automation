@@ -42,7 +42,7 @@
         "html",
         {
           "open": "never",
-          "title": "OOLTool PUAT Automation Report"
+          "title": "OOLTool UAT Automation Report"
         }
       ],
       [
@@ -94,12 +94,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7396,
+                      "duration": 4045,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:13:43.723Z",
+                      "startTime": "2026-08-24T12:25:09.574Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -144,12 +144,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4101,
+                      "duration": 3713,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:13:53.213Z",
+                      "startTime": "2026-08-24T12:25:14.252Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -194,12 +194,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8866,
+                      "duration": 9018,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:13:57.699Z",
+                      "startTime": "2026-08-24T12:25:18.108Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -244,12 +244,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3858,
+                      "duration": 2832,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:07.125Z",
+                      "startTime": "2026-08-24T12:25:27.230Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -294,12 +294,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6223,
+                      "duration": 2038,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:11.298Z",
+                      "startTime": "2026-08-24T12:25:30.176Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -344,12 +344,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3296,
+                      "duration": 2092,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:17.923Z",
+                      "startTime": "2026-08-24T12:25:32.322Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -394,12 +394,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2774,
+                      "duration": 2021,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:21.576Z",
+                      "startTime": "2026-08-24T12:25:34.565Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -444,12 +444,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3719,
+                      "duration": 2075,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:24.834Z",
+                      "startTime": "2026-08-24T12:25:36.682Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -494,12 +494,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3888,
+                      "duration": 2149,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:28.927Z",
+                      "startTime": "2026-08-24T12:25:38.842Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -544,12 +544,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3592,
+                      "duration": 2293,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:33.220Z",
+                      "startTime": "2026-08-24T12:25:41.106Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -594,12 +594,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2552,
+                      "duration": 3868,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:37.100Z",
+                      "startTime": "2026-08-24T12:25:43.473Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -644,12 +644,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3207,
+                      "duration": 2497,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:39.993Z",
+                      "startTime": "2026-08-24T12:25:47.474Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -694,12 +694,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3247,
+                      "duration": 2316,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:43.542Z",
+                      "startTime": "2026-08-24T12:25:50.045Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -744,12 +744,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2435,
+                      "duration": 3041,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:47.170Z",
+                      "startTime": "2026-08-24T12:25:52.444Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -794,12 +794,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2617,
+                      "duration": 2435,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:49.944Z",
+                      "startTime": "2026-08-24T12:25:55.577Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -844,12 +844,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12186,
+                      "duration": 3109,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:14:52.891Z",
+                      "startTime": "2026-08-24T12:25:58.127Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -894,12 +894,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22384,
+                      "duration": 2177,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:15:05.462Z",
+                      "startTime": "2026-08-24T12:26:01.320Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -944,12 +944,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21731,
+                      "duration": 2332,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:15:28.170Z",
+                      "startTime": "2026-08-24T12:26:03.684Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -994,7 +994,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24686,
+                      "duration": 4074,
                       "errors": [],
                       "stdout": [
                         {
@@ -1009,7 +1009,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:15:50.196Z",
+                      "startTime": "2026-08-24T12:26:06.140Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1054,7 +1054,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22667,
+                      "duration": 4057,
                       "errors": [],
                       "stdout": [
                         {
@@ -1069,7 +1069,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:16:15.217Z",
+                      "startTime": "2026-08-24T12:26:10.327Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1114,7 +1114,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14182,
+                      "duration": 3987,
                       "errors": [],
                       "stdout": [
                         {
@@ -1129,7 +1129,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:16:38.292Z",
+                      "startTime": "2026-08-24T12:26:14.487Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1174,7 +1174,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4311,
+                      "duration": 4264,
                       "errors": [],
                       "stdout": [
                         {
@@ -1189,7 +1189,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:16:52.750Z",
+                      "startTime": "2026-08-24T12:26:18.598Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1234,7 +1234,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3551,
+                      "duration": 2952,
                       "errors": [],
                       "stdout": [
                         {
@@ -1249,7 +1249,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:16:57.313Z",
+                      "startTime": "2026-08-24T12:26:22.988Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1294,7 +1294,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3112,
+                      "duration": 2964,
                       "errors": [],
                       "stdout": [
                         {
@@ -1309,7 +1309,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:01.127Z",
+                      "startTime": "2026-08-24T12:26:26.078Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1352,7 +1352,7 @@
         {
           "title": "Auth UI Validation",
           "file": "AuthUiValidation.spec.ts",
-          "line": 77,
+          "line": 123,
           "column": 6,
           "specs": [
             {
@@ -1371,7 +1371,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6066,
+                      "duration": 4597,
                       "errors": [],
                       "stdout": [
                         {
@@ -1395,7 +1395,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:04.490Z",
+                      "startTime": "2026-08-24T12:26:29.187Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1421,7 +1421,7 @@
               ],
               "id": "af1f88c11cbb0133d115-fa3a13a837df2a976e05",
               "file": "AuthUiValidation.spec.ts",
-              "line": 81,
+              "line": 127,
               "column": 9
             },
             {
@@ -1440,12 +1440,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3109,
+                      "duration": 2314,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:10.902Z",
+                      "startTime": "2026-08-24T12:26:33.959Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1471,7 +1471,57 @@
               ],
               "id": "af1f88c11cbb0133d115-5268677bedab91cdbdda",
               "file": "AuthUiValidation.spec.ts",
-              "line": 100,
+              "line": 146,
+              "column": 9
+            },
+            {
+              "title": "Login password draft is cleared after refresh",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3006,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-24T12:26:36.358Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d667b-ft-is-cleared-after-refresh-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d667b-ft-is-cleared-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-d667b-ft-is-cleared-after-refresh-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-939eab8d79f162cb2a56",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 199,
               "column": 9
             },
             {
@@ -1490,7 +1540,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5579,
+                      "duration": 3935,
                       "errors": [],
                       "stdout": [
                         {
@@ -1514,7 +1564,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:14.235Z",
+                      "startTime": "2026-08-24T12:26:39.441Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1540,7 +1590,93 @@
               ],
               "id": "af1f88c11cbb0133d115-baeb348759907e8a396c",
               "file": "AuthUiValidation.spec.ts",
-              "line": 153,
+              "line": 250,
+              "column": 9
+            },
+            {
+              "title": "Forgot password email draft is cleared after refresh",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11859,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n\n    at ForgotPasswordPage.open (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts:98:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:299:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
+                          "column": 7,
+                          "line": 98
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mpages\\ForgotPasswordPage.ts:98\n\n\u001b[0m \u001b[90m  96 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m  97 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m     )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \u001b[35m/forgot-password/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m       {\n \u001b[90m 101 |\u001b[39m         timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
+                            "column": 7,
+                            "line": 98
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\ForgotPasswordPage.ts:98\n\n\u001b[0m \u001b[90m  96 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m  97 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m     )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \u001b[35m/forgot-password/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m       {\n \u001b[90m 101 |\u001b[39m         timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[0m\n\u001b[2m    at ForgotPasswordPage.open (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts:98:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:299:9\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "[INFO] Opening Forgot Password Page\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Forgot Password\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-24T12:26:43.508Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
+                        "column": 7,
+                        "line": 98
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-cf5acaf1f1cdae3070f1",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 292,
               "column": 9
             },
             {
@@ -1556,15 +1692,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2897,
+                      "duration": 2838,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:20.189Z",
+                      "startTime": "2026-08-24T12:26:57.228Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1590,7 +1726,57 @@
               ],
               "id": "af1f88c11cbb0133d115-975049c32c675d6578b1",
               "file": "AuthUiValidation.spec.ts",
-              "line": 195,
+              "line": 326,
+              "column": 9
+            },
+            {
+              "title": "Public auth routes tolerate trailing slash and unknown query parameters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4345,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-24T12:27:00.628Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-dd6b5-nd-unknown-query-parameters-chromium\\test-finished-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-dd6b5-nd-unknown-query-parameters-chromium\\video.webm"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-dd6b5-nd-unknown-query-parameters-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "af1f88c11cbb0133d115-e3a0377a03a0d8064c37",
+              "file": "AuthUiValidation.spec.ts",
+              "line": 368,
               "column": 9
             },
             {
@@ -1606,10 +1792,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4785,
+                      "duration": 6026,
                       "errors": [],
                       "stdout": [
                         {
@@ -1618,7 +1804,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:23.625Z",
+                      "startTime": "2026-08-24T12:27:05.104Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1644,7 +1830,7 @@
               ],
               "id": "af1f88c11cbb0133d115-eb68f965980750adf612",
               "file": "AuthUiValidation.spec.ts",
-              "line": 237,
+              "line": 436,
               "column": 9
             },
             {
@@ -1660,10 +1846,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4819,
+                      "duration": 3842,
                       "errors": [],
                       "stdout": [
                         {
@@ -1672,7 +1858,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:28.794Z",
+                      "startTime": "2026-08-24T12:27:11.272Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1698,7 +1884,7 @@
               ],
               "id": "af1f88c11cbb0133d115-ad0bdabe497d49ac7020",
               "file": "AuthUiValidation.spec.ts",
-              "line": 273,
+              "line": 472,
               "column": 9
             },
             {
@@ -1714,19 +1900,19 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2755,
+                      "duration": 2033,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[CLICK] Toggle Login Password Visibility\n"
+                          "text": "[CLICK] Toggle Password Visibility\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:33.998Z",
+                      "startTime": "2026-08-24T12:27:15.259Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1752,7 +1938,7 @@
               ],
               "id": "af1f88c11cbb0133d115-a68e87f5c3d9704dabe8",
               "file": "AuthUiValidation.spec.ts",
-              "line": 351,
+              "line": 550,
               "column": 9
             },
             {
@@ -1768,10 +1954,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8410,
+                      "duration": 7044,
                       "errors": [],
                       "stdout": [
                         {
@@ -1786,7 +1972,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:37.117Z",
+                      "startTime": "2026-08-24T12:27:17.372Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1812,7 +1998,7 @@
               ],
               "id": "af1f88c11cbb0133d115-71c9137da6732d727397",
               "file": "AuthUiValidation.spec.ts",
-              "line": 427,
+              "line": 613,
               "column": 9
             },
             {
@@ -1828,10 +2014,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8689,
+                      "duration": 7288,
                       "errors": [],
                       "stdout": [
                         {
@@ -1844,12 +2030,12 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[CLICK] Toggle Register Password Visibility\n"
+                          "text": "[CLICK] Toggle Password Visibility\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:46.251Z",
+                      "startTime": "2026-08-24T12:27:24.837Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1875,7 +2061,7 @@
               ],
               "id": "af1f88c11cbb0133d115-75414157541f8702e583",
               "file": "AuthUiValidation.spec.ts",
-              "line": 462,
+              "line": 648,
               "column": 9
             },
             {
@@ -1891,10 +2077,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9839,
+                      "duration": 8510,
                       "errors": [],
                       "stdout": [
                         {
@@ -1912,7 +2098,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:17:55.982Z",
+                      "startTime": "2026-08-24T12:27:32.455Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1938,7 +2124,7 @@
               ],
               "id": "af1f88c11cbb0133d115-4a70a46f087bc8a200c1",
               "file": "AuthUiValidation.spec.ts",
-              "line": 517,
+              "line": 690,
               "column": 9
             }
           ]
@@ -1971,10 +2157,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13419,
+                      "duration": 10880,
                       "errors": [],
                       "stdout": [
                         {
@@ -1990,7 +2176,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2001,7 +2187,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:18:06.747Z",
+                      "startTime": "2026-08-24T12:27:41.315Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2043,10 +2229,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13142,
+                      "duration": 12386,
                       "errors": [],
                       "stdout": [
                         {
@@ -2062,7 +2248,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2079,7 +2265,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:18:21.069Z",
+                      "startTime": "2026-08-24T12:27:52.468Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2138,10 +2324,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21686,
+                      "duration": 20794,
                       "errors": [],
                       "stdout": [
                         {
@@ -2157,7 +2343,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2174,7 +2360,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:18:35.160Z",
+                      "startTime": "2026-08-24T12:28:05.560Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2205,7 +2391,7 @@
             },
             {
               "title": "Authenticated dashboard remains usable on mobile viewport",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2216,11 +2402,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 13243,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 15514,
+                      "error": {
+                        "message": "Error: Authenticated page should not create horizontal overflow\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                        "stack": "Error: Authenticated page should not create horizontal overflow\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at expectNoHorizontalOverflow (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:71:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:167:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts",
+                          "column": 7,
+                          "line": 71
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 69 |\u001b[39m       page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\n \u001b[90m 70 |\u001b[39m     ) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 71 |\u001b[39m       \u001b[36mawait\u001b[39m expect\n \u001b[90m    |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 72 |\u001b[39m         \u001b[33m.\u001b[39mpoll(\n \u001b[90m 73 |\u001b[39m           \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m\n \u001b[90m 74 |\u001b[39m             \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts",
+                            "column": 7,
+                            "line": 71
+                          },
+                          "message": "Error: Authenticated page should not create horizontal overflow\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n\u001b[0m \u001b[90m 69 |\u001b[39m       page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\n \u001b[90m 70 |\u001b[39m     ) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 71 |\u001b[39m       \u001b[36mawait\u001b[39m expect\n \u001b[90m    |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 72 |\u001b[39m         \u001b[33m.\u001b[39mpoll(\n \u001b[90m 73 |\u001b[39m           \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m\n \u001b[90m 74 |\u001b[39m             \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(\u001b[0m\n\u001b[2m    at expectNoHorizontalOverflow (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:71:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:167:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "[INFO] Logging in\n"
@@ -2235,7 +2440,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2252,13 +2457,13 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:18:58.066Z",
+                      "startTime": "2026-08-24T12:28:26.946Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -2266,14 +2471,24 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\DashboardNavigation-Dashbo-de2e1-s-usable-on-mobile-viewport-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts",
+                        "column": 7,
+                        "line": 71
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "d7c789189ee614e96ffe-39a6090575fa46114618",
@@ -2294,10 +2509,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18882,
+                      "duration": 19795,
                       "errors": [],
                       "stdout": [
                         {
@@ -2313,7 +2528,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2324,7 +2539,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:19:12.118Z",
+                      "startTime": "2026-08-24T12:28:44.836Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2366,10 +2581,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18249,
+                      "duration": 16518,
                       "errors": [],
                       "stdout": [
                         {
@@ -2385,7 +2600,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2396,7 +2611,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:19:31.905Z",
+                      "startTime": "2026-08-24T12:29:05.809Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2438,10 +2653,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 33825,
+                      "duration": 21811,
                       "errors": [],
                       "stdout": [
                         {
@@ -2457,7 +2672,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2468,7 +2683,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:19:51.242Z",
+                      "startTime": "2026-08-24T12:29:22.811Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2510,10 +2725,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13728,
+                      "duration": 12865,
                       "errors": [],
                       "stdout": [
                         {
@@ -2529,7 +2744,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2540,7 +2755,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:20:25.756Z",
+                      "startTime": "2026-08-24T12:29:45.037Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2582,10 +2797,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9892,
+                      "duration": 10646,
                       "errors": [],
                       "stdout": [
                         {
@@ -2601,7 +2816,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2615,7 +2830,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:20:39.968Z",
+                      "startTime": "2026-08-24T12:29:58.209Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2657,10 +2872,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23072,
+                      "duration": 23785,
                       "errors": [],
                       "stdout": [
                         {
@@ -2676,7 +2891,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2729,7 +2944,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:20:50.651Z",
+                      "startTime": "2026-08-24T12:30:09.432Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2771,10 +2986,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12158,
+                      "duration": 11813,
                       "errors": [],
                       "stdout": [
                         {
@@ -2790,7 +3005,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2813,7 +3028,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:21:14.872Z",
+                      "startTime": "2026-08-24T12:30:34.297Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2855,10 +3070,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10877,
+                      "duration": 9741,
                       "errors": [],
                       "stdout": [
                         {
@@ -2874,7 +3089,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2885,7 +3100,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:21:27.635Z",
+                      "startTime": "2026-08-24T12:30:46.614Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2927,10 +3142,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13597,
+                      "duration": 12931,
                       "errors": [],
                       "stdout": [
                         {
@@ -2946,7 +3161,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -2961,16 +3176,19 @@
                           "text": "[CLICK] Open Dashboard\n"
                         },
                         {
-                          "text": "[CLICK] Open Analytics\n"
+                          "text": "[CLICK] Open Opportunities\n"
                         },
                         {
                           "text": "[CLICK] Open Portfolio\n"
                         },
                         {
-                          "text": "[CLICK] Open Accounts\n"
+                          "text": "[CLICK] Open Research\n"
                         },
                         {
                           "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Support\n"
                         },
                         {
                           "text": "[PASS] Dashboard top navigation routes are healthy\n"
@@ -2978,7 +3196,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:21:38.914Z",
+                      "startTime": "2026-08-24T12:30:56.626Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3004,7 +3222,7 @@
               ],
               "id": "d7c789189ee614e96ffe-efd1de176eb11ba0c9a0",
               "file": "DashboardNavigation.spec.ts",
-              "line": 522,
+              "line": 537,
               "column": 9
             },
             {
@@ -3020,10 +3238,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12625,
+                      "duration": 13272,
                       "errors": [],
                       "stdout": [
                         {
@@ -3039,7 +3257,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3054,16 +3272,19 @@
                           "text": "[CLICK] Open Dashboard\n"
                         },
                         {
-                          "text": "[CLICK] Open Analytics\n"
+                          "text": "[CLICK] Open Opportunities\n"
                         },
                         {
                           "text": "[CLICK] Open Portfolio\n"
                         },
                         {
-                          "text": "[CLICK] Open Accounts\n"
+                          "text": "[CLICK] Open Research\n"
                         },
                         {
                           "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Support\n"
                         },
                         {
                           "text": "[PASS] Dashboard top navigation destinations render content\n"
@@ -3071,7 +3292,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:21:53.459Z",
+                      "startTime": "2026-08-24T12:31:10.048Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3097,7 +3318,7 @@
               ],
               "id": "d7c789189ee614e96ffe-3c5d1734a0e948e26c11",
               "file": "DashboardNavigation.spec.ts",
-              "line": 533,
+              "line": 548,
               "column": 9
             },
             {
@@ -3113,10 +3334,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21881,
+                      "duration": 20686,
                       "errors": [],
                       "stdout": [
                         {
@@ -3132,7 +3353,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3147,16 +3368,19 @@
                           "text": "[CLICK] Open Dashboard\n"
                         },
                         {
-                          "text": "[CLICK] Open Analytics\n"
+                          "text": "[CLICK] Open Opportunities\n"
                         },
                         {
                           "text": "[CLICK] Open Portfolio\n"
                         },
                         {
-                          "text": "[CLICK] Open Accounts\n"
+                          "text": "[CLICK] Open Research\n"
                         },
                         {
                           "text": "[CLICK] Open Academy\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Support\n"
                         },
                         {
                           "text": "[PASS] Dashboard top navigation destinations persist after refresh\n"
@@ -3164,7 +3388,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:22:06.809Z",
+                      "startTime": "2026-08-24T12:31:23.727Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3190,7 +3414,7 @@
               ],
               "id": "d7c789189ee614e96ffe-ac58dcb47ff3d1e58119",
               "file": "DashboardNavigation.spec.ts",
-              "line": 544,
+              "line": 559,
               "column": 9
             },
             {
@@ -3206,10 +3430,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12107,
+                      "duration": 10724,
                       "errors": [],
                       "stdout": [
                         {
@@ -3225,7 +3449,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3251,7 +3475,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:22:30.165Z",
+                      "startTime": "2026-08-24T12:31:45.037Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3277,7 +3501,7 @@
               ],
               "id": "d7c789189ee614e96ffe-6c71b9ac478a642f1d8e",
               "file": "DashboardNavigation.spec.ts",
-              "line": 555,
+              "line": 570,
               "column": 9
             },
             {
@@ -3293,10 +3517,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16778,
+                      "duration": 10160,
                       "errors": [],
                       "stdout": [
                         {
@@ -3312,7 +3536,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3332,7 +3556,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:22:43.047Z",
+                      "startTime": "2026-08-24T12:31:56.135Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3358,7 +3582,7 @@
               ],
               "id": "d7c789189ee614e96ffe-18c0c522fa02e00486bd",
               "file": "DashboardNavigation.spec.ts",
-              "line": 566,
+              "line": 581,
               "column": 9
             },
             {
@@ -3374,10 +3598,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14496,
+                      "duration": 10165,
                       "errors": [],
                       "stdout": [
                         {
@@ -3393,7 +3617,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3413,7 +3637,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:23:01.336Z",
+                      "startTime": "2026-08-24T12:32:06.654Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3439,7 +3663,7 @@
               ],
               "id": "d7c789189ee614e96ffe-39ffc38d9aaeee93db0d",
               "file": "DashboardNavigation.spec.ts",
-              "line": 577,
+              "line": 592,
               "column": 9
             },
             {
@@ -3455,10 +3679,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12115,
+                      "duration": 10156,
                       "errors": [],
                       "stdout": [
                         {
@@ -3474,7 +3698,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3497,7 +3721,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:23:16.812Z",
+                      "startTime": "2026-08-24T12:32:17.123Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3523,7 +3747,7 @@
               ],
               "id": "d7c789189ee614e96ffe-30a42057b6345e052da9",
               "file": "DashboardNavigation.spec.ts",
-              "line": 588,
+              "line": 603,
               "column": 9
             },
             {
@@ -3539,10 +3763,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12391,
+                      "duration": 11606,
                       "errors": [],
                       "stdout": [
                         {
@@ -3558,7 +3782,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3593,7 +3817,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:23:29.636Z",
+                      "startTime": "2026-08-24T12:32:27.511Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3619,7 +3843,7 @@
               ],
               "id": "d7c789189ee614e96ffe-84cca6836eea7d09ddb9",
               "file": "DashboardNavigation.spec.ts",
-              "line": 599,
+              "line": 614,
               "column": 9
             },
             {
@@ -3635,10 +3859,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 28647,
+                      "duration": 24813,
                       "errors": [],
                       "stdout": [
                         {
@@ -3654,7 +3878,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3671,7 +3895,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:23:42.500Z",
+                      "startTime": "2026-08-24T12:32:39.522Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3697,7 +3921,7 @@
               ],
               "id": "d7c789189ee614e96ffe-1b75cabe50713151b6c0",
               "file": "DashboardNavigation.spec.ts",
-              "line": 610,
+              "line": 625,
               "column": 9
             },
             {
@@ -3713,10 +3937,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15002,
+                      "duration": 13558,
                       "errors": [],
                       "stdout": [
                         {
@@ -3732,7 +3956,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3743,7 +3967,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:24:12.013Z",
+                      "startTime": "2026-08-24T12:33:04.861Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3769,7 +3993,7 @@
               ],
               "id": "d7c789189ee614e96ffe-5b824a785e6578cc31f7",
               "file": "DashboardNavigation.spec.ts",
-              "line": 621,
+              "line": 636,
               "column": 9
             },
             {
@@ -3785,10 +4009,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 17843,
+                      "duration": 12908,
                       "errors": [],
                       "stdout": [
                         {
@@ -3804,7 +4028,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "[INFO] Validating Dashboard\n"
@@ -3827,7 +4051,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:24:27.939Z",
+                      "startTime": "2026-08-24T12:33:18.755Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3853,7 +4077,7 @@
               ],
               "id": "d7c789189ee614e96ffe-bfbcfe097713626ec361",
               "file": "DashboardNavigation.spec.ts",
-              "line": 660,
+              "line": 675,
               "column": 9
             }
           ]
@@ -3886,10 +4110,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18851,
+                      "duration": 16226,
                       "errors": [],
                       "stdout": [
                         {
@@ -3905,7 +4129,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "Logging Out\n"
@@ -3922,7 +4146,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:24:46.596Z",
+                      "startTime": "2026-08-24T12:33:31.969Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3964,10 +4188,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16944,
+                      "duration": 15084,
                       "errors": [],
                       "stdout": [
                         {
@@ -3983,7 +4207,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "Logging Out\n"
@@ -4000,7 +4224,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:25:05.959Z",
+                      "startTime": "2026-08-24T12:33:48.555Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4042,10 +4266,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23919,
+                      "duration": 23233,
                       "errors": [],
                       "stdout": [
                         {
@@ -4061,7 +4285,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "Logging Out\n"
@@ -4078,7 +4302,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:25:23.334Z",
+                      "startTime": "2026-08-24T12:34:04.009Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4120,15 +4344,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10746,
+                      "duration": 11903,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:25:47.942Z",
+                      "startTime": "2026-08-24T12:34:27.597Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4170,10 +4394,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15229,
+                      "duration": 12281,
                       "errors": [],
                       "stdout": [
                         {
@@ -4189,12 +4413,12 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:25:59.238Z",
+                      "startTime": "2026-08-24T12:34:39.591Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4205,12 +4429,12 @@
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video-1.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video.webm"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-6046c-open-dashboard-in-a-new-tab-chromium\\video-1.webm"
                         },
                         {
                           "name": "trace",
@@ -4241,10 +4465,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14214,
+                      "duration": 11618,
                       "errors": [],
                       "stdout": [
                         {
@@ -4260,12 +4484,12 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:26:15.116Z",
+                      "startTime": "2026-08-24T12:34:52.116Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4312,10 +4536,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19228,
+                      "duration": 17291,
                       "errors": [],
                       "stdout": [
                         {
@@ -4331,7 +4555,7 @@
                           "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Current URL: https://puat.ooltool.com/dashboard\n"
+                          "text": "Current URL: https://uat.ooltool.com/dashboard\n"
                         },
                         {
                           "text": "Logging Out\n"
@@ -4348,7 +4572,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-07-15T11:26:29.739Z",
+                      "startTime": "2026-08-24T12:35:04.081Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4359,12 +4583,12 @@
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video-1.webm"
                         },
                         {
                           "name": "video",
                           "contentType": "video/webm",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video-1.webm"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\SessionSecurity-Session-Se-24c64-ss-in-an-already-opened-tab-chromium\\video.webm"
                         },
                         {
                           "name": "trace",
@@ -4389,11 +4613,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-07-15T11:13:42.142Z",
-    "duration": 793798.816,
-    "expected": 64,
+    "startTime": "2026-08-24T12:25:08.561Z",
+    "duration": 617063.2250000001,
+    "expected": 65,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 2,
     "flaky": 0
   }
 }
