@@ -210,6 +210,73 @@ function refundEstimate(
   );
 }
 
+function upgradeTargetPlan() {
+  const configuredPlan =
+    process.env.SUB_LIFECYCLE_UPGRADE_TARGET_PLAN as PlanName | undefined;
+
+  return configuredPlan ??
+    'Portfolio Hedger';
+}
+
+function submitUpgradeTargetPlan() {
+  const configuredPlan =
+    process.env.SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN as PlanName | undefined;
+
+  return configuredPlan ??
+    'Overlay Strategists';
+}
+
+function submitUpgradeInterval() {
+  const configuredInterval =
+    (
+      process.env.SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL ??
+      'monthly'
+    )
+      .trim()
+      .toLowerCase();
+
+  return configuredInterval === 'annual'
+    ? 'annual'
+    : 'monthly';
+}
+
+function upgradeIntervals() {
+  const configuredIntervals =
+    process.env.SUB_LIFECYCLE_UPGRADE_INTERVALS;
+
+  if (!configuredIntervals) {
+    return [
+      'monthly',
+      'annual'
+    ] as BillingInterval[];
+  }
+
+  return configuredIntervals
+    .split(
+      ','
+    )
+    .map(
+      interval =>
+        interval.trim()
+          .toLowerCase()
+    )
+    .filter(
+      (
+        interval
+      ): interval is BillingInterval =>
+        interval === 'monthly' ||
+        interval === 'annual'
+    );
+}
+
+function upgradeBillingCopy(
+  interval: BillingInterval
+) {
+  return interval === 'monthly'
+    ? /per month|monthly|\/mo|month|subscription|total|due|pay/i
+    : /per year|annual|\/yr|\/year|year|subscription|total|due|pay/i;
+}
+
 async function openPlanSelectionForDisposableUser(
   page: Page,
   scenario: string
@@ -474,6 +541,109 @@ test.describe(
         await billing.validatePlanLifecycleActionSummary();
         await billing.validateBillingIntervalPresentationSummary();
         await billing.validatePaidSubscriberTrialCtaIsNotOffered();
+      }
+    );
+
+    controlledLifecycleTest(
+      'Prepared paid user can preview monthly and annual upgrade calculations',
+      'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED',
+      'Upgrade preview validates the billing calculation context without submitting payment.',
+      async ({ page }) => {
+        const targetPlan =
+          upgradeTargetPlan();
+
+        const intervals =
+          upgradeIntervals();
+
+        await loginPreparedPaidUser(
+          page
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        for (const interval of intervals) {
+          await billing.openPlanChangeCalculationPreview({
+            targetPlan,
+            action: 'upgrade',
+            interval
+          });
+
+          await billing.validatePlanChangeCalculationPreview({
+            targetPlan:
+              targetPlan,
+            action:
+              'upgrade',
+            interval:
+              interval,
+            expectedBillingCopy:
+              upgradeBillingCopy(
+                interval
+              ),
+            expectedPlanCharge:
+              PLAN_PRICES[targetPlan][interval],
+            expectedRecurringAmount:
+              PLAN_PRICES[targetPlan][interval]
+          });
+
+          await billing.closePlanChangeCalculationPreview({
+            targetPlan,
+            action: 'upgrade'
+          });
+        }
+      }
+    );
+
+    controlledLifecycleTest(
+      'Prepared paid user can accept terms and submit upgrade payment',
+      'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED',
+      'This test changes the prepared paid user subscription and requires a card on file.',
+      async ({ page }) => {
+        const targetPlan =
+          submitUpgradeTargetPlan();
+
+        const interval =
+          submitUpgradeInterval();
+
+        await loginPreparedPaidUser(
+          page
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await billing.openPlanChangeCalculationPreview({
+          targetPlan,
+          action: 'upgrade',
+          interval
+        });
+
+        await billing.validatePlanChangeCalculationPreview({
+          targetPlan,
+          action: 'upgrade',
+          interval,
+          expectedBillingCopy:
+            upgradeBillingCopy(
+              interval
+            ),
+          expectedPlanCharge:
+            PLAN_PRICES[targetPlan][interval],
+          expectedRecurringAmount:
+            PLAN_PRICES[targetPlan][interval]
+        });
+
+        await billing.submitPlanChangeCalculationPreview({
+          targetPlan,
+          action: 'upgrade'
+        });
+
+        await billing.validateActivePlan(
+          targetPlan
+        );
       }
     );
 

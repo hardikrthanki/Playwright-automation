@@ -224,8 +224,8 @@ Validated coverage:
   Builder, Overlay Strategists, Portfolio Hedger, and Marketplace.
 - Users can switch between available plan selections without launching Stripe
   checkout until setup is submitted.
-- Multi-plan Stripe checkout summaries are validated before payment for
-  selected safe plan and billing interval combinations.
+- Multi-plan Stripe checkout summaries are validated before payment across
+  direct paid monthly and annual plan combinations.
 - Curious Explorer free plan completes onboarding without Stripe where enabled.
 - Paid plan redirects to Stripe checkout.
 - Overlay Strategists 30-day trial options.
@@ -238,6 +238,7 @@ Primary specs:
 
 - `tests/PlanSelectionValidation.spec.ts`
 - `tests/OverlayStrategistsTrial.spec.ts`
+- `tests/DirectSubscriptionPurchase.spec.ts`
 
 ### 9. Stripe Checkout and Payment
 
@@ -273,6 +274,7 @@ Primary specs:
 - `tests/onboarding.spec.ts`
 - `tests/PaymentNegative.spec.ts`
 - `tests/OverlayStrategistsTrial.spec.ts`
+- `tests/DirectSubscriptionPurchase.spec.ts`
 
 ### 10. Dashboard and Navigation
 

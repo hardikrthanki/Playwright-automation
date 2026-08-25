@@ -173,9 +173,9 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 
 | SC | Scenario Group | Automation Status | Current Coverage | Gap / Dependency |
 | --- | --- | --- | --- | --- |
-| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens Income Builder monthly, Income Builder annual, Portfolio Hedger annual, and Marketplace monthly checkout summaries before payment | Other full-payment plan completions need dedicated fresh users and safe Stripe runs |
+| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens direct paid-plan checkout summaries before payment across Income Builder, Portfolio Hedger, and Marketplace monthly/annual combinations; Overlay Strategists trial checkout is covered under Use Case 1 | Other full-payment plan completions need dedicated fresh users and safe Stripe runs |
 | 41-44 | Purchase entry points | Started | Onboarding plan-selection entry point and safe plan switching are covered before checkout | Pricing, expired-trial upgrade prompt, and deeper settings entry points need selectors/fixtures |
-| 45-49 | Subscription summary before payment | Started | Stripe checkout loads selected plan/payment page, validates selected plan/email/billing copy/card fields across multiple plan/interval combinations, currency/conversion-fee copy, plan-selection billing toggle, paid-plan pricing across billing periods, and paid-plan entitlement limits before checkout | Exact renewal/auto-renew summary needs stable Stripe copy expectations |
+| 45-49 | Subscription summary before payment | Started | Stripe checkout loads selected plan/payment page, validates selected plan/email/billing copy/card fields across direct paid monthly/annual combinations, currency/conversion-fee copy, plan-selection billing toggle, paid-plan pricing across billing periods, and paid-plan entitlement limits before checkout | Exact renewal/auto-renew summary needs stable Stripe copy expectations |
 | 50-51 | Terms acceptance | Started | Overlay trial terms guardrail is automated | Paid plan terms guardrail needs confirmation if separate modal exists |
 | 52-56 | Successful payment activation and invoice | Started | Checkout success, dashboard redirect, billing invoice/PDF links, and portal invoice history are automated | Email receipt needs mailbox strategy |
 | 57-62 | Payment failure and retry | Started | Checkout-negative validation is automated with `PaymentNegative.spec.ts` for incomplete card data, declined card, insufficient funds, processing error, stolen-card decline, and authentication-required checkout context | Retry from same/different method needs a fresh checkout recovery fixture |
@@ -197,7 +197,7 @@ Confirmed behavior:
 
 | Use Case | Browser-Safe Tests To Add Next | Blocked Until |
 | --- | --- | --- |
-| Upgrade Subscription | Matrix completed; current safe coverage validates plan lifecycle action/status summary; next executable slice is safe upgrade checkout-open and failed-checkout state validation | Dedicated lower-tier accounts and Stripe proration/billing-cycle visibility |
+| Upgrade Subscription | Matrix completed; current coverage validates plan lifecycle action/status summary, monthly/annual in-app upgrade calculation previews including target price, unused-time credit, amount due, recurring price, and controlled one-time upgrade submission after terms acceptance | Stripe API/billing-cycle visibility for exact invoice/proration reconciliation |
 | Downgrade Subscription | Matrix completed; next executable slice is lost-feature warning and acknowledgement guardrail validation | Dedicated higher-tier accounts and data-limit fixtures |
 | Monthly To Annual | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is safe checkout-open and failed-checkout interval preservation | Dedicated monthly accounts and Stripe proration validation |
 | Annual To Monthly | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is effective-date and pending-change messaging validation | Dedicated annual accounts and renewal-date fixtures |
@@ -267,11 +267,17 @@ $env:SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED="true"
 $env:SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED="true"
 $env:SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
+$env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
 
 # Prepared paid-user slices need:
 $env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
 $env:SUB_LIFECYCLE_PAID_PASSWORD="PASTE_TEST_PASSWORD"
+$env:SUB_LIFECYCLE_UPGRADE_TARGET_PLAN="Portfolio Hedger"
+$env:SUB_LIFECYCLE_UPGRADE_INTERVALS="monthly,annual"
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
 
 npm run test:controlled:subscription-lifecycle-execution -- --headed
 $env:AIR_REPORT_SCOPE="latest"

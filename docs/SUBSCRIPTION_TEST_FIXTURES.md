@@ -11,10 +11,12 @@ be used only for the scenarios assigned to that state.
 
 ## Naming Convention
 
-Use scenario-specific Gmail aliases:
+Use scenario-specific Gmail aliases. Include the source use case or scenario ID
+when it is available from the test-case file.
 
 ```text
-imhardikthanki+sub-<scenario-name>@gmail.com
+imhardikthanki+sub-<use-case>-<scenario-name>@gmail.com
+imhardikthanki+sub-<scenario-id>-<scenario-name>@gmail.com
 ```
 
 Examples:
@@ -23,7 +25,19 @@ Examples:
 imhardikthanki+sub-plan-ready@gmail.com
 imhardikthanki+sub-income-monthly@gmail.com
 imhardikthanki+sub-overlay-trial-card@gmail.com
+imhardikthanki+sub-sc-007-trial-with-card@gmail.com
+imhardikthanki+sub-uc3-upgrade-preview@gmail.com
 ```
+
+Disposable users created by automation should keep the timestamp suffix added by
+`generateEmail(scenarioTag)` so repeated runs never collide:
+
+```text
+imhardikthanki+sub-sc-007-trial-with-card-1783421974329@gmail.com
+```
+
+Reusable fixture users should not use a timestamp because they represent a known
+billing state that may be used again later.
 
 Do not hardcode passwords in test files. Store fixture credentials in local
 environment variables only.
@@ -77,11 +91,17 @@ $env:SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED="true"
 $env:SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED="true"
 $env:SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
+$env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
 
 # Prepared paid-user slices:
 $env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
 $env:SUB_LIFECYCLE_PAID_PASSWORD=$env:SUBSCRIPTION_FIXTURE_PASSWORD
+$env:SUB_LIFECYCLE_UPGRADE_TARGET_PLAN="Portfolio Hedger"
+$env:SUB_LIFECYCLE_UPGRADE_INTERVALS="monthly,annual"
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
 ```
 
 ## Use Case 1 Trial Execution Commands
@@ -182,6 +202,10 @@ Dedicated users allow automation to safely validate:
 - With-card and without-card trial state.
 - Paid plan billing overview.
 - Upgrade and downgrade eligibility.
+- Monthly and annual in-app upgrade calculation previews, including target
+  price, unused-time credit, amount-due, and recurring-price checks.
+- One-time upgrade submission after terms acceptance, using a dedicated
+  lower-tier paid user with a saved card.
 - Monthly-to-annual and annual-to-monthly behavior.
 - Cancel-at-period-end state.
 - Expiry behavior.
@@ -191,3 +215,22 @@ Dedicated users allow automation to safely validate:
 
 They also make AIR clearer because blocked/skipped lifecycle rows can reference
 real missing fixture state instead of generic dependency notes.
+
+## One-Time Upgrade Submission
+
+This command accepts the plan-change terms checkbox, confirms the button is
+enabled, clicks `Confirm & pay`, and validates Billing shows the upgraded plan.
+Run it only on a dedicated lower-tier paid user because it changes the
+subscription.
+
+```powershell
+$env:BASE_URL="https://uat.ooltool.com"
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+plantest@gmail.com"
+$env:SUB_LIFECYCLE_PAID_PASSWORD=$env:SUBSCRIPTION_FIXTURE_PASSWORD
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
+$env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
+
+npm run test:controlled:subscription-lifecycle-execution -- --headed -g "submit upgrade payment"
+```

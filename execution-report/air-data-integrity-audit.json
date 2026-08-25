@@ -1,44 +1,42 @@
 {
-  "generatedAt": "2026-08-24T13:51:56.845Z",
+  "generatedAt": "2026-08-25T04:59:50.081Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-08-24T13:51:56.384Z",
+    "generatedAt": "2026-08-25T04:59:49.481Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 623,
-    "rawTestCount": 623,
-    "attempts": 623,
-    "passed": 169,
-    "failed": 13,
-    "skipped": 441,
+    "total": 1,
+    "rawTestCount": 1,
+    "attempts": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 169,
-      "unexpected": 13,
-      "skipped": 441
+      "expected": 1
     }
   },
   "airExecution": {
-    "total": 623,
-    "attempts": 623,
-    "passed": 169,
-    "failed": 13,
-    "skipped": 441,
+    "total": 1,
+    "attempts": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 623,
-    "expectedAirTotal": 623,
-    "airTotal": 623,
+    "sourceTotal": 1,
+    "expectedAirTotal": 1,
+    "airTotal": 1,
     "difference": 0
   },
   "duplicates": {
@@ -49,185 +47,151 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 589,
+    "perTestEvidence": 3,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 591,
+    "totalWithRawReports": 5,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
   "invalidJourneyReferences": [],
   "historicalContaminationDetected": false,
   "evidenceTraceability": {
-    "failedTests": [
-      {
-        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Forgot password email draft is cleared after refresh",
-        "testName": "Auth UI Validation > Forgot password email draft is cleared after refresh",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-        "testName": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AccessibilityBrowser.spec.ts > Accessibility And Browser Behavior > Forgot password page remains usable on mobile viewport",
-        "testName": "Accessibility And Browser Behavior > Forgot password page remains usable on mobile viewport",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "testName": "Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile required fields block onboarding progress",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile required fields block onboarding progress",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Compliance required fields and disclosures block onboarding progress",
-        "testName": "Onboarding Field Validation > Full field-level regression > Compliance required fields and disclosures block onboarding progress",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile investing experience field is required",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile investing experience field is required",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile strategy selection is required",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile strategy selection is required",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile account type selection is required",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile account type selection is required",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile saved progress persists after refresh",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile saved progress persists after refresh",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Risk Profile and Compliance selections can be updated before save",
-        "testName": "Onboarding Field Validation > Full field-level regression > Risk Profile and Compliance selections can be updated before save",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full field-level regression > Compliance state field is required",
-        "testName": "Onboarding Field Validation > Full field-level regression > Compliance state field is required",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > BillingEdgeValidation.spec.ts > Billing Edge Validation > Billing plans expose billing interval summary without changing subscription",
-        "testName": "Billing Edge Validation > Billing plans expose billing interval summary without changing subscription",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      }
-    ]
+    "failedTests": []
   },
   "releaseTraceability": {
     "status": "PASS",
     "reasons": [
-      "Release thresholds were not met",
-      "Failures or missing critical data require review",
-      "Resolve blockers before release approval"
+      "Critical journeys are not blocked",
+      "Warnings require review",
+      "Release can proceed after evidence review"
     ],
     "reasonTraceability": [
       {
-        "reason": "Release thresholds were not met",
-        "source": "blockers",
+        "reason": "Critical journeys are not blocked",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Failures or missing critical data require review",
-        "source": "blockers",
+        "reason": "Warnings require review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Resolve blockers before release approval",
-        "source": "blockers",
+        "reason": "Release can proceed after evidence review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       }
     ],
-    "warnings": 29,
-    "blockers": 4
+    "warnings": 7,
+    "blockers": 0
   }
 }

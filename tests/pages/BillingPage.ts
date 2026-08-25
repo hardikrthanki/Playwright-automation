@@ -14,6 +14,117 @@ import {
   URLS
 } from '../config/constants';
 
+function escapeRegExp(
+  value: string
+) {
+  return value.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  );
+}
+
+function parseCurrencyValue(
+  value: string
+) {
+  const isNegative =
+    value.includes(
+      '-'
+    );
+
+  const numericValue =
+    Number(
+      value.replace(
+        /[^0-9.]/g,
+        ''
+      )
+    );
+
+  return isNegative
+    ? -numericValue
+    : numericValue;
+}
+
+function firstCurrencyValueNearLabel(
+  text: string,
+  label: RegExp
+) {
+  const lines =
+    text
+      .split(
+        /\r?\n/
+      )
+      .map(
+        line =>
+          line.trim()
+      )
+      .filter(
+        Boolean
+      );
+
+  const labelIndex =
+    lines.findIndex(
+      line =>
+        label.test(
+          line
+        )
+    );
+
+  if (labelIndex === -1) {
+    return undefined;
+  }
+
+  const nearbyText =
+    lines
+      .slice(
+        labelIndex,
+        labelIndex + 3
+      )
+      .join(
+        ' '
+      );
+
+  const currencyMatch =
+    nearbyText.match(
+      /-?\s*[$₹]\s*\d[\d,]*(?:\.\d{1,2})?/i
+    );
+
+  if (!currencyMatch) {
+    return undefined;
+  }
+
+  return parseCurrencyValue(
+    currencyMatch[0]
+  );
+}
+
+async function checkboxIsChecked(
+  checkbox: Locator
+) {
+  const ariaChecked =
+    await checkbox.getAttribute(
+      'aria-checked'
+    ).catch(
+      () => undefined
+    );
+
+  const dataState =
+    await checkbox.getAttribute(
+      'data-state'
+    ).catch(
+      () => undefined
+    );
+
+  const inputChecked =
+    await checkbox.isChecked()
+      .catch(
+        () => false
+      );
+
+  return inputChecked ||
+    ariaChecked === 'true' ||
+    dataState === 'checked';
+}
+
 /* ============================================================================
 PAGE OBJECT: BillingPage
 
@@ -624,6 +735,659 @@ async validateBillingIntervalPresentationSummary() {
   Logger.success(
     'Billing Interval Presentation Summary Validated'
   );
+}
+
+private async openPlansView() {
+
+  await this.validateOverview();
+
+  if (
+    await this.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.plansTab,
+      'Open Plans Tab'
+    );
+  }
+
+  await this.validateBillingUrl();
+}
+
+private billingIntervalButton(
+  interval: 'monthly' | 'annual'
+) {
+  return this.page
+    .getByRole(
+      'button',
+      {
+        name:
+          interval === 'monthly'
+            ? /monthly|month/i
+            : /annual|year/i
+      }
+    )
+    .first();
+}
+
+private async selectBillingIntervalIfAvailable(
+  interval: 'monthly' | 'annual'
+) {
+  const intervalButton =
+    this.billingIntervalButton(
+      interval
+    );
+
+  if (
+    await intervalButton.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      intervalButton,
+      `Select ${interval} billing`
+    );
+  }
+}
+
+private async findPlanActionButton(
+  planName: string,
+  action: 'upgrade' | 'downgrade'
+) {
+  const actionButtons =
+    this.page
+      .locator(
+        'a, button'
+      )
+      .filter({
+        hasText:
+          action === 'upgrade'
+            ? /upgrade/i
+            : /downgrade/i
+      });
+
+  const buttonCount =
+    await actionButtons.count();
+
+  for (let index = 0; index < buttonCount; index += 1) {
+    const button =
+      actionButtons.nth(
+        index
+      );
+
+    const belongsToPlan =
+      await button.evaluate(
+        (
+          element,
+          targetPlan
+        ) => {
+          const knownPlans = [
+            'Curious Explorer',
+            'Income Builder',
+            'Overlay Strategists',
+            'Portfolio Hedger',
+            'Marketplace'
+          ];
+
+          let current =
+            element.parentElement;
+
+          for (let depth = 0; current && depth < 8; depth += 1) {
+            const currentText =
+              (
+                current.textContent ?? ''
+              ).toLowerCase();
+
+            if (
+              currentText.includes(
+                String(
+                  targetPlan
+                ).toLowerCase()
+              )
+            ) {
+              const matchingPlanCount =
+                knownPlans.filter(
+                  plan =>
+                    currentText.includes(
+                      plan.toLowerCase()
+                    )
+                ).length;
+
+              if (matchingPlanCount <= 1) {
+                return true;
+              }
+            }
+
+            current =
+              current.parentElement;
+          }
+
+          current =
+            element.parentElement;
+
+          for (let depth = 0; current && depth < 8; depth += 1) {
+            const currentText =
+              (
+                current.textContent ?? ''
+              ).toLowerCase();
+
+            if (
+              currentText.includes(
+                String(
+                  targetPlan
+                )
+                  .toLowerCase()
+              ) &&
+              !knownPlans.some(
+                plan =>
+                  plan.toLowerCase() !==
+                    String(
+                      targetPlan
+                    ).toLowerCase() &&
+                  currentText.includes(
+                    plan.toLowerCase()
+                  )
+              )
+            ) {
+              return true;
+            }
+
+            current =
+              current.parentElement;
+          }
+
+          return false;
+        },
+        planName
+      )
+        .catch(
+          () => false
+        );
+
+    if (belongsToPlan) {
+      return button;
+    }
+  }
+
+  const visibleControls =
+    await this.visibleControlSummary();
+
+  throw new Error(
+    `Could not find ${action} control for ${planName}. Visible controls: ${visibleControls.join(' | ')}`
+  );
+}
+
+private planChangeDialog(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade';
+  }
+) {
+  return this.page
+    .getByRole(
+      'dialog'
+    )
+    .filter({
+      hasText: new RegExp(
+        `${options.action} to\\s+${escapeRegExp(
+          options.targetPlan
+        )}`,
+        'i'
+      )
+    })
+    .first();
+}
+
+async openPlanChangeCalculationPreview(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade';
+    interval: 'monthly' | 'annual';
+  }
+) {
+  Logger.info(
+    `Opening ${options.action} calculation preview for ${options.targetPlan} ${options.interval}`
+  );
+
+  await this.openPlansView();
+
+  await this.selectBillingIntervalIfAvailable(
+    options.interval
+  );
+
+  const actionButton =
+    await this.findPlanActionButton(
+      options.targetPlan,
+      options.action
+    );
+
+  await safeClick(
+    actionButton,
+    `${options.action} ${options.targetPlan}`
+  );
+
+  await expect(
+    this.planChangeDialog(
+      options
+    )
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    `${options.action} calculation preview opened for ${options.targetPlan} ${options.interval}`
+  );
+}
+
+async validatePlanChangeCalculationPreview(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade';
+    interval: 'monthly' | 'annual';
+    expectedBillingCopy?: RegExp;
+    expectedPlanCharge?: number;
+    expectedRecurringAmount?: number;
+  }
+) {
+  Logger.info(
+    `Validating ${options.action} calculation preview for ${options.targetPlan} ${options.interval}`
+  );
+
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    dialog
+  ).toContainText(
+    new RegExp(
+      `${options.action} to\\s+${escapeRegExp(
+        options.targetPlan
+      )}`,
+      'i'
+    )
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    /prorat|charged|card on file|billing cycle|renews|new price|amount due/i
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    new RegExp(
+      `${escapeRegExp(
+        options.targetPlan
+      )}\\s+charge`,
+      'i'
+    )
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    /credit for unused time/i
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    /amount due today/i
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    /new recurring amount/i
+  );
+
+  await expect(
+    dialog
+  ).toContainText(
+    /next billing date/i
+  );
+
+  if (options.expectedBillingCopy) {
+    await expect(
+      dialog
+    ).toContainText(
+      options.expectedBillingCopy
+    );
+  }
+
+  await expect(
+    dialog.getByRole(
+      'checkbox'
+    ).first()
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    dialog.getByRole(
+      'button',
+      {
+        name: /confirm|pay|continue/i
+      }
+    ).first()
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  const dialogText =
+    await dialog.innerText();
+
+  const planCharge =
+    firstCurrencyValueNearLabel(
+      dialogText,
+      new RegExp(
+        `${escapeRegExp(
+          options.targetPlan
+        )}\\s+charge`,
+        'i'
+      )
+    );
+
+  const unusedCredit =
+    firstCurrencyValueNearLabel(
+      dialogText,
+      /credit for unused time/i
+    );
+
+  const amountDueToday =
+    firstCurrencyValueNearLabel(
+      dialogText,
+      /amount due today/i
+    );
+
+  const newRecurringAmount =
+    firstCurrencyValueNearLabel(
+      dialogText,
+      /new recurring amount/i
+    );
+
+  expect(
+    planCharge,
+    'Plan charge should be present in plan-change preview'
+  ).toBeDefined();
+
+  expect(
+    unusedCredit,
+    'Unused-time credit should be present in plan-change preview'
+  ).toBeDefined();
+
+  expect(
+    amountDueToday,
+    'Amount due today should be present in plan-change preview'
+  ).toBeDefined();
+
+  expect(
+    newRecurringAmount,
+    'New recurring amount should be present in plan-change preview'
+  ).toBeDefined();
+
+  if (options.expectedPlanCharge !== undefined) {
+    expect(
+      Math.abs(
+        (
+          planCharge ??
+          0
+        ) -
+          options.expectedPlanCharge
+      ),
+      `Plan charge should match configured ${options.targetPlan} ${options.interval} price.`
+    ).toBeLessThanOrEqual(
+      0.02
+    );
+  }
+
+  if (options.expectedRecurringAmount !== undefined) {
+    expect(
+      Math.abs(
+        (
+          newRecurringAmount ??
+          0
+        ) -
+          options.expectedRecurringAmount
+      ),
+      `New recurring amount should match configured ${options.targetPlan} ${options.interval} price.`
+    ).toBeLessThanOrEqual(
+      0.02
+    );
+  }
+
+  expect(
+    unusedCredit ?? 0,
+    'Unused-time credit should be zero or negative.'
+  ).toBeLessThanOrEqual(
+    0
+  );
+
+  expect(
+    amountDueToday ?? 0,
+    'Amount due today should not exceed the target plan charge.'
+  ).toBeLessThanOrEqual(
+    planCharge ?? 0
+  );
+
+  expect(
+    Math.abs(
+      (
+        planCharge ??
+        0
+      ) +
+        (
+          unusedCredit ??
+          0
+        ) -
+        (
+          amountDueToday ??
+          0
+        )
+    )
+  ).toBeLessThanOrEqual(
+    0.02
+  );
+
+  Logger.success(
+    `${options.action} calculation preview validated for ${options.targetPlan} ${options.interval}`
+  );
+}
+
+async submitPlanChangeCalculationPreview(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade';
+  }
+) {
+  Logger.info(
+    `Accepting terms and submitting ${options.action} for ${options.targetPlan}`
+  );
+
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const termsCheckbox =
+    dialog
+      .locator(
+        '[role="checkbox"], input[type="checkbox"]'
+      )
+      .first();
+
+  const confirmButton =
+    dialog
+      .getByRole(
+        'button',
+        {
+          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+        }
+      )
+      .first();
+
+  await expect(
+    termsCheckbox
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    confirmButton
+  ).toBeDisabled({
+    timeout: 10000
+  });
+
+  if (
+    !(await checkboxIsChecked(
+      termsCheckbox
+    ))
+  ) {
+    await safeClick(
+      termsCheckbox,
+      'Accept Plan Change Terms'
+    );
+  }
+
+  await expect
+    .poll(
+      async () =>
+        checkboxIsChecked(
+          termsCheckbox
+        ),
+      {
+        timeout: 10000,
+        message: 'Waiting for plan-change terms checkbox to be checked'
+      }
+    )
+    .toBe(
+      true
+    );
+
+  await expect(
+    confirmButton
+  ).toBeEnabled({
+    timeout: 15000
+  });
+
+  await safeClick(
+    confirmButton,
+    'Confirm and pay plan change'
+  );
+
+  await expect(
+    dialog
+  ).toBeHidden({
+    timeout: 60000
+  });
+
+  await this.page.waitForLoadState(
+    'domcontentloaded'
+  ).catch(
+    () => undefined
+  );
+
+  Logger.success(
+    `${options.action} submitted for ${options.targetPlan}`
+  );
+}
+
+async validateActivePlan(
+  expectedPlan: string
+) {
+  Logger.info(
+    `Validating active Billing plan: ${expectedPlan}`
+  );
+
+  if (
+    !/billing/i.test(
+      this.page.url()
+    )
+  ) {
+    await this.validateOverview();
+  } else {
+    await this.waitForBillingContent();
+  }
+
+  const bodyText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText({
+        timeout: 15000
+      });
+
+  expect(
+    bodyText,
+    `Billing should show ${expectedPlan} after plan change.`
+  ).toMatch(
+    new RegExp(
+      escapeRegExp(
+        expectedPlan
+      ),
+      'i'
+    )
+  );
+
+  expect(
+    bodyText,
+    'Billing should show an active/current subscription state after plan change.'
+  ).toMatch(
+    /active|current plan|current subscription|subscription|renews|billing/i
+  );
+
+  Logger.success(
+    `Active Billing plan validated: ${expectedPlan}`
+  );
+}
+
+async closePlanChangeCalculationPreview(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade';
+  }
+) {
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  await safeClick(
+    dialog.getByRole(
+      'button',
+      {
+        name: /^cancel$/i
+      }
+    ).first(),
+    'Cancel Plan Change Preview'
+  );
+
+  await expect(
+    dialog
+  ).toBeHidden({
+    timeout: 10000
+  });
 }
 
 async validatePaidSubscriberTrialCtaIsNotOffered() {

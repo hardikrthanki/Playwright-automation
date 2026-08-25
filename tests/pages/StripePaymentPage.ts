@@ -318,6 +318,46 @@ export class StripePaymentPage
     );
   }
 
+  async validatePlanChangeCalculationPreview(
+    options: {
+      expectedEmail?: string;
+      expectedPlan: string;
+      expectedBillingCopy: RegExp;
+      expectedCalculationCopy?: RegExp;
+    }
+  ) {
+    Logger.info(
+      'Validating Stripe plan-change calculation preview'
+    );
+
+    await this.validateSubscriptionCheckoutDetails({
+      expectedEmail:
+        options.expectedEmail,
+      expectedPlan:
+        options.expectedPlan,
+      expectedBillingCopy:
+        options.expectedBillingCopy
+    });
+
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText();
+
+    expect(
+      bodyText
+    ).toMatch(
+      options.expectedCalculationCopy ??
+        /total|subtotal|due|amount|charged|pay|tax|credit|prorat|remaining/i
+    );
+
+    Logger.success(
+      'Stripe plan-change calculation preview validated'
+    );
+  }
+
   async validateCurrencyAndConversionDetails() {
     Logger.info(
       'Validating Stripe currency and conversion details'

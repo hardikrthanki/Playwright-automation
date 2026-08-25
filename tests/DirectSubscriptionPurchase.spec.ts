@@ -58,6 +58,22 @@ function envEnabled(
   );
 }
 
+type CheckoutPlanName =
+  | 'Income Builder'
+  | 'Overlay Strategists'
+  | 'Portfolio Hedger'
+  | 'Marketplace';
+
+type CheckoutBillingInterval =
+  | 'monthly'
+  | 'annual';
+
+type CheckoutSummaryScenario = {
+  planName: CheckoutPlanName;
+  interval: CheckoutBillingInterval;
+  expectedBillingCopy: RegExp;
+};
+
 async function openPlanSelectionForFreshUser(
   page: Page,
   scenario: string
@@ -143,6 +159,76 @@ async function openPlanSelectionForFreshUser(
     email,
     mobileNumber
   };
+}
+
+async function validateCheckoutSummaryAndReturn(
+  page: Page,
+  email: string,
+  scenario: CheckoutSummaryScenario
+) {
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  await test.step(
+    `Open ${scenario.planName} ${scenario.interval} checkout`,
+    async () => {
+      if (
+        scenario.interval === 'annual'
+      ) {
+        await planPage.selectAnnualBilling();
+      } else {
+        await planPage.selectMonthlyBilling();
+      }
+
+      await planPage.selectPlan(
+        scenario.planName
+      );
+    }
+  );
+
+  await test.step(
+    `Validate ${scenario.planName} ${scenario.interval} checkout summary`,
+    async () => {
+      await new StripePaymentPage(
+        page
+      ).validateSubscriptionCheckoutDetails({
+        expectedEmail:
+          email,
+        expectedPlan:
+          scenario.planName,
+        expectedBillingCopy:
+          scenario.expectedBillingCopy
+      });
+    }
+  );
+
+  await test.step(
+    `Return from ${scenario.planName} ${scenario.interval} checkout before payment`,
+    async () => {
+      await page.goBack({
+        waitUntil: 'domcontentloaded'
+      });
+
+      await expect(
+        page
+      ).not.toHaveURL(
+        /checkout\.stripe\.com|billing\.stripe\.com/i,
+        {
+          timeout: 15000
+        }
+      );
+
+      await expect(
+        page.getByText(
+          /choose your plan|select a plan|get started/i
+        ).first()
+      ).toBeVisible({
+        timeout: 30000
+      });
+    }
+  );
 }
 
 if (
@@ -316,6 +402,40 @@ if (
             });
           }
         );
+      }
+    );
+
+    test(
+      'Remaining direct paid plan checkout summaries validate before payment with one user',
+      async ({ page }) => {
+        const user =
+          await openPlanSelectionForFreshUser(
+            page,
+            'direct-remaining-paid-plan-summaries'
+          );
+
+        const scenarios: CheckoutSummaryScenario[] = [
+          {
+            planName: 'Portfolio Hedger',
+            interval: 'monthly',
+            expectedBillingCopy:
+              /149|per month|monthly|subscription|total/i
+          },
+          {
+            planName: 'Marketplace',
+            interval: 'annual',
+            expectedBillingCopy:
+              /2,?490|per year|annual|subscription|total|due/i
+          }
+        ];
+
+        for (const scenario of scenarios) {
+          await validateCheckoutSummaryAndReturn(
+            page,
+            user.email,
+            scenario
+          );
+        }
       }
     );
 

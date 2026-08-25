@@ -216,6 +216,115 @@ export class RiskProfilePage
     );
   }
 
+  private async locatorIsVisible(
+    locator: Locator
+  ) {
+    return locator.isVisible()
+      .catch(() => false);
+  }
+
+  private async complianceStepIsReady(
+    timeoutMs = 8000
+  ) {
+    const deadline =
+      Date.now() + timeoutMs;
+
+    const disclosureButtons =
+      this.page.getByRole('button', {
+        name: /read disclosure/i,
+      });
+
+    const complianceTab =
+      this.page.getByRole('tab', {
+        name: /compliance/i,
+      });
+
+    while (Date.now() < deadline) {
+      const disclosureCount =
+        await disclosureButtons.count();
+
+      for (let i = 0; i < disclosureCount; i++) {
+        if (
+          await this.locatorIsVisible(
+            disclosureButtons.nth(i)
+          )
+        ) {
+          return true;
+        }
+      }
+
+      if (
+        await this.locatorIsVisible(
+          complianceTab.first()
+        )
+      ) {
+        const disabled =
+          await complianceTab
+            .first()
+            .getAttribute('aria-disabled');
+
+        const selected =
+          await complianceTab
+            .first()
+            .getAttribute('aria-selected');
+
+        if (
+          disabled !== 'true' ||
+          selected === 'true'
+        ) {
+          return true;
+        }
+      }
+
+      await this.page.waitForTimeout(500);
+    }
+
+    return false;
+  }
+
+  private async waitForComplianceStepReady() {
+    if (
+      await this.complianceStepIsReady(15000)
+    ) {
+      return;
+    }
+
+    const diagnostics =
+      (await this.page
+        .locator('body')
+        .innerText()
+        .catch(() => ''))
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 500);
+
+    throw new Error(
+      `Risk Profile did not unlock Compliance after save. Visible diagnostics: ${diagnostics}`
+    );
+  }
+
+  async saveRiskProfileAndOpenCompliance() {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      await this.saveRiskProfile(
+        attempt === 1
+          ? 'Save Risk Profile'
+          : 'Retry Save Risk Profile'
+      );
+
+      if (
+        await this.complianceStepIsReady(8000)
+      ) {
+        return;
+      }
+
+      Logger.info(
+        `Risk Profile save did not unlock Compliance. Retrying (${attempt}/2).`
+      );
+    }
+
+    await this.waitForComplianceStepReady();
+  }
+
   async validateSelectionsCanBeUpdatedBeforeSave() {
     Logger.info(
       'Validating Risk Profile selections can be updated before save'
@@ -261,13 +370,7 @@ export class RiskProfilePage
       'Save Updated Risk Profile'
     );
 
-    await expect(
-      this.page.getByText(
-        /read disclosure/i
-      ).first()
-    ).toBeVisible({
-      timeout: 15000,
-    });
+    await this.waitForComplianceStepReady();
 
     Logger.success(
       'Risk Profile update before save is accepted'
@@ -354,17 +457,9 @@ await this.selectMultiLegNo();
 await this.selectCashAccountType();
 
 console.log(
-  ' Cash Account Type selected'
+    ' Cash Account Type selected'
 );
-    await this.saveRiskProfile();
-
-await expect(
-  this.page.getByText(
-    /read disclosure/i
-  ).first()
-).toBeVisible({
-  timeout: 15000,
-});
+    await this.saveRiskProfileAndOpenCompliance();
 
 Logger.success(
   'Risk Profile completed'
