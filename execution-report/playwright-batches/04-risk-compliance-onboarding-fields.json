@@ -94,33 +94,33 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 141628,
+                      "duration": 85678,
                       "error": {
-                        "message": "Error: Login failed after 3 attempts",
-                        "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:246:9",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:268:11",
                         "location": {
-                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                          "column": 17,
-                          "line": 472
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                          "column": 11,
+                          "line": 268
                         },
-                        "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                        "snippet": "\u001b[0m \u001b[90m 266 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 267 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 268 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 269 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 270 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 271 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 11,
+                            "line": 268
                           },
-                          "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:246:9\u001b[22m"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 266 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 267 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 268 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 269 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 270 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 271 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:268:11\u001b[22m"
                         }
                       ],
                       "stdout": [
                         {
-                          "text": "fast-risk-compliance-validation Email: imhardikthanki+fast-risk-compliance-validation-1787575606049@gmail.com\n"
+                          "text": "fast-risk-compliance-validation Email: imhardikthanki+fast-risk-compliance-validation-1787658555819@gmail.com\n"
                         },
                         {
-                          "text": "fast-risk-compliance-validation Mobile: 2015556049\n"
+                          "text": "fast-risk-compliance-validation Mobile: 2015555819\n"
                         },
                         {
                           "text": "[INFO] Opening application\n"
@@ -132,10 +132,10 @@
                           "text": "[PASS] Create Account Opened\n"
                         },
                         {
-                          "text": "[STEP] Registering: imhardikthanki+fast-risk-compliance-validation-1787575606049@gmail.com\n"
+                          "text": "[STEP] Registering: imhardikthanki+fast-risk-compliance-validation-1787658555819@gmail.com\n"
                         },
                         {
-                          "text": "Registration Email: imhardikthanki+fast-risk-compliance-validation-1787575606049@gmail.com\n"
+                          "text": "Registration Email: imhardikthanki+fast-risk-compliance-validation-1787658555819@gmail.com\n"
                         },
                         {
                           "text": "[CLICK] Send Code via SMS\n"
@@ -159,7 +159,7 @@
                           "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                         },
                         {
-                          "text": "Verify email sent to: imhardikthanki+fast-risk-compliance-validation-1787575606049@gmail.com\n"
+                          "text": "Verify email sent to: imhardikthanki+fast-risk-compliance-validation-1787658555819@gmail.com\n"
                         },
                         {
                           "text": "Open Gmail and click the verification link.\n"
@@ -177,30 +177,54 @@
                           "text": "[CLICK] Submit Login\n"
                         },
                         {
-                          "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bfast-risk-compliance-validation-1787575606049%40gmail.com\n"
+                          "text": "[PASS] Logged in successfully\n"
                         },
                         {
-                          "text": "Login Attempt 2\n"
+                          "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                         },
                         {
-                          "text": "[CLICK] Submit Login\n"
+                          "text": "[INFO] Mobile verification step not shown\n"
                         },
                         {
-                          "text": "Current URL: https://uat.ooltool.com/login\n"
+                          "text": "[INFO] Validating Risk Profile required fields\n"
                         },
                         {
-                          "text": "Login Attempt 3\n"
+                          "text": "[CLICK] Save Risk Profile Without Required Fields\n"
                         },
                         {
-                          "text": "[CLICK] Submit Login\n"
+                          "text": "[PASS] Risk Profile required fields block progress\n"
                         },
                         {
-                          "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bfast-risk-compliance-validation-1787575606049%40gmail.com\n"
+                          "text": "[INFO] Validating Risk Profile investing experience is required\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Beginner\n"
+                        },
+                        {
+                          "text": "[CLICK] Select No\n"
+                        },
+                        {
+                          "text": "[CLICK] Select Moderate\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile Without Investing Experience\n"
+                        },
+                        {
+                          "text": "[PASS] Risk Profile investing experience is required\n"
+                        },
+                        {
+                          "text": "[CLICK] Open Experience Dropdown\n"
+                        },
+                        {
+                          "text": "[CLICK] Select 3-5 years\n"
+                        },
+                        {
+                          "text": "[CLICK] Save Risk Profile\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:46:44.816Z",
+                      "startTime": "2026-08-25T11:49:13.818Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -225,9 +249,9 @@
                         }
                       ],
                       "errorLocation": {
-                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                        "column": 17,
-                        "line": 472
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                        "column": 11,
+                        "line": 268
                       }
                     }
                   ],
@@ -263,33 +287,33 @@
                           "workerIndex": 1,
                           "parallelIndex": 0,
                           "status": "failed",
-                          "duration": 139050,
+                          "duration": 78326,
                           "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:307:9",
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:325:11",
                             "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 11,
+                              "line": 325
                             },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                            "snippet": "\u001b[0m \u001b[90m 323 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 324 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 325 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 326 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 327 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 328 |\u001b[39m       }\u001b[0m"
                           },
                           "errors": [
                             {
                               "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 11,
+                                "line": 325
                               },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:307:9\u001b[22m"
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    18 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 323 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 324 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 325 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 326 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 327 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 328 |\u001b[39m       }\u001b[0m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:325:11\u001b[22m"
                             }
                           ],
                           "stdout": [
                             {
-                              "text": "risk-validation Email: imhardikthanki+risk-validation-1787575732916@gmail.com\n"
+                              "text": "risk-validation Email: imhardikthanki+risk-validation-1787658624848@gmail.com\n"
                             },
                             {
-                              "text": "risk-validation Mobile: 2015552916\n"
+                              "text": "risk-validation Mobile: 2015554848\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -301,10 +325,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-validation-1787575732916@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-validation-1787658624848@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-validation-1787575732916@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-validation-1787658624848@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -328,7 +352,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-validation-1787575732916@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-validation-1787658624848@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -346,30 +370,96 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-validation-1787575732916%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile required fields\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[CLICK] Save Risk Profile Without Required Fields\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[PASS] Risk Profile required fields block progress\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-validation-1787575732916%40gmail.com\n"
+                              "text": "[INFO] Filling Risk Profile\n"
+                            },
+                            {
+                              "text": "[STEP] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Experience Dropdown\n"
+                            },
+                            {
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:48:51.611Z",
+                          "startTime": "2026-08-25T11:50:23.033Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -394,9 +484,9 @@
                             }
                           ],
                           "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 11,
+                            "line": 325
                           }
                         }
                       ],
@@ -424,33 +514,33 @@
                           "workerIndex": 2,
                           "parallelIndex": 0,
                           "status": "failed",
-                          "duration": 140755,
+                          "duration": 86951,
                           "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:334:9",
+                            "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i }) to be visible\u001b[22m\n",
+                            "stack": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i }) to be visible\u001b[22m\n\n    at safeClick (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\helpers\\safeClick.ts:18:17)\n    at CompliancePage.validateRequiredFieldsBlockSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:375:20)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:351:26",
                             "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\helpers\\safeClick.ts",
                               "column": 17,
-                              "line": 472
+                              "line": 18
                             },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                            "snippet": "\u001b[90m   at \u001b[39mhelpers\\safeClick.ts:18\n\n\u001b[0m \u001b[90m 16 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m`[CLICK] ${label}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 18 |\u001b[39m   \u001b[36mawait\u001b[39m locator\u001b[33m.\u001b[39mwaitFor({\n \u001b[90m    |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 19 |\u001b[39m     state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 20 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 21 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m"
                           },
                           "errors": [
                             {
                               "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\helpers\\safeClick.ts",
                                 "column": 17,
-                                "line": 472
+                                "line": 18
                               },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:334:9\u001b[22m"
+                              "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i }) to be visible\u001b[22m\n\n\n\u001b[90m   at \u001b[39mhelpers\\safeClick.ts:18\n\n\u001b[0m \u001b[90m 16 |\u001b[39m   console\u001b[33m.\u001b[39mlog(\u001b[32m`[CLICK] ${label}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 18 |\u001b[39m   \u001b[36mawait\u001b[39m locator\u001b[33m.\u001b[39mwaitFor({\n \u001b[90m    |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 19 |\u001b[39m     state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 20 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 21 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at safeClick (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\helpers\\safeClick.ts:18:17)\u001b[22m\n\u001b[2m    at CompliancePage.validateRequiredFieldsBlockSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:375:20)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:351:26\u001b[22m"
                             }
                           ],
                           "stdout": [
                             {
-                              "text": "compliance-validation Email: imhardikthanki+compliance-validation-1787575857074@gmail.com\n"
+                              "text": "compliance-validation Email: imhardikthanki+compliance-validation-1787658688970@gmail.com\n"
                             },
                             {
-                              "text": "compliance-validation Mobile: 2015557074\n"
+                              "text": "compliance-validation Mobile: 2015558970\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -462,10 +552,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-validation-1787575857074@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-validation-1787658688970@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-validation-1787575857074@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-validation-1787658688970@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -489,7 +579,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-validation-1787575857074@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-validation-1787658688970@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -507,30 +597,93 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-validation-1787575857074%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Filling Risk Profile\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[STEP] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-validation-1787575857074%40gmail.com\n"
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance required fields\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Compliance Without Required Fields\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:50:55.955Z",
+                          "startTime": "2026-08-25T11:51:27.464Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -555,9 +708,9 @@
                             }
                           ],
                           "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\helpers\\safeClick.ts",
                             "column": 17,
-                            "line": 472
+                            "line": 18
                           }
                         }
                       ],
@@ -571,7 +724,7 @@
                 },
                 {
                   "title": "Risk Profile investing experience field is required",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -584,34 +737,15 @@
                         {
                           "workerIndex": 3,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 138651,
-                          "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:368:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
-                              },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:368:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 70068,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-experience-required Email: imhardikthanki+risk-experience-required-1787575982582@gmail.com\n"
+                              "text": "risk-experience-required Email: imhardikthanki+risk-experience-required-1787658761840@gmail.com\n"
                             },
                             {
-                              "text": "risk-experience-required Mobile: 2015552582\n"
+                              "text": "risk-experience-required Mobile: 2015551840\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -623,10 +757,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-experience-required-1787575982582@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-experience-required-1787658761840@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-experience-required-1787575982582@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-experience-required-1787658761840@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -650,7 +784,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-experience-required-1787575982582@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-experience-required-1787658761840@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -668,36 +802,42 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-experience-required-1787575982582%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile investing experience is required\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[CLICK] Select Beginner\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Select No\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-experience-required-1787575982582%40gmail.com\n"
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Investing Experience\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile investing experience is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:53:01.226Z",
+                          "startTime": "2026-08-25T11:52:40.053Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -705,24 +845,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--8cbf6-xperience-field-is-required-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-98f395a56e27b67a5007",
@@ -732,7 +862,7 @@
                 },
                 {
                   "title": "Risk Profile strategy selection is required",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -743,36 +873,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 4,
+                          "workerIndex": 3,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 140151,
-                          "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
-                              },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:382:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 71699,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-strategy-required Email: imhardikthanki+risk-strategy-required-1787576106495@gmail.com\n"
+                              "text": "risk-strategy-required Email: imhardikthanki+risk-strategy-required-1787658815477@gmail.com\n"
                             },
                             {
-                              "text": "risk-strategy-required Mobile: 2015556495\n"
+                              "text": "risk-strategy-required Mobile: 2015555477\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -784,10 +895,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-strategy-required-1787576106495@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-strategy-required-1787658815477@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-strategy-required-1787576106495@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-strategy-required-1787658815477@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -811,7 +922,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-strategy-required-1787576106495@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-strategy-required-1787658815477@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -829,36 +940,48 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-strategy-required-1787576106495%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile strategy selection is required\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Select 3-5 years\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-strategy-required-1787576106495%40gmail.com\n"
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Allowed Strategy\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile strategy selection is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:55:05.190Z",
+                          "startTime": "2026-08-25T11:53:34.831Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -866,24 +989,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--6e964-ategy-selection-is-required-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-1bd2a2d688cd3b545570",
@@ -893,7 +1006,7 @@
                 },
                 {
                   "title": "Risk Profile account type selection is required",
-                  "ok": false,
+                  "ok": true,
                   "tags": [],
                   "tests": [
                     {
@@ -904,36 +1017,17 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 5,
+                          "workerIndex": 3,
                           "parallelIndex": 0,
-                          "status": "failed",
-                          "duration": 140757,
-                          "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:396:9",
-                            "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
-                            },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
-                          },
-                          "errors": [
-                            {
-                              "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
-                              },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:396:9\u001b[22m"
-                            }
-                          ],
+                          "status": "passed",
+                          "duration": 63935,
+                          "errors": [],
                           "stdout": [
                             {
-                              "text": "risk-account-type-required Email: imhardikthanki+risk-account-type-required-1787576231122@gmail.com\n"
+                              "text": "risk-account-type-required Email: imhardikthanki+risk-account-type-required-1787658871277@gmail.com\n"
                             },
                             {
-                              "text": "risk-account-type-required Mobile: 2015551122\n"
+                              "text": "risk-account-type-required Mobile: 2015551277\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -945,10 +1039,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-account-type-required-1787576231122@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-account-type-required-1787658871277@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-account-type-required-1787576231122@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-account-type-required-1787658871277@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -972,7 +1066,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-account-type-required-1787576231122@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-account-type-required-1787658871277@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -990,36 +1084,48 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-account-type-required-1787576231122%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile account type is required\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Select 3-5 years\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-account-type-required-1787576231122%40gmail.com\n"
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile Without Account Type\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile account type is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:57:09.819Z",
+                          "startTime": "2026-08-25T11:54:30.229Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\test-failed-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\test-finished-1.png"
                             },
                             {
                               "name": "video",
@@ -1027,24 +1133,14 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\video.webm"
                             },
                             {
-                              "name": "error-context",
-                              "contentType": "text/markdown",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\error-context.md"
-                            },
-                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--224d0--type-selection-is-required-chromium\\trace.zip"
                             }
-                          ],
-                          "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
-                          }
+                          ]
                         }
                       ],
-                      "status": "unexpected"
+                      "status": "expected"
                     }
                   ],
                   "id": "58116153685230c06d23-7852aa8830d204060271",
@@ -1065,36 +1161,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 6,
+                          "workerIndex": 3,
                           "parallelIndex": 0,
                           "status": "failed",
-                          "duration": 140200,
+                          "duration": 81700,
                           "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:410:9",
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:427:11",
                             "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 11,
+                              "line": 427
                             },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                            "snippet": "\u001b[0m \u001b[90m 425 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 426 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 427 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 428 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 429 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 430 |\u001b[39m       }\u001b[0m"
                           },
                           "errors": [
                             {
                               "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 11,
+                                "line": 427
                               },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:410:9\u001b[22m"
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText(/read disclosure/i).first()\nExpected: visible\nReceived: hidden\nTimeout:  15000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/read disclosure/i).first()\u001b[22m\n\u001b[2m    13 × locator resolved to <button type=\"button\" class=\"text-xs font-medium text-primary hover:underline\">Read Disclosure →</button>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 425 |\u001b[39m             \u001b[35m/read disclosure/i\u001b[39m\n \u001b[90m 426 |\u001b[39m           )\u001b[33m.\u001b[39mfirst()\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 427 |\u001b[39m         )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 428 |\u001b[39m           timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 429 |\u001b[39m         })\u001b[33m;\u001b[39m\n \u001b[90m 430 |\u001b[39m       }\u001b[0m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:427:11\u001b[22m"
                             }
                           ],
                           "stdout": [
                             {
-                              "text": "risk-persistence Email: imhardikthanki+risk-persistence-1787576356460@gmail.com\n"
+                              "text": "risk-persistence Email: imhardikthanki+risk-persistence-1787658917575@gmail.com\n"
                             },
                             {
-                              "text": "risk-persistence Mobile: 2015556460\n"
+                              "text": "risk-persistence Mobile: 2015557575\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1106,10 +1202,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-persistence-1787576356460@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-persistence-1787658917575@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-persistence-1787576356460@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-persistence-1787658917575@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1133,7 +1229,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-persistence-1787576356460@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-persistence-1787658917575@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1151,30 +1247,87 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-persistence-1787576356460%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Filling Risk Profile\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[STEP] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-persistence-1787576356460%40gmail.com\n"
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T12:59:15.228Z",
+                          "startTime": "2026-08-25T11:55:16.875Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1199,9 +1352,9 @@
                             }
                           ],
                           "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 11,
+                            "line": 427
                           }
                         }
                       ],
@@ -1226,36 +1379,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 7,
+                          "workerIndex": 4,
                           "parallelIndex": 0,
                           "status": "failed",
-                          "duration": 139687,
+                          "duration": 93257,
                           "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:436:9",
+                            "message": "TimeoutError: locator.scrollIntoViewIfNeeded: Timeout 29951.00099999999ms exceeded.\nCall log:\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    55 × waiting for element to be stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying scroll into view action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                            "stack": "TimeoutError: locator.scrollIntoViewIfNeeded: Timeout 29951.00099999999ms exceeded.\nCall log:\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    55 × waiting for element to be stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying scroll into view action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at CompliancePage.selectState (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:73:25)\n    at CompliancePage.validateSelectionsCanBeUpdatedBeforeSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:184:16)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:447:11",
                             "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                              "column": 25,
+                              "line": 73
                             },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                            "snippet": "\u001b[90m   at \u001b[39mpages\\CompliancePage.ts:73\n\n\u001b[0m \u001b[90m 71 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mstateDropdown()\u001b[33m;\u001b[39m\n \u001b[90m 72 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 73 |\u001b[39m     \u001b[36mawait\u001b[39m stateDropdown\u001b[33m.\u001b[39mscrollIntoViewIfNeeded()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 74 |\u001b[39m\n \u001b[90m 75 |\u001b[39m     \u001b[36mawait\u001b[39m safeClick(\n \u001b[90m 76 |\u001b[39m       stateDropdown\u001b[33m,\u001b[39m\u001b[0m"
                           },
                           "errors": [
                             {
                               "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                                "column": 25,
+                                "line": 73
                               },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:436:9\u001b[22m"
+                              "message": "TimeoutError: locator.scrollIntoViewIfNeeded: Timeout 29951.00099999999ms exceeded.\nCall log:\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying scroll into view action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    55 × waiting for element to be stable\u001b[22m\n\u001b[2m       - element is not visible\u001b[22m\n\u001b[2m     - retrying scroll into view action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\CompliancePage.ts:73\n\n\u001b[0m \u001b[90m 71 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mstateDropdown()\u001b[33m;\u001b[39m\n \u001b[90m 72 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 73 |\u001b[39m     \u001b[36mawait\u001b[39m stateDropdown\u001b[33m.\u001b[39mscrollIntoViewIfNeeded()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 74 |\u001b[39m\n \u001b[90m 75 |\u001b[39m     \u001b[36mawait\u001b[39m safeClick(\n \u001b[90m 76 |\u001b[39m       stateDropdown\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at CompliancePage.selectState (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:73:25)\u001b[22m\n\u001b[2m    at CompliancePage.validateSelectionsCanBeUpdatedBeforeSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:184:16)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:447:11\u001b[22m"
                             }
                           ],
                           "stdout": [
                             {
-                              "text": "risk-compliance-update Email: imhardikthanki+risk-compliance-update-1787576481332@gmail.com\n"
+                              "text": "risk-compliance-update Email: imhardikthanki+risk-compliance-update-1787658988590@gmail.com\n"
                             },
                             {
-                              "text": "risk-compliance-update Mobile: 2015551332\n"
+                              "text": "risk-compliance-update Mobile: 2015558590\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1267,10 +1420,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+risk-compliance-update-1787576481332@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+risk-compliance-update-1787658988590@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+risk-compliance-update-1787576481332@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+risk-compliance-update-1787658988590@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1294,7 +1447,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+risk-compliance-update-1787576481332@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+risk-compliance-update-1787658988590@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1312,30 +1465,63 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-compliance-update-1787576481332%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Validating Risk Profile selections can be updated before save\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Select 3-5 years\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Brisk-compliance-update-1787576481332%40gmail.com\n"
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Update Options Experience\n"
+                            },
+                            {
+                              "text": "[INFO] Alternate options experience was not available; keeping Beginner.\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Yes\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": "[CLICK] Update Risk Tolerance\n"
+                            },
+                            {
+                              "text": "[INFO] Alternate risk tolerance was not available; keeping Moderate.\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Updated Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile update before save is accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance selections can be updated before save\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:01:20.051Z",
+                          "startTime": "2026-08-25T11:56:26.554Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1360,9 +1546,9 @@
                             }
                           ],
                           "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                            "column": 25,
+                            "line": 73
                           }
                         }
                       ],
@@ -1387,36 +1573,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 8,
+                          "workerIndex": 5,
                           "parallelIndex": 0,
                           "status": "failed",
-                          "duration": 138663,
+                          "duration": 117920,
                           "error": {
-                            "message": "Error: Login failed after 3 attempts",
-                            "stack": "Error: Login failed after 3 attempts\n    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\n    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:454:9",
+                            "message": "TimeoutError: locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('div.flex-1.overflow-y-auto').last()\u001b[22m\n",
+                            "stack": "TimeoutError: locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('div.flex-1.overflow-y-auto').last()\u001b[22m\n\n    at CompliancePage.acceptOpenDisclosure (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:246:29)\n    at CompliancePage.acceptDisclosureByIndex (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:321:16)\n    at CompliancePage.acceptAllDisclosures (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:349:7)\n    at CompliancePage.validateStateRequiredBlocksSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:411:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:459:9",
                             "location": {
-                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                              "column": 17,
-                              "line": 472
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                              "column": 29,
+                              "line": 246
                             },
-                            "snippet": "\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m"
+                            "snippet": "\u001b[90m   at \u001b[39mpages\\CompliancePage.ts:246\n\n\u001b[0m \u001b[90m 244 |\u001b[39m       )\u001b[33m.\u001b[39mlast()\u001b[33m;\u001b[39m\n \u001b[90m 245 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 246 |\u001b[39m     \u001b[36mawait\u001b[39m disclosureContent\u001b[33m.\u001b[39mevaluate(\n \u001b[90m     |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 247 |\u001b[39m       \u001b[36masync\u001b[39m (element) \u001b[33m=>\u001b[39m {\n \u001b[90m 248 |\u001b[39m\n \u001b[90m 249 |\u001b[39m         \u001b[36mconst\u001b[39m step \u001b[33m=\u001b[39m \u001b[35m200\u001b[39m\u001b[33m;\u001b[39m\u001b[0m"
                           },
                           "errors": [
                             {
                               "location": {
-                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                                "column": 17,
-                                "line": 472
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                                "column": 29,
+                                "line": 246
                               },
-                              "message": "Error: Login failed after 3 attempts\n\n\u001b[90m   at \u001b[39mpages\\LoginPage.ts:472\n\n\u001b[0m \u001b[90m 470 |\u001b[39m\n \u001b[90m 471 |\u001b[39m         \u001b[36mif\u001b[39m (attempt \u001b[33m===\u001b[39m \u001b[35m3\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 472 |\u001b[39m           \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 473 |\u001b[39m             \u001b[32m'Login failed after 3 attempts'\u001b[39m\n \u001b[90m 474 |\u001b[39m           )\u001b[33m;\u001b[39m\n \u001b[90m 475 |\u001b[39m         }\u001b[0m\n\u001b[2m    at LoginPage.login (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts:472:17)\u001b[22m\n\u001b[2m    at registerAndLoginFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:191:3)\u001b[22m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:216:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:454:9\u001b[22m"
+                              "message": "TimeoutError: locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('div.flex-1.overflow-y-auto').last()\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\CompliancePage.ts:246\n\n\u001b[0m \u001b[90m 244 |\u001b[39m       )\u001b[33m.\u001b[39mlast()\u001b[33m;\u001b[39m\n \u001b[90m 245 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 246 |\u001b[39m     \u001b[36mawait\u001b[39m disclosureContent\u001b[33m.\u001b[39mevaluate(\n \u001b[90m     |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 247 |\u001b[39m       \u001b[36masync\u001b[39m (element) \u001b[33m=>\u001b[39m {\n \u001b[90m 248 |\u001b[39m\n \u001b[90m 249 |\u001b[39m         \u001b[36mconst\u001b[39m step \u001b[33m=\u001b[39m \u001b[35m200\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at CompliancePage.acceptOpenDisclosure (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:246:29)\u001b[22m\n\u001b[2m    at CompliancePage.acceptDisclosureByIndex (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:321:16)\u001b[22m\n\u001b[2m    at CompliancePage.acceptAllDisclosures (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:349:7)\u001b[22m\n\u001b[2m    at CompliancePage.validateStateRequiredBlocksSave (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts:411:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:459:9\u001b[22m"
                             }
                           ],
                           "stdout": [
                             {
-                              "text": "compliance-state-required Email: imhardikthanki+compliance-state-required-1787576606299@gmail.com\n"
+                              "text": "compliance-state-required Email: imhardikthanki+compliance-state-required-1787659066484@gmail.com\n"
                             },
                             {
-                              "text": "compliance-state-required Mobile: 2015556299\n"
+                              "text": "compliance-state-required Mobile: 2015556484\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1428,10 +1614,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-state-required-1787576606299@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-state-required-1787659066484@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-state-required-1787576606299@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-state-required-1787659066484@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1455,7 +1641,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-state-required-1787576606299@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-state-required-1787659066484@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1473,30 +1659,135 @@
                               "text": "[CLICK] Submit Login\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-state-required-1787576606299%40gmail.com\n"
+                              "text": "[PASS] Logged in successfully\n"
                             },
                             {
-                              "text": "Login Attempt 2\n"
+                              "text": "Current URL: https://uat.ooltool.com/onboarding\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[INFO] Mobile verification step not shown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
+                              "text": "[INFO] Filling Risk Profile\n"
                             },
                             {
-                              "text": "Login Attempt 3\n"
+                              "text": "[STEP] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "[CLICK] Submit Login\n"
+                              "text": "[CLICK] Open Experience Dropdown\n"
                             },
                             {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-state-required-1787576606299%40gmail.com\n"
+                              "text": "[CLICK] Select 3-5 years\n"
+                            },
+                            {
+                              "text": " Options Experience  Beginner\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Beginner\n"
+                            },
+                            {
+                              "text": " Multi-leg Strategies  No\n"
+                            },
+                            {
+                              "text": "[CLICK] Select No\n"
+                            },
+                            {
+                              "text": " Risk Tolerance  Moderate\n"
+                            },
+                            {
+                              "text": "[CLICK] Select Moderate\n"
+                            },
+                            {
+                              "text": " Portfolio Loss  Keeping default 10%\n"
+                            },
+                            {
+                              "text": " Preferred Duration  30-60 days\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Covered Calls\n"
+                            },
+                            {
+                              "text": " Allowed Strategy  Cash Secured Puts\n"
+                            },
+                            {
+                              "text": " Account Type  Cash\n"
+                            },
+                            {
+                              "text": " Cash Account Type selected\n"
+                            },
+                            {
+                              "text": "[CLICK] Save Risk Profile\n"
+                            },
+                            {
+                              "text": "[PASS] Risk Profile completed\n"
+                            },
+                            {
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
+                            },
+                            {
+                              "text": " Compliance tab opened successfully\n"
+                            },
+                            {
+                              "text": "[INFO] Validating Compliance state is required\n"
+                            },
+                            {
+                              "text": "Found 5 disclosure(s)\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 1 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 1\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 1\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 1 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 2 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 2\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 2\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 2 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 3 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 3\n"
+                            },
+                            {
+                              "text": "[CLICK] Accept Disclosure 3\n"
+                            },
+                            {
+                              "text": "[PASS] Disclosure 3 Accepted\n"
+                            },
+                            {
+                              "text": "[INFO] Processing Disclosure 4 of 5\n"
+                            },
+                            {
+                              "text": "[CLICK] Open Disclosure 4\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:03:25.032Z",
+                          "startTime": "2026-08-25T11:57:44.930Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1521,9 +1812,9 @@
                             }
                           ],
                           "errorLocation": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\LoginPage.ts",
-                            "column": 17,
-                            "line": 472
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\CompliancePage.ts",
+                            "column": 29,
+                            "line": 246
                           }
                         }
                       ],
@@ -1537,7 +1828,7 @@
                 },
                 {
                   "title": "Compliance disclosures are required",
-                  "ok": true,
+                  "ok": false,
                   "tags": [],
                   "tests": [
                     {
@@ -1548,17 +1839,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 9,
+                          "workerIndex": 6,
                           "parallelIndex": 0,
-                          "status": "passed",
-                          "duration": 125964,
-                          "errors": [],
+                          "status": "failed",
+                          "duration": 86291,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 5,
+                              "line": 230
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 5,
+                                "line": 230
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:468:9\u001b[22m"
+                            }
+                          ],
                           "stdout": [
                             {
-                              "text": "compliance-disclosures-required Email: imhardikthanki+compliance-disclosures-required-1787576730196@gmail.com\n"
+                              "text": "compliance-disclosures-required Email: imhardikthanki+compliance-disclosures-required-1787659170743@gmail.com\n"
                             },
                             {
-                              "text": "compliance-disclosures-required Mobile: 2015550196\n"
+                              "text": "compliance-disclosures-required Mobile: 2015550743\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1570,10 +1880,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosures-required-1787576730196@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosures-required-1787659170743@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-disclosures-required-1787576730196@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-disclosures-required-1787659170743@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1597,7 +1907,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-disclosures-required-1787576730196@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosures-required-1787659170743@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1610,24 +1920,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosures-required-1787576730196%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1696,51 +1988,30 @@
                               "text": "[PASS] Risk Profile completed\n"
                             },
                             {
-                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
                               "text": " Compliance tab opened successfully\n"
-                            },
-                            {
-                              "text": "[INFO] Validating Compliance disclosures are required\n"
-                            },
-                            {
-                              "text": "[CLICK] Open State Dropdown\n"
-                            },
-                            {
-                              "text": "[CLICK] Select State\n"
-                            },
-                            {
-                              "text": "Selected State: Alabama\n"
-                            },
-                            {
-                              "text": "[PASS] State Selected\n"
-                            },
-                            {
-                              "text": "[CLICK] Save Compliance Without Disclosures\n"
-                            },
-                            {
-                              "text": "[PASS] Compliance disclosures are required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:05:28.805Z",
+                          "startTime": "2026-08-25T11:59:29.356Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\test-finished-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\test-failed-1.png"
                             },
                             {
                               "name": "video",
@@ -1748,14 +2019,24 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\video.webm"
                             },
                             {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\error-context.md"
+                            },
+                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--435a6-ce-disclosures-are-required-chromium\\trace.zip"
                             }
-                          ]
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 5,
+                            "line": 230
+                          }
                         }
                       ],
-                      "status": "expected"
+                      "status": "unexpected"
                     }
                   ],
                   "id": "58116153685230c06d23-83a06ac4f94184bf1652",
@@ -1765,7 +2046,7 @@
                 },
                 {
                   "title": "Every Compliance disclosure must be accepted",
-                  "ok": true,
+                  "ok": false,
                   "tags": [],
                   "tests": [
                     {
@@ -1776,17 +2057,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 9,
+                          "workerIndex": 7,
                           "parallelIndex": 0,
-                          "status": "passed",
-                          "duration": 149437,
-                          "errors": [],
+                          "status": "failed",
+                          "duration": 83908,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 5,
+                              "line": 230
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 5,
+                                "line": 230
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:482:9\u001b[22m"
+                            }
+                          ],
                           "stdout": [
                             {
-                              "text": "compliance-each-disclosure-required Email: imhardikthanki+compliance-each-disclosure-required-1787576838494@gmail.com\n"
+                              "text": "compliance-each-disclosure-required Email: imhardikthanki+compliance-each-disclosure-required-1787659243202@gmail.com\n"
                             },
                             {
-                              "text": "compliance-each-disclosure-required Mobile: 2015558494\n"
+                              "text": "compliance-each-disclosure-required Mobile: 2015553202\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -1798,10 +2098,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-each-disclosure-required-1787576838494@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-each-disclosure-required-1787659243202@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-each-disclosure-required-1787576838494@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-each-disclosure-required-1787659243202@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -1825,7 +2125,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-each-disclosure-required-1787576838494@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-each-disclosure-required-1787659243202@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -1838,24 +2138,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-each-disclosure-required-1787576838494%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -1924,102 +2206,30 @@
                               "text": "[PASS] Risk Profile completed\n"
                             },
                             {
-                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
                               "text": " Compliance tab opened successfully\n"
-                            },
-                            {
-                              "text": "[INFO] Validating each Compliance disclosure is required\n"
-                            },
-                            {
-                              "text": "[CLICK] Open State Dropdown\n"
-                            },
-                            {
-                              "text": "[CLICK] Select State\n"
-                            },
-                            {
-                              "text": "Selected State: Alabama\n"
-                            },
-                            {
-                              "text": "[PASS] State Selected\n"
-                            },
-                            {
-                              "text": "Found 5 disclosure(s)\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 1 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 1\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 1 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 2 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 2\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 2 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 3 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 3\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 3\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 3 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 4 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 4\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 4\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 4 Accepted\n"
-                            },
-                            {
-                              "text": "[CLICK] Save Compliance With One Disclosure Missing\n"
-                            },
-                            {
-                              "text": "[PASS] Every Compliance disclosure is required\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:07:18.111Z",
+                          "startTime": "2026-08-25T12:00:41.599Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\test-finished-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\test-failed-1.png"
                             },
                             {
                               "name": "video",
@@ -2027,14 +2237,24 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\video.webm"
                             },
                             {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\error-context.md"
+                            },
+                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--b51c5-disclosure-must-be-accepted-chromium\\trace.zip"
                             }
-                          ]
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 5,
+                            "line": 230
+                          }
                         }
                       ],
-                      "status": "expected"
+                      "status": "unexpected"
                     }
                   ],
                   "id": "58116153685230c06d23-63f89be022e7b6edffb7",
@@ -2044,7 +2264,7 @@
                 },
                 {
                   "title": "Compliance disclosure cancel does not accept disclosure",
-                  "ok": true,
+                  "ok": false,
                   "tags": [],
                   "tests": [
                     {
@@ -2055,17 +2275,36 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 9,
+                          "workerIndex": 8,
                           "parallelIndex": 0,
-                          "status": "passed",
-                          "duration": 126674,
-                          "errors": [],
+                          "status": "failed",
+                          "duration": 83878,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:496:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 5,
+                              "line": 230
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 5,
+                                "line": 230
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:496:9\u001b[22m"
+                            }
+                          ],
                           "stdout": [
                             {
-                              "text": "compliance-disclosure-cancel Email: imhardikthanki+compliance-disclosure-cancel-1787576971193@gmail.com\n"
+                              "text": "compliance-disclosure-cancel Email: imhardikthanki+compliance-disclosure-cancel-1787659312779@gmail.com\n"
                             },
                             {
-                              "text": "compliance-disclosure-cancel Mobile: 2015551193\n"
+                              "text": "compliance-disclosure-cancel Mobile: 2015552779\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2077,10 +2316,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosure-cancel-1787576971193@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-disclosure-cancel-1787659312779@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-disclosure-cancel-1787576971193@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-disclosure-cancel-1787659312779@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2104,7 +2343,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-disclosure-cancel-1787576971193@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-disclosure-cancel-1787659312779@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2117,24 +2356,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/verify-email-sent?email=imhardikthanki%2Bcompliance-disclosure-cancel-1787576971193%40gmail.com\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -2203,54 +2424,30 @@
                               "text": "[PASS] Risk Profile completed\n"
                             },
                             {
-                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
                               "text": " Compliance tab opened successfully\n"
-                            },
-                            {
-                              "text": "[INFO] Validating disclosure cancel does not accept disclosure\n"
-                            },
-                            {
-                              "text": "[CLICK] Open State Dropdown\n"
-                            },
-                            {
-                              "text": "[CLICK] Select State\n"
-                            },
-                            {
-                              "text": "Selected State: Alabama\n"
-                            },
-                            {
-                              "text": "[PASS] State Selected\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Save Compliance After Disclosure Cancel\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure cancel does not accept disclosure\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:09:30.830Z",
+                          "startTime": "2026-08-25T12:01:51.308Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\test-finished-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\test-failed-1.png"
                             },
                             {
                               "name": "video",
@@ -2258,14 +2455,24 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\video.webm"
                             },
                             {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\error-context.md"
+                            },
+                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--781ae--does-not-accept-disclosure-chromium\\trace.zip"
                             }
-                          ]
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 5,
+                            "line": 230
+                          }
                         }
                       ],
-                      "status": "expected"
+                      "status": "unexpected"
                     }
                   ],
                   "id": "58116153685230c06d23-e11e0569db5493adc042",
@@ -2275,7 +2482,7 @@
                 },
                 {
                   "title": "Compliance saved progress persists after refresh",
-                  "ok": true,
+                  "ok": false,
                   "tags": [],
                   "tests": [
                     {
@@ -2288,15 +2495,34 @@
                         {
                           "workerIndex": 9,
                           "parallelIndex": 0,
-                          "status": "passed",
-                          "duration": 163256,
-                          "errors": [],
+                          "status": "failed",
+                          "duration": 90905,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:510:9",
+                            "location": {
+                              "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                              "column": 5,
+                              "line": 230
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                                "column": 5,
+                                "line": 230
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: /save compliance profile/i })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: /save compliance profile/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 228 |\u001b[39m         \u001b[35m/save compliance profile/i\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 229 |\u001b[39m     })\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m   )\u001b[33m.\u001b[39mtoBeVisible({\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m\n \u001b[90m 232 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m }\u001b[0m\n\u001b[2m    at openComplianceForFreshUser (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:230:5)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts:510:9\u001b[22m"
+                            }
+                          ],
                           "stdout": [
                             {
-                              "text": "compliance-persistence Email: imhardikthanki+compliance-persistence-1787577080958@gmail.com\n"
+                              "text": "compliance-persistence Email: imhardikthanki+compliance-persistence-1787659382554@gmail.com\n"
                             },
                             {
-                              "text": "compliance-persistence Mobile: 2015550958\n"
+                              "text": "compliance-persistence Mobile: 2015552554\n"
                             },
                             {
                               "text": "[INFO] Opening application\n"
@@ -2308,10 +2534,10 @@
                               "text": "[PASS] Create Account Opened\n"
                             },
                             {
-                              "text": "[STEP] Registering: imhardikthanki+compliance-persistence-1787577080958@gmail.com\n"
+                              "text": "[STEP] Registering: imhardikthanki+compliance-persistence-1787659382554@gmail.com\n"
                             },
                             {
-                              "text": "Registration Email: imhardikthanki+compliance-persistence-1787577080958@gmail.com\n"
+                              "text": "Registration Email: imhardikthanki+compliance-persistence-1787659382554@gmail.com\n"
                             },
                             {
                               "text": "[CLICK] Send Code via SMS\n"
@@ -2335,7 +2561,7 @@
                               "text": "\nMANUAL EMAIL VERIFICATION REQUIRED\n"
                             },
                             {
-                              "text": "Verify email sent to: imhardikthanki+compliance-persistence-1787577080958@gmail.com\n"
+                              "text": "Verify email sent to: imhardikthanki+compliance-persistence-1787659382554@gmail.com\n"
                             },
                             {
                               "text": "Open Gmail and click the verification link.\n"
@@ -2348,24 +2574,6 @@
                             },
                             {
                               "text": "Login Attempt 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Submit Login\n"
-                            },
-                            {
-                              "text": "Current URL: https://uat.ooltool.com/login\n"
-                            },
-                            {
-                              "text": "Login Attempt 3\n"
                             },
                             {
                               "text": "[CLICK] Submit Login\n"
@@ -2434,132 +2642,30 @@
                               "text": "[PASS] Risk Profile completed\n"
                             },
                             {
-                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
+                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mtrue\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 1: United States Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 2: Select Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
-                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
+                              "text": "Dropdown 3: Select level Visible: \u001b[33mfalse\u001b[39m\n"
                             },
                             {
                               "text": " Compliance tab opened successfully\n"
-                            },
-                            {
-                              "text": "[INFO] Filling Compliance Profile\n"
-                            },
-                            {
-                              "text": " State of Residence\n"
-                            },
-                            {
-                              "text": "Found 4 dropdown(s)\n"
-                            },
-                            {
-                              "text": "Dropdown 0: 3-5 years Visible: \u001b[33mfalse\u001b[39m\n"
-                            },
-                            {
-                              "text": "Dropdown 1: United States Visible: \u001b[33mtrue\u001b[39m\n"
-                            },
-                            {
-                              "text": "Dropdown 2: Select Visible: \u001b[33mtrue\u001b[39m\n"
-                            },
-                            {
-                              "text": "Dropdown 3: Select level Visible: \u001b[33mtrue\u001b[39m\n"
-                            },
-                            {
-                              "text": "[CLICK] Open State Dropdown\n"
-                            },
-                            {
-                              "text": "[CLICK] Select State\n"
-                            },
-                            {
-                              "text": "Selected State: Alabama\n"
-                            },
-                            {
-                              "text": "[PASS] State Selected\n"
-                            },
-                            {
-                              "text": "Found 5 disclosure(s)\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 1 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 1\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 1\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 1 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 2 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 2\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 2\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 2 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 3 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 3\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 3\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 3 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 4 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 4\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 4\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 4 Accepted\n"
-                            },
-                            {
-                              "text": "[INFO] Processing Disclosure 5 of 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Open Disclosure 5\n"
-                            },
-                            {
-                              "text": "[CLICK] Accept Disclosure 5\n"
-                            },
-                            {
-                              "text": "[PASS] Disclosure 5 Accepted\n"
-                            },
-                            {
-                              "text": "[CLICK] Save Compliance Profile\n"
-                            },
-                            {
-                              "text": "[URL] https://uat.ooltool.com/onboarding\n"
                             }
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2026-08-24T13:11:20.578Z",
+                          "startTime": "2026-08-25T12:03:00.456Z",
                           "annotations": [],
                           "attachments": [
                             {
                               "name": "screenshot",
                               "contentType": "image/png",
-                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\test-finished-1.png"
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\test-failed-1.png"
                             },
                             {
                               "name": "video",
@@ -2567,14 +2673,24 @@
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\video.webm"
                             },
                             {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\error-context.md"
+                            },
+                            {
                               "name": "trace",
                               "contentType": "application/zip",
                               "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\OnboardingFieldValidation--ac84e-ress-persists-after-refresh-chromium\\trace.zip"
                             }
-                          ]
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\OnboardingFieldValidation.spec.ts",
+                            "column": 5,
+                            "line": 230
+                          }
                         }
                       ],
-                      "status": "expected"
+                      "status": "unexpected"
                     }
                   ],
                   "id": "58116153685230c06d23-bec30317837470c4b7bb",
@@ -2614,10 +2730,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18293,
+                      "duration": 20954,
                       "errors": [],
                       "stdout": [
                         {
@@ -2665,7 +2781,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:13:47.675Z",
+                      "startTime": "2026-08-25T12:04:17.794Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2707,10 +2823,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22269,
+                      "duration": 21743,
                       "errors": [],
                       "stdout": [
                         {
@@ -2749,7 +2865,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:14:06.276Z",
+                      "startTime": "2026-08-25T12:04:40.253Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2791,10 +2907,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18284,
+                      "duration": 20452,
                       "errors": [],
                       "stdout": [
                         {
@@ -2836,7 +2952,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:14:28.897Z",
+                      "startTime": "2026-08-25T12:05:02.711Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2878,10 +2994,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22146,
+                      "duration": 23872,
                       "errors": [],
                       "stdout": [
                         {
@@ -2938,7 +3054,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:14:47.437Z",
+                      "startTime": "2026-08-25T12:05:23.987Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2980,10 +3096,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23006,
+                      "duration": 28448,
                       "errors": [],
                       "stdout": [
                         {
@@ -3025,7 +3141,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:15:10.009Z",
+                      "startTime": "2026-08-25T12:05:50.512Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3067,10 +3183,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20749,
+                      "duration": 23639,
                       "errors": [],
                       "stdout": [
                         {
@@ -3130,7 +3246,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:15:33.491Z",
+                      "startTime": "2026-08-25T12:06:20.143Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3182,10 +3298,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 18068,
+                      "duration": 18071,
                       "errors": [],
                       "stdout": [
                         {
@@ -3224,7 +3340,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:15:54.622Z",
+                      "startTime": "2026-08-25T12:06:44.846Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3286,10 +3402,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 17463,
+                      "duration": 19297,
                       "errors": [],
                       "stdout": [
                         {
@@ -3328,7 +3444,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:16:12.963Z",
+                      "startTime": "2026-08-25T12:07:03.619Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3390,10 +3506,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 9,
+                      "workerIndex": 10,
                       "parallelIndex": 0,
                       "status": "skipped",
-                      "duration": 17624,
+                      "duration": 19695,
                       "errors": [],
                       "stdout": [
                         {
@@ -3432,7 +3548,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T13:16:30.701Z",
+                      "startTime": "2026-08-25T12:07:23.635Z",
                       "annotations": [
                         {
                           "type": "skip",
@@ -3478,11 +3594,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-24T12:46:41.352Z",
-    "duration": 1810151.3739999998,
-    "expected": 10,
+    "startTime": "2026-08-25T11:49:10.408Z",
+    "duration": 1115824.581,
+    "expected": 9,
     "skipped": 3,
-    "unexpected": 9,
+    "unexpected": 10,
     "flaky": 0
   }
 }

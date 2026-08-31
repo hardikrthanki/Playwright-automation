@@ -94,12 +94,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4045,
+                      "duration": 3612,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:09.574Z",
+                      "startTime": "2026-08-25T11:20:18.034Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -144,12 +144,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3713,
+                      "duration": 5201,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:14.252Z",
+                      "startTime": "2026-08-25T11:20:22.915Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -194,12 +194,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9018,
+                      "duration": 9870,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:18.108Z",
+                      "startTime": "2026-08-25T11:20:28.424Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -244,12 +244,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2832,
+                      "duration": 3835,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:27.230Z",
+                      "startTime": "2026-08-25T11:20:38.660Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -294,12 +294,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2038,
+                      "duration": 2690,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:30.176Z",
+                      "startTime": "2026-08-25T11:20:42.720Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -344,12 +344,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2092,
+                      "duration": 2983,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:32.322Z",
+                      "startTime": "2026-08-25T11:20:45.564Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -394,12 +394,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2021,
+                      "duration": 3264,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:34.565Z",
+                      "startTime": "2026-08-25T11:20:48.709Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -444,12 +444,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2075,
+                      "duration": 2173,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:36.682Z",
+                      "startTime": "2026-08-25T11:20:52.245Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -494,12 +494,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2149,
+                      "duration": 3079,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:38.842Z",
+                      "startTime": "2026-08-25T11:20:54.569Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -544,12 +544,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2293,
+                      "duration": 2233,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:41.106Z",
+                      "startTime": "2026-08-25T11:20:57.849Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -594,12 +594,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3868,
+                      "duration": 2445,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:43.473Z",
+                      "startTime": "2026-08-25T11:21:00.210Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -644,12 +644,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2497,
+                      "duration": 3017,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:47.474Z",
+                      "startTime": "2026-08-25T11:21:02.767Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -694,12 +694,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2316,
+                      "duration": 2597,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:50.045Z",
+                      "startTime": "2026-08-25T11:21:05.913Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -744,12 +744,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3041,
+                      "duration": 3112,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:52.444Z",
+                      "startTime": "2026-08-25T11:21:08.652Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -794,12 +794,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2435,
+                      "duration": 2345,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:55.577Z",
+                      "startTime": "2026-08-25T11:21:11.889Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -844,12 +844,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3109,
+                      "duration": 2269,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:25:58.127Z",
+                      "startTime": "2026-08-25T11:21:14.364Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -894,12 +894,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2177,
+                      "duration": 2513,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:01.320Z",
+                      "startTime": "2026-08-25T11:21:16.761Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -944,12 +944,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2332,
+                      "duration": 4297,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:03.684Z",
+                      "startTime": "2026-08-25T11:21:19.485Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -994,7 +994,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4074,
+                      "duration": 5330,
                       "errors": [],
                       "stdout": [
                         {
@@ -1009,7 +1009,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:06.140Z",
+                      "startTime": "2026-08-25T11:21:24.172Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1054,7 +1054,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4057,
+                      "duration": 4357,
                       "errors": [],
                       "stdout": [
                         {
@@ -1069,7 +1069,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:10.327Z",
+                      "startTime": "2026-08-25T11:21:29.708Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1114,7 +1114,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3987,
+                      "duration": 3829,
                       "errors": [],
                       "stdout": [
                         {
@@ -1129,7 +1129,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:14.487Z",
+                      "startTime": "2026-08-25T11:21:34.285Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1174,7 +1174,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4264,
+                      "duration": 3960,
                       "errors": [],
                       "stdout": [
                         {
@@ -1189,7 +1189,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:18.598Z",
+                      "startTime": "2026-08-25T11:21:38.358Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1234,7 +1234,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2952,
+                      "duration": 4337,
                       "errors": [],
                       "stdout": [
                         {
@@ -1249,7 +1249,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:22.988Z",
+                      "startTime": "2026-08-25T11:21:42.508Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1294,7 +1294,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2964,
+                      "duration": 4115,
                       "errors": [],
                       "stdout": [
                         {
@@ -1309,7 +1309,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:26.078Z",
+                      "startTime": "2026-08-25T11:21:47.069Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1371,7 +1371,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4597,
+                      "duration": 4343,
                       "errors": [],
                       "stdout": [
                         {
@@ -1395,7 +1395,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:29.187Z",
+                      "startTime": "2026-08-25T11:21:51.410Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1440,12 +1440,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2314,
+                      "duration": 2887,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:33.959Z",
+                      "startTime": "2026-08-25T11:21:55.982Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1490,12 +1490,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3006,
+                      "duration": 2773,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:36.358Z",
+                      "startTime": "2026-08-25T11:21:59.000Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1540,7 +1540,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3935,
+                      "duration": 5960,
                       "errors": [],
                       "stdout": [
                         {
@@ -1564,7 +1564,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:39.441Z",
+                      "startTime": "2026-08-25T11:22:01.915Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1595,7 +1595,7 @@
             },
             {
               "title": "Forgot password email draft is cleared after refresh",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1608,45 +1608,29 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 11859,
-                      "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n\n    at ForgotPasswordPage.open (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts:98:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:299:9",
-                        "location": {
-                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
-                          "column": 7,
-                          "line": 98
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39mpages\\ForgotPasswordPage.ts:98\n\n\u001b[0m \u001b[90m  96 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m  97 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m     )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \u001b[35m/forgot-password/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m       {\n \u001b[90m 101 |\u001b[39m         timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
-                            "column": 7,
-                            "line": 98
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/forgot-password/\u001b[39m\nReceived string:  \u001b[31m\"https://uat.ooltool.com/login\"\u001b[39m\nTimeout: 10000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 10000ms\u001b[22m\n\u001b[2m    13 × unexpected value \"https://uat.ooltool.com/login\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39mpages\\ForgotPasswordPage.ts:98\n\n\u001b[0m \u001b[90m  96 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m  97 |\u001b[39m       \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mpage\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m     )\u001b[33m.\u001b[39mtoHaveURL(\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \u001b[35m/forgot-password/\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m       {\n \u001b[90m 101 |\u001b[39m         timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m\u001b[0m\n\u001b[2m    at ForgotPasswordPage.open (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts:98:7)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:299:9\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 13130,
+                      "errors": [],
                       "stdout": [
                         {
                           "text": "[INFO] Opening Forgot Password Page\n"
                         },
                         {
                           "text": "[CLICK] Open Forgot Password\n"
+                        },
+                        {
+                          "text": "[PASS] Forgot Password Page Opened\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:43.508Z",
+                      "startTime": "2026-08-25T11:22:08.094Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\test-failed-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\test-finished-1.png"
                         },
                         {
                           "name": "video",
@@ -1654,24 +1638,14 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\video.webm"
                         },
                         {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\error-context.md"
-                        },
-                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-43dcd-ft-is-cleared-after-refresh-chromium\\trace.zip"
                         }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\pages\\ForgotPasswordPage.ts",
-                        "column": 7,
-                        "line": 98
-                      }
+                      ]
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "af1f88c11cbb0133d115-cf5acaf1f1cdae3070f1",
@@ -1692,15 +1666,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2838,
+                      "duration": 21326,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:26:57.228Z",
+                      "startTime": "2026-08-25T11:22:21.537Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1742,15 +1716,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4345,
+                      "duration": 22763,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:00.628Z",
+                      "startTime": "2026-08-25T11:22:43.007Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1792,10 +1766,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6026,
+                      "duration": 22225,
                       "errors": [],
                       "stdout": [
                         {
@@ -1804,7 +1778,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:05.104Z",
+                      "startTime": "2026-08-25T11:23:05.991Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1846,10 +1820,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3842,
+                      "duration": 23049,
                       "errors": [],
                       "stdout": [
                         {
@@ -1858,7 +1832,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:11.272Z",
+                      "startTime": "2026-08-25T11:23:28.375Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1889,7 +1863,7 @@
             },
             {
               "title": "Login password visibility control is exposed without submitting form",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1900,11 +1874,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2033,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 16447,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\nExpected: \u001b[32m\"DraftPassword123!\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input value=\"\" type=\"text\" required=\"\" id=\"password\" autocomplete=\"current-password\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\nExpected: \u001b[32m\"DraftPassword123!\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input value=\"\" type=\"text\" required=\"\" id=\"password\" autocomplete=\"current-password\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:607:11",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                          "column": 11,
+                          "line": 607
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 605 |\u001b[39m         \u001b[36mawait\u001b[39m expect(\n \u001b[90m 606 |\u001b[39m           passwordInput\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 607 |\u001b[39m         )\u001b[33m.\u001b[39mtoHaveValue(\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 608 |\u001b[39m           \u001b[32m'DraftPassword123!'\u001b[39m\n \u001b[90m 609 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 610 |\u001b[39m       }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                            "column": 11,
+                            "line": 607
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\nExpected: \u001b[32m\"DraftPassword123!\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel(/^password$/i).or(locator('input[name=\"password\"]')).first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input value=\"\" type=\"text\" required=\"\" id=\"password\" autocomplete=\"current-password\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"/>\u001b[22m\n\u001b[2m      - unexpected value \"\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 605 |\u001b[39m         \u001b[36mawait\u001b[39m expect(\n \u001b[90m 606 |\u001b[39m           passwordInput\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 607 |\u001b[39m         )\u001b[33m.\u001b[39mtoHaveValue(\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 608 |\u001b[39m           \u001b[32m'DraftPassword123!'\u001b[39m\n \u001b[90m 609 |\u001b[39m         )\u001b[33m;\u001b[39m\n \u001b[90m 610 |\u001b[39m       }\u001b[0m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:607:11\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "[CLICK] Toggle Password Visibility\n"
@@ -1912,13 +1905,13 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:15.259Z",
+                      "startTime": "2026-08-25T11:23:51.855Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -1926,14 +1919,24 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-2824e-sed-without-submitting-form-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                        "column": 11,
+                        "line": 607
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "af1f88c11cbb0133d115-a68e87f5c3d9704dabe8",
@@ -1957,7 +1960,7 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7044,
+                      "duration": 8722,
                       "errors": [],
                       "stdout": [
                         {
@@ -1972,7 +1975,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:17.372Z",
+                      "startTime": "2026-08-25T11:24:10.398Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2003,7 +2006,7 @@
             },
             {
               "title": "Register screen password visibility toggle changes password field type",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -2016,9 +2019,28 @@
                     {
                       "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 7288,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 13658,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at expectPasswordToggleResponds (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:96:3)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:677:9",
+                        "location": {
+                          "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                          "column": 3,
+                          "line": 96
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 94 |\u001b[39m   )\u001b[33m;\u001b[39m\n \u001b[90m 95 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 96 |\u001b[39m   \u001b[36mawait\u001b[39m expect\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 97 |\u001b[39m     \u001b[33m.\u001b[39mpoll(\n \u001b[90m 98 |\u001b[39m       \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 99 |\u001b[39m         \u001b[36mconst\u001b[39m currentType \u001b[33m=\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                            "column": 3,
+                            "line": 96
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n\u001b[0m \u001b[90m 94 |\u001b[39m   )\u001b[33m;\u001b[39m\n \u001b[90m 95 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 96 |\u001b[39m   \u001b[36mawait\u001b[39m expect\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 97 |\u001b[39m     \u001b[33m.\u001b[39mpoll(\n \u001b[90m 98 |\u001b[39m       \u001b[36masync\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 99 |\u001b[39m         \u001b[36mconst\u001b[39m currentType \u001b[33m=\u001b[39m\u001b[0m\n\u001b[2m    at expectPasswordToggleResponds (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:96:3)\u001b[22m\n\u001b[2m    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts:677:9\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
                           "text": "[INFO] Opening application\n"
@@ -2035,13 +2057,13 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:24.837Z",
+                      "startTime": "2026-08-25T11:24:20.987Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\test-finished-1.png"
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "video",
@@ -2049,14 +2071,24 @@
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\video.webm"
                         },
                         {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\error-context.md"
+                        },
+                        {
                           "name": "trace",
                           "contentType": "application/zip",
                           "path": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\test-results\\AuthUiValidation-Auth-UI-V-f20f9-changes-password-field-type-chromium\\trace.zip"
                         }
-                      ]
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\AuthUiValidation.spec.ts",
+                        "column": 3,
+                        "line": 96
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "af1f88c11cbb0133d115-75414157541f8702e583",
@@ -2077,10 +2109,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8510,
+                      "duration": 12311,
                       "errors": [],
                       "stdout": [
                         {
@@ -2098,7 +2130,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:32.455Z",
+                      "startTime": "2026-08-25T11:24:36.876Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2157,10 +2189,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10880,
+                      "duration": 13067,
                       "errors": [],
                       "stdout": [
                         {
@@ -2187,7 +2219,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:41.315Z",
+                      "startTime": "2026-08-25T11:24:50.475Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2229,10 +2261,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12386,
+                      "duration": 13053,
                       "errors": [],
                       "stdout": [
                         {
@@ -2265,7 +2297,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:27:52.468Z",
+                      "startTime": "2026-08-25T11:25:04.218Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2324,10 +2356,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20794,
+                      "duration": 21118,
                       "errors": [],
                       "stdout": [
                         {
@@ -2360,7 +2392,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:28:05.560Z",
+                      "startTime": "2026-08-25T11:25:17.867Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2402,10 +2434,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 15514,
+                      "duration": 17139,
                       "error": {
                         "message": "Error: Authenticated page should not create horizontal overflow\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
                         "stack": "Error: Authenticated page should not create horizontal overflow\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at expectNoHorizontalOverflow (C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:71:7)\n    at C:\\Users\\BAPS\\Documents\\Oools_paywright\\tests\\DashboardNavigation.spec.ts:167:9",
@@ -2457,7 +2489,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:28:26.946Z",
+                      "startTime": "2026-08-25T11:25:39.726Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2509,10 +2541,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19795,
+                      "duration": 17947,
                       "errors": [],
                       "stdout": [
                         {
@@ -2539,7 +2571,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:28:44.836Z",
+                      "startTime": "2026-08-25T11:25:58.827Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2581,10 +2613,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16518,
+                      "duration": 15151,
                       "errors": [],
                       "stdout": [
                         {
@@ -2611,7 +2643,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:29:05.809Z",
+                      "startTime": "2026-08-25T11:26:18.438Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2653,10 +2685,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21811,
+                      "duration": 20785,
                       "errors": [],
                       "stdout": [
                         {
@@ -2683,7 +2715,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:29:22.811Z",
+                      "startTime": "2026-08-25T11:26:34.215Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2725,10 +2757,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12865,
+                      "duration": 11942,
                       "errors": [],
                       "stdout": [
                         {
@@ -2755,7 +2787,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:29:45.037Z",
+                      "startTime": "2026-08-25T11:26:55.755Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2797,10 +2829,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10646,
+                      "duration": 13647,
                       "errors": [],
                       "stdout": [
                         {
@@ -2830,7 +2862,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:29:58.209Z",
+                      "startTime": "2026-08-25T11:27:08.204Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2872,10 +2904,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23785,
+                      "duration": 27201,
                       "errors": [],
                       "stdout": [
                         {
@@ -2944,7 +2976,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:30:09.432Z",
+                      "startTime": "2026-08-25T11:27:22.370Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -2986,10 +3018,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 11813,
+                      "duration": 12960,
                       "errors": [],
                       "stdout": [
                         {
@@ -3028,7 +3060,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:30:34.297Z",
+                      "startTime": "2026-08-25T11:27:50.838Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3070,10 +3102,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 9741,
+                      "duration": 10226,
                       "errors": [],
                       "stdout": [
                         {
@@ -3100,7 +3132,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:30:46.614Z",
+                      "startTime": "2026-08-25T11:28:04.576Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3142,10 +3174,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12931,
+                      "duration": 15800,
                       "errors": [],
                       "stdout": [
                         {
@@ -3196,7 +3228,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:30:56.626Z",
+                      "startTime": "2026-08-25T11:28:15.145Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3238,10 +3270,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13272,
+                      "duration": 16327,
                       "errors": [],
                       "stdout": [
                         {
@@ -3292,7 +3324,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:31:10.048Z",
+                      "startTime": "2026-08-25T11:28:31.868Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3334,10 +3366,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20686,
+                      "duration": 24947,
                       "errors": [],
                       "stdout": [
                         {
@@ -3388,7 +3420,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:31:23.727Z",
+                      "startTime": "2026-08-25T11:28:49.067Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3430,10 +3462,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10724,
+                      "duration": 12595,
                       "errors": [],
                       "stdout": [
                         {
@@ -3475,7 +3507,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:31:45.037Z",
+                      "startTime": "2026-08-25T11:29:14.884Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3517,10 +3549,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10160,
+                      "duration": 12505,
                       "errors": [],
                       "stdout": [
                         {
@@ -3556,7 +3588,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:31:56.135Z",
+                      "startTime": "2026-08-25T11:29:27.989Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3598,10 +3630,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10165,
+                      "duration": 11355,
                       "errors": [],
                       "stdout": [
                         {
@@ -3637,7 +3669,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:32:06.654Z",
+                      "startTime": "2026-08-25T11:29:40.975Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3679,10 +3711,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10156,
+                      "duration": 12834,
                       "errors": [],
                       "stdout": [
                         {
@@ -3721,7 +3753,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:32:17.123Z",
+                      "startTime": "2026-08-25T11:29:52.697Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3763,10 +3795,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 11606,
+                      "duration": 16009,
                       "errors": [],
                       "stdout": [
                         {
@@ -3817,7 +3849,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:32:27.511Z",
+                      "startTime": "2026-08-25T11:30:06.050Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3859,10 +3891,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24813,
+                      "duration": 25799,
                       "errors": [],
                       "stdout": [
                         {
@@ -3895,7 +3927,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:32:39.522Z",
+                      "startTime": "2026-08-25T11:30:23.013Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -3937,10 +3969,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13558,
+                      "duration": 16233,
                       "errors": [],
                       "stdout": [
                         {
@@ -3967,7 +3999,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:33:04.861Z",
+                      "startTime": "2026-08-25T11:30:49.677Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4009,10 +4041,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12908,
+                      "duration": 15923,
                       "errors": [],
                       "stdout": [
                         {
@@ -4051,7 +4083,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:33:18.755Z",
+                      "startTime": "2026-08-25T11:31:07.159Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4110,10 +4142,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16226,
+                      "duration": 15744,
                       "errors": [],
                       "stdout": [
                         {
@@ -4146,7 +4178,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:33:31.969Z",
+                      "startTime": "2026-08-25T11:31:23.738Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4188,10 +4220,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15084,
+                      "duration": 31764,
                       "errors": [],
                       "stdout": [
                         {
@@ -4224,7 +4256,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:33:48.555Z",
+                      "startTime": "2026-08-25T11:31:39.976Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4266,10 +4298,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23233,
+                      "duration": 43976,
                       "errors": [],
                       "stdout": [
                         {
@@ -4302,7 +4334,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:34:04.009Z",
+                      "startTime": "2026-08-25T11:32:12.331Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4344,15 +4376,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 11903,
+                      "duration": 30507,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:34:27.597Z",
+                      "startTime": "2026-08-25T11:32:57.117Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4394,10 +4426,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12281,
+                      "duration": 29241,
                       "errors": [],
                       "stdout": [
                         {
@@ -4418,7 +4450,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:34:39.591Z",
+                      "startTime": "2026-08-25T11:33:27.803Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4465,10 +4497,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 11618,
+                      "duration": 22204,
                       "errors": [],
                       "stdout": [
                         {
@@ -4489,7 +4521,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:34:52.116Z",
+                      "startTime": "2026-08-25T11:33:57.390Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4536,10 +4568,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 17291,
+                      "duration": 19862,
                       "errors": [],
                       "stdout": [
                         {
@@ -4572,7 +4604,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-08-24T12:35:04.081Z",
+                      "startTime": "2026-08-25T11:34:20.041Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -4613,11 +4645,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-08-24T12:25:08.561Z",
-    "duration": 617063.2250000001,
-    "expected": 65,
+    "startTime": "2026-08-25T11:20:15.067Z",
+    "duration": 869536.752,
+    "expected": 64,
     "skipped": 0,
-    "unexpected": 2,
+    "unexpected": 3,
     "flaky": 0
   }
 }
