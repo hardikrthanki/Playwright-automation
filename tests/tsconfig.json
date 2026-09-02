@@ -1,0 +1,24 @@
+{
+  "_comment": "PURPOSE: Nearest TypeScript config for spec files under tests/. Declares Node types so globals like process resolve in the IDE even when the workspace root is tests/.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "node",
+      "@playwright/test"
+    ]
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}
