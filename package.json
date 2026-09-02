@@ -34,6 +34,7 @@
     "test:controlled:stripe-use-case-8-matrix": "playwright test tests/FailedPaymentDunningMatrix.spec.ts",
     "test:controlled:subscription-lifecycle-matrix": "playwright test tests/SubscriptionLifecycleE2EMatrix.spec.ts",
     "test:controlled:subscription-lifecycle-execution": "playwright test tests/SubscriptionLifecycleExecution.spec.ts",
+    "test:controlled:blocked-scenarios": "playwright test tests/BlockedScenarioExecution.spec.ts",
     "test:controlled:user-journey-matrix": "playwright test tests/UserJourneyCoverageMatrix.spec.ts",
     "test:controlled:coverage-matrix": "playwright test tests/UserJourneyCoverageMatrix.spec.ts tests/OverlayStrategistsTrialMatrix.spec.ts tests/NewSubscriptionPurchaseMatrix.spec.ts tests/UpgradeSubscriptionMatrix.spec.ts tests/DowngradeSubscriptionMatrix.spec.ts tests/MonthlyAnnualBillingChangeMatrix.spec.ts tests/AnnualMonthlyBillingChangeMatrix.spec.ts tests/SubscriptionCancellationMatrix.spec.ts tests/FailedPaymentDunningMatrix.spec.ts tests/SubscriptionLifecycleE2EMatrix.spec.ts",
     "test:controlled:direct-subscription": "playwright test tests/DirectSubscriptionPurchase.spec.ts",

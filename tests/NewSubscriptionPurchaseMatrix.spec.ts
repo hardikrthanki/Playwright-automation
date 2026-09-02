@@ -28,7 +28,7 @@ type SubscriptionScenario = {
   sourceIds: string[];
   title: string;
   priority: 'Critical' | 'High' | 'Medium' | 'Low';
-  status: 'automated' | 'blocked' | 'future';
+  status: 'automated' | 'blocked' | 'future' | 'controlled';
   automation?: string;
   dependency?: string;
 };
@@ -135,8 +135,9 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-013'],
     title: 'Stripe checkout displays renewal or auto-renewal copy before payment',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires stable Stripe checkout copy expectation for renewal/auto-renewal text.'
+    status: 'controlled',
+    automation: 'BlockedScenarioExecution.spec.ts > SC-48: Stripe checkout displays renewal or auto-renewal copy before payment',
+    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; copy expectation now asserted flexibly.'
   },
   {
     id: 'SC-49',
@@ -239,24 +240,27 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-026'],
     title: 'Missing cardholder name is blocked before subscription activation',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable Stripe validation copy and checkout fixture for empty cardholder name.'
+    status: 'controlled',
+    automation: 'BlockedScenarioExecution.spec.ts > SC-61: Missing cardholder name is blocked before subscription activation',
+    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; validation asserted flexibly (blocked-state OR error copy).'
   },
   {
     id: 'SC-62',
     sourceIds: ['SUB-NEW-027'],
     title: 'Failed checkout keeps user without active paid subscription',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires backend/API or billing UI state validation after failed checkout session.'
+    status: 'controlled',
+    automation: 'BlockedScenarioExecution.spec.ts > SC-62: Failed checkout keeps user without active paid subscription',
+    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; UI-level validation (no success/activation copy after decline).'
   },
   {
     id: 'SC-63',
     sourceIds: ['SUB-NEW-028'],
     title: 'Closing Stripe checkout returns user safely without activating subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires deterministic cancel/return URL behavior and non-destructive checkout fixture.'
+    status: 'controlled',
+    automation: 'BlockedScenarioExecution.spec.ts > SC-63: Closing Stripe checkout returns user safely without activating subscription',
+    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true, STRIPE_CHECKOUT_URL, and a checkout link exposing a cancel/return control.'
   },
   {
     id: 'SC-64',
