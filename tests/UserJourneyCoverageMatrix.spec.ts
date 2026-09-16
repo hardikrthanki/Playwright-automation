@@ -253,7 +253,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Dashboard',
     priority: 'Critical',
     status: 'automated',
-    automation: 'DashboardHealth.spec.ts and Subscriber.spec.ts'
+    automation: 'DashboardNavigation.spec.ts and Subscriber.spec.ts'
   },
   {
     id: 'UJ-025',
@@ -280,7 +280,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Profile',
     priority: 'Critical',
     status: 'automated',
-    automation: 'Profile.spec.ts'
+    automation: 'ProfileNegative.spec.ts'
   },
   {
     id: 'UJ-028',
@@ -289,7 +289,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Profile',
     priority: 'Critical',
     status: 'automated',
-    automation: 'ProfilePasswordMismatch.spec.ts and ProfileWrongCurrentPassword.spec.ts'
+    automation: 'ProfilePasswordMismatch.spec.ts'
   },
   {
     id: 'UJ-029',
@@ -367,7 +367,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Billing',
     priority: 'Critical',
     status: 'automated',
-    automation: 'Subscriber.spec.ts and BillingDeep.spec.ts'
+    automation: 'Subscriber.spec.ts'
   },
   {
     id: 'UJ-037',
@@ -385,7 +385,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Billing',
     priority: 'High',
     status: 'automated',
-    automation: 'Subscriber.spec.ts and BillingDeep.spec.ts'
+    automation: 'Subscriber.spec.ts'
   },
   {
     id: 'UJ-039',
@@ -565,7 +565,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Profile',
     priority: 'Medium',
     status: 'automated',
-    automation: 'Profile.spec.ts and DashboardNavigation.spec.ts'
+    automation: 'ProfileNegative.spec.ts and DashboardNavigation.spec.ts'
   },
   {
     id: 'UJ-059',
