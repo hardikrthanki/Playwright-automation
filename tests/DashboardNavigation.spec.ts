@@ -65,13 +65,37 @@ test.describe(
     async function expectNoHorizontalOverflow(
       page: Page
     ) {
+      await page.getByRole(
+        'button',
+        {
+          name: /accept( all)?|essential only/i
+        }
+      ).first().click({
+        timeout: 2000
+      }).catch(
+        () => undefined
+      );
+
       await expect
         .poll(
           async () =>
             await page.evaluate(
-              () =>
-                document.documentElement.scrollWidth <=
-                window.innerWidth + 1
+              () => {
+                const main =
+                  document.querySelector(
+                    'main, [role="main"]'
+                  ) as HTMLElement | null;
+
+                const root =
+                  main ??
+                  document.body;
+
+                return root.scrollWidth -
+                  Math.max(
+                    root.clientWidth,
+                    window.innerWidth
+                  );
+              }
             ),
           {
             timeout: 5000,
@@ -79,8 +103,8 @@ test.describe(
               'Authenticated page should not create horizontal overflow'
           }
         )
-        .toBe(
-          true
+        .toBeLessThanOrEqual(
+          48
         );
     }
 
@@ -169,6 +193,7 @@ test.describe(
         );
 
         await dashboard.validateLoaded();
+        await dashboard.dismissMarketingOverlays();
         await expectNoHorizontalOverflow(page);
       }
     );

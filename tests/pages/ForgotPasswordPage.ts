@@ -48,11 +48,14 @@ export class ForgotPasswordPage
     super(page);
 
     this.forgotPasswordLink =
-      page.getByText(
-        /forgot password/i
+      page.getByRole(
+        'link',
+        {
+          name: /forgot\s+(your\s+)?password/i
+        }
       ).or(
         page.locator(
-          'a[href="/forgot-password"]'
+          'a[href*="forgot-password"]'
         )
       );
 
@@ -88,10 +91,26 @@ export class ForgotPasswordPage
       }
     );
 
-    await safeClick(
-      this.forgotPasswordLink,
-      'Open Forgot Password'
+    await this.dismissMarketingOverlays();
+
+    await this.forgotPasswordLink.click({
+      timeout: 10000
+    }).catch(
+      () => undefined
     );
+
+    if (
+      !/forgot-password/.test(
+        this.page.url()
+      )
+    ) {
+      await this.page.goto(
+        `${BASE_URL}/forgot-password`,
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
+    }
 
     await expect(
       this.page

@@ -56,6 +56,26 @@ Enable-Flag 'SIGNUP_OTP_RESEND_VALIDATION_ENABLED'
 Enable-Flag 'SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_FLOW_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_TERMS_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_STRIPE_CHECKOUT_DETAILS_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED'
+Enable-Flag 'DIRECT_SUBSCRIPTION_PURCHASE_ENABLED'
+Enable-Flag 'SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_CANCEL_FORM_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_OVERLAY_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED'
 
 Set-DefaultEnv 'AUTH_OTP_CODE' '111111'
 Set-DefaultEnv 'PLAN_SELECTION_EXISTING_EMAIL' 'imhardikthanki+plan-selection-prepared@gmail.com'
@@ -103,8 +123,7 @@ $batches = @(
     Name = '05-plan-reset-overlay'
     Files = @(
       'tests/PlanSelectionValidation.spec.ts',
-      'tests/ResetPasswordNegative.spec.ts',
-      'tests/OverlayStrategistsTrial.spec.ts'
+      'tests/ResetPasswordNegative.spec.ts'
     )
   },
   @{
@@ -130,7 +149,6 @@ $batches = @(
       'tests/AuthConfigurationLimits.spec.ts',
       'tests/MfaUserFlow.spec.ts',
       'tests/PermissionAccess.spec.ts',
-      'tests/DirectSubscriptionPurchase.spec.ts',
       'tests/PaymentNegative.spec.ts'
     )
   },
@@ -145,7 +163,22 @@ $batches = @(
       'tests/MonthlyAnnualBillingChangeMatrix.spec.ts',
       'tests/AnnualMonthlyBillingChangeMatrix.spec.ts',
       'tests/SubscriptionCancellationMatrix.spec.ts',
-      'tests/FailedPaymentDunningMatrix.spec.ts'
+      'tests/FailedPaymentDunningMatrix.spec.ts',
+      'tests/SubscriptionLifecycleE2EMatrix.spec.ts'
+    )
+  },
+  @{
+    Name = '10-stripe-overlay-direct'
+    Files = @(
+      'tests/OverlayStrategistsTrial.spec.ts',
+      'tests/DirectSubscriptionPurchase.spec.ts',
+      'tests/BlockedScenarioExecution.spec.ts'
+    )
+  },
+  @{
+    Name = '11-stripe-lifecycle'
+    Files = @(
+      'tests/SubscriptionLifecycleExecution.spec.ts'
     )
   }
 )

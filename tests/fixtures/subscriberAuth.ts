@@ -6,11 +6,16 @@ import {
 } from '@playwright/test';
 
 import {
+  BASE_URL,
   TEST_USERS
 } from '../config/testData';
 
 import { LoginPage }
   from '../pages/LoginPage';
+
+import {
+  isLoginUrl
+} from '../helpers/subscriberSession';
 
 /* =============================================================================
 FIXTURE: subscriberAuth
@@ -19,6 +24,8 @@ PURPOSE
 -------
 Logs the shared subscriber in once per run and reuses the saved session so
 dashboard, billing, and profile specs do not repeat Sign in.
+The saved session is probed against /dashboard so an expired cookie is not
+reused.
 ============================================================================= */
 
 export const SUBSCRIBER_STORAGE_STATE =
@@ -54,42 +61,49 @@ export const test = base.extend({
     ) {
       prepareStorage =
         (async () => {
-          if (
+          const hasStoredSession =
             fs.existsSync(
               SUBSCRIBER_STORAGE_STATE
-            )
-          ) {
-            const ageMs =
-              Date.now() -
-              fs.statSync(
-                SUBSCRIBER_STORAGE_STATE
-              ).mtimeMs;
+            );
 
-            if (
-              ageMs <
-              30 *
-              60 *
-              1000
-            ) {
-              return SUBSCRIBER_STORAGE_STATE;
-            }
-          }
+          const context =
+            await browser.newContext(
+              hasStoredSession
+                ? {
+                    storageState:
+                      SUBSCRIBER_STORAGE_STATE
+                  }
+                : {}
+            );
 
           const page =
-            await browser.newPage();
+            await context.newPage();
 
-          await new LoginPage(
-            page
-          ).login(
-            TEST_USERS.subscriber.email,
-            TEST_USERS.subscriber.password
+          await page.goto(
+            `${BASE_URL}/dashboard`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
           );
 
-          await page.context().storageState({
+          if (
+            isLoginUrl(
+              page.url()
+            )
+          ) {
+            await new LoginPage(
+              page
+            ).login(
+              TEST_USERS.subscriber.email,
+              TEST_USERS.subscriber.password
+            );
+          }
+
+          await context.storageState({
             path: SUBSCRIBER_STORAGE_STATE
           });
 
-          await page.close();
+          await context.close();
 
           return SUBSCRIBER_STORAGE_STATE;
         })();

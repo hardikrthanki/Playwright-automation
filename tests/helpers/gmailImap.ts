@@ -5,437 +5,373 @@ import {
   TEST_USERS
 } from '../config/testData';
 
+import '../config/loadLocalEnv';
+
 /* =============================================================================
 HELPER: Gmail IMAP verification
 
 PURPOSE
 -------
-Reads the verification email from Gmail and returns the OOLTool link.
-Requires a Google App Password:
+Reads the OOLTool verification link from Gmail.
 
-$env:GMAIL_USER="imhardikthanki@gmail.com"
-$env:GMAIL_APP_PASSWORD="xxxx xxxx xxxx xxxx"
+Requires a Google App Password in gitignored .env or the terminal:
+
+GMAIL_USER=imhardikthanki@gmail.com
+GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
 ============================================================================= */
+
+const MAILBOXES = [
+  'INBOX',
+  '[Gmail]/All Mail',
+  '[Gmail]/Spam',
+  '[Google Mail]/All Mail',
+  '[Google Mail]/Spam'
+];
+
+function envTimeoutMs() {
+  const parsed = Number(
+    process.env.GMAIL_IMAP_TIMEOUT_MS
+  );
+
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed;
+  }
+
+  return 180000;
+}
 
 export function isGmailAutomationEnabled() {
   return Boolean(
-    process.env.GMAIL_APP_PASSWORD?.replace(
-      /\s+/g,
-      ''
-    )
+    gmailAppPassword()
   );
 }
 
 function gmailUser() {
-  return process.env.GMAIL_USER ??
-    TEST_USERS.onboarding.emailBase;
+  return (
+    process.env.GMAIL_USER ??
+    TEST_USERS.onboarding.emailBase ??
+    ''
+  ).trim();
 }
 
 function gmailAppPassword() {
   return (
     process.env.GMAIL_APP_PASSWORD ??
     ''
-  ).replace(
-    /\s+/g,
-    ''
-  );
+  ).replace(/\s+/g, '');
 }
 
-function decodeQuotedPrintable(
-  value: string
-) {
+function decodeQuotedPrintable(value: string) {
   return value
-    .replace(
-      /=\r?\n/g,
-      ''
-    )
-    .replace(
-      /=([0-9A-Fa-f]{2})/g,
-      (_match, hex) =>
-        String.fromCharCode(
-          Number.parseInt(
-            hex,
-            16
-          )
-        )
+    .replace(/=\r?\n/g, '')
+    .replace(/=([0-9A-Fa-f]{2})/g, (_match, hex) =>
+      String.fromCharCode(Number.parseInt(hex, 16))
     );
 }
 
-function extractVerificationLink(
-  rawEmail: string
-) {
-  const decoded =
-    decodeQuotedPrintable(
-      rawEmail
-    );
+function decodeBase64(value: string) {
+  try {
+    return Buffer.from(
+      value.replace(/\s+/g, ''),
+      'base64'
+    ).toString('utf8');
+  } catch {
+    return '';
+  }
+}
 
-  const escapedBase =
-    BASE_URL.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      '\\$&'
-    );
+function decodeMime(rawEmail: string) {
+  const quoted = decodeQuotedPrintable(rawEmail);
+  const withBase64 = quoted.replace(
+    /Content-Transfer-Encoding:\s*base64\s*\r?\n\r?\n([A-Za-z0-9+/=\s]+)/gi,
+    (_match, body: string) => `\n${decodeBase64(body)}\n`
+  );
 
-  const match =
-    decoded.match(
-      new RegExp(
-        `${escapedBase}/[^\\s"'<>\\\\]+`,
-        'i'
-      )
-    ) ??
-    decoded.match(
-      /https?:\/\/[^\s"'<>\\]*verify[^\s"'<>\\]*/i
-    );
+  return `${quoted}\n${withBase64}`;
+}
 
-  if (
-    !match
-  ) {
-    return undefined;
+function extractVerificationLink(rawEmail: string) {
+  const decoded = decodeMime(rawEmail)
+    .replace(/&amp;/gi, '&')
+    .replace(/&#x3d;|=3D/gi, '=');
+
+  const escapedBase = BASE_URL.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  );
+
+  const patterns = [
+    new RegExp(`${escapedBase}/[^\\s"'<>\\\\]+`, 'ig'),
+    /https?:\/\/(?:www\.)?ooltool\.com\/[^\s"'<>\\]+/ig,
+    /https?:\/\/[^\s"'<>\\]*uat\.ooltool\.com\/[^\s"'<>\\]*/ig,
+    /https?:\/\/[^\s"'<>\\]*(?:verify-email|email-verif|confirm-email|\/verify)[^\s"'<>\\]*/ig
+  ];
+
+  const links: string[] = [];
+
+  for (const pattern of patterns) {
+    const matches = decoded.match(pattern) ?? [];
+    links.push(...matches);
   }
 
-  return match[0]
-    .replace(
-      /&amp;/g,
-      '&'
+  const unique = [
+    ...new Set(
+      links.map((link) =>
+        link
+          .replace(/&amp;/g, '&')
+          .replace(/[),.;>"'\]]+$/g, '')
+      )
     )
-    .replace(
-      /[),.;]+$/,
-      ''
-    );
+  ];
+
+  const preferred = unique.find((link) =>
+    /verify|confirm|token/i.test(link)
+  );
+
+  return preferred ?? unique[0];
 }
 
-function quoteImap(
-  value: string
-) {
+function quoteImap(value: string) {
   return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
+function collectUids(response: string) {
+  const line = response.match(/^\* SEARCH[^\r\n]*/m)?.[0] ?? '';
+
+  return [
+    ...new Set(
+      [...line.matchAll(/\b(\d+)\b/g)].map((match) => match[1])
+    )
+  ];
+}
+
+function newestUids(uids: string[], limit = 8) {
+  return uids.slice(-limit).reverse();
 }
 
 async function readImapResponse(
   socket: tls.TLSSocket,
-  state: {
-    buffer: string;
-  },
+  state: { buffer: string },
   tag: string
 ) {
-  const timeout =
-    Date.now() +
-    25000;
+  const timeout = Date.now() + 45000;
 
-  while (
-    Date.now() <
-    timeout
-  ) {
-    if (
-      new RegExp(
-        `^${tag} (NO|BAD)`,
-        'm'
-      ).test(
-        state.buffer
-      )
-    ) {
-      throw new Error(
-        state.buffer.slice(
-          -400
-        )
-      );
+  while (Date.now() < timeout) {
+    if (new RegExp(`^${tag} (NO|BAD)`, 'm').test(state.buffer)) {
+      const response = state.buffer;
+      state.buffer = '';
+      throw new Error(response.slice(-500).trim());
     }
 
-    if (
-      new RegExp(
-        `^${tag} OK`,
-        'm'
-      ).test(
-        state.buffer
-      )
-    ) {
-      const response =
-        state.buffer;
-
-      state.buffer =
-        '';
-
+    if (new RegExp(`^${tag} OK`, 'm').test(state.buffer)) {
+      const response = state.buffer;
+      state.buffer = '';
       return response;
     }
 
-    await new Promise(
-      resolve =>
-        setTimeout(
-          resolve,
-          50
-        )
-    );
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
 
-  throw new Error(
-    'Gmail IMAP timed out'
-  );
+  throw new Error('Gmail IMAP timed out');
 }
 
-async function imapRequest(
-  email: string
+async function imapSession<T>(
+  run: (
+    send: (command: string) => Promise<string>
+  ) => Promise<T>
 ) {
-  const user =
-    gmailUser();
+  const user = gmailUser();
+  const password = gmailAppPassword();
 
-  const password =
-    gmailAppPassword();
+  if (!user) {
+    throw new Error('GMAIL_USER is not set');
+  }
+
+  if (!password) {
+    throw new Error('GMAIL_APP_PASSWORD is not set');
+  }
 
   const state = {
     buffer: ''
   };
 
-  const socket =
-    await new Promise<tls.TLSSocket>(
-      (resolve, reject) => {
-        const connection =
-          tls.connect(
-            {
-              host: 'imap.gmail.com',
-              port: 993,
-              servername: 'imap.gmail.com'
-            }
-          );
+  const socket = await new Promise<tls.TLSSocket>((resolve, reject) => {
+    const connection = tls.connect({
+      host: 'imap.gmail.com',
+      port: 993,
+      servername: 'imap.gmail.com'
+    });
 
-        connection.setEncoding(
-          'utf8'
-        );
+    connection.setEncoding('utf8');
 
-        connection.on(
-          'data',
-          (chunk: string) => {
-            state.buffer +=
-              chunk;
-          }
-        );
+    connection.on('data', (chunk: string) => {
+      state.buffer += chunk;
+    });
 
-        connection.once(
-          'error',
-          reject
-        );
+    connection.once('error', reject);
+    connection.once('secureConnect', () => resolve(connection));
+  });
 
-        connection.once(
-          'secureConnect',
-          () =>
-            resolve(
-              connection
-            )
-        );
-      }
-    );
-
-  socket.setTimeout(
-    30000
-  );
-
-  const waitForGreeting =
-    async () => {
-      const timeout =
-        Date.now() +
-        15000;
-
-      while (
-        Date.now() <
-        timeout
-      ) {
-        if (
-          /\* OK/i.test(
-            state.buffer
-          )
-        ) {
-          state.buffer =
-            '';
-
-          return;
-        }
-
-        await new Promise(
-          resolve =>
-            setTimeout(
-              resolve,
-              50
-            )
-        );
-      }
-
-      throw new Error(
-        'Gmail IMAP greeting timed out'
-      );
-    };
-
-  let tagCount =
-    0;
-
-  const send = async (
-    command: string
-  ) => {
-    tagCount +=
-      1;
-
-    const tag =
-      `A${tagCount}`;
-
-    socket.write(
-      `${tag} ${command}\r\n`
-    );
-
-    return readImapResponse(
-      socket,
-      state,
-      tag
-    );
-  };
+  socket.setTimeout(45000);
 
   try {
-    await waitForGreeting();
+    const greetingTimeout = Date.now() + 15000;
+    let greeted = false;
 
-    await send(
-      `LOGIN ${quoteImap(user)} ${quoteImap(password)}`
-    );
+    while (Date.now() < greetingTimeout) {
+      if (/\* OK/i.test(state.buffer)) {
+        state.buffer = '';
+        greeted = true;
+        break;
+      }
 
-    await send(
-      'SELECT INBOX'
-    );
-
-    const search =
-      await send(
-        `UID SEARCH X-GM-RAW ${quoteImap(`newer_than:2d to:${email}`)}`
-      );
-
-    let uids =
-      [
-        ...search.matchAll(
-          /\* SEARCH[^\n]*/g
-        )
-      ]
-        .flatMap(
-          line =>
-            [
-              ...line[0].matchAll(
-                /\b(\d+)\b/g
-              )
-            ]
-              .map(
-                match =>
-                  match[1]
-              )
-        );
-
-    if (
-      uids.length ===
-      0
-    ) {
-      const fallback =
-        await send(
-          `UID SEARCH TEXT ${quoteImap(email)}`
-        );
-
-      uids =
-        [
-          ...fallback.matchAll(
-            /\* SEARCH[^\n]*/g
-          )
-        ]
-          .flatMap(
-            line =>
-              [
-                ...line[0].matchAll(
-                  /\b(\d+)\b/g
-                )
-              ]
-                .map(
-                  match =>
-                    match[1]
-                )
-        );
+      await new Promise((resolve) => setTimeout(resolve, 50));
     }
 
-    const uid =
-      uids.at(
-        -1
-      );
-
-    if (
-      !uid
-    ) {
-      throw new Error(
-        `No Gmail message found for ${email}`
-      );
+    if (!greeted) {
+      throw new Error('Gmail IMAP greeting timed out');
     }
 
-    const body =
-      await send(
-        `UID FETCH ${uid} BODY.PEEK[]`
-      );
+    let tagCount = 0;
 
-    await send(
-      'LOGOUT'
-    ).catch(
-      () => undefined
-    );
+    const send = async (command: string) => {
+      tagCount += 1;
+      const tag = `A${tagCount}`;
+      socket.write(`${tag} ${command}\r\n`);
+      return readImapResponse(socket, state, tag);
+    };
 
-    const link =
-      extractVerificationLink(
-        body
-      );
+    await send(`LOGIN ${quoteImap(user)} ${quoteImap(password)}`);
 
-    if (
-      !link
-    ) {
-      throw new Error(
-        `Gmail message for ${email} did not contain a verification link`
-      );
+    try {
+      return await run(send);
+    } finally {
+      await send('LOGOUT').catch(() => undefined);
     }
-
-    return link;
   } finally {
     socket.destroy();
   }
 }
 
+function searchCommands(email: string) {
+  const uniqueLocal = email.split('@')[0]?.split('+')[1];
+
+  const commands = [
+    `UID SEARCH X-GM-RAW ${quoteImap(`newer_than:2d deliveredto:${email}`)}`,
+    `UID SEARCH X-GM-RAW ${quoteImap(`newer_than:2d to:${email}`)}`,
+    `UID SEARCH X-GM-RAW ${quoteImap(`newer_than:2d ${email}`)}`,
+    `UID SEARCH HEADER Delivered-To ${quoteImap(email)}`,
+    `UID SEARCH TO ${quoteImap(email)}`,
+    `UID SEARCH TEXT ${quoteImap(email)}`
+  ];
+
+  if (uniqueLocal) {
+    commands.push(
+      `UID SEARCH X-GM-RAW ${quoteImap(`newer_than:2d ${uniqueLocal}`)}`,
+      `UID SEARCH TEXT ${quoteImap(uniqueLocal)}`
+    );
+  }
+
+  return commands;
+}
+
+async function searchMailbox(
+  send: (command: string) => Promise<string>,
+  mailbox: string,
+  email: string
+) {
+  try {
+    await send(`SELECT ${quoteImap(mailbox)}`);
+  } catch {
+    return [];
+  }
+
+  const uids: string[] = [];
+
+  for (const command of searchCommands(email)) {
+    try {
+      const response = await send(command);
+      uids.push(...collectUids(response));
+
+      if (uids.length > 0) {
+        return newestUids(uids);
+      }
+    } catch {
+      // Try the next Gmail search syntax.
+    }
+  }
+
+  return newestUids(uids);
+}
+
+async function fetchLink(
+  send: (command: string) => Promise<string>,
+  uid: string
+) {
+  const body = await send(`UID FETCH ${uid} BODY.PEEK[]`);
+  return extractVerificationLink(body);
+}
+
+async function imapRequest(email: string) {
+  return imapSession(async (send) => {
+    for (const mailbox of MAILBOXES) {
+      const uids = await searchMailbox(send, mailbox, email);
+
+      for (const uid of uids) {
+        const link = await fetchLink(send, uid);
+
+        if (link) {
+          console.log(
+            `Found verification link in Gmail ${mailbox} UID ${uid}`
+          );
+          return link;
+        }
+      }
+    }
+
+    throw new Error(
+      `No Gmail verification message found for ${email}`
+    );
+  });
+}
+
 export async function waitForGmailVerificationLink(
   email: string,
-  timeoutMs =
-    90000
+  timeoutMs = envTimeoutMs()
 ) {
-  const startedAt =
-    Date.now();
+  const startedAt = Date.now();
+  let lastError: Error | undefined;
+  let attempt = 0;
 
-  let lastError:
-    Error |
-    undefined;
+  while (Date.now() - startedAt < timeoutMs) {
+    attempt += 1;
 
-  while (
-    Date.now() -
-    startedAt <
-    timeoutMs
-  ) {
     try {
-      return await imapRequest(
-        email
-      );
-    } catch (
-      error
-    ) {
-      lastError =
-        error instanceof Error
-          ? error
-          : new Error(
-            String(
-              error
-            )
-          );
+      return await imapRequest(email);
+    } catch (error) {
+      lastError = error instanceof Error
+        ? error
+        : new Error(String(error));
 
-      await new Promise(
-        resolve =>
-          setTimeout(
-            resolve,
-            5000
-          )
+      const remainingMs = timeoutMs - (Date.now() - startedAt);
+
+      if (attempt === 1 || attempt % 3 === 0) {
+        console.log(
+          `Gmail IMAP attempt ${attempt} for ${email}: ${lastError.message.split('\n')[0]}`
+        );
+      }
+
+      if (remainingMs <= 0) {
+        break;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.min(5000, remainingMs))
       );
     }
   }
 
-  throw lastError ??
-    new Error(
-      `Timed out waiting for Gmail verification mail to ${email}`
-    );
+  throw lastError ?? new Error(
+    `Timed out waiting for Gmail verification mail to ${email}`
+  );
 }

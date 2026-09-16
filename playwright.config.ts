@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import './tests/config/loadLocalEnv';
 import {
   watchDelayMs
 } from './tests/config/watchMode';

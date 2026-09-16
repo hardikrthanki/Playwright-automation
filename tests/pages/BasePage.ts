@@ -44,7 +44,7 @@ export class BasePage {
       this.page.getByRole(
         'button',
         {
-          name: /^(accept|essential only)$/i
+        name: /accept( all)?|essential only/i
         }
       ).first(),
       this.page.getByRole(

@@ -12,6 +12,11 @@ import {
   URLS
 } from '../config/constants';
 
+import {
+  isLoginUrl,
+  restoreSubscriberSession
+} from '../helpers/subscriberSession';
+
 /* ============================================================================
 PAGE OBJECT: DashboardPage
 
@@ -172,15 +177,67 @@ export class DashboardPage
 
   private async openProfileMenu() {
 
-    await safeClick(
+    await this.dismissMarketingOverlays();
+
+    const menuTrigger =
       this.page.getByText(
         'HT',
         {
           exact: true
         }
-      ),
+      ).or(
+        this.page.locator(
+          'header button'
+        ).filter({
+          hasText: /^[A-Z]{1,2}$/
+        })
+      ).or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /account|profile menu|user menu/i
+          }
+        )
+      ).first();
+
+    await safeClick(
+      menuTrigger,
       'Open Profile Menu'
     );
+  }
+
+  private profileMenuItem(
+    label: string
+  ) {
+    const labelPattern =
+      new RegExp(
+        `^${label.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        )}$`,
+        'i'
+      );
+
+    return this.page.getByRole(
+      'menuitem',
+      {
+        name: labelPattern
+      }
+    ).or(
+      this.page.getByRole(
+        'link',
+        {
+          name: labelPattern
+        }
+      )
+    ).or(
+      this.page.getByRole(
+        'button',
+        {
+          name: labelPattern
+        }
+      )
+    ).first();
   }
 
   async validateNoLoadError() {
@@ -199,6 +256,18 @@ export class DashboardPage
       acceptTrialSuccessMobileGate?: boolean;
     }
   ) {
+
+    await this.dismissMarketingOverlays();
+
+    if (
+      isLoginUrl(
+        this.page.url()
+      )
+    ) {
+      await restoreSubscriberSession(
+        this.page
+      );
+    }
 
     Logger.info(
       'Validating Dashboard'
@@ -715,17 +784,9 @@ export class DashboardPage
       await this.openProfileMenu();
 
       await safeClick(
-        this.page
-          .getByText(
-            new RegExp(
-              item.label.replace(
-                /[.*+?^${}()|[\]\\]/g,
-                '\\$&'
-              ),
-              'i'
-            )
-          )
-          .first(),
+        this.profileMenuItem(
+          item.label
+        ),
         `Open ${item.label} From Profile Menu`
       );
 

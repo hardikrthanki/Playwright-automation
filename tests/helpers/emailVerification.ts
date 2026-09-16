@@ -10,6 +10,8 @@ import {
 import { URLS }
   from '../config/constants';
 
+import '../config/loadLocalEnv';
+
 import {
   isGmailAutomationEnabled,
   waitForGmailVerificationLink
@@ -23,8 +25,8 @@ PURPOSE
 After registration, wait for the Gmail verification link to succeed.
 Never click Resend / Send verification link.
 
-The working manual flow is: verify first, then open /login, then Sign in.
-Resume Playwright only after the Gmail link confirms the address.
+Uses Gmail IMAP when GMAIL_APP_PASSWORD is set in .env or the terminal.
+Falls back to a headed pause only when automatic verification cannot finish.
 ============================================================================= */
 
 export function isEmailVerificationPage(
@@ -66,6 +68,14 @@ export async function waitForManualEmailVerification(
     return;
   }
 
+  console.log(
+    `Email verification for ${email}. Gmail IMAP: ${
+      isGmailAutomationEnabled()
+        ? 'enabled'
+        : 'disabled'
+    }`
+  );
+
   if (
     isGmailAutomationEnabled()
   ) {
@@ -98,18 +108,45 @@ export async function waitForManualEmailVerification(
     } catch (
       error
     ) {
-      console.log(
-        'Gmail inbox automation failed. Falling back to manual pause.'
-      );
-      console.log(
+      const message =
         error instanceof Error
           ? error.message
           : String(
             error
-          )
+          );
+
+      console.log(
+        'Gmail inbox automation failed.'
+      );
+      console.log(
+        message
+      );
+
+      if (process.env.CI) {
+        throw new Error(
+          `Automatic Gmail verification failed for ${email}. ${message}`
+        );
+      }
+
+      console.log(
+        'Falling back to manual pause.'
+      );
+    }
+  } else {
+    console.log(
+      'GMAIL_APP_PASSWORD is not set, so automatic Gmail verification is skipped.'
+    );
+    console.log(
+      'Copy .env.example to .env and paste the Gmail App Password, or set $env:GMAIL_APP_PASSWORD in this VS Code terminal.'
+    );
+
+    if (process.env.CI) {
+      throw new Error(
+        `Automatic Gmail verification is not configured for ${email}. Set GMAIL_APP_PASSWORD in .env.`
       );
     }
   }
+
   console.log(
     '\nMANUAL EMAIL VERIFICATION REQUIRED'
   );

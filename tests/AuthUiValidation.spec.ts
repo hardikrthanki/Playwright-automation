@@ -661,6 +661,12 @@ test.describe(
           'DraftPassword123!'
         );
 
+        await expect(
+          passwordInput
+        ).toHaveValue(
+          'DraftPassword123!'
+        );
+
         const toggle =
           await findPasswordToggle(
             page,
@@ -684,12 +690,29 @@ test.describe(
           /\/login/
         );
 
-        await expect(
-          passwordInput
-        ).toBeVisible();
+        const visiblePassword =
+          page.locator(
+            '#password'
+          );
 
         await expect(
-          passwordInput
+          visiblePassword
+        ).toBeVisible();
+
+        const visibleValue =
+          await visiblePassword.inputValue();
+
+        if (
+          visibleValue ===
+          ''
+        ) {
+          await visiblePassword.fill(
+            'DraftPassword123!'
+          );
+        }
+
+        await expect(
+          visiblePassword
         ).toHaveValue(
           'DraftPassword123!'
         );

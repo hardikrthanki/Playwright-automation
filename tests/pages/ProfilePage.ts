@@ -18,6 +18,10 @@ import {
   BASE_URL
 } from '../config/testData';
 
+import {
+  openAuthenticatedPath
+} from '../helpers/subscriberSession';
+
 /* =============================================================================
 PAGE OBJECT: ProfilePage
 
@@ -68,7 +72,23 @@ export class ProfilePage
 constructor(page: Page) {
   super(page);
   this.emailInput =
-  page.locator('#email');
+    page.locator(
+      '#email:disabled'
+    ).or(
+      page.locator(
+        'form'
+      ).filter({
+        has: page.getByLabel(
+          /first name/i
+        )
+      }).locator(
+        '#email'
+      )
+    ).or(
+      page.getByLabel(
+        /^email$/i
+      )
+    ).first();
     this.firstNameInput =
       page.getByLabel(
         /first name/i
@@ -157,12 +177,13 @@ constructor(page: Page) {
 
   async open() {
 
-    await this.page.goto(
-      `${BASE_URL}/dashboard/profile`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
+    await openAuthenticatedPath(
+      this.page,
+      '/dashboard/profile',
+      /\/dashboard\/profile/
     );
+
+    await this.dismissMarketingOverlays();
 
     await this.waitForProfileData();
   }
@@ -257,11 +278,20 @@ constructor(page: Page) {
 async waitForProfileData() {
 
   await expect(
+    this.page
+  ).toHaveURL(
+    /\/dashboard\/profile/,
+    {
+      timeout: 15000
+    }
+  );
+
+  await expect(
     this.emailInput
   ).not.toHaveValue(
     '',
     {
-      timeout: 10000
+      timeout: 20000
     }
   );
 }

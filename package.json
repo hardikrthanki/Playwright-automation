@@ -57,6 +57,8 @@
     "user-journey:report": "npm run test:user-journey:stable && npm run report:execution",
     "test:headed": "playwright test --headed",
     "report": "playwright show-report",
+    "gmail:check": "node scripts/check-gmail-imap.js",
+    "complete:headed": "powershell -ExecutionPolicy Bypass -File scripts/run-complete-headed-air.ps1",
     "air:parse": "node scripts/generate-air-results.js",
     "report:inventory": "node scripts/generate-inventory-report.js",
     "report:inventory:open": "node scripts/generate-inventory-report.js && start inventory-report/index.html",

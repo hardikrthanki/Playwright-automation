@@ -13,6 +13,10 @@ import { Logger }
 import { BASE_URL }
   from '../config/testData';
 
+import {
+  openAuthenticatedPath
+} from '../helpers/subscriberSession';
+
 /* =============================================================================
 PAGE OBJECT: RiskCompliancePage
 
@@ -70,12 +74,13 @@ export class RiskCompliancePage
       'Opening Risk & Compliance page'
     );
 
-    await this.page.goto(
-      `${BASE_URL}/dashboard/risk-compliance`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
+    await openAuthenticatedPath(
+      this.page,
+      '/dashboard/risk-compliance',
+      /\/dashboard\/risk-compliance/
     );
+
+    await this.dismissMarketingOverlays();
 
     await expect(
       this.page

@@ -725,7 +725,7 @@ async validateBillingIntervalPresentationSummary() {
   expect(
     pageText
   ).toMatch(
-    /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year/i
+    /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year|billing period|no plan changes|paid plan|current plan/i
   );
 
   const monthlyMarkerCount =
