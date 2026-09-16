@@ -9,7 +9,8 @@ import {
   STRIPE_CARD,
   STRIPE_DECLINED_CARD,
   STRIPE_EXPIRY,
-  STRIPE_CVC
+  STRIPE_CVC,
+  uniqueStripeTrialCard
 } from '../config/testData';
 
 import { BasePage } from './BasePage';
@@ -462,7 +463,9 @@ export class StripePaymentPage
     );
   }
 
-  async completePayment() {
+  async completePayment(
+    cardNumber = STRIPE_CARD
+  ) {
     Logger.info(
       'Completing Stripe Payment'
     );
@@ -472,11 +475,11 @@ export class StripePaymentPage
     await this.page.locator(
       '#cardNumber'
     ).fill(
-      STRIPE_CARD
+      cardNumber
     );
 
     Logger.success(
-      'Card Number Entered'
+      `Card Number Entered (...${cardNumber.slice(-4)})`
     );
 
     await this.page.locator(
@@ -519,8 +522,22 @@ export class StripePaymentPage
       'Payment Submitted'
     );
 
+    await this.page.waitForURL(
+      url =>
+        !url
+          .toString()
+          .includes(
+            'checkout.stripe.com'
+          ),
+      {
+        timeout: 60000
+      }
+    ).catch(
+      () => undefined
+    );
+
     await this.page.waitForTimeout(
-      10000
+      3000
     );
 
     Logger.url(
@@ -548,6 +565,20 @@ export class StripePaymentPage
 
     Logger.celebration(
       'Payment Completed'
+    );
+  }
+
+  async completeTrialPayment() {
+    const trialCard =
+      uniqueStripeTrialCard();
+
+    console.log(
+      'With-card trial Stripe card:',
+      `...${trialCard.slice(-4)}`
+    );
+
+    await this.completePayment(
+      trialCard
     );
   }
 }

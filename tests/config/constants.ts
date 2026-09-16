@@ -32,6 +32,8 @@ export const URLS = {
 
   LOGIN: '/login',
 
+  REGISTER: '/register',
+
   DASHBOARD: '/dashboard',
 
   ONBOARDING: '/onboarding',
@@ -39,3 +41,9 @@ export const URLS = {
   BILLING: '/dashboard/billing'
 
 };
+
+export const REGISTRATION_CTA_NAME =
+  /start\s+30[-\s]?day\s+free\s+trial|create account|sign up/i;
+
+export const REGISTRATION_SUBMIT_NAME =
+  /create account|start\s+(30[-\s]?day\s+)?free\s+trial|start trial/i;

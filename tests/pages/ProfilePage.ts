@@ -125,8 +125,8 @@ constructor(page: Page) {
 
     this.mobileNumberInput =
       page.locator(
-        'input[type="tel"], input[inputmode="tel"], input[autocomplete="tel"]'
-      ).first();
+        'input[type="tel"]:enabled, input[inputmode="tel"]:enabled'
+      ).last();
 
     this.sendMobileCodeButton =
       page.getByRole(
@@ -427,6 +427,23 @@ async openMobileNumberChange() {
   Logger.info(
     'Opening Mobile Number Change Form'
   );
+
+  const formAlreadyOpen =
+    await this.sendMobileCodeButton.isVisible({
+      timeout: 1500
+    }).catch(
+      () => false
+    );
+
+  if (
+    formAlreadyOpen
+  ) {
+    Logger.success(
+      'Mobile Number Change Form Already Open'
+    );
+
+    return;
+  }
 
   await expect(
     this.changeMobileNumberButton

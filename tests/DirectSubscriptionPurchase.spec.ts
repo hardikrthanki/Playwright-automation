@@ -5,13 +5,15 @@ import {
 } from '@playwright/test';
 
 import {
-  AUTH_SETTINGS,
   TEST_USERS
 } from './config/testData';
 import {
   generateEmail,
   generateMobileNumber
 } from './utils/emailGenerator';
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -107,24 +109,10 @@ async function openPlanSelectionForFreshUser(
     mobileNumber
   );
 
-  if (
-    AUTH_SETTINGS.emailVerificationRequired
-  ) {
-    console.log(
-      '\nMANUAL EMAIL VERIFICATION REQUIRED'
-    );
-    console.log(
-      `Verify email sent to: ${email}`
-    );
-    console.log(
-      'Open Gmail and click the verification link.'
-    );
-    console.log(
-      'After verification, resume Playwright.'
-    );
-
-    await page.pause();
-  }
+  await waitForManualEmailVerification(
+    page,
+    email
+  );
 
   await new LoginPage(
     page

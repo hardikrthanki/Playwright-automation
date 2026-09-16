@@ -24,13 +24,13 @@ management, billing, security, password recovery, and logout.
 | 6 | Compliance profile | Completes state/disclosures and validates state required, disclosures required, every disclosure required, cancel behavior, editable controls, update-before-save, post-onboarding dashboard updates, additional field persistence, and refresh persistence | `onboarding.spec.ts`, `OnboardingFieldValidation.spec.ts`, `RiskComplianceUpdate.spec.ts` | Stable prerequisite + controlled validation |
 | 7 | Plan selection | Selects Income Builder plan and validates plan catalog, feature summaries, monthly/annual toggle, paid-plan pricing across billing periods, Complete Setup guardrail, and Overlay Strategists trial modals without starting checkout | `onboarding.spec.ts`, `PlanSelectionValidation.spec.ts` | Stable + controlled validation |
 | 8 | Stripe payment | Completes Stripe checkout using test card | `onboarding.spec.ts` | Stable |
-| 9 | Dashboard validation | Verifies dashboard loads after payment and does not show load-error screen | `onboarding.spec.ts`, `DashboardHealth.spec.ts` | Stable |
+| 9 | Dashboard validation | Verifies dashboard loads after payment, survives refresh, and does not show load-error screen | `onboarding.spec.ts`, `DashboardNavigation.spec.ts` | Stable |
 | 10 | Dashboard navigation | Authenticated dashboard, top navigation tabs, top navigation route health, destination content rendering, destination refresh resilience, key authenticated route refresh resilience, dashboard refresh utility, dashboard quick-action menu, notification panel behavior, notification/theme/fullscreen controls, profile-menu navigation, profile-menu dismissal, profile-menu sign out, profile, billing, Risk & Compliance, menu, and browser-back navigation | `DashboardNavigation.spec.ts` | Stable |
-| 11 | Profile page | Validates profile data, personal-info controls, read-only email, and opt-in name update/restore persistence | `Profile.spec.ts` | Stable + controlled update |
+| 11 | Profile page | Validates profile data, personal-info controls, read-only email, drafts, and opt-in name update/restore persistence | `ProfileNegative.spec.ts` | Stable + controlled update |
 | 12 | Profile negative validation | Email read-only, empty draft safety, refresh persistence | `ProfileNegative.spec.ts` | Stable |
 | 13 | Profile mobile validation | Mobile section visibility, invalid mobile guardrail, optional OTP request/update | `ProfileMobileValidation.spec.ts` | Controlled by env flags |
-| 14 | Password validation | Mismatch and wrong current password checks | `ProfilePasswordMismatch.spec.ts`, `ProfileWrongCurrentPassword.spec.ts` | Stable |
-| 15 | Billing page | Billing overview, plans, transactions, invoice, PDF, tab stability, and billing evidence link targets inside OOLTool | `BillingDeep.spec.ts`, `BillingEdgeValidation.spec.ts`, `Subscriber.spec.ts` | Stable |
+| 14 | Password validation | Mismatch and wrong current password checks | `ProfilePasswordMismatch.spec.ts` | Stable |
+| 15 | Billing page | Billing overview, plans, transactions, invoice, PDF, tab stability, and billing evidence link targets inside OOLTool | `BillingEdgeValidation.spec.ts`, `Subscriber.spec.ts` | Stable |
 | 16 | Logout | User logout, login redirect, browser-back protection, refresh protection, and direct protected-route blocking after logout | `Subscriber.spec.ts`, `SessionSecurity.spec.ts` | Stable |
 | 17 | Forgot password | Reset email, reset page, new password, login with new password, negative form validation, whitespace/unsafe input checks, password-reset email rate-limit validation, and accessible public controls | `forgotpassword.spec.ts`, `AuthNegative.spec.ts`, `AuthConfigurationLimits.spec.ts`, `AccessibilityBrowser.spec.ts` | Controlled manual email step + stable negative checks |
 | 18 | Account unlock | Locked-account email unlock and login | `UnlockAccount.spec.ts` | Controlled, only when account is locked |
@@ -164,7 +164,7 @@ Run opt-in profile name update/restore validation:
 
 ```powershell
 $env:PROFILE_UPDATE_VALIDATION_ENABLED="true"
-npx playwright test tests/Profile.spec.ts -g "Profile name update" --headed
+npx playwright test tests/ProfileNegative.spec.ts -g "Name update" --headed
 ```
 
 Run Stripe billing management portal validation without cancelling. This is
@@ -375,3 +375,6 @@ Billing Subscription Management:
 - Remaining: destructive final cancellation, upgrade checkout submission,
   prorated invoice validation, and billing-cycle anchor validation should stay
   opt-in with dedicated test accounts and Stripe/admin visibility.
+- Gated non-destructive slices now include downgrade calculation preview,
+  billing-interval preview, and Overlay/Portfolio Hedger/Marketplace paid
+  purchases in `SubscriptionLifecycleExecution.spec.ts`.

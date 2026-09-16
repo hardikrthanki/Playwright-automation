@@ -5,7 +5,6 @@ import {
 } from '@playwright/test';
 
 import {
-  AUTH_SETTINGS,
   BASE_URL,
   TEST_USERS
 } from './config/testData';
@@ -13,6 +12,9 @@ import {
   generateEmail,
   generateMobileNumber
 } from './utils/emailGenerator';
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { DashboardPage }
@@ -212,24 +214,10 @@ async function openPlanSelection(
     mobileNumber
   );
 
-  if (
-    AUTH_SETTINGS.emailVerificationRequired
-  ) {
-    console.log(
-      '\nMANUAL EMAIL VERIFICATION REQUIRED'
-    );
-    console.log(
-      `Verify email sent to: ${email}`
-    );
-    console.log(
-      'Open Gmail and click the verification link.'
-    );
-    console.log(
-      'After verification, resume Playwright.'
-    );
-
-    await page.pause();
-  }
+  await waitForManualEmailVerification(
+    page,
+    email
+  );
 
   const login =
     new LoginPage(
@@ -278,176 +266,103 @@ if (
 
     if (planSelectionReadOnlyEnabled) {
       test(
-        'Plan catalog, feature summary, and billing toggle are visible',
+        'Plan catalog pricing overlay trial and complete-setup in one session',
         async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-toggle-validation'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-          page
-        );
-
-        await planPage.validatePlanCatalog();
-
-        await planPage.validateBillingToggle();
-        }
-      );
-
-      test(
-        'Paid plan prices and actions remain available across billing periods',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-paid-pricing-periods'
-        );
-
-        await new PlanSelectionPage(
-          page
-        ).validatePaidPlanPricingAcrossBillingPeriods();
-        }
-      );
-
-      test(
-        'Complete Setup initial state is safe before checkout',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-complete-setup-guard'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await openPlanSelection(
+            page,
+            'plan-selection-read-only'
           );
 
-        await planPage.validateCompleteSetupRequiresPlanSelection();
-        }
-      );
+          const planPage =
+            new PlanSelectionPage(
+              page
+            );
 
-      test(
-        'Overlay Strategists feature limits and premium benefits are displayed',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-overlay-feature-summary'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Catalog and billing toggle',
+            async () => {
+              await planPage.validatePlanCatalog();
+              await planPage.validateBillingToggle();
+            }
           );
 
-        await planPage.validateOverlayStrategistsFeatureSummary();
-        }
-      );
-
-      test(
-        'Paid plan entitlement limits are displayed before checkout',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-paid-entitlement-limits'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Paid plan prices across billing periods',
+            async () => {
+              await planPage.validatePaidPlanPricingAcrossBillingPeriods();
+            }
           );
 
-        await planPage.validatePaidPlanEntitlementSummaries();
-        }
-      );
-
-      test(
-        'User can switch plan selections without launching Stripe checkout',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-selection-switching'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Complete Setup requires a plan',
+            async () => {
+              await planPage.validateCompleteSetupRequiresPlanSelection();
+            }
           );
 
-        await planPage.validatePlanSelectionCanSwitchWithoutCheckout();
-        }
-      );
-
-      test(
-        'Overlay Strategists with-card trial explains card collection auto-renewal and cancellation',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-with-card-modal-validation'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Overlay Strategists feature summary',
+            async () => {
+              await planPage.validateOverlayStrategistsFeatureSummary();
+            }
           );
 
-        await planPage.openOverlayStrategistsTrialWithCardModal();
-
-        await planPage.validateOverlayStrategistsTrialModalContent(
-          'with-card'
-        );
-
-        await planPage.cancelTrialModal();
-
-        await planPage.validatePlanVisible(
-          'Overlay Strategists'
-        );
-        }
-      );
-
-      test(
-        'Overlay Strategists without-card trial explains Free plan fallback after expiry',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-without-card-modal-validation'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Paid plan entitlement limits',
+            async () => {
+              await planPage.validatePaidPlanEntitlementSummaries();
+            }
           );
 
-        await planPage.openOverlayStrategistsTrialWithoutCardModal();
-
-        await planPage.validateOverlayStrategistsTrialModalContent(
-          'without-card'
-        );
-
-        await planPage.closeTrialModal();
-
-        await planPage.validatePlanVisible(
-          'Overlay Strategists'
-        );
-        }
-      );
-
-      test(
-        'Overlay Strategists trial start requires terms acceptance',
-        async ({ page }) => {
-        await openPlanSelection(
-          page,
-          'plan-terms-validation'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
+          await test.step(
+            'Switch plans without checkout',
+            async () => {
+              await planPage.validatePlanSelectionCanSwitchWithoutCheckout();
+            }
           );
 
-        await planPage.openOverlayStrategistsTrialWithoutCardModal();
+          await test.step(
+            'With-card trial modal',
+            async () => {
+              await planPage.openOverlayStrategistsTrialWithCardModal();
 
-        await planPage.validateTrialTermsRequired();
+              await planPage.validateOverlayStrategistsTrialModalContent(
+                'with-card'
+              );
+
+              await planPage.cancelTrialModal();
+
+              await planPage.validatePlanVisible(
+                'Overlay Strategists'
+              );
+            }
+          );
+
+          await test.step(
+            'Without-card trial modal',
+            async () => {
+              await planPage.openOverlayStrategistsTrialWithoutCardModal();
+
+              await planPage.validateOverlayStrategistsTrialModalContent(
+                'without-card'
+              );
+
+              await planPage.closeTrialModal();
+
+              await planPage.validatePlanVisible(
+                'Overlay Strategists'
+              );
+            }
+          );
+
+          await test.step(
+            'Trial start requires terms',
+            async () => {
+              await planPage.openOverlayStrategistsTrialWithoutCardModal();
+
+              await planPage.validateTrialTermsRequired();
+            }
+          );
         }
       );
     }

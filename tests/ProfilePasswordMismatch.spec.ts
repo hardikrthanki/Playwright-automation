@@ -1,9 +1,6 @@
 import {
   test
-} from '@playwright/test';
-
-import { LoginPage }
-  from './pages/LoginPage';
+} from './fixtures/subscriberAuth';
 
 import { ProfilePage }
   from './pages/ProfilePage';
@@ -13,43 +10,51 @@ import {
 } from './config/testData';
 
 /* =============================================================================
-TEST SUITE: Profile Password Mismatch
+TEST SUITE: Profile Password Guardrails
 
 PURPOSE
 -------
-Validate password mismatch error message.
-
-Run:
-npx playwright test tests/ProfilePasswordMismatch.spec.ts --headed
+One authenticated session validates mismatch and wrong-current-password.
 ============================================================================= */
 
 test(
-  'Password Mismatch Validation',
+  'Password mismatch and wrong current password in one session',
   async ({ page }) => {
     test.setTimeout(
-      90000
+      120000
     );
-
-    const login =
-      new LoginPage(page);
 
     const profile =
-      new ProfilePage(page);
-
-    await login.login(
-      TEST_USERS.subscriber.email,
-      TEST_USERS.subscriber.password
-    );
+      new ProfilePage(
+        page
+      );
 
     await profile.open();
 
-    await profile.changePasswordMismatch(
-      TEST_USERS.subscriber.password,
-      'H@rdik1989',
-      'H@rdik9999'
+    await test.step(
+      'Password mismatch is blocked',
+      async () => {
+        await profile.changePasswordMismatch(
+          TEST_USERS.subscriber.password,
+          'H@rdik1989',
+          'H@rdik9999'
+        );
+
+        await profile.validatePasswordMismatch();
+      }
     );
 
-    await profile.validatePasswordMismatch();
+    await test.step(
+      'Wrong current password is blocked',
+      async () => {
+        await profile.changePasswordMismatch(
+          'WrongPassword123',
+          'H@rdik1989',
+          'H@rdik1989'
+        );
 
+        await profile.validateWrongCurrentPassword();
+      }
+    );
   }
 );

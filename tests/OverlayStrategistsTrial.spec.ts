@@ -4,13 +4,18 @@ import {
 } from '@playwright/test';
 
 import {
-  AUTH_SETTINGS,
   TEST_USERS
 } from './config/testData';
 import {
   generateEmail,
   generateMobileNumber
 } from './utils/emailGenerator';
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
+import {
+  continueAfterWithCardTrialCheckout
+} from './helpers/withCardTrial';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -42,7 +47,12 @@ verification in UAT.
 
 Run:
 $env:OVERLAY_STRATEGISTS_FLOW_ENABLED="true"
-npx playwright test tests/OverlayStrategistsTrial.spec.ts --headed
+$env:OVERLAY_STRATEGISTS_WITH_CARD_ENABLED="true"
+npx playwright test tests/OverlayStrategistsTrial.spec.ts --headed -g "with card"
+
+QA-CL-005: with-card trial needs a fresh user and a unique Stripe test card.
+Reusing 4242 trips already_redeemed and bounces to Plan Selection / Free.
+/verify-mobile?trial=success means the trial was granted.
 ============================================================================= */
 
 function envEnabled(
@@ -114,26 +124,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -231,26 +227,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -307,7 +289,12 @@ if (
               email
             );
 
-            await stripe.completePayment();
+            await stripe.completeTrialPayment();
+
+            await continueAfterWithCardTrialCheckout(
+              page,
+              mobileNumber
+            );
           }
         );
 
@@ -319,7 +306,9 @@ if (
                 page
               );
 
-            await dashboard.validateLoaded();
+            await dashboard.validateLoaded({
+              acceptTrialSuccessMobileGate: true
+            });
           }
         );
 
@@ -382,26 +371,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -508,26 +483,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -632,26 +593,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -756,26 +703,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -894,26 +827,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 

@@ -47,11 +47,8 @@ export class PlanSelectionPage extends BasePage {
 
     this.incomeBuilderPlan =
       page.getByText(
-        'Income Builder',
-        {
-          exact:true
-        }
-      );
+        /income builder|build your portfolio/i
+      ).first();
 
 
   this.completeSetupButton =
@@ -68,6 +65,18 @@ hasText:/complete setup|continue to payment/i
   private planByName(
     planName: string
   ) {
+    if (
+      /income builder/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /income builder|build your portfolio/i
+        )
+        .first();
+    }
+
     const escapedName =
       planName.replace(
         /[.*+?^${}()|[\]\\]/g,
@@ -77,7 +86,7 @@ hasText:/complete setup|continue to payment/i
     return this.page
       .getByText(
         new RegExp(
-          `^${escapedName}$`,
+          escapedName,
           'i'
         )
       )

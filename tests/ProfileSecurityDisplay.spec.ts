@@ -1,6 +1,6 @@
 import {
   test
-} from '@playwright/test';
+} from './fixtures/subscriberAuth';
 
 import {
   TEST_USERS
@@ -17,8 +17,8 @@ TEST SUITE: Profile Security Display
 
 PURPOSE
 -------
-Validates user profile security/MFA display without enabling, disabling,
-regenerating backup codes, or revoking trusted devices.
+One authenticated session validates MFA overview, backup codes, trusted
+devices, and refresh stability.
 
 RUN
 ---
@@ -35,6 +35,10 @@ const profileSecurityUser = {
     TEST_USERS.subscriber.password
 };
 
+const usesSharedSubscriber =
+  profileSecurityUser.email ===
+  TEST_USERS.subscriber.email;
+
 test.describe(
   'Profile Security Display',
   () => {
@@ -43,66 +47,57 @@ test.describe(
       timeout: 120000
     });
 
-    test.beforeEach(
+    test(
+      'Profile security MFA backup codes trusted devices and refresh',
       async ({ page }) => {
-        const login =
-          new LoginPage(page);
+        if (
+          !usesSharedSubscriber
+        ) {
+          await new LoginPage(
+            page
+          ).login(
+            profileSecurityUser.email,
+            profileSecurityUser.password
+          );
+        }
 
-        await login.login(
-          profileSecurityUser.email,
-          profileSecurityUser.password
+        const mfa =
+          new MfaPage(
+            page
+          );
+
+        await test.step(
+          'MFA overview',
+          async () => {
+            await mfa.validateSecurityOverviewReadOnly();
+          }
         );
-      }
-    );
 
-    test(
-      'Profile security page shows MFA overview state',
-      async ({ page }) => {
+        await test.step(
+          'Backup-code controls',
+          async () => {
+            await mfa.validateBackupCodeControlsReadOnly();
+          }
+        );
 
-        const mfa =
-          new MfaPage(page);
+        await test.step(
+          'Trusted devices',
+          async () => {
+            await mfa.validateTrustedDevicesReadOnly();
+          }
+        );
 
-        await mfa.validateSecurityOverviewReadOnly();
-      }
-    );
+        await test.step(
+          'Refresh keeps security page stable',
+          async () => {
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
 
-    test(
-      'Profile security page shows backup-code controls when MFA is enabled',
-      async ({ page }) => {
-
-        const mfa =
-          new MfaPage(page);
-
-        await mfa.validateBackupCodeControlsReadOnly();
-      }
-    );
-
-    test(
-      'Profile security page shows trusted devices section',
-      async ({ page }) => {
-
-        const mfa =
-          new MfaPage(page);
-
-        await mfa.validateTrustedDevicesReadOnly();
-      }
-    );
-
-    test(
-      'Profile security page remains stable after refresh',
-      async ({ page }) => {
-
-        const mfa =
-          new MfaPage(page);
-
-        await mfa.validateSecurityOverviewReadOnly();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await mfa.validateSecurityOverviewReadOnly();
-        await mfa.validateTrustedDevicesReadOnly();
+            await mfa.validateSecurityOverviewReadOnly();
+            await mfa.validateTrustedDevicesReadOnly();
+          }
+        );
       }
     );
   }

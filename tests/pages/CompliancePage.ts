@@ -47,10 +47,21 @@ constructor(page: Page) {
 
   private stateDropdown() {
     return this.page
-      .locator(
-        'button[role="combobox"]'
+      .getByText(
+        /state of residence/i
       )
-      .nth(2);
+      .locator(
+        'xpath=following::button[@role="combobox"][1]'
+      )
+      .or(
+        this.page.getByRole(
+          'combobox',
+          {
+            name: /state/i
+          }
+        )
+      )
+      .first();
   }
 
   private disclosureButtons() {
@@ -501,34 +512,48 @@ constructor(page: Page) {
   }
 
   async fill() {
-   Logger.info(
-  'Filling Compliance Profile'
-);
-   await this.page.waitForTimeout(
-  WAITS.NORMAL
-);
-   console.log(' State of Residence');
-const dropdowns =
-  this.page.locator(
-    'button[role="combobox"]'
-  );
+    Logger.info(
+      'Filling Compliance Profile'
+    );
 
-console.log(
-  `Found ${await dropdowns.count()} dropdown(s)`
-);
+    await this.dismissMarketingOverlays();
 
-for (
-  let i = 0;
-  i < await dropdowns.count();
-  i++
-) {
-  console.log(
-    `Dropdown ${i}:`,
-    await dropdowns.nth(i).textContent(),
-    'Visible:',
-    await dropdowns.nth(i).isVisible()
-  );
-}
+    const complianceTab =
+      this.page.getByRole(
+        'tab',
+        {
+          name: /compliance/i
+        }
+      ).first();
+
+    if (
+      await complianceTab.isVisible()
+        .catch(
+          () => false
+        )
+    ) {
+      const tabDisabled =
+        await complianceTab.isDisabled()
+          .catch(
+            () => true
+          );
+
+      if (!tabDisabled) {
+        await complianceTab.click({
+          timeout: 5000
+        }).catch(
+          () => undefined
+        );
+      }
+    }
+
+    await expect(
+      this.page.getByText(
+        /state of residence/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
 await this.selectState();
   
     await this.acceptAllDisclosures();

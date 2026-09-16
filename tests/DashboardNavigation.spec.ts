@@ -1,12 +1,10 @@
 import {
   expect,
-  Page,
-  test
+  Page
 } from '@playwright/test';
 
 import {
-  BASE_URL,
-  TEST_USERS
+  BASE_URL
 } from './config/testData';
 
 import { BillingPage }
@@ -15,8 +13,8 @@ import { BillingPage }
 import { DashboardPage }
   from './pages/DashboardPage';
 
-import { LoginPage }
-  from './pages/LoginPage';
+import { test }
+  from './fixtures/subscriberAuth';
 
 import { ProfilePage }
   from './pages/ProfilePage';
@@ -50,15 +48,14 @@ test.describe(
 
     test.beforeEach(
       async ({ page }) => {
-        const login =
-          new LoginPage(page);
-
         const dashboard =
           new DashboardPage(page);
 
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
         );
 
         await dashboard.validateLoaded();
@@ -90,6 +87,14 @@ test.describe(
     test(
       'Authenticated user can open dashboard profile billing and compliance routes',
       async ({ page }) => {
+        const dashboard =
+          new DashboardPage(page);
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await dashboard.validateLoaded();
 
         const profile =
           new ProfilePage(page);

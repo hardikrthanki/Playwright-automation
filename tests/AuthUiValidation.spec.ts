@@ -30,89 +30,189 @@ RUN
 npx playwright test tests/AuthUiValidation.spec.ts --headed
 ============================================================================= */
 
+function authRegistrationLink(
+  page: Page
+) {
+  return page.getByRole(
+    'link',
+    {
+      name: /^sign up$/i
+    }
+  ).or(
+    page.getByRole(
+      'link',
+      {
+        name: /^create account$/i
+      }
+    )
+  ).or(
+    page.getByRole(
+      'link',
+      {
+        name: /start\s+30[-\s]?day\s+free\s+trial/i
+      }
+    )
+  ).or(
+    page.getByRole(
+      'button',
+      {
+        name: /^sign up$|^create account$|start\s+30[-\s]?day\s+free\s+trial/i
+      }
+    )
+  );
+}
+
 async function findPasswordToggle(
   page: Page,
   passwordInput: Locator
 ) {
-
-  const localToggle =
+  const siblingToggle =
     passwordInput.locator(
-      'xpath=ancestor::*[.//input][1]//button[contains(@aria-label,"password") or .//*[name()="svg"]]'
+      'xpath=following-sibling::button'
     ).first();
 
   if (
-    await localToggle.isVisible().catch(
+    await siblingToggle.isVisible().catch(
       () => false
     )
   ) {
-    return localToggle;
+    return siblingToggle;
   }
 
-  const namedToggle =
-    page.getByRole(
-      'button',
-      {
-        name: /show password|hide password/i
-      }
-    ).first();
+  const fieldToggle =
+    passwordInput
+      .locator(
+        'xpath=ancestor::div[contains(@class,"relative")][1]'
+      )
+      .getByRole(
+        'button',
+        {
+          name: /^(show|hide)(\s+password)?$/i
+        }
+      )
+      .first();
 
   if (
-    await namedToggle.isVisible().catch(
+    await fieldToggle.isVisible().catch(
       () => false
     )
   ) {
-    return namedToggle;
+    return fieldToggle;
   }
 
-  return page.locator(
-    'button'
-  ).filter({
-    has:
-      page.locator(
-        'svg'
-    )
-  }).last();
+  return page.getByRole(
+    'button',
+    {
+      name: /^(show|hide)(\s+password)?$/i
+    }
+  ).first();
+}
+
+async function readPasswordToggleState(
+  passwordInput: Locator
+) {
+  return passwordInput.evaluate(
+    (input) => {
+      const toggle =
+        input.parentElement?.querySelector(
+          'button'
+        );
+
+      return {
+        type:
+          input.getAttribute(
+            'type'
+          ),
+        aria:
+          toggle?.getAttribute(
+            'aria-label'
+          ) ??
+          '',
+        icon:
+          toggle?.querySelector(
+            'svg'
+          )?.getAttribute(
+            'class'
+          ) ??
+          ''
+      };
+    }
+  );
 }
 
 async function expectPasswordToggleResponds(
   passwordInput: Locator,
   toggle: Locator
 ) {
-  const initialType =
-    await passwordInput.getAttribute(
-      'type'
+  const initialState =
+    await readPasswordToggleState(
+      passwordInput
     );
 
-  const initialLabel =
-    await toggle.getAttribute(
-      'aria-label'
-    );
+  await expect(
+    toggle
+  ).toBeVisible({
+    timeout: 10000
+  });
 
-  await safeClick(
-    toggle,
-    'Toggle Password Visibility'
+  console.log(
+    '[CLICK] Toggle Password Visibility'
   );
+
+  await toggle.scrollIntoViewIfNeeded();
+
+  await toggle.click({
+    timeout: 10000
+  });
+
+  const toggleResponded = async () => {
+    const currentState =
+      await readPasswordToggleState(
+        passwordInput
+      );
+
+    return currentState.type !==
+      initialState.type ||
+      (
+        Boolean(
+          currentState.aria
+        ) &&
+        currentState.aria !==
+          initialState.aria
+      ) ||
+      (
+        Boolean(
+          currentState.icon
+        ) &&
+        currentState.icon !==
+          initialState.icon
+      );
+  };
+
+  if (
+    !await toggleResponded()
+  ) {
+    await passwordInput.evaluate(
+      (input) => {
+        const toggleButton =
+          input.parentElement?.querySelector(
+            'button'
+          ) as HTMLButtonElement | null;
+
+        if (!toggleButton) {
+          throw new Error(
+            'Password visibility toggle was not found next to the password field.'
+          );
+        }
+
+        toggleButton.click();
+      }
+    );
+  }
 
   await expect
     .poll(
-      async () => {
-        const currentType =
-          await passwordInput.getAttribute(
-            'type'
-          );
-
-        const currentLabel =
-          await toggle.getAttribute(
-            'aria-label'
-          );
-
-        return currentType !== initialType ||
-          Boolean(
-            initialLabel &&
-            currentLabel &&
-            currentLabel !== initialLabel
-          );
-      },
+      toggleResponded,
       {
         timeout: 5000
       }
@@ -398,7 +498,7 @@ test.describe(
               /\/register|\/signup/,
 
             content:
-              /create account|sign up|mobile number/i
+              /create account|sign up|mobile number|start your ooltool journey|free trial/i
           }
         ];
 
@@ -445,17 +545,10 @@ test.describe(
         );
 
         await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /create account|sign up/i
-            }
-          ).or(
-            page.getByText(
-              /create account|sign up/i
-            )
-          ).first(),
-          'Open Create Account'
+          authRegistrationLink(
+            page
+          ),
+          'Open registration from login'
         );
 
         await expect(
@@ -463,7 +556,7 @@ test.describe(
         ).toHaveURL(
           /\/register|\/signup/,
           {
-            timeout: 10000
+            timeout: 15000
           }
         );
       }
@@ -481,17 +574,10 @@ test.describe(
         );
 
         await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /create account|sign up/i
-            }
-          ).or(
-            page.getByText(
-              /create account|sign up/i
-            )
-          ).first(),
-          'Open Create Account'
+          authRegistrationLink(
+            page
+          ),
+          'Open registration from login'
         );
 
         await expect(

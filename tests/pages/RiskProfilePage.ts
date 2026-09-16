@@ -208,6 +208,8 @@ export class RiskProfilePage
   async saveRiskProfile(
     label = 'Save Risk Profile'
   ) {
+    await this.dismissMarketingOverlays();
+
     await safeClick(
       this.page.getByRole('button', {
         name: /save risk profile/i,
@@ -234,45 +236,63 @@ export class RiskProfilePage
         name: /read disclosure/i,
       });
 
+    const saveComplianceButton =
+      this.page.getByRole('button', {
+        name: /save compliance profile/i,
+      });
+
     const complianceTab =
       this.page.getByRole('tab', {
         name: /compliance/i,
-      });
+      }).first();
 
     while (Date.now() < deadline) {
-      const disclosureCount =
-        await disclosureButtons.count();
-
-      for (let i = 0; i < disclosureCount; i++) {
-        if (
-          await this.locatorIsVisible(
-            disclosureButtons.nth(i)
-          )
-        ) {
-          return true;
-        }
+      if (
+        await this.locatorIsVisible(
+          disclosureButtons.first()
+        ) ||
+        await this.locatorIsVisible(
+          saveComplianceButton.first()
+        )
+      ) {
+        return true;
       }
 
       if (
         await this.locatorIsVisible(
-          complianceTab.first()
+          complianceTab
         )
       ) {
-        const disabled =
-          await complianceTab
-            .first()
-            .getAttribute('aria-disabled');
+        const tabDisabled =
+          await complianceTab.isDisabled()
+            .catch(
+              () => true
+            );
 
-        const selected =
-          await complianceTab
-            .first()
-            .getAttribute('aria-selected');
+        if (!tabDisabled) {
+          const selected =
+            await complianceTab.getAttribute(
+              'aria-selected'
+            );
 
-        if (
-          disabled !== 'true' ||
-          selected === 'true'
-        ) {
-          return true;
+          if (selected !== 'true') {
+            await complianceTab.click({
+              timeout: 3000
+            }).catch(
+              () => undefined
+            );
+          }
+
+          if (
+            await this.locatorIsVisible(
+              disclosureButtons.first()
+            ) ||
+            await this.locatorIsVisible(
+              saveComplianceButton.first()
+            )
+          ) {
+            return true;
+          }
         }
       }
 
@@ -406,8 +426,10 @@ export class RiskProfilePage
 
   async fill() {
     Logger.info(
-  'Filling Risk Profile'
-);
+      'Filling Risk Profile'
+    );
+
+    await this.dismissMarketingOverlays();
 
   Logger.step(
   'Open Experience Dropdown'

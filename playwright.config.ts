@@ -1,7 +1,20 @@
 import { defineConfig, devices } from '@playwright/test';
 
+import {
+  watchDelayMs
+} from './tests/config/watchMode';
+
 const recordAllArtifacts =
   process.env.RECORD_ALL_ARTIFACTS === 'true';
+
+const watchDelay =
+  watchDelayMs();
+
+if (watchDelay > 0) {
+  console.log(
+    `Headed watch mode: slowing each Playwright action by ${watchDelay}ms. Set SLOW_MO=0 for full speed.`
+  );
+}
 
 export default defineConfig({
   testDir: './tests',
@@ -30,6 +43,10 @@ export default defineConfig({
 
     actionTimeout: 30000,
     navigationTimeout: 30000,
+
+    launchOptions: {
+      slowMo: watchDelay,
+    },
   },
 
   projects: [

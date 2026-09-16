@@ -165,60 +165,72 @@ if (
       timeout: 120000
     });
 
-    for (const scenario of permissionScenarios) {
-      test(
-        `Allowed user can access ${scenario.name}`,
-        async ({ page }) => {
-          await loginAs(
-            page,
-            allowedUser
-          );
+    test(
+      'Allowed user can access permission-gated routes in one session',
+      async ({ page }) => {
+        await loginAs(
+          page,
+          allowedUser
+        );
 
-          await expectRouteAccess(
-            page,
-            scenario
-          );
+        for (const scenario of permissionScenarios) {
+          await test.step(
+            scenario.name,
+            async () => {
+              await expectRouteAccess(
+                page,
+                scenario
+              );
 
-          if (scenario.action) {
-            await expect(
-              page
-                .getByRole(
-                  'button',
-                  {
-                    name: scenario.action
-                  }
-                )
-                .or(
-                  page.getByRole(
-                    'link',
-                    {
-                      name: scenario.action
-                    }
-                  )
-                )
-                .first()
-            ).toBeVisible({
-              timeout: 10000
-            });
-          }
-        }
-      );
-
-      test(
-        `Restricted user cannot access ${scenario.name}`,
-        async ({ page }) => {
-          await loginAs(
-            page,
-            restrictedUser
-          );
-
-          await expectRouteBlocked(
-            page,
-            scenario
+              if (scenario.action) {
+                await expect(
+                  page
+                    .getByRole(
+                      'button',
+                      {
+                        name: scenario.action
+                      }
+                    )
+                    .or(
+                      page.getByRole(
+                        'link',
+                        {
+                          name: scenario.action
+                        }
+                      )
+                    )
+                    .first()
+                ).toBeVisible({
+                  timeout: 10000
+                });
+              }
+            }
           );
         }
-      );
-    }
+      }
+    );
+
+    test(
+      'Restricted user cannot access permission-gated routes in one session',
+      async ({ page }) => {
+        await loginAs(
+          page,
+          restrictedUser
+        );
+
+        for (const scenario of permissionScenarios) {
+          await test.step(
+            scenario.name,
+            async () => {
+              await expectRouteBlocked(
+                page,
+                scenario
+              );
+            }
+          );
+        }
+      }
+    );
     }
   );
 }

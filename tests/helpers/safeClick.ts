@@ -1,5 +1,9 @@
 import { Locator } from '@playwright/test';
 
+import {
+  watchDelayMs
+} from '../config/watchMode';
+
 /* =============================================================================
 HELPER: safeClick
 
@@ -25,4 +29,13 @@ export async function safeClick(
   await locator.click({
     force: true,
   });
+
+  const watchDelay =
+    watchDelayMs();
+
+  if (watchDelay > 0) {
+    await locator.page().waitForTimeout(
+      watchDelay
+    );
+  }
 }

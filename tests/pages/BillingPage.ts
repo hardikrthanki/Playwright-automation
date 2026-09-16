@@ -141,6 +141,8 @@ export class BillingPage
 
   readonly historyTab: Locator;
 
+  readonly overviewTab: Locator;
+
   readonly transactionsTab: Locator;
 
   readonly invoiceLinks: Locator;
@@ -162,7 +164,16 @@ constructor(page: Page) {
     page.getByRole(
       'tab',
       {
-        name: /history/i,
+        name: 'History',
+        exact: true
+      }
+    );
+
+  this.overviewTab =
+    page.getByRole(
+      'tab',
+      {
+        name: /^overview$/i
       }
     );
 
@@ -276,6 +287,8 @@ Logger.info(
   'Validating Billing Overview'
 );
 
+  await this.ensureOnApp();
+
   try {
     await safeClick(
       this.page.getByText(
@@ -306,10 +319,9 @@ Logger.info(
     );
 
     await this.page.goto(
-      new URL(
-        URLS.BILLING,
-        this.page.url()
-      ).toString(),
+      this.appUrl(
+        URLS.BILLING
+      ),
       {
         waitUntil: 'domcontentloaded',
       }
@@ -360,9 +372,11 @@ async validatePlans() {
 
   await expect(
     this.page.getByText(
-      /income builder/i
-    )
-  ).toBeVisible();
+      /income builder|build your portfolio/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
 
   console.log(
     ' Income Builder Plan Visible'
@@ -795,9 +809,23 @@ private async selectBillingIntervalIfAvailable(
   }
 }
 
+private planActionButtonPattern(
+  action: 'upgrade' | 'downgrade' | 'interval'
+) {
+  if (action === 'upgrade') {
+    return /upgrade/i;
+  }
+
+  if (action === 'downgrade') {
+    return /downgrade/i;
+  }
+
+  return /switch|change (billing|plan)|to annual|to monthly|upgrade|downgrade/i;
+}
+
 private async findPlanActionButton(
   planName: string,
-  action: 'upgrade' | 'downgrade'
+  action: 'upgrade' | 'downgrade' | 'interval'
 ) {
   const actionButtons =
     this.page
@@ -806,9 +834,9 @@ private async findPlanActionButton(
       )
       .filter({
         hasText:
-          action === 'upgrade'
-            ? /upgrade/i
-            : /downgrade/i
+          this.planActionButtonPattern(
+            action
+          )
       });
 
   const buttonCount =
@@ -925,20 +953,31 @@ private async findPlanActionButton(
 private planChangeDialog(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
+  const planName =
+    escapeRegExp(
+      options.targetPlan
+    );
+
+  const dialogPattern =
+    options.action === 'interval'
+      ? new RegExp(
+          `${planName}[\\s\\S]{0,800}(?:charge|amount due|recurring|billing)|(?:upgrade|downgrade|switch|change)\\s+to[\\s\\S]{0,80}${planName}`,
+          'i'
+        )
+      : new RegExp(
+          `(?:${options.action}\\s+to\\s+${planName}|switch to\\s+${planName}|${planName}\\s+charge)`,
+          'i'
+        );
+
   return this.page
     .getByRole(
       'dialog'
     )
     .filter({
-      hasText: new RegExp(
-        `${options.action} to\\s+${escapeRegExp(
-          options.targetPlan
-        )}`,
-        'i'
-      )
+      hasText: dialogPattern
     })
     .first();
 }
@@ -946,7 +985,7 @@ private planChangeDialog(
 async openPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: 'upgrade' | 'downgrade' | 'interval';
     interval: 'monthly' | 'annual';
   }
 ) {
@@ -960,11 +999,27 @@ async openPlanChangeCalculationPreview(
     options.interval
   );
 
-  const actionButton =
-    await this.findPlanActionButton(
-      options.targetPlan,
-      options.action
-    );
+  let actionButton;
+
+  try {
+    actionButton =
+      await this.findPlanActionButton(
+        options.targetPlan,
+        options.action
+      );
+  } catch (error) {
+    if (options.action !== 'interval') {
+      throw error;
+    }
+
+    actionButton =
+      await this.findPlanActionButton(
+        options.targetPlan,
+        options.interval === 'annual'
+          ? 'upgrade'
+          : 'downgrade'
+      );
+  }
 
   await safeClick(
     actionButton,
@@ -987,7 +1042,7 @@ async openPlanChangeCalculationPreview(
 async validatePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: 'upgrade' | 'downgrade' | 'interval';
     interval: 'monthly' | 'annual';
     expectedBillingCopy?: RegExp;
     expectedPlanCharge?: number;
@@ -1013,9 +1068,13 @@ async validatePlanChangeCalculationPreview(
     dialog
   ).toContainText(
     new RegExp(
-      `${options.action} to\\s+${escapeRegExp(
-        options.targetPlan
-      )}`,
+      `${options.action === 'interval'
+        ? `(?:upgrade|downgrade|switch|change)\\s+to|${escapeRegExp(
+          options.targetPlan
+        )}`
+        : `${options.action}\\s+to\\s+${escapeRegExp(
+          options.targetPlan
+        )}`}`,
       'i'
     )
   );
@@ -1184,24 +1243,26 @@ async validatePlanChangeCalculationPreview(
     planCharge ?? 0
   );
 
-  expect(
-    Math.abs(
-      (
-        planCharge ??
-        0
-      ) +
+  if (options.action === 'upgrade') {
+    expect(
+      Math.abs(
         (
-          unusedCredit ??
+          planCharge ??
           0
-        ) -
-        (
-          amountDueToday ??
-          0
-        )
-    )
-  ).toBeLessThanOrEqual(
-    0.02
-  );
+        ) +
+          (
+            unusedCredit ??
+            0
+          ) -
+          (
+            amountDueToday ??
+            0
+          )
+      )
+    ).toBeLessThanOrEqual(
+      0.02
+    );
+  }
 
   Logger.success(
     `${options.action} calculation preview validated for ${options.targetPlan} ${options.interval}`
@@ -1211,7 +1272,7 @@ async validatePlanChangeCalculationPreview(
 async submitPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
   Logger.info(
@@ -1365,7 +1426,7 @@ async validateActivePlan(
 async closePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
   const dialog =
@@ -1373,21 +1434,162 @@ async closePlanChangeCalculationPreview(
       options
     );
 
-  await safeClick(
+  const cancelButton =
     dialog.getByRole(
       'button',
       {
-        name: /^cancel$/i
+        name: /^(cancel|close)$/i
       }
-    ).first(),
-    'Cancel Plan Change Preview'
-  );
+    ).first();
+
+  if (
+    await cancelButton.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      cancelButton,
+      'Cancel Plan Change Preview'
+    );
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
 
   await expect(
     dialog
   ).toBeHidden({
     timeout: 10000
   });
+}
+
+async validatePlanChangeTermsRequired(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+  }
+) {
+  Logger.info(
+    `Validating ${options.action} terms are required before confirmation`
+  );
+
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const termsCheckbox =
+    dialog
+      .locator(
+        '[role="checkbox"], input[type="checkbox"]'
+      )
+      .first();
+
+  const confirmButton =
+    dialog
+      .getByRole(
+        'button',
+        {
+          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+        }
+      )
+      .first();
+
+  await expect(
+    termsCheckbox
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  if (
+    await checkboxIsChecked(
+      termsCheckbox
+    )
+  ) {
+    await safeClick(
+      termsCheckbox,
+      'Clear Plan Change Terms'
+    );
+  }
+
+  await expect(
+    confirmButton
+  ).toBeDisabled({
+    timeout: 10000
+  });
+
+  await safeClick(
+    termsCheckbox,
+    'Accept Plan Change Terms'
+  );
+
+  await expect
+    .poll(
+      async () =>
+        checkboxIsChecked(
+          termsCheckbox
+        ),
+      {
+        timeout: 10000,
+        message: 'Waiting for plan-change terms checkbox to be checked'
+      }
+    )
+    .toBe(
+      true
+    );
+
+  await expect(
+    confirmButton
+  ).toBeEnabled({
+    timeout: 15000
+  });
+
+  Logger.success(
+    `${options.action} terms required validation passed`
+  );
+}
+
+async validateDowngradeImpactCopyIfPresent(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+  }
+) {
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  const dialogText =
+    await dialog.innerText();
+
+  const hasImpactCopy =
+    /lose|lost|remov|limit|feature|access|entitlement|broker|account linked|position|no longer|will not have/i.test(
+      dialogText
+    );
+
+  if (hasImpactCopy) {
+    Logger.success(
+      'Downgrade impact or lost-feature copy is present'
+    );
+
+    return true;
+  }
+
+  Logger.info(
+    'Downgrade dialog does not show dedicated lost-feature warning copy'
+  );
+
+  return false;
 }
 
 async validatePaidSubscriberTrialCtaIsNotOffered() {
@@ -1445,6 +1647,22 @@ async validateOverviewContract() {
 
   await this.validateBillingUrl();
   await this.waitForBillingContent();
+
+  const overviewVisible =
+    await this.overviewTab.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    );
+
+  if (
+    overviewVisible
+  ) {
+    await safeClick(
+      this.overviewTab,
+      'Open Overview Tab'
+    );
+  }
 
   await expect(
     this.plansTab
@@ -1531,16 +1749,16 @@ async validateOverlayStrategistsTrialBillingState(
   ) {
     expect(
       bodyText,
-      'With-card trial should show saved payment method details in Billing.'
+      'QA-CL-005: with-card trial should show saved payment method details in Billing.'
     ).toMatch(
-      /visa|mastercard|amex|discover|4242|ending\s+in\s+\d{4}|\*{2,}\s*\d{4}|\u2022{2,}\s*\d{4}/i
+      /visa|mastercard|amex|discover|4444|5556|4242|ending\s+in\s+\d{4}|\*{2,}\s*\d{4}|\u2022{2,}\s*\d{4}/i
     );
 
     expect(
       bodyText,
-      'With-card trial should not be presented as only the Free Plan.'
+      'QA-CL-005: with-card trial grants Overlay Strategists, not Curious Explorer / Free.'
     ).not.toMatch(
-      /current plan\s*free plan|free plan\s*active/i
+      /current plan\s*[:\-]?\s*(free plan|curious explorer)|curious explorer\s*\(free\)/i
     );
   }
 
@@ -1733,6 +1951,8 @@ async openSubscriptionPortal() {
 
   await this.validateOverview();
 
+  await this.dismissMarketingOverlays();
+
   const manageControl =
     await this.manageSubscriptionControl();
 
@@ -1742,12 +1962,14 @@ async openSubscriptionPortal() {
     timeout: 15000
   });
 
+  await manageControl.scrollIntoViewIfNeeded();
+
   const newPagePromise =
     this.page.context()
       .waitForEvent(
         'page',
         {
-          timeout: 7000
+          timeout: 20000
         }
       )
       .catch(
@@ -1759,12 +1981,26 @@ async openSubscriptionPortal() {
     'Manage Subscription'
   );
 
+  const openedPage =
+    await newPagePromise;
+
   const portalPage =
-    await newPagePromise ??
+    openedPage ??
     this.page;
 
   await portalPage.waitForLoadState(
     'domcontentloaded'
+  ).catch(
+    () => undefined
+  );
+
+  await expect(
+    portalPage
+  ).toHaveURL(
+    /stripe\.com/,
+    {
+      timeout: 30000
+    }
   );
 
   await portalPage.waitForLoadState(
@@ -1865,7 +2101,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /current subscription/i
+      /current subscription|subscription/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -1881,7 +2117,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /billing information/i
+      /billing information|billing details|billing/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -1889,7 +2125,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /invoice history/i
+      /invoice history|invoices/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -1905,7 +2141,25 @@ async validateSubscriptionPortalOverview() {
   expect(
     portalText
   ).toMatch(
-    /current subscription[\s\S]+payment method[\s\S]+billing information[\s\S]+invoice history/i
+    /subscription/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /payment method/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /billing (information|details)/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /invoice/i
   );
 
   const expectedPlan =

@@ -15,6 +15,13 @@ import {
 }
 from '../config/testData';
 
+import {
+  REGISTRATION_CTA_NAME,
+  REGISTRATION_SUBMIT_NAME,
+  URLS
+}
+from '../config/constants';
+
 import { BasePage }
 from './BasePage';
 
@@ -32,7 +39,7 @@ Handles new user registration process.
 FLOW COVERED
 ------------
 1. Open Application
-2. Open Create Account
+2. Open Start 30-Day Free Trial / Create Account
 3. Enter User Details
 4. Enter Mobile Number
 5. Send SMS OTP
@@ -84,9 +91,16 @@ extends BasePage {
       page.getByRole(
         'link',
         {
-          name: /create account/i
+          name: REGISTRATION_CTA_NAME
         }
-      );
+      ).or(
+        page.getByRole(
+          'button',
+          {
+            name: REGISTRATION_CTA_NAME
+          }
+        )
+      ).first();
 
 
     this.firstNameInput =
@@ -156,12 +170,19 @@ extends BasePage {
           exact: true
         }
       ).or(
+        page.getByRole(
+          'button',
+          {
+            name: REGISTRATION_SUBMIT_NAME
+          }
+        )
+      ).or(
         page.locator(
           'button[type="submit"]'
         ).filter({
-          hasText: /create account/i
+          hasText: REGISTRATION_SUBMIT_NAME
         })
-      );
+      ).first();
 
   }
 
@@ -390,14 +411,41 @@ extends BasePage {
     );
 
 
-    await this.page.waitForTimeout(
-      3000
-    );
+    await this.dismissMarketingOverlays();
 
 
-    await safeClick(
-      this.createAccountLink,
-      'Open Create Account'
+    const registrationCtaVisible =
+      await this.createAccountLink.isVisible({
+        timeout: 10000
+      }).catch(
+        () => false
+      );
+
+    if (registrationCtaVisible) {
+      await safeClick(
+        this.createAccountLink,
+        'Open Start 30-Day Free Trial'
+      );
+    } else {
+      await this.page.goto(
+        `${BASE_URL}${URLS.REGISTER}`,
+        {
+          waitUntil:
+          'domcontentloaded',
+
+          timeout:
+          60000
+        }
+      );
+    }
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /\/register|\/signup/,
+      {
+        timeout: 15000
+      }
     );
 
     await expect(
@@ -414,7 +462,7 @@ extends BasePage {
 
 
     Logger.success(
-      'Create Account Opened'
+      'Registration page opened'
     );
 
   }

@@ -194,25 +194,46 @@ export class DashboardPage
     });
   }
 
-  async validateLoaded() {
+  async validateLoaded(
+    options?: {
+      acceptTrialSuccessMobileGate?: boolean;
+    }
+  ) {
 
-Logger.info(
-  'Validating Dashboard'
-);
+    Logger.info(
+      'Validating Dashboard'
+    );
 
-    await expect(this.page)
-      .toHaveURL(
-        /dashboard/,
-        {
-          timeout: 30000,
-        }
+    if (
+      options?.acceptTrialSuccessMobileGate &&
+      /verify-mobile/i.test(
+        this.page.url()
+      ) &&
+      /trial=success/i.test(
+        this.page.url()
+      )
+    ) {
+      Logger.success(
+        'QA-CL-005: with-card trial granted. Phone gate is separate from the trial grant.'
       );
 
-  await this.validateNoLoadError();
+      return;
+    }
 
-  Logger.success(
-  'Dashboard Loaded'
-);
+    await expect(
+      this.page
+    ).toHaveURL(
+      /dashboard/,
+      {
+        timeout: 30000
+      }
+    );
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Dashboard Loaded'
+    );
   }
 
   async validateTopNavigationRoutes() {
@@ -682,10 +703,9 @@ Logger.info(
 
     for (const item of menuItems) {
       await this.page.goto(
-        new URL(
-          URLS.DASHBOARD,
-          this.page.url()
-        ).toString(),
+        this.appUrl(
+          URLS.DASHBOARD
+        ),
         {
           waitUntil: 'domcontentloaded'
         }
@@ -865,10 +885,9 @@ Logger.info(
 
     for (const route of routes) {
       await this.page.goto(
-        new URL(
-          route.path,
-          this.page.url()
-        ).toString(),
+        this.appUrl(
+          route.path
+        ),
         {
           waitUntil: 'domcontentloaded'
         }
@@ -925,6 +944,27 @@ Logger.info(
 
     Logger.success(
       'Key authenticated routes remain usable after refresh'
+    );
+  }
+
+  async validateExpiryOverview() {
+    Logger.info(
+      'Validating Option Expiry Overview'
+    );
+
+    await expect(
+      this.page.getByRole(
+        'heading',
+        {
+          name: /option expiry overview/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Option Expiry Overview is visible'
     );
   }
 

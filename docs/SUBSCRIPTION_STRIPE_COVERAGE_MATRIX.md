@@ -138,14 +138,14 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 | 4 | No-card trial linked-account limit requires confirmation | Critical | Blocked | Business clarification and broker linked account data | FRD says no-card trial has 5 linked accounts, but paid Overlay Strategists UI displays Account Linked (10). Confirm whether no-card trial should remain reduced at 5 or match paid-plan limit of 10 before automating enforcement |
 | 5 | No-card trial portfolio position limit is 100 | Critical | Blocked | Portfolio import/API seed fixture | FRD expected limit is 100 positions for no-card trial. Enforcement needs a safe portfolio import/API seed fixture |
 | 6 | Premium Overlay Strategists features available | High | Started | Runtime entitlement checks need feature-specific pages | Plan-selection validation confirms the Overlay Strategists premium benefit and limit summary is displayed before trial activation |
-| 7 | Start trial with valid card | Critical | Known Bug | Product fix required | With-card trial activation validates Stripe trial details, submits the test card, and now checks Billing for active Overlay Strategists trial plus saved payment method. Product bug remains if Billing shows Free Plan or omits card details |
+| 7 | Start trial with valid card | Critical | Started | Fresh user plus unique Stripe test card | QA-CL-005: trial grants Overlay Strategists (`trialing`), not Free. Billing Free / Plan Selection bounce is the silent `already_redeemed` card-reuse gate. Automation rotates Visa/Mastercard test cards per user. `/verify-mobile?trial=success` means the trial succeeded. |
 | 7A | Authorization failure handling | Critical | Started | Manual email verification and Stripe test checkout | Declined-card authorization failure is automated behind `OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED`; trial is not activated and Stripe displays a failure message |
 | 8 | No subscription charge during trial | Critical | Blocked | Stripe/Admin access | Cannot verify payment ledger without Stripe/API access |
-| 9 | Card information securely saved | High | Known Bug | Product fix required, then Stripe/API validation | UI-level Billing validation now expects saved card/payment-method evidence after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence |
+| 9 | Card information securely saved | High | Started | Stripe/API validation still needed | QA-CL-005: with-card trial persists a Stripe subscription. UI Billing should show payment-method evidence. Remaining gap is Stripe/API confirmation of the stored fingerprint. |
 | 10 | Existing paid subscriber cannot start trial | Critical | Started | Existing paid account fixture | Billing plans validation confirms paid subscriber is not offered the Overlay Strategists trial CTA |
 | 11 | Same verified email cannot receive another trial | Critical | Blocked | Repeat-trial fixture | Business rule confirmed: free trial is allowed only once for a verified email identity. Needs deterministic previously-used trial account |
 | 12 | Same verified mobile number cannot receive another trial | Critical | Blocked | Repeat phone fixture | Business rule confirmed: free trial is allowed only once for a verified mobile identity. Needs safe repeat-phone trial fixture |
-| 13 | Same payment method cannot receive another trial | Critical | Blocked | Stripe payment method reuse visibility | Need Stripe/API confirmation |
+| 13 | Same payment method cannot receive another trial | Critical | Started | Unique card per user; silent UI reason still dropped | QA-CL-005: `offer_verify_failed` reason `already_redeemed` is the once-per-lifetime card fingerprint gate. Reusing `4242` across users refuses the trial and bounces to Plan Selection without a message. Automation uses a unique test card per fresh user. |
 | 14 | Trial lasts exactly 30 days | Critical | Blocked | Time travel/scheduler/admin controls | Cannot wait 30 real days in automation |
 | 15 | Day 25 reminder no-card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
 | 16 | Day 28 reminder no-card | Medium | Blocked | Scheduler/time control and email access | Manual until scheduler hooks exist |
@@ -173,7 +173,7 @@ exact dev/admin dependency. Browser-executable scenarios remain in
 
 | SC | Scenario Group | Automation Status | Current Coverage | Gap / Dependency |
 | --- | --- | --- | --- | --- |
-| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens direct paid-plan checkout summaries before payment across Income Builder, Portfolio Hedger, and Marketplace monthly/annual combinations; Overlay Strategists trial checkout is covered under Use Case 1 | Other full-payment plan completions need dedicated fresh users and safe Stripe runs |
+| 36-40 | New paid subscription purchase | Started | `onboarding.spec.ts` completes Income Builder Stripe checkout; `DirectSubscriptionPurchase.spec.ts` opens direct paid-plan checkout summaries before payment across Income Builder, Portfolio Hedger, and Marketplace monthly/annual combinations; Overlay Strategists trial checkout is covered under Use Case 1; `SubscriptionLifecycleExecution.spec.ts` has gated Overlay Strategists, Portfolio Hedger, and Marketplace monthly completions plus an optional annual paid purchase | Stripe ledger/API and duplicate checkout session visibility |
 | 41-44 | Purchase entry points | Started | Onboarding plan-selection entry point and safe plan switching are covered before checkout | Pricing, expired-trial upgrade prompt, and deeper settings entry points need selectors/fixtures |
 | 45-49 | Subscription summary before payment | Started | Stripe checkout loads selected plan/payment page, validates selected plan/email/billing copy/card fields across direct paid monthly/annual combinations, currency/conversion-fee copy, plan-selection billing toggle, paid-plan pricing across billing periods, and paid-plan entitlement limits before checkout | Exact renewal/auto-renew summary needs stable Stripe copy expectations |
 | 50-51 | Terms acceptance | Started | Overlay trial terms guardrail is automated | Paid plan terms guardrail needs confirmation if separate modal exists |
@@ -197,10 +197,10 @@ Confirmed behavior:
 
 | Use Case | Browser-Safe Tests To Add Next | Blocked Until |
 | --- | --- | --- |
-| Upgrade Subscription | Matrix completed; current coverage validates plan lifecycle action/status summary, monthly/annual in-app upgrade calculation previews including target price, unused-time credit, amount due, recurring price, and controlled one-time upgrade submission after terms acceptance | Stripe API/billing-cycle visibility for exact invoice/proration reconciliation |
-| Downgrade Subscription | Matrix completed; next executable slice is lost-feature warning and acknowledgement guardrail validation | Dedicated higher-tier accounts and data-limit fixtures |
-| Monthly To Annual | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is safe checkout-open and failed-checkout interval preservation | Dedicated monthly accounts and Stripe proration validation |
-| Annual To Monthly | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is effective-date and pending-change messaging validation | Dedicated annual accounts and renewal-date fixtures |
+| Upgrade Subscription | Matrix completed; current coverage validates plan lifecycle action/status summary, monthly/annual in-app upgrade calculation previews including target price, unused-time credit, amount due, recurring price, and controlled one-time upgrade submission after terms acceptance. Cancel-before-submit is automated in the upgrade preview. | Stripe API/billing-cycle visibility for exact invoice/proration reconciliation |
+| Downgrade Subscription | Matrix completed; executable slice validates downgrade calculation preview, terms required, and cancel-before-submit without changing subscription. Lost-feature warning stays blocked until product copy is stable. | Dedicated higher-tier accounts, data-limit fixtures, and scheduled-downgrade effective-date validation |
+| Monthly To Annual | Matrix completed; executable slice opens interval preview, validates yearly amount, UI proration, next billing date, and close without confirm | Dedicated monthly accounts for preview; Stripe proration/API for submitted interval change |
+| Annual To Monthly | Matrix completed; executable slice reuses interval preview with `SUB_LIFECYCLE_INTERVAL_TO=monthly` | Dedicated annual accounts and renewal-date fixtures for submitted change |
 | Subscription Cancellation | Matrix completed; safe portal form and cancellation lifecycle-state validation exists; destructive final-cancel remains blocked | Dedicated destructive cancellation account and refund/admin workflow |
 | Dunning Management | Matrix completed; checkout negatives, authentication-required checkout context, and payment-recovery portal entry points exist; renewal/dunning remains blocked | Stripe dunning test fixture, webhook/scheduler/admin controls |
 
@@ -269,6 +269,8 @@ $env:SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
 
 # Prepared paid-user slices need:
@@ -278,6 +280,9 @@ $env:SUB_LIFECYCLE_UPGRADE_TARGET_PLAN="Portfolio Hedger"
 $env:SUB_LIFECYCLE_UPGRADE_INTERVALS="monthly,annual"
 $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
 $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
+$env:SUB_LIFECYCLE_DOWNGRADE_TARGET_PLAN="Income Builder"
+$env:SUB_LIFECYCLE_INTERVAL_TARGET_PLAN="Income Builder"
+$env:SUB_LIFECYCLE_INTERVAL_TO="annual"
 
 npm run test:controlled:subscription-lifecycle-execution -- --headed
 $env:AIR_REPORT_SCOPE="latest"

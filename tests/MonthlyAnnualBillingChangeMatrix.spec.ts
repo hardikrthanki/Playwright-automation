@@ -63,8 +63,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-004'],
     title: 'Annual switch action is available only for active monthly subscriptions',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires dedicated active monthly paid-account fixture. Current safe coverage validates interval presentation without changing subscription.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview billing interval change without submitting. Enable SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED with a monthly paid fixture.'
   },
   {
     id: 'SC-169',
@@ -79,40 +79,40 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-006'],
     title: 'Annual switch confirmation displays current monthly plan and target annual plan',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires safe billing-interval change fixture and confirmation UI/Stripe portal selectors.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview shows target plan and annual billing copy'
   },
   {
     id: 'SC-171',
     sourceIds: ['SUB-M2A-007'],
     title: 'Annual switch confirmation displays yearly amount',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires deterministic plan price source and billing-change screen.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview validates annual plan charge and recurring amount'
   },
   {
     id: 'SC-172',
     sourceIds: ['SUB-M2A-008'],
     title: 'Annual switch confirmation displays prorated credit or charge',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe invoice preview/API visibility for proration.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview validates unused-time credit and amount due today. Stripe invoice-ID reconciliation remains blocked.'
   },
   {
     id: 'SC-173',
     sourceIds: ['SUB-M2A-009'],
     title: 'Annual switch confirmation displays next renewal date',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe subscription API or deterministic billing-cycle fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview asserts next billing date copy'
   },
   {
     id: 'SC-174',
     sourceIds: ['SUB-M2A-010'],
     title: 'User can cancel monthly-to-annual change before confirmation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe billing-change confirmation fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview is closed without submitting'
   },
   {
     id: 'SC-175',

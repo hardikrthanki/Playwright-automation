@@ -5,7 +5,6 @@ import {
 } from '@playwright/test';
 
 import {
-  AUTH_SETTINGS,
   BASE_URL,
   TEST_USERS
 } from './config/testData';
@@ -13,6 +12,9 @@ import {
   generateEmail,
   generateMobileNumber
 } from './utils/emailGenerator';
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -164,24 +166,10 @@ async function registerAndLoginFreshUser(
     mobileNumber
   );
 
-  if (
-    AUTH_SETTINGS.emailVerificationRequired
-  ) {
-    console.log(
-      '\nMANUAL EMAIL VERIFICATION REQUIRED'
-    );
-    console.log(
-      `Verify email sent to: ${email}`
-    );
-    console.log(
-      'Open Gmail and click the verification link.'
-    );
-    console.log(
-      'After verification, resume Playwright.'
-    );
-
-    await page.pause();
-  }
+  await waitForManualEmailVerification(
+    page,
+    email
+  );
 
   const login =
     new LoginPage(
@@ -207,29 +195,6 @@ async function registerAndLoginFreshUser(
       timeout: 30000
     }
   );
-}
-
-async function openComplianceForFreshUser(
-  page: Page,
-  scenario: string
-) {
-  await registerAndLoginFreshUser(
-    page,
-    scenario
-  );
-
-  await new RiskProfilePage(
-    page
-  ).fill();
-
-  await expect(
-    page.getByRole('button', {
-      name:
-        /save compliance profile/i,
-    })
-  ).toBeVisible({
-    timeout: 15000
-  });
 }
 
 test.describe(
@@ -297,238 +262,92 @@ test.describe(
         'ONBOARDING_FIELD_VALIDATION_FULL_ENABLED'
       )
     ) {
-      test.describe(
-        'Full field-level regression',
-        () => {
-
-    test(
-      'Risk Profile required fields block onboarding progress',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-validation'
-        );
-
-        const risk =
-          new RiskProfilePage(
-            page
+      test(
+        'Full Risk and Compliance field validation in one session',
+        async ({ page }) => {
+          await registerAndLoginFreshUser(
+            page,
+            'full-risk-compliance-validation'
           );
 
-        await risk.validateRequiredFieldsBlockSave();
+          const risk =
+            new RiskProfilePage(
+              page
+            );
 
-        await risk.fill();
-
-        await expect(
-          page.getByText(
-            /read disclosure/i
-          ).first()
-        ).toBeVisible({
-          timeout: 15000
-        });
-      }
-    );
-
-    test(
-      'Compliance required fields and disclosures block onboarding progress',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'compliance-validation'
-        );
-
-        const risk =
-          new RiskProfilePage(
-            page
+          await test.step(
+            'Risk required and missing fields block save',
+            async () => {
+              await risk.validateRequiredFieldsBlockSave();
+              await risk.validateMissingExperienceBlocksSave();
+              await risk.validateMissingStrategyBlocksSave();
+              await risk.validateMissingAccountTypeBlocksSave();
+            }
           );
 
-        await risk.fill();
-
-        const compliance =
-          new CompliancePage(
-            page
+          await test.step(
+            'Risk selections can be updated then saved',
+            async () => {
+              await risk.validateSelectionsCanBeUpdatedBeforeSave();
+            }
           );
 
-        await compliance.validateRequiredFieldsBlockSave();
+          await test.step(
+            'Risk progress persists after refresh',
+            async () => {
+              await page.reload({
+                waitUntil: 'domcontentloaded'
+              });
 
-        await compliance.fill();
+              await expect(
+                page.getByText(
+                  /read disclosure/i
+                ).first()
+              ).toBeVisible({
+                timeout: 15000
+              });
+            }
+          );
 
-        await expect(
-          page.getByText(
-            /choose your plan|select a plan|get started/i
-          ).first()
-        ).toBeVisible({
-          timeout: 30000
-        });
-      }
-    );
+          const compliance =
+            new CompliancePage(
+              page
+            );
 
-    test(
-      'Risk Profile investing experience field is required',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-experience-required'
-        );
+          await test.step(
+            'Compliance required fields and disclosures block save',
+            async () => {
+              await compliance.validateRequiredFieldsBlockSave();
+              await compliance.validateStateRequiredBlocksSave();
+              await compliance.validateDisclosureRequiredBlocksSave();
+              await compliance.validateEachDisclosureRequired();
+              await compliance.validateDisclosureCancelDoesNotAccept();
+            }
+          );
 
-        await new RiskProfilePage(
-          page
-        ).validateMissingExperienceBlocksSave();
-      }
-    );
+          await test.step(
+            'Compliance selections can be updated then saved',
+            async () => {
+              await compliance.validateSelectionsCanBeUpdatedBeforeSave();
+            }
+          );
 
-    test(
-      'Risk Profile strategy selection is required',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-strategy-required'
-        );
+          await test.step(
+            'Compliance progress persists after refresh',
+            async () => {
+              await page.reload({
+                waitUntil: 'domcontentloaded'
+              });
 
-        await new RiskProfilePage(
-          page
-        ).validateMissingStrategyBlocksSave();
-      }
-    );
-
-    test(
-      'Risk Profile account type selection is required',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-account-type-required'
-        );
-
-        await new RiskProfilePage(
-          page
-        ).validateMissingAccountTypeBlocksSave();
-      }
-    );
-
-    test(
-      'Risk Profile saved progress persists after refresh',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-persistence'
-        );
-
-        await new RiskProfilePage(
-          page
-        ).fill();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page.getByText(
-            /read disclosure/i
-          ).first()
-        ).toBeVisible({
-          timeout: 15000
-        });
-      }
-    );
-
-    test(
-      'Risk Profile and Compliance selections can be updated before save',
-      async ({ page }) => {
-        await registerAndLoginFreshUser(
-          page,
-          'risk-compliance-update'
-        );
-
-        await new RiskProfilePage(
-          page
-        ).validateSelectionsCanBeUpdatedBeforeSave();
-
-        await new CompliancePage(
-          page
-        ).validateSelectionsCanBeUpdatedBeforeSave();
-      }
-    );
-
-    test(
-      'Compliance state field is required',
-      async ({ page }) => {
-        await openComplianceForFreshUser(
-          page,
-          'compliance-state-required'
-        );
-
-        await new CompliancePage(
-          page
-        ).validateStateRequiredBlocksSave();
-      }
-    );
-
-    test(
-      'Compliance disclosures are required',
-      async ({ page }) => {
-        await openComplianceForFreshUser(
-          page,
-          'compliance-disclosures-required'
-        );
-
-        await new CompliancePage(
-          page
-        ).validateDisclosureRequiredBlocksSave();
-      }
-    );
-
-    test(
-      'Every Compliance disclosure must be accepted',
-      async ({ page }) => {
-        await openComplianceForFreshUser(
-          page,
-          'compliance-each-disclosure-required'
-        );
-
-        await new CompliancePage(
-          page
-        ).validateEachDisclosureRequired();
-      }
-    );
-
-    test(
-      'Compliance disclosure cancel does not accept disclosure',
-      async ({ page }) => {
-        await openComplianceForFreshUser(
-          page,
-          'compliance-disclosure-cancel'
-        );
-
-        await new CompliancePage(
-          page
-        ).validateDisclosureCancelDoesNotAccept();
-      }
-    );
-
-    test(
-      'Compliance saved progress persists after refresh',
-      async ({ page }) => {
-        await openComplianceForFreshUser(
-          page,
-          'compliance-persistence'
-        );
-
-        await new CompliancePage(
-          page
-        ).fill();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page.getByText(
-            /choose your plan|select a plan|get started/i
-          ).first()
-        ).toBeVisible({
-          timeout: 30000
-        });
-      }
-    );
+              await expect(
+                page.getByText(
+                  /choose your plan|select a plan|get started/i
+                ).first()
+              ).toBeVisible({
+                timeout: 30000
+              });
+            }
+          );
         }
       );
     }

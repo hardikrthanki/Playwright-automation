@@ -23,6 +23,12 @@ import {
   AUTH_SETTINGS
 } from '../config/testData';
 
+import {
+  isEmailVerificationPage,
+  openFreshLoginPage,
+  waitForManualEmailVerification
+} from '../helpers/emailVerification';
+
 /* =============================================================================
 PAGE OBJECT: LoginPage
 
@@ -75,8 +81,21 @@ export class LoginPage
       );
 
     this.submitButton =
-      page.locator(
-        'button[type="submit"]'
+      page.getByRole(
+        'button',
+        {
+          name: /^(sign in|log in)$/i
+        }
+      ).or(
+        page.locator(
+          'form'
+        ).filter({
+          has: page.locator(
+            'input[type="password"]'
+          )
+        }).locator(
+          'button[type="submit"]'
+        )
       ).first();
 
     this.accountLockedMessage =
@@ -291,16 +310,40 @@ export class LoginPage
     return true;
   }
 
-  private async waitForLoginRedirect() {
+  private async waitForLoginOutcome() {
+    const startedAt =
+      Date.now();
 
-    await this.page.waitForURL(
-      /\/(dashboard|onboarding|verify-mobile|mobile-verification)/,
-      {
-        timeout: 30000
+    while (
+      Date.now() - startedAt <
+      30000
+    ) {
+      if (
+        isEmailVerificationPage(
+          this.page
+        )
+      ) {
+        return 'unverified' as const;
       }
-    );
 
-    await this.completePostLoginMobileVerificationIfVisible();
+      if (
+        /\/(dashboard|onboarding|verify-mobile|mobile-verification)/.test(
+          this.page.url()
+        )
+      ) {
+        await this.completePostLoginMobileVerificationIfVisible();
+
+        return 'success' as const;
+      }
+
+      await this.page.waitForTimeout(
+        250
+      );
+    }
+
+    throw new Error(
+      'Login did not redirect'
+    );
   }
 
   async handleLockedAccount(
@@ -384,19 +427,6 @@ export class LoginPage
     );
 
     if (
-      !this.page.url().includes(
-        URLS.LOGIN
-      )
-    ) {
-      await this.page.goto(
-        `${BASE_URL}/login`,
-        {
-          waitUntil: 'domcontentloaded'
-        }
-      );
-    }
-
-    if (
       /\/(dashboard|onboarding)/.test(
         this.page.url()
       )
@@ -428,9 +458,43 @@ export class LoginPage
       return;
     }
 
+    if (
+      isEmailVerificationPage(
+        this.page
+      ) ||
+      !this.page.url().includes(
+        URLS.LOGIN
+      )
+    ) {
+      await openFreshLoginPage(
+        this.page
+      );
+    }
+
+    await this.dismissMarketingOverlays();
+
     await this.waitForLoginFormReady();
 
     for (let attempt = 1; attempt <= 3; attempt++) {
+      if (
+        isEmailVerificationPage(
+          this.page
+        )
+      ) {
+        Logger.warning(
+          'Still on email verification. Waiting for the Gmail link. Not sending a new link.'
+        );
+
+        await waitForManualEmailVerification(
+          this.page,
+          email
+        );
+
+        await this.dismissMarketingOverlays();
+
+        await this.waitForLoginFormReady();
+      }
+
       console.log(
         `Login Attempt ${attempt}`
       );
@@ -450,7 +514,36 @@ export class LoginPage
       );
 
       try {
-        await this.waitForLoginRedirect();
+        const outcome =
+          await this.waitForLoginOutcome();
+
+        if (
+          outcome ===
+          'unverified'
+        ) {
+          Logger.warning(
+            'Sign in bounced to email verification. The Gmail link has not confirmed this account yet.'
+          );
+
+          if (
+            attempt === 3
+          ) {
+            throw new Error(
+              'Login bounced to email verification. Verify the Gmail link first, then resume. Do not click Send verification link.'
+            );
+          }
+
+          await waitForManualEmailVerification(
+            this.page,
+            email
+          );
+
+          await this.dismissMarketingOverlays();
+
+          await this.waitForLoginFormReady();
+
+          continue;
+        }
 
         Logger.success(
           'Logged in successfully'
@@ -462,13 +555,49 @@ export class LoginPage
         );
 
         return;
-      } catch {
+      } catch (
+        error
+      ) {
         console.log(
           'Current URL:',
           this.page.url()
         );
 
+        if (
+          isEmailVerificationPage(
+            this.page
+          )
+        ) {
+          if (
+            attempt === 3
+          ) {
+            throw new Error(
+              'Login bounced to email verification. Verify the Gmail link first, then resume. Do not click Send verification link.'
+            );
+          }
+
+          await waitForManualEmailVerification(
+            this.page,
+            email
+          );
+
+          await this.dismissMarketingOverlays();
+
+          await this.waitForLoginFormReady();
+
+          continue;
+        }
+
         if (attempt === 3) {
+          if (
+            error instanceof Error &&
+            error.message.includes(
+              'email verification'
+            )
+          ) {
+            throw error;
+          }
+
           throw new Error(
             'Login failed after 3 attempts'
           );
@@ -478,11 +607,8 @@ export class LoginPage
           2000
         );
 
-        await this.page.goto(
-          `${BASE_URL}/login`,
-          {
-            waitUntil: 'domcontentloaded'
-          }
+        await openFreshLoginPage(
+          this.page
         );
 
         if (
@@ -499,6 +625,8 @@ export class LoginPage
 
           return;
         }
+
+        await this.dismissMarketingOverlays();
 
         await this.waitForLoginFormReady();
       }

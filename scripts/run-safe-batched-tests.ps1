@@ -72,7 +72,6 @@ $batches = @(
       'tests/AuthNegative.spec.ts',
       'tests/AuthUiValidation.spec.ts',
       'tests/SessionSecurity.spec.ts',
-      'tests/DashboardHealth.spec.ts',
       'tests/DashboardNavigation.spec.ts'
     )
   },
@@ -87,12 +86,10 @@ $batches = @(
   @{
     Name = '03-profile'
     Files = @(
-      'tests/Profile.spec.ts',
       'tests/ProfileNegative.spec.ts',
       'tests/ProfileSecurityDisplay.spec.ts',
       'tests/ProfileMobileValidation.spec.ts',
-      'tests/ProfilePasswordMismatch.spec.ts',
-      'tests/ProfileWrongCurrentPassword.spec.ts'
+      'tests/ProfilePasswordMismatch.spec.ts'
     )
   },
   @{
@@ -113,10 +110,10 @@ $batches = @(
   @{
     Name = '06-billing'
     Files = @(
-      'tests/BillingDeep.spec.ts',
       'tests/BillingEdgeValidation.spec.ts',
       'tests/BillingSubscriptionManagement.spec.ts',
-      'tests/Subscriber.spec.ts'
+      'tests/Subscriber.spec.ts',
+      'tests/AddManualPosition.spec.ts'
     )
   },
   @{

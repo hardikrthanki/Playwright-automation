@@ -63,8 +63,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-004'],
     title: 'Monthly switch action is available only for active annual subscriptions',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires dedicated active annual paid-account fixture. Current safe coverage validates interval presentation without changing subscription.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview with SUB_LIFECYCLE_INTERVAL_TO=monthly and an annual paid fixture'
   },
   {
     id: 'SC-205',
@@ -79,16 +79,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-006'],
     title: 'Annual-to-monthly confirmation displays current annual plan and target monthly plan',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires safe billing-interval change fixture and confirmation UI/Stripe portal selectors.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview shows target plan and monthly billing copy when SUB_LIFECYCLE_INTERVAL_TO=monthly'
   },
   {
     id: 'SC-207',
     sourceIds: ['SUB-A2M-007'],
     title: 'Annual-to-monthly confirmation displays monthly amount',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires deterministic plan price source and billing-change screen.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview validates monthly plan charge and recurring amount'
   },
   {
     id: 'SC-208',
@@ -103,16 +103,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-009'],
     title: 'Annual-to-monthly confirmation displays next renewal date',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe subscription API or deterministic billing-cycle fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview asserts next billing date copy'
   },
   {
     id: 'SC-210',
     sourceIds: ['SUB-A2M-010'],
     title: 'User can cancel annual-to-monthly change before confirmation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe billing-change confirmation fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview is closed without submitting'
   },
   {
     id: 'SC-211',

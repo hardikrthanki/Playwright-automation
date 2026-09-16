@@ -87,32 +87,32 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-007'],
     title: 'Upgrade CTA opens Stripe checkout or customer portal update screen',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires safe subscription-update fixture and Stripe portal/checkout state validation.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview monthly and annual upgrade calculations'
   },
   {
     id: 'SC-83',
     sourceIds: ['SUB-UPG-008'],
     title: 'Upgrade screen displays current plan and target plan',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe hosted upgrade flow or app upgrade confirmation screen selectors.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview shows target plan'
   },
   {
     id: 'SC-84',
     sourceIds: ['SUB-UPG-009'],
     title: 'Upgrade screen displays new price and billing interval',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires deterministic upgrade checkout fixture and expected price source.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview validates plan charge and interval copy'
   },
   {
     id: 'SC-85',
     sourceIds: ['SUB-UPG-010'],
     title: 'Upgrade screen displays prorated amount before confirmation',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: user pays the prorated amount on upgrade. Requires Stripe API/admin visibility for prorated invoice preview.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > upgrade preview validates unused-time credit and amount due today. Stripe invoice-ID reconciliation remains blocked.'
   },
   {
     id: 'SC-86',
@@ -127,8 +127,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-012'],
     title: 'User can cancel upgrade before payment confirmation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe upgrade checkout/session and return URL behavior.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview is closed without submitting'
   },
   {
     id: 'SC-88',

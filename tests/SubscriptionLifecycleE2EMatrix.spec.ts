@@ -224,7 +224,7 @@ const lifecycleScenarios: LifecycleScenario[] = [
     phase: 'Paid Subscription',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts, BillingDeep.spec.ts, and DirectSubscriptionPurchase.spec.ts'
+    automation: 'BillingSubscriptionManagement.spec.ts, Subscriber.spec.ts, and DirectSubscriptionPurchase.spec.ts'
   },
   {
     id: 'LC-020',
@@ -332,7 +332,7 @@ const lifecycleScenarios: LifecycleScenario[] = [
     phase: 'Billing Interval',
     priority: 'High',
     status: 'automated',
-    automation: 'PlanSelectionValidation.spec.ts, BillingSubscriptionManagement.spec.ts, and DirectSubscriptionPurchase.spec.ts'
+    automation: 'PlanSelectionValidation.spec.ts, BillingSubscriptionManagement.spec.ts, DirectSubscriptionPurchase.spec.ts, and SubscriptionLifecycleExecution.spec.ts interval preview'
   },
   {
     id: 'LC-032',
