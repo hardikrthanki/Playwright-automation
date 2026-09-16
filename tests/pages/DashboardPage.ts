@@ -228,36 +228,44 @@ export class DashboardPage
   private profileMenuItem(
     label: string
   ) {
+    const escaped =
+      label.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&'
+      );
+
     const labelPattern =
       new RegExp(
-        label.replace(
-          /[.*+?^${}()|[\]\\]/g,
-          '\\$&'
-        ),
+        `^${escaped}(\\b|\\s|&|$)`,
         'i'
       );
 
-    return this.page.getByRole(
+    const menu =
+      this.page.locator(
+        '[role="menu"], [data-radix-menu-content], [data-radix-popper-content-wrapper], [data-state="open"]'
+      );
+
+    return menu.getByRole(
       'menuitem',
       {
         name: labelPattern
       }
     ).or(
-      this.page.getByRole(
+      menu.getByRole(
         'link',
         {
           name: labelPattern
         }
       )
     ).or(
-      this.page.getByRole(
+      menu.getByRole(
         'button',
         {
           name: labelPattern
         }
       )
     ).or(
-      this.page.getByText(
+      menu.getByText(
         labelPattern
       )
     ).first();

@@ -1,42 +1,44 @@
 {
-  "generatedAt": "2026-09-16T12:50:30.174Z",
+  "generatedAt": "2026-09-16T13:24:35.031Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-16T12:50:29.790Z",
+    "generatedAt": "2026-09-16T13:24:34.718Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 4,
-    "rawTestCount": 4,
-    "attempts": 4,
-    "passed": 4,
-    "failed": 0,
-    "skipped": 0,
+    "total": 153,
+    "rawTestCount": 153,
+    "attempts": 153,
+    "passed": 124,
+    "failed": 5,
+    "skipped": 24,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 4
+      "expected": 124,
+      "unexpected": 5,
+      "skipped": 24
     }
   },
   "airExecution": {
-    "total": 4,
-    "attempts": 4,
-    "passed": 4,
-    "failed": 0,
-    "skipped": 0,
+    "total": 153,
+    "attempts": 153,
+    "passed": 124,
+    "failed": 5,
+    "skipped": 24,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 4,
-    "expectedAirTotal": 4,
-    "airTotal": 4,
+    "sourceTotal": 153,
+    "expectedAirTotal": 153,
+    "airTotal": 153,
     "difference": 0
   },
   "duplicates": {
@@ -47,17 +49,48 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 0,
+    "perTestEvidence": 12,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 2,
+    "totalWithRawReports": 14,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
   "invalidJourneyReferences": [],
   "historicalContaminationDetected": false,
   "evidenceTraceability": {
-    "failedTests": []
+    "failedTests": [
+      {
+        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Login password visibility control is exposed without submitting form",
+        "testName": "Auth UI Validation > Login password visibility control is exposed without submitting form",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > OverlayStrategistsTrial.spec.ts > Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
+        "testName": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Profile menu navigation actions open the expected pages",
+        "testName": "Dashboard Navigation > Profile menu navigation actions open the expected pages",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > RiskComplianceUpdate.spec.ts > Risk & Compliance Dashboard Update > Risk Profile and Compliance can be updated from dashboard in one session",
+        "testName": "Risk & Compliance Dashboard Update > Risk Profile and Compliance can be updated from dashboard in one session",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > BillingSubscriptionManagement.spec.ts > Billing Subscription Management > Billing portal plans invoices and return in one session",
+        "testName": "Billing Subscription Management > Billing portal plans invoices and return in one session",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      }
+    ]
   },
   "releaseTraceability": {
     "status": "PASS",
@@ -72,14 +105,39 @@
         "source": "warnings",
         "references": [
           {
+            "type": "Failure",
+            "name": "Auth UI Validation > Login password visibility control is exposed without submitting form",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Dashboard Navigation > Profile menu navigation actions open the expected pages",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Risk & Compliance Dashboard Update > Risk Profile and Compliance can be updated from dashboard in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Billing portal plans invoices and return in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
             "type": "Business Journey",
             "name": "Registration",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
@@ -88,8 +146,38 @@
           },
           {
             "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Execution",
@@ -103,14 +191,39 @@
         "source": "warnings",
         "references": [
           {
+            "type": "Failure",
+            "name": "Auth UI Validation > Login password visibility control is exposed without submitting form",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Dashboard Navigation > Profile menu navigation actions open the expected pages",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Risk & Compliance Dashboard Update > Risk Profile and Compliance can be updated from dashboard in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Billing portal plans invoices and return in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
             "type": "Business Journey",
             "name": "Registration",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
@@ -119,8 +232,38 @@
           },
           {
             "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Execution",
@@ -134,14 +277,39 @@
         "source": "warnings",
         "references": [
           {
+            "type": "Failure",
+            "name": "Auth UI Validation > Login password visibility control is exposed without submitting form",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Dashboard Navigation > Profile menu navigation actions open the expected pages",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Risk & Compliance Dashboard Update > Risk Profile and Compliance can be updated from dashboard in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
+            "type": "Failure",
+            "name": "Billing Subscription Management > Billing portal plans invoices and return in one session",
+            "detail": "Warning severity is Medium."
+          },
+          {
             "type": "Business Journey",
             "name": "Registration",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
@@ -150,8 +318,38 @@
           },
           {
             "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Journey status is Not Executed."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Execution",
@@ -161,7 +359,7 @@
         ]
       }
     ],
-    "warnings": 5,
+    "warnings": 16,
     "blockers": 0
   }
 }

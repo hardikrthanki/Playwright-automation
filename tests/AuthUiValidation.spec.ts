@@ -172,15 +172,18 @@ async function expectPasswordToggleResponds(
     timeout: 10000
   });
 
+  await dismissOverlays(
+    passwordInput.page()
+  );
+
   console.log(
     '[CLICK] Toggle Password Visibility'
   );
 
-  await toggle.scrollIntoViewIfNeeded();
-
-  await toggle.click({
-    timeout: 10000
-  });
+  await safeClick(
+    toggle,
+    'Toggle Password Visibility'
+  );
 
   const toggleResponded = async () => {
     const currentState =
@@ -209,21 +212,11 @@ async function expectPasswordToggleResponds(
   if (
     !await toggleResponded()
   ) {
-    await passwordInput.evaluate(
-      (input) => {
-        const toggleButton =
-          input.parentElement?.querySelector(
-            'button'
-          ) as HTMLButtonElement | null;
-
-        if (!toggleButton) {
-          throw new Error(
-            'Password visibility toggle was not found next to the password field.'
-          );
-        }
-
-        toggleButton.click();
-      }
+    await toggle.click({
+      force: true,
+      timeout: 5000
+    }).catch(
+      () => undefined
     );
   }
 

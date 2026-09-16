@@ -30,6 +30,15 @@ export async function continueAfterWithCardTrialCheckout(
     'domcontentloaded'
   );
 
+  await page.waitForURL(
+    /\/(dashboard|verify-mobile)/i,
+    {
+      timeout: 20000
+    }
+  ).catch(
+    () => undefined
+  );
+
   const returnUrl =
     page.url();
 
@@ -88,9 +97,12 @@ export async function continueAfterWithCardTrialCheckout(
   }
 
   const planSelectionVisible =
-    await page.getByText(
-      /choose your plan|select a plan/i
-    ).first().isVisible({
+    await page.getByRole(
+      'heading',
+      {
+        name: /choose your plan/i
+      }
+    ).isVisible({
       timeout: 3000
     }).catch(
       () => false

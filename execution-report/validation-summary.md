@@ -1,6 +1,6 @@
 # AIR Automation Validation Summary
 
-Generated: 9/16/2026, 6:20:29 PM
+Generated: 9/16/2026, 6:54:34 PM
 
 Project: OOLTool
 
@@ -16,39 +16,221 @@ This document explains what the latest automation execution validated in plain b
 
 | Metric | Count |
 | --- | ---: |
-| Unique Tests | 4 |
-| Passed | 4 |
-| Failed | 0 |
-| Skipped / Not Executed | 0 |
+| Unique Tests | 153 |
+| Passed | 124 |
+| Failed | 5 |
+| Skipped / Not Executed | 24 |
 | Flaky | 0 |
-| Attempts | 4 |
+| Attempts | 153 |
 
 ## Status Breakdown
 
 | Status | Count |
 | --- | ---: |
-| passed | 4 |
+| failed | 5 |
+| passed | 124 |
+| skipped | 24 |
 
 ## Area Breakdown
 
 | Area | Validations |
 | --- | ---: |
-| Billing | 3 |
-| Onboarding | 1 |
+| Accessibility | 15 |
+| Authentication | 46 |
+| Billing | 37 |
+| Dashboard | 16 |
+| MFA | 1 |
+| Onboarding | 3 |
+| Password | 14 |
+| Profile | 1 |
+| Signup | 20 |
 
 ## What Was Validated
 
 | Result | Area | Scenario | Why It Matters | Expected Outcome |
 | --- | --- | --- | --- | --- |
+| PASS | Authentication | Login screen navigates to forgot password and back | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Login direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Login password draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Forgot password back to login clears reset-only navigation state | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Forgot password email draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Forgot password direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Public auth routes tolerate trailing slash and unknown query parameters | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Login screen navigates to create account | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Auth pages remain usable with browser back and forward | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
+| FAIL | Authentication | Login password visibility control is exposed without submitting form | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register screen exposes required public form controls | Confirm users can authenticate safely and invalid access is blocked. | Expected controls and information should be visible to the user. |
+| PASS | Authentication | Register screen password visibility toggle changes password field type | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register screen navigates back to login | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Login form blocks empty required fields | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks empty email only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks empty password only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form does not authenticate email with leading and trailing spaces | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form keeps user on login when invalid credentials are submitted with Enter | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Protected route /dashboard redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/profile redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/billing redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /onboarding redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/settings redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/security redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/subscription redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/notifications redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/activity redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Forgot password form blocks empty email | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password keeps user on reset page for email with surrounding spaces | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup form blocks empty required fields | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Signup | Signup form blocks invalid email format | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Accessibility | Signup name fields expose browser-friendly autocomplete metadata | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup form blocks missing domain email input | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Signup | Signup form blocks missing @ email input | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Signup | Signup form blocks SQL injection email input | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Signup | Signup form blocks XSS injection email input | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Signup | Signup email trims leading and trailing spaces | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Signup form keeps submit disabled without password and confirmation | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Signup form keeps submit disabled when passwords do not match | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup form keeps OTP request disabled without mobile number | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup form keeps OTP request disabled for short mobile number | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup mobile input strips letters and keeps OTP disabled | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup mobile input normalizes formatted US number | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup mobile input normalizes spaces and parentheses | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup mobile input limits extra digits to ten digits | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup form shows US mobile number guidance before OTP request | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Expected controls and information should be visible to the user. |
+| PASS | Signup | Signup OTP input limits entry to six digits | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Signup | Signup OTP input trims pasted value to six digits | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup OTP input accepts digits only | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup OTP verify button is enabled only for six digits | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup OTP resend or cooldown state is visible after code request | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Expected controls and information should be visible to the user. |
+| PASS | Onboarding | Signup blocks already registered email address | Confirm the related product behavior is stable and safe for the current execution. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Password | Signup password visibility toggles work for both password fields | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Signup | Signup submit stays disabled before mobile OTP verification | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Signup password drafts are cleared after refresh | Confirm password rules and password-change guardrails protect the account. | The page should remain usable after refresh without losing required state. |
+| PASS | Password | Accepts a valid password that satisfies configured policy | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Rejects password shorter than configured minimum length | Confirm password rules and password-change guardrails protect the account. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Password | Rejects banned passwords from configured policy | Confirm password rules and password-change guardrails protect the account. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Password | Banned password comparison is case-insensitive | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Uppercase rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Lowercase rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Digit rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Symbol rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Login form exposes accessible email and password fields | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Expected controls and information should be visible to the user. |
+| PASS | Accessibility | Login page remains usable on mobile viewport | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Login form supports Enter key submission without authenticating invalid data | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Login form keyboard tab order reaches primary controls | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Forgot password form supports Back to login navigation | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
+| PASS | Accessibility | Forgot password form exposes accessible email and submit controls | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Expected controls and information should be visible to the user. |
+| PASS | Accessibility | Forgot password page remains usable on mobile viewport | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Forgot password form keyboard tab order reaches primary controls | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Register page keeps form visible after browser refresh | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The page should remain usable after refresh without losing required state. |
+| PASS | Accessibility | Register page exposes accessible primary actions | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Expected controls and information should be visible to the user. |
+| PASS | Accessibility | Register page remains usable on mobile viewport | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Register form keyboard tab order reaches primary fields | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register -> Verify Email -> Login -> Risk -> Compliance | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Onboarding | Fast Risk and Compliance field validation | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Onboarding | Full Risk and Compliance field validation in one session | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | New user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Plan catalog pricing overlay trial and complete-setup in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Curious Explorer free plan completes onboarding without Stripe | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | New user can reach Overlay Strategists trial option | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | New user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Overlay Strategists with-card trial opens Stripe checkout with trial details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
+| SKIPPED | Billing | Overlay Strategists with-card trial blocks missing Stripe card details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| SKIPPED | Billing | Overlay Strategists with-card trial rejects declined Stripe card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Billing | New user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Overlay Strategists trial requires terms acceptance | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Income Builder monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | Portfolio Hedger annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | Income Builder annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | Marketplace monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | Paid plan checkout summaries currency refresh and return use one user | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
+| SKIPPED | Billing | Income Builder checkout shows currency and conversion details before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | Income Builder checkout preserves context on refresh and returns safely before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
+| SKIPPED | Billing | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | SC-61: Missing cardholder name is blocked before subscription activation | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | SC-62: Failed checkout keeps user without active paid subscription | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | SC-63: Closing Stripe checkout returns user safely without activating subscription | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can purchase Income Builder monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can purchase Overlay Strategists monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can purchase Portfolio Hedger monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can purchase Marketplace monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Disposable user can purchase configured paid annual plan and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Prepared paid user exposes upgrade downgrade and interval controls | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| PASS | Billing | Prepared paid user can preview monthly and annual upgrade calculations | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Prepared paid user can accept terms and submit upgrade payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Prepared paid user can preview downgrade calculations without submitting | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Prepared paid user can preview billing interval change without submitting | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | Prepared paid user exposes non-destructive cancellation form | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| PASS | Billing | Subscription lifecycle calculation rules are deterministic | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Authenticated user can open dashboard profile billing and compliance routes | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Authenticated dashboard remains usable on mobile viewport | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Authenticated profile billing and compliance routes remain usable on tablet viewport | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Authenticated deep links with query parameters render expected pages | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Authenticated direct routes tolerate trailing slash and unknown query parameters | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Dashboard footer legal and support links expose usable targets | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Profile menu exposes billing risk compliance and sign out actions | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| FAIL | Dashboard | Profile menu navigation actions open the expected pages | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Profile menu closes with Escape and outside click | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Dashboard top navigation tabs are visible | Confirm authenticated users can navigate the product without load errors. | Expected controls and information should be visible to the user. |
+| PASS | Dashboard | Dashboard top navigation links open without load errors | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Dashboard top navigation destinations render usable content | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Dashboard top navigation destinations stay usable after refresh | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
+| PASS | Dashboard | Dashboard header notification theme and fullscreen controls are healthy | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Dashboard refresh utility reloads data without ending session | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
+| PASS | Dashboard | Dashboard quick action menu opens without changing session | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
+| PASS | Dashboard | Notification panel opens and closes without disrupting dashboard | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
+| PASS | Dashboard | Notification panel remains usable after dashboard refresh | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Key authenticated routes stay usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Accessibility | Browser back returns from billing to dashboard without ending session | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
+| PASS | Dashboard | Profile menu sign out blocks direct dashboard access | Confirm authenticated users can navigate the product without load errors. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Dashboard | Dashboard plus menu adds equity then cash then option | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Profile identity drafts password toggles and navigation in one session | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | MFA | Profile security MFA backup codes trusted devices and refresh | Confirm two-factor authentication controls protect the account without breaking login recovery. | The page should remain usable after refresh without losing required state. |
+| PASS | Profile | Profile mobile section validation in one session | Confirm profile data and account controls remain visible, stable, and protected. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Password mismatch and wrong current password in one session | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Saved Risk Profile and Compliance load edit and survive refresh in one session | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
+| FAIL | Dashboard | Risk Profile and Compliance can be updated from dashboard in one session | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Billing overview plans and history in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | Billing portal plans invoices and return in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Login once then logout blocks back refresh tabs and protected routes | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Invalid reset password link does not authenticate user | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 
 ## Skipped / Blocked / Controlled Coverage
 
 | Category | Scenario | Reason / Next Action |
 | --- | --- | --- |
+| Skipped | Signup OTP input trims pasted value to six digits | Scenario was not executed in this run. |
+| Skipped | New user can reach Overlay Strategists trial option | Scenario was not executed in this run. |
+| Controlled | Overlay Strategists with-card trial opens Stripe checkout with trial details | Scenario was not executed in this run. |
+| Controlled | Overlay Strategists with-card trial blocks missing Stripe card details | Scenario was not executed in this run. |
+| Controlled | Overlay Strategists with-card trial rejects declined Stripe card | Scenario was not executed in this run. |
+| Skipped | Income Builder monthly checkout shows subscription summary before payment | Scenario was not executed in this run. |
+| Skipped | Portfolio Hedger annual checkout shows subscription summary before payment | Scenario was not executed in this run. |
+| Skipped | Income Builder annual checkout shows subscription summary before payment | Scenario was not executed in this run. |
+| Skipped | Marketplace monthly checkout shows subscription summary before payment | Scenario was not executed in this run. |
+| Skipped | Income Builder checkout shows currency and conversion details before payment | Scenario was not executed in this run. |
+| Skipped | Income Builder checkout preserves context on refresh and returns safely before payment | Scenario was not executed in this run. |
+| Controlled | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Scenario was not executed in this run. |
+| Skipped | SC-61: Missing cardholder name is blocked before subscription activation | Scenario was not executed in this run. |
+| Skipped | SC-62: Failed checkout keeps user without active paid subscription | Scenario was not executed in this run. |
+| Controlled | SC-63: Closing Stripe checkout returns user safely without activating subscription | Scenario was not executed in this run. |
+| Skipped | Disposable user can start Overlay Strategists trial without card | Scenario was not executed in this run. |
+| Skipped | Disposable user can start Overlay Strategists trial with card | Scenario was not executed in this run. |
+| Skipped | Disposable user can purchase Income Builder monthly and reach Billing | Scenario was not executed in this run. |
+| Skipped | Disposable user can purchase Overlay Strategists monthly and reach Billing | Scenario was not executed in this run. |
+| Skipped | Disposable user can purchase Portfolio Hedger monthly and reach Billing | Scenario was not executed in this run. |
+| Skipped | Disposable user can purchase Marketplace monthly and reach Billing | Scenario was not executed in this run. |
+| Skipped | Disposable user can purchase configured paid annual plan and reach Billing | Scenario was not executed in this run. |
+| Skipped | Prepared paid user can accept terms and submit upgrade payment | Scenario was not executed in this run. |
+| Skipped | Prepared paid user exposes non-destructive cancellation form | Scenario was not executed in this run. |
 | Traceability | UJ-001 - New user registers with email, password, US mobile, and static OTP | Documented matrix scenario. Covered by onboarding.spec.ts > Step 1 - Registration, but it was not included in this AIR execution. |
 | Traceability | UJ-002 - Duplicate registered email is rejected during signup | Documented matrix scenario. Covered by SignupNegative.spec.ts > duplicate email validation, but it was not included in this AIR execution. |
 | Traceability | UJ-003 - Registration OTP input does not accept more than six digits | Documented matrix scenario. Covered by SignupNegative.spec.ts > OTP length validation, but it was not included in this AIR execution. |
@@ -160,7 +342,6 @@ This document explains what the latest automation execution validated in plain b
 | Traceability | SC-45 - Stripe checkout displays subscriber email | Documented matrix scenario. Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails, but it was not included in this AIR execution. |
 | Traceability | SC-46 - Stripe checkout displays selected plan name | Documented matrix scenario. Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails, but it was not included in this AIR execution. |
 | Traceability | SC-47 - Stripe checkout displays correct billing interval | Documented matrix scenario. Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails, but it was not included in this AIR execution. |
-| Future | SC-48 - Stripe checkout displays renewal or auto-renewal copy before payment | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; copy expectation now asserted flexibly. |
 | Traceability | SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields | Documented matrix scenario. Covered by DirectSubscriptionPurchase.spec.ts and PaymentNegative.spec.ts, but it was not included in this AIR execution. |
 | Traceability | SC-50 - Successful sandbox card payment activates subscription | Documented matrix scenario. Covered by onboarding.spec.ts > Stripe checkout payment completion, but it was not included in this AIR execution. |
 | Traceability | SC-51 - Successful payment redirects user back to OOLTool dashboard | Documented matrix scenario. Covered by onboarding.spec.ts and OverlayStrategistsTrial.spec.ts, but it was not included in this AIR execution. |
@@ -173,9 +354,6 @@ This document explains what the latest automation execution validated in plain b
 | Traceability | SC-58 - Expired card date is blocked in Stripe checkout | Documented matrix scenario. Covered by PaymentNegative.spec.ts > Stripe Checkout blocks expired card date, but it was not included in this AIR execution. |
 | Traceability | SC-59 - Invalid CVC is blocked in Stripe checkout | Documented matrix scenario. Covered by PaymentNegative.spec.ts > Stripe Checkout blocks invalid CVC, but it was not included in this AIR execution. |
 | Traceability | SC-60 - Declined card does not activate subscription | Documented matrix scenario. Covered by PaymentNegative.spec.ts and OverlayStrategistsTrial.spec.ts, but it was not included in this AIR execution. |
-| Future | SC-61 - Missing cardholder name is blocked before subscription activation | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; validation asserted flexibly (blocked-state OR error copy). |
-| Future | SC-62 - Failed checkout keeps user without active paid subscription | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; UI-level validation (no success/activation copy after decline). |
-| Future | SC-63 - Closing Stripe checkout returns user safely without activating subscription | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true, STRIPE_CHECKOUT_URL, and a checkout link exposing a cancel/return control. |
 | Traceability | SC-64 - Payment currency and conversion details are displayed correctly | Documented matrix scenario. Covered by DirectSubscriptionPurchase.spec.ts > Income Builder checkout shows currency and conversion details before payment, but it was not included... |
 | Blocked | SC-65 - Successful subscription confirmation email is sent | Requires email inbox/API access or notification capture. |
 | Blocked | SC-66 - Successful purchase creates Stripe customer and subscription records | Requires Stripe sandbox API/admin access to validate customer/subscription objects. |
