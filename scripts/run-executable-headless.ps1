@@ -1,8 +1,11 @@
 <#
-Runs the entire Playwright suite at full speed, including Stripe execution
-flags and skipped/blocked matrix rows, then generates AIR.
+Clean headless run of executable specs only.
 
-Default is headless. Set WATCH=true to open a headed browser.
+Skips skip-only matrix files (~478 AIR rows). Enables gated executable
+Stripe/onboarding flags. Does not open a browser. Does not record video.
+
+Usage:
+  powershell -ExecutionPolicy Bypass -File scripts\run-executable-headless.ps1
 #>
 
 $ErrorActionPreference = 'Continue'
@@ -11,6 +14,14 @@ Set-Location (Split-Path -Parent $PSScriptRoot)
 
 if (-not $env:PLAYWRIGHT_BROWSERS_PATH) {
   $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $env:USERPROFILE 'AppData\Local\ms-playwright'
+}
+
+Write-Host 'Cleaning previous Playwright results...' -ForegroundColor Cyan
+
+foreach ($path in @('test-results', 'playwright-report')) {
+  if (Test-Path $path) {
+    Remove-Item -Path $path -Recurse -Force -ErrorAction SilentlyContinue
+  }
 }
 
 node scripts\upsert-env-flags.js
@@ -45,7 +56,7 @@ $flags = @(
   'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED'
 )
 
-$duplicateLifecycleFlags = @(
+$offFlags = @(
   'SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED',
   'SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED',
   'SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED',
@@ -54,53 +65,41 @@ $duplicateLifecycleFlags = @(
   'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED',
   'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
   'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED',
-  'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED'
+  'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED',
+  'RECORD_ALL_ARTIFACTS',
+  'RECORD_VIDEO',
+  'WATCH'
 )
 
 foreach ($flag in $flags) {
   Set-Item -Path "Env:$flag" -Value 'true'
 }
 
-foreach ($flag in $duplicateLifecycleFlags) {
+foreach ($flag in $offFlags) {
   Set-Item -Path "Env:$flag" -Value 'false'
 }
 
-if (-not $env:SLOW_MO) {
-  $env:SLOW_MO = '0'
-}
-
-$watch = @('1', 'true', 'yes', 'on') -contains ([string]$env:WATCH).ToLower()
-
-if ($watch) {
-  $env:HEADED = 'true'
-} else {
-  $env:HEADED = 'false'
-}
-
+$env:SLOW_MO = '0'
+$env:HEADED = 'false'
 $env:AIR_REPORT_SCOPE = 'latest'
 $env:AIR_RESTORE_HISTORY = 'true'
 
-Write-Host 'Complete suite: full speed, duplicate paid-user flows off, then AIR.' -ForegroundColor Cyan
-if ($watch) {
-  Write-Host 'WATCH=true: headed browser. Set SLOW_MO=500 to slow clicks.' -ForegroundColor Cyan
-} else {
-  Write-Host 'Headless. Set WATCH=true only if you need to see the browser.' -ForegroundColor Cyan
-}
-Write-Host 'Matrix rows still skip on purpose so AIR can classify skipped/blocked.' -ForegroundColor Cyan
+$specFiles = Get-ChildItem -Path 'tests' -Filter '*.spec.ts' |
+  Where-Object { $_.Name -notmatch 'Matrix' } |
+  ForEach-Object { "tests/$($_.Name)" }
 
-if ($watch) {
-  & .\node_modules\.bin\playwright.cmd test --headed
-} else {
-  & .\node_modules\.bin\playwright.cmd test
-}
+Write-Host ("Clean executable headless run: {0} spec files, no matrix rows, SLOW_MO=0." -f $specFiles.Count) -ForegroundColor Cyan
+Write-Host ($specFiles -join ', ') -ForegroundColor DarkGray
+
+& .\node_modules\.bin\playwright.cmd test @specFiles
 $playwrightExit = $LASTEXITCODE
 
 $env:AIR_REPORT_SCOPE = 'latest'
 npm run report:execution
 
 if ($playwrightExit -ne 0) {
-  Write-Host "Playwright finished with exit code $playwrightExit. AIR was still generated." -ForegroundColor Yellow
+  Write-Host "Executable headless run finished with exit code $playwrightExit. AIR was still generated." -ForegroundColor Yellow
   exit $playwrightExit
 }
 
-Write-Host 'Complete suite finished. AIR opened.' -ForegroundColor Green
+Write-Host 'Executable headless run finished. AIR opened.' -ForegroundColor Green

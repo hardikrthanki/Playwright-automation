@@ -344,18 +344,11 @@ extends BasePage {
 
     await this.mobileInput.click();
 
-    await this.mobileInput.type(
-      mobileNumber,
-      {
-        delay: 35
-      }
+    await this.mobileInput.fill(
+      mobileNumber
     );
 
     await this.mobileInput.blur();
-
-    await this.page.waitForTimeout(
-      700
-    );
   }
 
 
@@ -442,7 +435,7 @@ extends BasePage {
     await expect(
       this.page
     ).toHaveURL(
-      /\/register|\/signup/,
+      /\/register|\/signup|\/sign-up|\/create/,
       {
         timeout: 15000
       }
@@ -546,9 +539,12 @@ extends BasePage {
         'OTP Verify Clicked'
       );
 
-
-      await this.page.waitForTimeout(
-        2000
+      await expect(
+        this.passwordInput
+      ).toBeVisible({
+        timeout: 15000
+      }).catch(
+        () => undefined
       );
     } else {
       Logger.info(

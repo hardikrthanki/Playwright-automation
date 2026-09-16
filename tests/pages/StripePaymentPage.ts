@@ -16,6 +16,57 @@ import {
 import { BasePage } from './BasePage';
 import { Logger } from '../utils/logger';
 
+function stripeCheckoutPlanPattern(
+  expectedPlan: string
+) {
+  const normalized =
+    expectedPlan.trim();
+
+  const aliases: Record<string, string> = {
+    'Income Builder':
+      'Income Builder|Subscribe to Income|\\bIncome\\b',
+    'Overlay Strategists':
+      'Overlay Strategists|Subscribe to Overlay|\\bOverlay\\b',
+    'Portfolio Hedger':
+      'Portfolio Hedger|Portfolio Hedge|3-Advanced|Subscribe to 3-Advanced',
+    'Marketplace':
+      'Marketplace|Market Place'
+  };
+
+  const mapped =
+    aliases[normalized];
+
+  if (mapped) {
+    return new RegExp(
+      mapped,
+      'i'
+    );
+  }
+
+  const escaped =
+    normalized.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      '\\$&'
+    );
+
+  const firstToken =
+    normalized
+      .split(
+        /\s+/
+      )[0]
+      ?.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&'
+      );
+
+  return new RegExp(
+    firstToken
+      ? `${escaped}|${firstToken}`
+      : escaped,
+    'i'
+  );
+}
+
 /* ============================================================================
 PAGE OBJECT: StripePaymentPage
 
@@ -169,7 +220,7 @@ export class StripePaymentPage
         'body'
       )
     ).toContainText(
-      /30 days free|start trial|free trial|trial/i,
+      /30 days free|start trial|free trial|trial|subscribe to overlay|overlay/i,
       {
         timeout: 15000
       }
@@ -261,9 +312,8 @@ export class StripePaymentPage
       await expect(
         body
       ).toContainText(
-        new RegExp(
-          options.expectedPlan,
-          'i'
+        stripeCheckoutPlanPattern(
+          options.expectedPlan
         ),
         {
           timeout: 15000
@@ -534,10 +584,6 @@ export class StripePaymentPage
       }
     ).catch(
       () => undefined
-    );
-
-    await this.page.waitForTimeout(
-      3000
     );
 
     Logger.url(

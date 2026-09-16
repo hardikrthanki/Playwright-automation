@@ -131,8 +131,15 @@ constructor(page: Page) {
       );
 
     this.mobileSectionHeading =
-      page.getByText(
-        /mobile number/i
+      page.getByRole(
+        'heading',
+        {
+          name: /mobile number|phone number|mobile/i
+        }
+      ).or(
+        page.getByText(
+          /mobile number|phone number|change number/i
+        )
       ).first();
 
     this.changeMobileNumberButton =

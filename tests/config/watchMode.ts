@@ -3,11 +3,11 @@ WATCH MODE
 
 PURPOSE
 -------
-Slows headed Playwright runs so a viewer can see each action and the
-validated screen. Headless and CI stay fast.
+Optional headed slowdown so a viewer can see each action. Default is full
+speed, including headed runs.
 
-SLOW_MO=0 disables the delay even when headed.
-SLOW_MO=800 makes headed playback slower.
+Set SLOW_MO=500 (or WATCH=true) when you want to watch playback.
+SLOW_MO=0 keeps full speed.
 ============================================================================= */
 
 export function isHeadedRun() {
@@ -43,7 +43,21 @@ export function watchDelayMs() {
     }
   }
 
-  return isHeadedRun()
-    ? 500
-    : 0;
+  if (
+    [
+      '1',
+      'true',
+      'yes',
+      'on'
+    ].includes(
+      (
+        process.env.WATCH ??
+        ''
+      ).toLowerCase()
+    )
+  ) {
+    return 400;
+  }
+
+  return 0;
 }

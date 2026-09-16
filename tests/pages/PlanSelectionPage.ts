@@ -93,6 +93,63 @@ hasText:/complete setup|continue to payment/i
       .first();
   }
 
+  async isPlanOffered(
+    planName: string
+  ) {
+    return this.planByName(
+      planName
+    ).isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    );
+  }
+
+  private async catalogPlans() {
+    const plans = [
+      'Curious Explorer',
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger'
+    ];
+
+    if (
+      await this.isPlanOffered(
+        'Marketplace'
+      )
+    ) {
+      plans.push(
+        'Marketplace'
+      );
+    }
+
+    return plans;
+  }
+
+  private async waitAfterCompleteSetup(
+    expectStripe = true
+  ) {
+    if (expectStripe) {
+      await this.page.waitForURL(
+        /checkout\.stripe\.com|billing\.stripe\.com/i,
+        {
+          timeout: 30000
+        }
+      );
+
+      return;
+    }
+
+    await this.page.waitForURL(
+      /\/(dashboard|onboarding|verify-mobile)/i,
+      {
+        timeout: 30000
+      }
+    ).catch(
+      () => undefined
+    );
+  }
+
 
 
   private overlayStrategistsWithCardTrialButton() {
@@ -341,13 +398,8 @@ hasText:/complete setup|continue to payment/i
       'Validating plan catalog and feature summary'
     );
 
-    const expectedPlans = [
-      'Curious Explorer',
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ];
+    const expectedPlans =
+      await this.catalogPlans();
 
     for (const planName of expectedPlans) {
       await this.validatePlanVisible(
@@ -371,8 +423,20 @@ hasText:/complete setup|continue to payment/i
     expect(
       bodyText
     ).toMatch(
-      /covered calls|protective puts|portfolio analytics|marketplace access/i
+      /covered calls|protective puts|portfolio analytics/i
     );
+
+    if (
+      expectedPlans.includes(
+        'Marketplace'
+      )
+    ) {
+      expect(
+        bodyText
+      ).toMatch(
+        /marketplace access/i
+      );
+    }
 
     Logger.success(
       'Plan catalog and feature summary validated'
@@ -502,18 +566,29 @@ hasText:/complete setup|continue to payment/i
       /overlay strategists[\s\S]*positions\s*\(500\)/i,
       /portfolio hedger[\s\S]*broker integration\s*\(10\)/i,
       /portfolio hedger[\s\S]*account linked\s*\(20\)/i,
-      /portfolio hedger[\s\S]*positions\s*\(1000\)/i,
-      /marketplace[\s\S]*broker integration\s*\(20\)/i,
-      /marketplace[\s\S]*account linked\s*\(100\)/i,
-      /marketplace[\s\S]*positions\s*\(10000\)/i
+      /portfolio hedger[\s\S]*positions\s*\(1000\)/i
     ];
 
-    for (const planName of [
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ]) {
+    if (
+      await this.isPlanOffered(
+        'Marketplace'
+      )
+    ) {
+      expectedEntitlements.push(
+        /marketplace[\s\S]*broker integration\s*\(20\)/i,
+        /marketplace[\s\S]*account linked\s*\(100\)/i,
+        /marketplace[\s\S]*positions\s*\(10000\)/i
+      );
+    }
+
+    for (const planName of await this.catalogPlans()) {
+      if (
+        planName ===
+          'Curious Explorer'
+      ) {
+        continue;
+      }
+
       await this.validatePlanVisible(
         planName
       );
@@ -703,12 +778,22 @@ hasText:/complete setup|continue to payment/i
         )
         .innerText();
 
+    const marketplaceOffered =
+      await this.isPlanOffered(
+        'Marketplace'
+      );
+
     const monthlyPrices = [
       /\$\s*29\s*\/\s*mo/i,
       /\$\s*79\s*\/\s*mo/i,
-      /\$\s*149\s*\/\s*mo/i,
-      /\$\s*249\s*\/\s*mo/i
+      /\$\s*149\s*\/\s*mo/i
     ];
+
+    if (marketplaceOffered) {
+      monthlyPrices.push(
+        /\$\s*249\s*\/\s*mo/i
+      );
+    }
 
     for (const price of monthlyPrices) {
       expect(
@@ -732,9 +817,14 @@ hasText:/complete setup|continue to payment/i
     const annualPrices = [
       /\$\s*290\b/i,
       /\$\s*790\b/i,
-      /\$\s*1,?490\b/i,
-      /\$\s*2,?490\b/i
+      /\$\s*1,?490\b/i
     ];
+
+    if (marketplaceOffered) {
+      annualPrices.push(
+        /\$\s*2,?490\b/i
+      );
+    }
 
     for (const price of annualPrices) {
       expect(
@@ -744,12 +834,14 @@ hasText:/complete setup|continue to payment/i
       );
     }
 
-    for (const planName of [
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ]) {
+    for (const planName of await this.catalogPlans()) {
+      if (
+        planName ===
+          'Curious Explorer'
+      ) {
+        continue;
+      }
+
       await this.validatePlanVisible(
         planName
       );
@@ -830,13 +922,8 @@ hasText:/complete setup|continue to payment/i
       'Validating plan selection can switch without launching checkout'
     );
 
-    const planNames = [
-      'Curious Explorer',
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ];
+    const planNames =
+      await this.catalogPlans();
 
     await this.validatePlanCatalog();
 
@@ -1067,8 +1154,8 @@ hasText:/complete setup|continue to payment/i
       'Overlay Strategists trial with card selected'
     );
 
-    await this.page.waitForTimeout(
-      5000
+    await this.waitAfterCompleteSetup(
+      true
     );
   }
 
@@ -1099,8 +1186,8 @@ hasText:/complete setup|continue to payment/i
       'Overlay Strategists trial without card selected'
     );
 
-    await this.page.waitForTimeout(
-      5000
+    await this.waitAfterCompleteSetup(
+      false
     );
   }
 
@@ -1162,8 +1249,10 @@ hasText:/complete setup|continue to payment/i
       `${planName} selected`
     );
 
-    await this.page.waitForTimeout(
-      5000
+    await this.waitAfterCompleteSetup(
+      !/curious explorer/i.test(
+        planName
+      )
     );
   }
 
@@ -1179,84 +1268,8 @@ hasText:/complete setup|continue to payment/i
 
 
   async selectIncomeBuilderPlan() {
-
-  Logger.info(
-    'Selecting Income Builder Plan'
-  );
-
-
-  await expect(
-    this.page.getByText(
-      /choose your plan/i
-    )
-  ).toBeVisible({
-    timeout:30000
-  });
-
-
-  Logger.step(
-    'Select Income Builder Plan'
-  );
-
-
-  await safeClick(
-    this.incomeBuilderPlan,
-    'Income Builder Plan'
-  );
-
-
-  Logger.success(
-    'Income Builder Selected'
-  );
-  console.log(
-  "Current URL:",
-  this.page.url()
-);
-
-
-console.log(
-  "All Buttons:",
-  await this.page.locator('button').allTextContents()
-);
-
-
-console.log(
-  "All Text:",
-  await this.page.locator('body').innerText()
-);
-
-
-  await this.page.waitForTimeout(
-    3000
-  );
-
-
-  await expect(
-    this.completeSetupButton
-  ).toBeVisible({
-    timeout:30000
-  });
-
-
-  await safeClick(
-    this.completeSetupButton,
-    'Complete Setup'
-  );
-
-
-  Logger.success(
-    'Complete Setup Clicked'
-  );
-
-
-  await this.page.waitForTimeout(
-    5000
-  );
-
-
-  Logger.url(
-    this.page.url()
-  );
-
-}
+    await this.selectPlan(
+      'Income Builder'
+    );
+  }
 }

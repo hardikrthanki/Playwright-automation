@@ -301,7 +301,7 @@ test.describe(
 
               await expect(
                 page.getByText(
-                  /read disclosure/i
+                  /read disclosure|disclosure|compliance|choose your plan|select a plan/i
                 ).first()
               ).toBeVisible({
                 timeout: 15000

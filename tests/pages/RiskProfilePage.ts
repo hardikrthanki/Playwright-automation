@@ -175,8 +175,6 @@ export class RiskProfilePage
       force: true
     });
 
-    await this.page.waitForTimeout(1000);
-
     const accountCheckboxes =
       this.page.locator('[role="checkbox"]');
 

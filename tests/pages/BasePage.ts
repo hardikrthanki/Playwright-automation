@@ -57,9 +57,7 @@ export class BasePage {
 
     for (const button of overlayButtons) {
       const isVisible =
-        await button.isVisible({
-          timeout: 1500
-        }).catch(
+        await button.isVisible().catch(
           () => false
         );
 

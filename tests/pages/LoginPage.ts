@@ -14,8 +14,7 @@ import { Logger }
   from '../utils/logger';
 
 import {
-  URLS,
-  WAITS
+  URLS
 } from '../config/constants';
 
 import {
@@ -649,9 +648,13 @@ export class LoginPage
       'Open Profile Menu'
     );
 
-    await this.page.waitForTimeout(
-      WAITS.NORMAL
-    );
+    await expect(
+      this.page.getByText(
+        /sign out/i
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
 
     await safeClick(
       this.page.getByText(

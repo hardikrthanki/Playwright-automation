@@ -1,5 +1,6 @@
 import {
   expect,
+  Page,
   test
 } from '@playwright/test';
 
@@ -71,6 +72,71 @@ function envEnabled(
   );
 }
 
+async function registerOverlayUserAndReachPlanSelection(
+  page: Page,
+  scenario: string
+) {
+  const email =
+    generateEmail(
+      scenario
+    );
+
+  const mobileNumber =
+    generateMobileNumber();
+
+  console.log(
+    `${scenario} Email:`,
+    email
+  );
+
+  console.log(
+    `${scenario} Mobile:`,
+    mobileNumber
+  );
+
+  await new RegistrationPage(
+    page
+  ).open();
+
+  await new RegistrationPage(
+    page
+  ).register(
+    email,
+    mobileNumber
+  );
+
+  await waitForManualEmailVerification(
+    page,
+    email
+  );
+
+  await new LoginPage(
+    page
+  ).login(
+    email,
+    TEST_USERS.onboarding.password
+  );
+
+  await new MobileVerificationPage(
+    page
+  ).completeIfVisible(
+    mobileNumber
+  );
+
+  await new RiskProfilePage(
+    page
+  ).fill();
+
+  await new CompliancePage(
+    page
+  ).fill();
+
+  return {
+    email,
+    mobileNumber
+  };
+}
+
 if (
   envEnabled(
     'OVERLAY_STRATEGISTS_FLOW_ENABLED'
@@ -87,6 +153,12 @@ if (
     test(
       'New user can reach Overlay Strategists trial option',
       async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'PLAN_SELECTION_VALIDATION_ENABLED'
+          ),
+          'Plan catalog validation already covers Overlay Strategists trial options.'
+        );
 
         const email =
           generateEmail(
@@ -190,80 +262,17 @@ if (
       test(
         'New user can start Overlay Strategists trial with card',
         async ({ page }) => {
-
-        const email =
-          generateEmail(
+        const user =
+          await registerOverlayUserAndReachPlanSelection(
+            page,
             'overlay-with-card'
           );
 
+        const email =
+          user.email;
+
         const mobileNumber =
-          generateMobileNumber();
-
-        console.log(
-          'Overlay With Card Trial Email:',
-          email
-        );
-
-        console.log(
-          'Overlay With Card Trial Mobile:',
-          mobileNumber
-        );
-
-        await test.step(
-          'Register new user',
-          async () => {
-            const registration =
-              new RegistrationPage(
-                page
-              );
-
-            await registration.open();
-
-            await registration.register(
-              email,
-              mobileNumber
-            );
-          }
-        );
-
-        await test.step(
-          'Verify email manually',
-          async () => {
-            await waitForManualEmailVerification(
-              page,
-              email
-            );
-          }
-        );
-
-        await test.step(
-          'Login and complete onboarding prerequisites',
-          async () => {
-            const login =
-              new LoginPage(
-                page
-              );
-
-            await login.login(
-              email,
-              TEST_USERS.onboarding.password
-            );
-
-            await new MobileVerificationPage(
-              page
-            ).completeIfVisible(
-              mobileNumber
-            );
-
-            await new RiskProfilePage(
-              page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
-          }
-        );
+          user.mobileNumber;
 
         await test.step(
           'Select Overlay Strategists with-card trial',
@@ -288,6 +297,22 @@ if (
             await stripe.validateTrialCheckoutDetails(
               email
             );
+
+            if (
+              envEnabled(
+                'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
+              )
+            ) {
+              await stripe.validateMissingCardDetailsBlocked();
+            }
+
+            if (
+              envEnabled(
+                'OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED'
+              )
+            ) {
+              await stripe.validateDeclinedCardRejected();
+            }
 
             await stripe.completeTrialPayment();
 
@@ -334,6 +359,12 @@ if (
       test(
         'Overlay Strategists with-card trial opens Stripe checkout with trial details',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Checkout details are validated on the with-card trial user.'
+        );
 
         const email =
           generateEmail(
@@ -446,6 +477,12 @@ if (
       test(
         'Overlay Strategists with-card trial blocks missing Stripe card details',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Missing card validation is folded into the with-card trial user.'
+        );
 
         const email =
           generateEmail(
@@ -556,6 +593,12 @@ if (
       test(
         'Overlay Strategists with-card trial rejects declined Stripe card',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Declined card validation is folded into the with-card trial user.'
+        );
 
         const email =
           generateEmail(

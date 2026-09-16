@@ -51,8 +51,9 @@ start trials, submit Stripe test payments, or inspect subscription controls.
 Default behavior is safe: every mutating flow is skipped until explicitly
 enabled with env flags.
 
-Paid preview/submit slices create a matching disposable user when
-SUB_LIFECYCLE_PAID_EMAIL is not set. Created emails are written to
+Paid preview/cancel slices reuse TEST_USERS.subscriber unless
+SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true. Upgrade submit and first
+purchases still create disposable users. Created emails are written to
 test-results/created-stripe-users.json.
 
 RUN
@@ -344,7 +345,7 @@ function downgradeIntervals() {
 function intervalPreviewTargetPlan() {
   return parsePlanName(
     process.env.SUB_LIFECYCLE_INTERVAL_TARGET_PLAN,
-    'Income Builder'
+    'Overlay Strategists'
   );
 }
 
@@ -593,23 +594,40 @@ async function loginPreparedPaidUser(
     usedFor: string;
   }
 ) {
-  const usePreparedUser =
+  const forceDisposableUser =
+    envEnabled(
+      'SUB_LIFECYCLE_CREATE_DISPOSABLE_USER'
+    );
+
+  const reusePreparedUser =
     envEnabled(
       'SUB_LIFECYCLE_USE_PREPARED_USER'
     );
 
+  const mutatingUsedFor =
+    options.usedFor ===
+      'upgrade-submit' ||
+    options.usedFor ===
+      'paid-purchase';
+
   const email =
     process.env.SUB_LIFECYCLE_PAID_EMAIL ??
-    process.env.BILLING_MANAGEMENT_EMAIL;
+    process.env.BILLING_MANAGEMENT_EMAIL ??
+    TEST_USERS.subscriber.email;
 
   const password =
     process.env.SUB_LIFECYCLE_PAID_PASSWORD ??
-    process.env.BILLING_MANAGEMENT_PASSWORD;
+    process.env.BILLING_MANAGEMENT_PASSWORD ??
+    TEST_USERS.subscriber.password;
 
   if (
-    usePreparedUser &&
+    !forceDisposableUser &&
     email &&
-    password
+    password &&
+    (
+      reusePreparedUser ||
+      !mutatingUsedFor
+    )
   ) {
     await new LoginPage(
       page
@@ -658,6 +676,7 @@ async function validateDashboardAndBilling(
     return;
   }
 
+  await billing.validateOverview();
   await billing.validateOverviewContract();
 }
 
@@ -838,7 +857,7 @@ test.describe(
     controlledLifecycleTest(
       'Prepared paid user exposes upgrade downgrade and interval controls',
       'SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED',
-      'Plan controls create a disposable Income Builder user when no paid fixture is set.',
+      'Plan controls reuse the existing paid subscriber unless SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true.',
       async ({ page }) => {
         await loginPreparedPaidUser(
           page,
@@ -868,7 +887,7 @@ test.describe(
     controlledLifecycleTest(
       'Prepared paid user can preview monthly and annual upgrade calculations',
       'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED',
-      'Upgrade preview creates a disposable lower-tier paid user when no paid fixture is set.',
+      'Upgrade preview reuses the existing paid subscriber unless SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true.',
       async ({ page }) => {
         const targetPlan =
           upgradeTargetPlan();
@@ -1088,7 +1107,7 @@ test.describe(
     controlledLifecycleTest(
       'Prepared paid user can preview billing interval change without submitting',
       'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED',
-      'Interval preview creates a disposable paid user on the opposite interval when no fixture is set and does not submit the change.',
+      'Interval preview reuses the existing paid subscriber unless SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true and does not submit the change.',
       async ({ page }) => {
         const targetPlan =
           intervalPreviewTargetPlan();

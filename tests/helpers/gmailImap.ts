@@ -366,7 +366,7 @@ export async function waitForGmailVerificationLink(
       }
 
       await new Promise((resolve) =>
-        setTimeout(resolve, Math.min(5000, remainingMs))
+        setTimeout(resolve, Math.min(2000, remainingMs))
       );
     }
   }

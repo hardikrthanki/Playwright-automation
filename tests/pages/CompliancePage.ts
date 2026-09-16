@@ -10,10 +10,6 @@ import { safeClick }
   from './BasePage';
   import { Logger }
   from '../utils/logger';
-  import {
-  TIMEOUTS,
-  WAITS
-} from '../config/constants';
   /* =============================================================================
 PAGE OBJECT: CompliancePage
 
@@ -88,10 +84,6 @@ constructor(page: Page) {
       'Open State Dropdown'
     );
 
-    await this.page.waitForTimeout(
-      1000
-    );
-
     const stateOption =
       this.page
         .locator('[role="option"]')
@@ -99,6 +91,12 @@ constructor(page: Page) {
           hasText: /^[A-Za-z]/,
         })
         .first();
+
+    await expect(
+      stateOption
+    ).toBeVisible({
+      timeout: 10000
+    });
 
     await safeClick(
       stateOption,
@@ -243,7 +241,16 @@ constructor(page: Page) {
       `Open Disclosure ${index + 1}`
     );
 
-    await this.page.waitForTimeout(2000);
+    await expect(
+      this.page.getByRole(
+        'button',
+        {
+          name: /i have read and accept/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
   }
 
   async acceptOpenDisclosure(
@@ -286,10 +293,6 @@ constructor(page: Page) {
       }
     );
 
-    await this.page.waitForTimeout(
-      2000
-    );
-
     const acceptButton =
       this.page.getByRole('button', {
         name:
@@ -315,10 +318,6 @@ constructor(page: Page) {
 
     Logger.success(
       `Disclosure ${index + 1} Accepted`
-    );
-
-    await this.page.waitForTimeout(
-      1500
     );
   }
 
@@ -560,12 +559,16 @@ await this.selectState();
 
     await this.saveCompliance();
 
-Logger.url(
-  this.page.url()
-);
+    Logger.url(
+      this.page.url()
+    );
 
-await this.page.waitForTimeout(
-  WAITS.LARGE
-);
+    await expect(
+      this.page.getByText(
+        /choose your plan|select a plan|get started/i
+      ).first()
+    ).toBeVisible({
+      timeout: 30000
+    });
   }
 }

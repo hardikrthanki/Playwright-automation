@@ -8,12 +8,16 @@ import {
 const recordAllArtifacts =
   process.env.RECORD_ALL_ARTIFACTS === 'true';
 
+const recordVideo =
+  recordAllArtifacts ||
+  process.env.RECORD_VIDEO === 'true';
+
 const watchDelay =
   watchDelayMs();
 
 if (watchDelay > 0) {
   console.log(
-    `Headed watch mode: slowing each Playwright action by ${watchDelay}ms. Set SLOW_MO=0 for full speed.`
+    `Watch mode: slowing each Playwright action by ${watchDelay}ms. Unset WATCH/SLOW_MO for full speed.`
   );
 }
 
@@ -38,9 +42,9 @@ export default defineConfig({
   ],
 
   use: {
-    trace: recordAllArtifacts ? 'on' : 'retain-on-failure',
+    trace: recordAllArtifacts ? 'on' : 'on-first-retry',
     screenshot: recordAllArtifacts ? 'on' : 'only-on-failure',
-    video: recordAllArtifacts ? 'on' : 'retain-on-failure',
+    video: recordVideo ? 'retain-on-failure' : 'off',
 
     actionTimeout: 30000,
     navigationTimeout: 30000,

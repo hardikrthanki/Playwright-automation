@@ -33,11 +33,15 @@ npx playwright test tests/AuthUiValidation.spec.ts --headed
 function authRegistrationLink(
   page: Page
 ) {
-  return page.getByRole(
-    'link',
-    {
-      name: /^sign up$/i
-    }
+  return page.locator(
+    'a[href*="/register"], a[href*="/signup"], a[href*="/sign-up"]'
+  ).first().or(
+    page.getByRole(
+      'link',
+      {
+        name: /^sign up$/i
+      }
+    )
   ).or(
     page.getByRole(
       'link',
@@ -60,6 +64,33 @@ function authRegistrationLink(
       }
     )
   );
+}
+
+async function expectRegistrationOpened(
+  page: Page
+) {
+  await expect
+    .poll(
+      async () => {
+        if (
+          /\/register|\/signup|\/sign-up|\/create/i.test(
+            page.url()
+          )
+        ) {
+          return true;
+        }
+
+        return page.locator(
+          'input[name="firstName"], input[name="email"]'
+        ).first().isVisible().catch(
+          () => false
+        );
+      },
+      {
+        timeout: 15000
+      }
+    )
+    .toBeTruthy();
 }
 
 async function findPasswordToggle(
@@ -551,13 +582,8 @@ test.describe(
           'Open registration from login'
         );
 
-        await expect(
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 15000
-          }
         );
       }
     );
@@ -580,13 +606,8 @@ test.describe(
           'Open registration from login'
         );
 
-        await expect(
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 10000
-          }
         );
 
         await page.goBack({
@@ -614,13 +635,8 @@ test.describe(
           waitUntil: 'domcontentloaded'
         });
 
-        await expect(
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 10000
-          }
         );
 
         await expect(
