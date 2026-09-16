@@ -109,13 +109,23 @@ export async function continueAfterWithCardTrialCheckout(
     );
 
   if (
-    planSelectionVisible &&
     /onboarding/i.test(
+      page.url()
+    ) &&
+    !/\/dashboard/i.test(
       page.url()
     )
   ) {
+    if (
+      planSelectionVisible
+    ) {
+      throw new Error(
+        'QA-CL-005: with-card trial bounced to Plan Selection. That is the silent already_redeemed card-reuse gate, not a Free-plan trial bug. Use a unique Stripe test card per fresh user.'
+      );
+    }
+
     throw new Error(
-      'QA-CL-005: with-card trial bounced to Plan Selection. That is the silent already_redeemed card-reuse gate, not a Free-plan trial bug. Use a unique Stripe test card per fresh user.'
+      `QA-CL-005: with-card trial did not reach dashboard after checkout. URL: ${page.url()}`
     );
   }
 }

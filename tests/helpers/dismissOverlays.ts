@@ -44,7 +44,12 @@ export async function dismissOverlays(
     await overlayButton.click({
       timeout: 3000
     }).catch(
-      () => undefined
+      () => overlayButton.click({
+        force: true,
+        timeout: 3000
+      }).catch(
+        () => undefined
+      )
     );
 
     await page.waitForTimeout(

@@ -621,6 +621,7 @@ export const STRIPE_CARD =
   '4242424242424242';
 
 export const STRIPE_TRIAL_CARDS = [
+  '4242424242424242',
   '4000056655665556',
   '2223003122003222',
   '5200828282828210',
@@ -628,7 +629,9 @@ export const STRIPE_TRIAL_CARDS = [
   '6011111111111117'
 ];
 
-let stripeTrialCardIndex = 0;
+let stripeTrialCardIndex =
+  Date.now() %
+  STRIPE_TRIAL_CARDS.length;
 
 export function uniqueStripeTrialCard(
   _seed?: string

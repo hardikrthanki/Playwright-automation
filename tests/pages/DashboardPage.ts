@@ -242,7 +242,7 @@ export class DashboardPage
 
     const menu =
       this.page.locator(
-        '[role="menu"], [data-radix-menu-content], [data-radix-popper-content-wrapper], [data-state="open"]'
+        '[role="menu"], [data-radix-menu-content], [data-radix-dropdown-menu-content], [data-radix-popper-content-wrapper]'
       );
 
     return menu.getByRole(

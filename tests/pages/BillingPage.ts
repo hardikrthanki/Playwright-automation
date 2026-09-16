@@ -2087,6 +2087,74 @@ private async manageSubscriptionControl() {
   );
 }
 
+private async clickStripePortalControl(
+  locator: Locator,
+  label: string
+) {
+  console.log(`[CLICK] ${label}`);
+
+  await locator.waitFor({
+    state: 'visible',
+    timeout: 15000
+  });
+
+  try {
+    await locator.click({
+      timeout: 5000
+    });
+  } catch {
+    await locator.click({
+      force: true,
+      timeout: 8000
+    });
+  }
+}
+
+private async dismissStripeCancelDialog(
+  portalPage: Page
+) {
+  const layer =
+    portalPage.locator(
+      '#__sail-layer-containers, [role="dialog"]'
+    ).filter({
+      hasText: /cancel your subscription/i
+    }).last();
+
+  const goBack =
+    layer.getByRole(
+      'button',
+      {
+        name: /^go back$/i
+      }
+    ).last();
+
+  if (
+    !await goBack.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    )
+  ) {
+    return false;
+  }
+
+  await this.clickStripePortalControl(
+    goBack,
+    'Go Back From Cancel Subscription'
+  );
+
+  await portalPage.getByText(
+    /cancel your subscription/i
+  ).first().waitFor({
+    state: 'hidden',
+    timeout: 10000
+  }).catch(
+    () => undefined
+  );
+
+  return true;
+}
+
 private async ensurePortalOverview(
   portalPage: Page
 ) {
@@ -2103,13 +2171,21 @@ private async ensurePortalOverview(
       return;
     }
 
+    if (
+      await this.dismissStripeCancelDialog(
+        portalPage
+      )
+    ) {
+      continue;
+    }
+
     const goBack =
       portalPage.getByRole(
         'button',
         {
-          name: /go back/i
+          name: /^go back$/i
         }
-      ).first();
+      ).last();
 
     const billingCrumb =
       portalPage.getByRole(
@@ -2134,7 +2210,7 @@ private async ensurePortalOverview(
         () => false
       )
     ) {
-      await safeClick(
+      await this.clickStripePortalControl(
         goBack,
         'Back To Portal Overview'
       );
@@ -2634,12 +2710,24 @@ private async returnFromPortalToApplication(
     'Validating subscription portal return link'
   );
 
+  await this.dismissStripeCancelDialog(
+    portalPage
+  );
+
   const returnControl =
-    portalPage.locator(
-      'a, button'
-    ).filter({
-      hasText: /return to|back to|go back/i,
-    }).first();
+    portalPage.getByRole(
+      'link',
+      {
+        name: /return to/i
+      }
+    ).or(
+      portalPage.getByRole(
+        'button',
+        {
+          name: /return to/i
+        }
+      )
+    ).first();
 
   const returnVisible =
     await returnControl.isVisible({
@@ -2651,7 +2739,7 @@ private async returnFromPortalToApplication(
   if (
     returnVisible
   ) {
-    await safeClick(
+    await this.clickStripePortalControl(
       returnControl,
       'Return To Application'
     );
@@ -3071,36 +3159,9 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     );
   }
 
-  const goBack =
-    portalPage.getByRole(
-      'button',
-      {
-        name: /go back/i
-      }
-    ).first();
-
-  if (
-    await goBack.isVisible({
-      timeout: 5000
-    }).catch(
-      () => false
-    )
-  ) {
-    await safeClick(
-      goBack,
-      'Go Back From Cancel Subscription'
-    );
-
-    await portalPage.waitForLoadState(
-      'domcontentloaded'
-    ).catch(
-      () => undefined
-    );
-
-    await portalPage.waitForTimeout(
-      1000
-    );
-  }
+  await this.dismissStripeCancelDialog(
+    portalPage
+  );
 
   const portalTextAfterBack =
     await portalPage
