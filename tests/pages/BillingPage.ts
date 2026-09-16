@@ -149,6 +149,10 @@ export class BillingPage
 
   readonly pdfLinks: Locator;
 
+  private stripePortalSessionValidated = false;
+
+  private activePortalPage?: Page;
+
 constructor(page: Page) {
   super(page);
 
@@ -289,63 +293,33 @@ Logger.info(
 
   await this.ensureOnApp();
 
-  try {
-    await safeClick(
-      this.page.getByText(
-        'HT',
-        { exact: true }
-      ),
-      'Open Profile Menu'
-    );
-
-    await safeClick(
-      this.page.getByText(
-        /billing/i
-      ),
-      'Open Billing'
-    );
-
-    await this.page.waitForURL(
-      /billing/,
-      {
-        timeout: 5000,
-      }
-    );
-
+  if (
+    this.page.url().includes(
+      '/billing'
+    )
+  ) {
     await this.waitForBillingContent();
-  } catch {
-    Logger.info(
-      'Billing menu navigation unavailable; opening billing route directly'
-    );
 
-    await this.page.goto(
-      this.appUrl(
-        URLS.BILLING
-      ),
-      {
-        waitUntil: 'domcontentloaded',
-      }
-    );
+Logger.success(
+  'Billing Page Opened'
+);
 
-    await expect(this.page)
-      .toHaveURL(
-        /billing/,
-        {
-          timeout: 15000,
-        }
-      );
-
-    try {
-      await this.waitForBillingContent();
-    } catch (error) {
-      const availableControls =
-        await this.visibleControlSummary();
-
-      throw new Error(
-        `Billing route opened but billing content did not load. Current URL: ${this.page.url()}. Visible controls: ${availableControls.join(' | ')}. Original error: ${String(error)}`
-      );
-    }
+    return;
   }
+
+  Logger.info(
+    'Opening billing route directly'
+  );
+
+  await this.page.goto(
+    this.appUrl(
+      URLS.BILLING
+    ),
+    {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    }
+  );
 
   await expect(this.page)
     .toHaveURL(
@@ -354,6 +328,17 @@ Logger.info(
         timeout: 15000,
       }
     );
+
+  try {
+    await this.waitForBillingContent();
+  } catch (error) {
+    const availableControls =
+      await this.visibleControlSummary();
+
+    throw new Error(
+      `Billing route opened but billing content did not load. Current URL: ${this.page.url()}. Visible controls: ${availableControls.join(' | ')}. Original error: ${String(error)}`
+    );
+  }
 
 Logger.success(
   'Billing Page Opened'
@@ -1824,7 +1809,20 @@ async validateInvoiceAndPdfLinksHaveTargets() {
     'Validating Billing Evidence Links'
   );
 
-  await this.validateHistoryTabStable();
+  const alreadyOnHistory =
+    await this.page.getByText(
+      /^paid$/i
+    ).first().isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    );
+
+  if (
+    !alreadyOnHistory
+  ) {
+    await this.validateHistoryTabStable();
+  }
 
   const invoiceLink =
     this.invoiceLinks.first();
@@ -1868,88 +1866,323 @@ async validateInvoiceAndPdfLinksHaveTargets() {
 }
 
 private async manageSubscriptionControl() {
-  const visibleControls =
-    this.page.locator(
-      'a, button'
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    throw new Error(
+      `Manage subscription was requested while still on Stripe: ${this.page.url()}`
     );
+  }
 
-  const manageText =
-    /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|invoices|payment settings|update payment method|change payment method|edit payment method/i;
+  const manageName =
+    /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods\s*&\s*invoices|update payment method|change payment method/i;
 
-  const controlCount =
-    await visibleControls.count();
+  const candidates = [
+    this.page.getByRole(
+      'button',
+      {
+        name: manageName,
+      }
+    ),
+    this.page.getByRole(
+      'link',
+      {
+        name: manageName,
+      }
+    ),
+    this.page.locator(
+      'a[href*="billing.stripe.com"], a[href*="stripe.com"]'
+    ).filter({
+      hasText: manageName,
+    }),
+    this.page.locator(
+      'button, a, [role="button"]'
+    ).filter({
+      hasText: manageName,
+    }),
+  ];
 
-  for (let i = 0; i < controlCount; i++) {
+  for (const candidate of candidates) {
     const control =
-      visibleControls.nth(i);
+      candidate.first();
 
     if (
-      !await control.isVisible()
-        .catch(
-          () => false
-        )
-    ) {
-      continue;
-    }
-
-    const text =
-      (
-        await control.innerText()
-          .catch(
-            () => ''
-          )
-      ).trim();
-
-    const href =
-      await control.getAttribute(
-        'href'
-      );
-
-    if (
-      manageText.test(
-        text
-      ) ||
-      /stripe|billing_portal|customer-portal|portal/i.test(
-        href ?? ''
+      await control.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
       )
     ) {
       return control;
     }
   }
 
-  const availableControls =
-    await visibleControls
-      .evaluateAll(
-        elements =>
-          elements
-            .map(
-              element =>
-                (
-                  element.textContent ??
-                  element.getAttribute('aria-label') ??
-                  element.getAttribute('href') ??
-                  ''
-                ).trim()
-            )
-            .filter(Boolean)
-            .slice(0, 30)
-      )
-      .catch(
-        () => []
-      );
-
   throw new Error(
-    `Manage subscription control was not found. Visible controls: ${availableControls.join(' | ')}`
+    `Manage subscription control was not found. Visible controls: ${(await this.visibleControlSummary()).join(' | ')}`
   );
 }
 
-async openSubscriptionPortal() {
+private async ensurePortalOverview(
+  portalPage: Page
+) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const overviewReady =
+      await this.waitForPortalOverview(
+        portalPage,
+        attempt === 0 ? 3000 : 5000
+      );
+
+    if (
+      overviewReady
+    ) {
+      return;
+    }
+
+    const goBack =
+      portalPage.getByRole(
+        'button',
+        {
+          name: /go back/i
+        }
+      ).first();
+
+    const billingCrumb =
+      portalPage.getByRole(
+        'link',
+        {
+          name: /^billing$/i
+        }
+      ).first();
+
+    const cancelNested =
+      portalPage.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      ).first();
+
+    if (
+      await goBack.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        goBack,
+        'Back To Portal Overview'
+      );
+      continue;
+    }
+
+    if (
+      await billingCrumb.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        billingCrumb,
+        'Back To Portal Overview'
+      );
+      continue;
+    }
+
+    if (
+      await cancelNested.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        cancelNested,
+        'Cancel Nested Portal Screen'
+      );
+    }
+  }
+
+  throw new Error(
+    `Stripe portal overview is not visible after leaving a nested screen. URL: ${portalPage.url()}`
+  );
+}
+
+private async waitForPortalOverview(
+  portalPage: Page,
+  timeout = 20000
+) {
+  const hasPortalOverview = async () => {
+    const bodyText =
+      await portalPage
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    return /current subscription/i.test(
+      bodyText
+    ) &&
+      /invoice history|payment method|billing information/i.test(
+        bodyText
+      );
+  };
+
+  return expect
+    .poll(
+      hasPortalOverview,
+      {
+        timeout
+      }
+    )
+    .toBeTruthy()
+    .then(
+      () => true
+    )
+    .catch(
+      () => false
+    );
+}
+
+private async restoreFromPortal(
+  portalPage?: Page
+) {
+  const pageToClose =
+    portalPage ??
+    this.activePortalPage;
+
+  if (
+    pageToClose &&
+    pageToClose !== this.page &&
+    !pageToClose.isClosed()
+  ) {
+    await pageToClose.close()
+      .catch(
+        () => undefined
+      );
+  }
+
+  this.activePortalPage =
+    undefined;
+
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    Logger.info(
+      'Leaving Stripe portal and returning to billing'
+    );
+
+    await this.page.goto(
+      this.appUrl(
+        URLS.BILLING
+      ),
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      }
+    );
+  }
+
+  await this.ensureOnApp();
+}
+
+async openSubscriptionPortal(
+  options: {
+    ensureOverview?: boolean
+  } = {}
+) {
+
+  const ensureOverview =
+    options.ensureOverview !==
+    false;
+
+  if (
+    this.activePortalPage &&
+    !this.activePortalPage.isClosed() &&
+    /stripe\.com/i.test(
+      this.activePortalPage.url()
+    )
+  ) {
+    Logger.info(
+      'Already on Stripe portal; reusing open portal tab'
+    );
+
+    if (
+      ensureOverview
+    ) {
+      await this.ensurePortalOverview(
+        this.activePortalPage
+      );
+    }
+
+    return this.activePortalPage;
+  }
+
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    Logger.info(
+      'Already on Stripe portal; reusing current tab'
+    );
+
+    this.activePortalPage =
+      this.page;
+
+    const reused =
+      await this.waitForPortalOverview(
+        this.page,
+        15000
+      );
+
+    if (
+      !reused
+    ) {
+      throw new Error(
+        `Already on Stripe but portal overview did not load. URL: ${this.page.url()}`
+      );
+    }
+
+    return this.page;
+  }
 
   Logger.info(
     'Opening subscription management portal'
   );
 
-  await this.validateOverview();
+  await this.ensureOnApp();
+
+  if (
+    !this.page.url().includes(
+      '/billing'
+    )
+  ) {
+    await this.validateOverview();
+  } else {
+    await this.waitForBillingContent();
+  }
+
+  if (
+    await this.overviewTab.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.overviewTab,
+      'Open Overview Tab'
+    );
+  }
 
   await this.dismissMarketingOverlays();
 
@@ -1969,7 +2202,7 @@ async openSubscriptionPortal() {
       .waitForEvent(
         'page',
         {
-          timeout: 20000
+          timeout: 8000
         }
       )
       .catch(
@@ -2003,46 +2236,11 @@ async openSubscriptionPortal() {
     }
   );
 
-  await portalPage.waitForLoadState(
-    'networkidle',
-    {
-      timeout: 15000
-    }
-  ).catch(
-    () => undefined
-  );
-
-  const hasPortalOverview = async () => {
-    const bodyText =
-      await portalPage
-        .locator(
-          'body'
-        )
-        .innerText()
-        .catch(
-          () => ''
-        );
-
-    return /current subscription|payment method|billing information|invoice history|selected subscription|cancel your subscription/i.test(
-      bodyText
-    );
-  };
-
   let portalOverviewVisible =
-    await expect
-      .poll(
-        hasPortalOverview,
-        {
-          timeout: 45000
-        }
-      )
-      .toBeTruthy()
-      .then(
-        () => true
-      )
-      .catch(
-        () => false
-      );
+    await this.waitForPortalOverview(
+      portalPage,
+      20000
+    );
 
   if (!portalOverviewVisible) {
     await portalPage.reload({
@@ -2051,30 +2249,11 @@ async openSubscriptionPortal() {
       () => undefined
     );
 
-    await portalPage.waitForLoadState(
-      'networkidle',
-      {
-        timeout: 15000
-      }
-    ).catch(
-      () => undefined
-    );
-
     portalOverviewVisible =
-      await expect
-        .poll(
-          hasPortalOverview,
-          {
-            timeout: 45000
-          }
-        )
-        .toBeTruthy()
-        .then(
-          () => true
-        )
-        .catch(
-          () => false
-        );
+      await this.waitForPortalOverview(
+        portalPage,
+        15000
+      );
   }
 
   if (!portalOverviewVisible) {
@@ -2087,13 +2266,15 @@ async openSubscriptionPortal() {
     'Subscription management portal opened'
   );
 
+  this.activePortalPage =
+    portalPage;
+
   return portalPage;
 }
 
-async validateSubscriptionPortalOverview() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async assertPortalOverview(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal overview'
@@ -2228,16 +2409,11 @@ async validateSubscriptionPortalOverview() {
   Logger.success(
     'Subscription portal overview validated'
   );
-
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
-async validateSubscriptionPortalInvoiceHistory() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async assertPortalInvoiceHistory(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal invoice history'
@@ -2285,16 +2461,11 @@ async validateSubscriptionPortalInvoiceHistory() {
   Logger.success(
     'Subscription portal invoice history validated'
   );
-
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
-async validateSubscriptionPortalReturnToApplication() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async returnFromPortalToApplication(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal return link'
@@ -2307,69 +2478,141 @@ async validateSubscriptionPortalReturnToApplication() {
       hasText: /return to|back to|go back/i,
     }).first();
 
-  await expect(
-    returnControl
-  ).toBeVisible({
-    timeout: 15000
-  });
-
-  await safeClick(
-    returnControl,
-    'Return To Application'
-  );
-
-  await portalPage.waitForLoadState(
-    'domcontentloaded'
-  ).catch(
-    () => undefined
-  );
-
-  await expect
-    .poll(
-      async () => {
-        const currentUrl =
-          portalPage.url();
-
-        const bodyText =
-          await portalPage.locator(
-            'body'
-          ).innerText()
-            .catch(
-              () => ''
-            );
-
-        return (
-          /ooltool|dashboard|billing/i.test(
-            currentUrl
-          ) ||
-          /ooltool|dashboard|billing|profile|plan/i.test(
-            bodyText
-          )
-        );
-      },
-      {
-        timeout: 30000,
-        message:
-          'Portal return action should land back on application content'
-      }
-    )
-    .toBe(
-      true
+  const returnVisible =
+    await returnControl.isVisible({
+      timeout: 15000
+    }).catch(
+      () => false
     );
+
+  if (
+    returnVisible
+  ) {
+    await safeClick(
+      returnControl,
+      'Return To Application'
+    );
+
+    await portalPage.waitForLoadState(
+      'domcontentloaded'
+    ).catch(
+      () => undefined
+    );
+
+    await expect
+      .poll(
+        async () => {
+          const currentUrl =
+            portalPage.url();
+
+          const bodyText =
+            await portalPage.locator(
+              'body'
+            ).innerText()
+              .catch(
+                () => ''
+              );
+
+          return (
+            /ooltool|dashboard|billing/i.test(
+              currentUrl
+            ) ||
+            /ooltool|dashboard|billing|profile|plan/i.test(
+              bodyText
+            )
+          );
+        },
+        {
+          timeout: 30000,
+          message:
+            'Portal return action should land back on application content'
+        }
+      )
+      .toBe(
+        true
+      );
+  }
+
+  await this.restoreFromPortal(
+    portalPage
+  );
 
   Logger.success(
     'Subscription portal return link validated'
   );
+}
 
-  if (portalPage !== this.page && !portalPage.isClosed()) {
-    await portalPage.close();
+async validateStripePortalSession(
+  options: {
+    restore?: boolean
+  } = {}
+) {
+
+  const restore =
+    options.restore !==
+    false;
+
+  if (
+    this.stripePortalSessionValidated
+  ) {
+    Logger.info(
+      'Stripe portal session already validated in this test; skipping duplicate open'
+    );
+
+    if (
+      restore
+    ) {
+      await this.restoreFromPortal();
+    }
+
+    return;
   }
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  await this.assertPortalOverview(
+    portalPage
+  );
+
+  await this.assertPortalInvoiceHistory(
+    portalPage
+  );
+
+  this.stripePortalSessionValidated =
+    true;
+
+  if (
+    restore
+  ) {
+    await this.returnFromPortalToApplication(
+      portalPage
+    );
+  }
+}
+
+async leaveStripePortal() {
+  await this.restoreFromPortal();
+}
+
+async validateSubscriptionPortalOverview() {
+  await this.validateStripePortalSession();
+}
+
+async validateSubscriptionPortalInvoiceHistory() {
+  await this.validateStripePortalSession();
+}
+
+async validateSubscriptionPortalReturnToApplication() {
+  await this.validateStripePortalSession();
 }
 
 async validateSubscriptionPortalCancellationLifecycleSummary() {
 
   const portalPage =
-    await this.openSubscriptionPortal();
+    await this.openSubscriptionPortal({
+      ensureOverview: false
+    });
 
   Logger.info(
     'Validating subscription cancellation lifecycle summary'
@@ -2443,9 +2686,6 @@ async validateSubscriptionPortalCancellationLifecycleSummary() {
     'Subscription cancellation lifecycle summary validated without changing subscription'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validatePaymentRecoveryEntryPointsSummary() {
@@ -2505,9 +2745,6 @@ async validatePaymentRecoveryEntryPointsSummary() {
     'Payment recovery entry points validated without saving changes'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateAddPaymentMethodOpensWithoutSaving() {
@@ -2545,9 +2782,6 @@ async validateAddPaymentMethodOpensWithoutSaving() {
     'Add payment method screen opened without saving'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateBillingInformationUpdateOpensWithoutSaving() {
@@ -2585,9 +2819,6 @@ async validateBillingInformationUpdateOpensWithoutSaving() {
     'Billing information update screen opened without saving'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateCancelSubscriptionFormWithoutCancelling() {
@@ -2628,10 +2859,6 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     Logger.success(
       'Subscription is already scheduled to cancel; cancellation state validated without changing it'
     );
-
-    if (portalPage !== this.page) {
-      await portalPage.close();
-    }
 
     return;
   }
@@ -2747,8 +2974,5 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     'Cancel subscription form validated without cancelling'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 }

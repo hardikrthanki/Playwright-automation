@@ -1,17 +1,18 @@
 /* =============================================================================
-TEST SUITE: OOLTool Subscriber Billing Validation
+TEST SUITE: OOLTool Subscriber Session Validation
 
 PURPOSE
 -------
-One subscriber session: dashboard Option Expiry Overview, logout, login again,
-then billing plan validation.
+One subscriber session: dashboard Option Expiry Overview, logout, then login
+again. In-app billing Overview, Plans, and History live in
+BillingEdgeValidation.spec.ts. Stripe portal lives in
+BillingSubscriptionManagement.spec.ts.
 
 Run:
 npx playwright test tests/Subscriber.spec.ts --headed
 ============================================================================= */
 
 import {
-  expect,
   test
 } from '@playwright/test';
 
@@ -20,9 +21,6 @@ import { LoginPage }
 
 import { DashboardPage }
   from './pages/DashboardPage';
-
-import { BillingPage }
-  from './pages/BillingPage';
 
 import {
   TEST_USERS
@@ -33,7 +31,7 @@ test.setTimeout(
 );
 
 test(
-  'Subscriber expiry overview logout login and plan validation',
+  'Subscriber expiry overview logout and login',
   async ({ page }) => {
     const login =
       new LoginPage(
@@ -42,11 +40,6 @@ test(
 
     const dashboard =
       new DashboardPage(
-        page
-      );
-
-    const billing =
-      new BillingPage(
         page
       );
 
@@ -72,35 +65,14 @@ test(
     );
 
     await test.step(
-      'Login again and validate plan',
+      'Login again and land on dashboard',
       async () => {
         await login.login(
           TEST_USERS.subscriber.email,
           TEST_USERS.subscriber.password
         );
 
-        await billing.validateOverview();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /billing/,
-          {
-            timeout: 15000
-          }
-        );
-
-        await billing.validatePlans();
-
-        await billing.validateTransactions();
-
-        await billing.validateInvoicePage();
-
-        await billing.validatePdfDownload();
+        await dashboard.validate();
       }
     );
   }

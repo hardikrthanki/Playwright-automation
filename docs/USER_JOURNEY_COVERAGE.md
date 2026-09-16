@@ -30,7 +30,7 @@ management, billing, security, password recovery, and logout.
 | 12 | Profile negative validation | Email read-only, empty draft safety, refresh persistence | `ProfileNegative.spec.ts` | Stable |
 | 13 | Profile mobile validation | Mobile section visibility, invalid mobile guardrail, optional OTP request/update | `ProfileMobileValidation.spec.ts` | Controlled by env flags |
 | 14 | Password validation | Mismatch and wrong current password checks | `ProfilePasswordMismatch.spec.ts` | Stable |
-| 15 | Billing page | Billing overview, plans, transactions, invoice, PDF, tab stability, and billing evidence link targets inside OOLTool | `BillingEdgeValidation.spec.ts`, `Subscriber.spec.ts` | Stable |
+| 15 | Billing page | Billing overview, plans, transactions, invoice/PDF targets, and back-forward inside OOLTool. Does not open Stripe. | `BillingEdgeValidation.spec.ts` | Stable |
 | 16 | Logout | User logout, login redirect, browser-back protection, refresh protection, and direct protected-route blocking after logout | `Subscriber.spec.ts`, `SessionSecurity.spec.ts` | Stable |
 | 17 | Forgot password | Reset email, reset page, new password, login with new password, negative form validation, whitespace/unsafe input checks, password-reset email rate-limit validation, and accessible public controls | `forgotpassword.spec.ts`, `AuthNegative.spec.ts`, `AuthConfigurationLimits.spec.ts`, `AccessibilityBrowser.spec.ts` | Controlled manual email step + stable negative checks |
 | 18 | Account unlock | Locked-account email unlock and login | `UnlockAccount.spec.ts` | Controlled, only when account is locked |
@@ -362,9 +362,8 @@ Auth Configuration Limits:
 
 Billing Subscription Management:
 
-- Stripe customer portal overview validation is automated.
-- Plan action/status controls are automated.
-- Stripe portal invoice history is automated.
+- Stripe customer portal overview, invoice history, and return are validated
+  in one portal visit.
 - Add-payment-method and billing-information update screens are automated
   without saving changes.
 - Cancel subscription form display, reason, feedback, or already-scheduled

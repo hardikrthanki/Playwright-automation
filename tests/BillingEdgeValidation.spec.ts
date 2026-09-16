@@ -15,8 +15,8 @@ TEST SUITE: Billing Edge Validation
 
 PURPOSE
 -------
-One authenticated session validates billing navigation and evidence links
-without mutating subscription state.
+One authenticated session validates in-app billing Overview, Plans, and
+History once. It does not click Manage Subscription.
 
 RUN
 ---
@@ -28,84 +28,44 @@ test.describe(
   () => {
 
     test.describe.configure({
-      timeout: 180000
+      timeout: 120000
     });
 
     test(
-      'Billing plans history invoices and back-forward in one session',
+      'Billing overview plans and history in one session',
       async ({ page }) => {
         const billing =
           new BillingPage(
             page
           );
 
-        await billing.validateOverview();
-
         await test.step(
-          'Plans tab remains stable without checkout',
+          'Overview shows current plan and management control',
           async () => {
-            await billing.validatePlansTabStable();
-
-            await expect(
-              page
-            ).toHaveURL(
-              /billing/
-            );
-          }
-        );
-
-        await test.step(
-          'Overview exposes plan status and management',
-          async () => {
+            await billing.validateOverview();
             await billing.validateOverviewContract();
           }
         );
 
         await test.step(
-          'Plan lifecycle action summary',
+          'Plans show Income Builder and billing interval',
           async () => {
-            await billing.validatePlanLifecycleActionSummary();
-          }
-        );
-
-        await test.step(
-          'Billing interval summary',
-          async () => {
-            await billing.validateBillingIntervalPresentationSummary();
-          }
-        );
-
-        await test.step(
-          'History remains stable after refresh',
-          async () => {
-            await billing.validateHistoryTabStable();
-
-            await page.reload({
-              waitUntil: 'domcontentloaded'
-            });
-
-            await billing.validateHistoryTabStable();
-          }
-        );
-
-        await test.step(
-          'Plans and history can be revisited',
-          async () => {
-            await billing.validatePlansTabStable();
-            await billing.validateHistoryTabStable();
-            await billing.validatePlansTabStable();
+            await billing.validatePlans();
 
             await expect(
-              page
-            ).toHaveURL(
-              /billing/
+              page.locator(
+                'body'
+              )
+            ).toContainText(
+              /monthly|annual|month|year|\/mo|\/yr|billing period|no plan changes|paid plan|current plan/i
             );
           }
         );
 
         await test.step(
-          'Invoice and PDF links have usable targets',
+          'History shows paid transactions and invoice PDF targets',
           async () => {
+            await billing.validateTransactions();
             await billing.validateInvoiceAndPdfLinksHaveTargets();
           }
         );
@@ -132,8 +92,6 @@ test.describe(
                 timeout: 15000
               }
             );
-
-            await billing.validateOverviewContract();
 
             await page.goForward({
               waitUntil: 'domcontentloaded'

@@ -300,7 +300,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal shows current subscription and payment method',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalOverview'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-69',
@@ -308,7 +308,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal invoice history is available',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalInvoiceHistory'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-70',
@@ -316,7 +316,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal return link navigates back to OOLTool',
     priority: 'Medium',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalReturnToApplication'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-71',

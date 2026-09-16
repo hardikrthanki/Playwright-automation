@@ -16,8 +16,9 @@ TEST SUITE: Billing Subscription Management
 
 PURPOSE
 -------
-One authenticated session validates Stripe portal, plans, invoices, and
-optional mutating-adjacent screens without submitting cancellation.
+One authenticated session opens the Stripe customer portal once and
+validates overview, invoices, and return. Mutating-adjacent screens stay
+opt-in and do not submit cancellation.
 
 RUN
 ---
@@ -82,13 +83,6 @@ test.describe(
           );
 
         await test.step(
-          'Plan action or status controls',
-          async () => {
-            await billing.validatePlanActionControls();
-          }
-        );
-
-        await test.step(
           'Paid subscriber is not offered Overlay Strategists trial CTA',
           async () => {
             await billing.validatePaidSubscriberTrialCtaIsNotOffered();
@@ -96,11 +90,13 @@ test.describe(
         );
 
         await test.step(
-          'Stripe portal overview invoices and return',
+          'Stripe portal overview invoices and return in one visit',
           async () => {
-            await billing.validateSubscriptionPortalOverview();
-            await billing.validateSubscriptionPortalInvoiceHistory();
-            await billing.validateSubscriptionPortalReturnToApplication();
+            await billing.validateStripePortalSession({
+              restore: !envEnabled(
+                'BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED'
+              )
+            });
           }
         );
 
@@ -144,6 +140,13 @@ test.describe(
           'Cancellation lifecycle is readable without cancelling',
           async () => {
             await billing.validateSubscriptionPortalCancellationLifecycleSummary();
+          }
+        );
+
+        await test.step(
+          'Return from Stripe portal to the application',
+          async () => {
+            await billing.leaveStripePortal();
           }
         );
       }

@@ -367,7 +367,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Billing',
     priority: 'Critical',
     status: 'automated',
-    automation: 'Subscriber.spec.ts'
+    automation: 'BillingEdgeValidation.spec.ts'
   },
   {
     id: 'UJ-037',
@@ -376,7 +376,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Billing',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts'
+    automation: 'BillingEdgeValidation.spec.ts'
   },
   {
     id: 'UJ-038',
@@ -385,7 +385,7 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     journey: 'Billing',
     priority: 'High',
     status: 'automated',
-    automation: 'Subscriber.spec.ts'
+    automation: 'BillingEdgeValidation.spec.ts'
   },
   {
     id: 'UJ-039',
