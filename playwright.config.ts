@@ -4,6 +4,12 @@ import './tests/config/loadLocalEnv';
 import {
   watchDelayMs
 } from './tests/config/watchMode';
+import {
+  assertAllSpecsAreListed,
+  playwrightTestMatch
+} from './scripts/execution-order';
+
+assertAllSpecsAreListed();
 
 const recordAllArtifacts =
   process.env.RECORD_ALL_ARTIFACTS === 'true';
@@ -54,12 +60,15 @@ export default defineConfig({
     },
   },
 
-  projects: [
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
+  // One project per spec keeps AIR ids as "chromium > file" while the
+  // array order from scripts/execution-order.js is the user-journey sequence.
+  // Playwright's directory walk is alphabetical, so a single project cannot
+  // run AccessibilityBrowser after Auth*.
+  projects: playwrightTestMatch.map((file) => ({
+    name: 'chromium',
+    testMatch: file,
+    use: {
+      ...devices['Desktop Chrome'],
     },
-  ],
+  })),
 });

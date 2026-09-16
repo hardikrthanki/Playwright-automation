@@ -52,11 +52,11 @@ export class PlanSelectionPage extends BasePage {
 
 
   this.completeSetupButton =
-  page.locator(
-'button'
-).filter({
-hasText:/complete setup|continue to payment/i
-});
+    page.locator(
+      'button'
+    ).filter({
+      hasText: /complete setup|continue to payment/i
+    }).first();
 
   }
 
@@ -66,13 +66,49 @@ hasText:/complete setup|continue to payment/i
     planName: string
   ) {
     if (
-      /income builder/i.test(
+      /curious/i.test(
         planName
       )
     ) {
       return this.page
         .getByText(
-          /income builder|build your portfolio/i
+          /^curious$|curious explorer|explore your portfolio/i
+        )
+        .first();
+    }
+
+    if (
+      /income/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /^income$|income builder|build your portfolio/i
+        )
+        .first();
+    }
+
+    if (
+      /overlay/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /overlay strategists/i
+        )
+        .first();
+    }
+
+    if (
+      /portfolio|hedger/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /portfolio hedger/i
         )
         .first();
     }
@@ -147,6 +183,63 @@ hasText:/complete setup|continue to payment/i
       }
     ).catch(
       () => undefined
+    );
+  }
+
+  private hasLeftPlanSelection() {
+    return /checkout\.stripe\.com|billing\.stripe\.com|\/dashboard/i.test(
+      this.page.url()
+    );
+  }
+
+  private async clickCompleteSetupIfStillOnPlans() {
+    if (
+      this.hasLeftPlanSelection()
+    ) {
+      return;
+    }
+
+    const completeSetupVisible =
+      await this.completeSetupButton.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      );
+
+    if (!completeSetupVisible) {
+      return;
+    }
+
+    await safeClick(
+      this.completeSetupButton,
+      'Complete Setup'
+    );
+  }
+
+  private async finishTrialStart(
+    expectStripe: boolean
+  ) {
+    const navigated =
+      await this.page.waitForURL(
+        expectStripe
+          ? /checkout\.stripe\.com|billing\.stripe\.com/i
+          : /\/dashboard/i,
+        {
+          timeout: 15000
+        }
+      ).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (navigated) {
+      return;
+    }
+
+    await this.clickCompleteSetupIfStillOnPlans();
+    await this.waitAfterCompleteSetup(
+      expectStripe
     );
   }
 
@@ -558,15 +651,15 @@ hasText:/complete setup|continue to payment/i
     );
 
     const expectedEntitlements = [
-      /income builder[\s\S]*broker integration\s*\(1\)/i,
-      /income builder[\s\S]*account linked\s*\(1\)/i,
-      /income builder[\s\S]*positions\s*\(100\)/i,
-      /overlay strategists[\s\S]*broker integration\s*\(5\)/i,
-      /overlay strategists[\s\S]*account linked\s*\(10\)/i,
-      /overlay strategists[\s\S]*positions\s*\(500\)/i,
-      /portfolio hedger[\s\S]*broker integration\s*\(10\)/i,
-      /portfolio hedger[\s\S]*account linked\s*\(20\)/i,
-      /portfolio hedger[\s\S]*positions\s*\(1000\)/i
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}broker integration\s*\(1\)/i,
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}account linked\s*\(1\)/i,
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}positions\s*\(100\)/i,
+      /overlay strategists[\s\S]{0,800}broker integration\s*\(5\)/i,
+      /overlay strategists[\s\S]{0,800}account linked\s*\(10\)/i,
+      /overlay strategists[\s\S]{0,800}positions\s*\(500\)/i,
+      /portfolio hedger[\s\S]{0,800}broker integration\s*\(10\)/i,
+      /portfolio hedger[\s\S]{0,800}account linked\s*\(20\)/i,
+      /portfolio hedger[\s\S]{0,800}positions\s*\(1000\)/i
     ];
 
     if (
@@ -1139,23 +1232,12 @@ hasText:/complete setup|continue to payment/i
 
     await this.confirmTrialModal();
 
-    await expect(
-      this.completeSetupButton
-    ).toBeVisible({
-      timeout: 30000
-    });
-
-    await safeClick(
-      this.completeSetupButton,
-      'Complete Setup'
+    await this.finishTrialStart(
+      true
     );
 
     Logger.success(
       'Overlay Strategists trial with card selected'
-    );
-
-    await this.waitAfterCompleteSetup(
-      true
     );
   }
 
@@ -1171,23 +1253,12 @@ hasText:/complete setup|continue to payment/i
 
     await this.confirmTrialModal();
 
-    await expect(
-      this.completeSetupButton
-    ).toBeVisible({
-      timeout: 30000
-    });
-
-    await safeClick(
-      this.completeSetupButton,
-      'Complete Setup'
+    await this.finishTrialStart(
+      false
     );
 
     Logger.success(
       'Overlay Strategists trial without card selected'
-    );
-
-    await this.waitAfterCompleteSetup(
-      false
     );
   }
 

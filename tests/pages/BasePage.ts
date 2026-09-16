@@ -4,6 +4,9 @@ import { URLS }
   from '../config/constants';
 import { BASE_URL }
   from '../config/testData';
+import {
+  dismissOverlays
+} from '../helpers/dismissOverlays';
 
 /* ============================================================================
 PAGE OBJECT: BasePage
@@ -40,37 +43,9 @@ export class BasePage {
   }
 
   async dismissMarketingOverlays() {
-    const overlayButtons = [
-      this.page.getByRole(
-        'button',
-        {
-        name: /accept( all)?|essential only/i
-        }
-      ).first(),
-      this.page.getByRole(
-        'button',
-        {
-          name: /dismiss announcement/i
-        }
-      ).first()
-    ];
-
-    for (const button of overlayButtons) {
-      const isVisible =
-        await button.isVisible().catch(
-          () => false
-        );
-
-      if (!isVisible) {
-        continue;
-      }
-
-      await button.click({
-        timeout: 3000
-      }).catch(
-        () => undefined
-      );
-    }
+    await dismissOverlays(
+      this.page
+    );
   }
 
   getCurrentUrl() {

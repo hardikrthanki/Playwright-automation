@@ -459,19 +459,28 @@ test.describe(
       'Profile menu exposes billing risk compliance and sign out actions',
       async ({ page }) => {
 
-        await safeClick(
-          page.getByText(
-            'HT',
-            {
-              exact: true
-            }
-          ),
-          'Open Profile Menu'
-        );
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.openProfileMenu();
 
         await expect(
-          page.getByText(
-            /billing/i
+          page.getByRole(
+            'menuitem',
+            {
+              name: /billing/i
+            }
+          ).or(
+            page.getByRole(
+              'link',
+              {
+                name: /billing/i
+              }
+            )
+          ).or(
+            page.getByText(
+              /billing/i
+            )
           ).first()
         ).toBeVisible({
           timeout: 10000

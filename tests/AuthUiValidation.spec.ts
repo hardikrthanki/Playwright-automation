@@ -15,6 +15,10 @@ import { ForgotPasswordPage }
 import { RegistrationPage }
   from './pages/RegistrationPage';
 
+import {
+  dismissOverlays
+} from './helpers/dismissOverlays';
+
 import { safeClick }
   from './helpers/safeClick';
 
@@ -33,37 +37,19 @@ npx playwright test tests/AuthUiValidation.spec.ts --headed
 function authRegistrationLink(
   page: Page
 ) {
-  return page.locator(
-    'a[href*="/register"], a[href*="/signup"], a[href*="/sign-up"]'
-  ).first().or(
-    page.getByRole(
-      'link',
-      {
-        name: /^sign up$/i
-      }
-    )
+  return page.getByRole(
+    'link',
+    {
+      name: /^sign up$/i
+    }
   ).or(
     page.getByRole(
       'link',
       {
-        name: /^create account$/i
+        name: /sign up|create account|start\s+30[-\s]?day\s+free\s+trial/i
       }
     )
-  ).or(
-    page.getByRole(
-      'link',
-      {
-        name: /start\s+30[-\s]?day\s+free\s+trial/i
-      }
-    )
-  ).or(
-    page.getByRole(
-      'button',
-      {
-        name: /^sign up$|^create account$|start\s+30[-\s]?day\s+free\s+trial/i
-      }
-    )
-  );
+  ).first();
 }
 
 async function expectRegistrationOpened(
@@ -81,7 +67,7 @@ async function expectRegistrationOpened(
         }
 
         return page.locator(
-          'input[name="firstName"], input[name="email"]'
+          'input[name="firstName"]'
         ).first().isVisible().catch(
           () => false
         );
@@ -575,6 +561,10 @@ test.describe(
           }
         );
 
+        await dismissOverlays(
+          page
+        );
+
         await safeClick(
           authRegistrationLink(
             page
@@ -597,6 +587,10 @@ test.describe(
           {
             waitUntil: 'domcontentloaded'
           }
+        );
+
+        await dismissOverlays(
+          page
         );
 
         await safeClick(

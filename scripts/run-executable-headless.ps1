@@ -84,14 +84,10 @@ $env:HEADED = 'false'
 $env:AIR_REPORT_SCOPE = 'latest'
 $env:AIR_RESTORE_HISTORY = 'true'
 
-$specFiles = Get-ChildItem -Path 'tests' -Filter '*.spec.ts' |
-  Where-Object { $_.Name -notmatch 'Matrix' } |
-  ForEach-Object { "tests/$($_.Name)" }
+Write-Host 'Clean executable headless run: journey order, no matrix rows, SLOW_MO=0.' -ForegroundColor Cyan
+node -e "require('./scripts/execution-order').assertAllSpecsAreListed(); require('./scripts/execution-order').printOrder(require('./scripts/execution-order').executableJourneyOrder)"
 
-Write-Host ("Clean executable headless run: {0} spec files, no matrix rows, SLOW_MO=0." -f $specFiles.Count) -ForegroundColor Cyan
-Write-Host ($specFiles -join ', ') -ForegroundColor DarkGray
-
-& .\node_modules\.bin\playwright.cmd test @specFiles
+node scripts\run-ordered-tests.js executable
 $playwrightExit = $LASTEXITCODE
 
 $env:AIR_REPORT_SCOPE = 'latest'

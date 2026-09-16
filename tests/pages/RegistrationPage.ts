@@ -137,17 +137,22 @@ extends BasePage {
 
 
     this.otpInput =
-      page.locator(
-        'input[autocomplete="one-time-code"], input[inputmode="numeric"], input[name*="otp" i], input[name*="code" i], input[id*="otp" i], input[id*="code" i]'
+      page.getByPlaceholder(
+        /enter otp/i
+      ).or(
+        page.locator(
+          'input[autocomplete="one-time-code"], input[inputmode="numeric"], input[name*="otp" i], input[name*="code" i], input[id*="otp" i], input[id*="code" i]'
+        )
+      ).first();
+
+    this.verifyOtpButton =
+      page.getByRole(
+        'button',
+        {
+          name: 'Verify',
+          exact: true
+        }
       );
-      this.verifyOtpButton =
-  page.getByRole(
-    'button',
-    {
-      name: 'Verify',
-      exact: true
-    }
-  );
 
 
     this.passwordInput =
@@ -540,6 +545,16 @@ extends BasePage {
       );
 
       await expect(
+        this.page.getByText(
+          /^verified$/i
+        ).first()
+      ).toBeVisible({
+        timeout: 15000
+      }).catch(
+        () => undefined
+      );
+
+      await expect(
         this.passwordInput
       ).toBeVisible({
         timeout: 15000
@@ -565,38 +580,27 @@ extends BasePage {
 
 
 
+    await expect(
+      this.submitButton
+    ).toBeEnabled({
+      timeout: 15000
+    });
+
     await safeClick(
       this.submitButton,
       'Submit Registration'
     );
 
-
-
-    await expect(
-
-      this.page
-      .getByText(
-        /check your email|verification sent|verify your email|registered/i
+    await expect
+      .poll(
+        async () =>
+          this.registrationLooksAccepted(),
+        {
+          timeout: 20000,
+          message: 'Waiting for registration success or email-verification screen'
+        }
       )
-      .or(
-
-        this.page.getByRole(
-          'heading',
-          {
-            name:
-            /verify|thank you|check/i
-          }
-        )
-
-      )
-
-    )
-    .toBeVisible({
-
-      timeout:
-      15000
-
-    });
+      .toBeTruthy();
 
 
 
@@ -605,6 +609,72 @@ extends BasePage {
     );
 
 
+  }
+
+  private async registrationLooksAccepted() {
+    const url =
+      this.page.url();
+
+    if (
+      /verify-email-sent|\/(verify|onboarding|dashboard|plan|risk|compliance|check-email|confirm)/i.test(
+        url
+      )
+    ) {
+      return true;
+    }
+
+    const firstNameVisible =
+      await this.firstNameInput.isVisible().catch(
+        () => false
+      );
+
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    if (
+      !firstNameVisible &&
+      /check your email|verification link was sent|verify-email/i.test(
+        bodyText
+      )
+    ) {
+      return true;
+    }
+
+    return /check your email|a verification link was sent|verification (sent|email|link)|verify your email|confirm your email/i.test(
+      bodyText
+    );
+  }
+
+  private async waitForRegistrationAccepted(
+    timeoutMs: number
+  ) {
+    const started =
+      Date.now();
+
+    while (
+      Date.now() -
+        started <
+      timeoutMs
+    ) {
+      if (
+        await this.registrationLooksAccepted()
+      ) {
+        return true;
+      }
+
+      await this.page.waitForTimeout(
+        500
+      );
+    }
+
+    return false;
   }
 
 

@@ -48,6 +48,9 @@ Runs controlled end-to-end subscription lifecycle slices with disposable users.
 These tests are separate from the matrix specs because they can create users,
 start trials, submit Stripe test payments, or inspect subscription controls.
 
+Declaration order follows the product flow: trial, paid purchases, then
+manage (controls, upgrade, downgrade, interval, cancel), then calc rules.
+
 Default behavior is safe: every mutating flow is skipped until explicitly
 enabled with env flags.
 
@@ -855,6 +858,65 @@ test.describe(
     );
 
     controlledLifecycleTest(
+      'Disposable user can purchase Overlay Strategists monthly and reach Billing',
+      'SUB_LIFECYCLE_OVERLAY_MONTHLY_ENABLED',
+      'Paid Overlay Strategists purchase creates a new disposable user and submits Stripe test payment.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-overlay-monthly',
+          'Overlay Strategists',
+          'monthly'
+        );
+      }
+    );
+
+    controlledLifecycleTest(
+      'Disposable user can purchase Portfolio Hedger monthly and reach Billing',
+      'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED',
+      'Paid Portfolio Hedger purchase creates a new disposable user and submits Stripe test payment.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-portfolio-monthly',
+          'Portfolio Hedger',
+          'monthly'
+        );
+      }
+    );
+
+    controlledLifecycleTest(
+      'Disposable user can purchase Marketplace monthly and reach Billing',
+      'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
+      'Paid Marketplace purchase creates a new disposable user and submits Stripe test payment.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-marketplace-monthly',
+          'Marketplace',
+          'monthly'
+        );
+      }
+    );
+
+    controlledLifecycleTest(
+      'Disposable user can purchase configured paid annual plan and reach Billing',
+      'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED',
+      'Annual paid purchase creates a new disposable user and submits Stripe test payment. Set SUB_LIFECYCLE_PAID_ANNUAL_PLAN to choose the plan.',
+      async ({ page }) => {
+        const plan =
+          paidAnnualPlan();
+
+        await purchasePaidPlanForDisposableUser(
+          page,
+          `sub-lifecycle-${plan.toLowerCase().replace(/\s+/g, '-')}-annual`,
+          plan,
+          'annual'
+        );
+      }
+    );
+
+    controlledLifecycleTest(
       'Prepared paid user exposes upgrade downgrade and interval controls',
       'SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED',
       'Plan controls reuse the existing paid subscriber unless SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true.',
@@ -1008,31 +1070,6 @@ test.describe(
     );
 
     controlledLifecycleTest(
-      'Prepared paid user exposes non-destructive cancellation form',
-      'SUB_LIFECYCLE_CANCEL_FORM_ENABLED',
-      'Cancellation form validation is non-destructive. Creates a disposable paid user when no fixture is set.',
-      async ({ page }) => {
-        await loginPreparedPaidUser(
-          page,
-          {
-            scenario:
-              'sub-lifecycle-cancel-form',
-            plan:
-              'Income Builder',
-            interval:
-              'monthly',
-            usedFor:
-              'cancel-form'
-          }
-        );
-
-        await new BillingPage(
-          page
-        ).validateCancelSubscriptionFormWithoutCancelling();
-      }
-    );
-
-    controlledLifecycleTest(
       'Prepared paid user can preview downgrade calculations without submitting',
       'SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED',
       'Downgrade preview creates a higher-tier disposable paid user when no fixture is set and does not submit the plan change.',
@@ -1169,61 +1206,27 @@ test.describe(
     );
 
     controlledLifecycleTest(
-      'Disposable user can purchase Overlay Strategists monthly and reach Billing',
-      'SUB_LIFECYCLE_OVERLAY_MONTHLY_ENABLED',
-      'Paid Overlay Strategists purchase creates a new disposable user and submits Stripe test payment.',
+      'Prepared paid user exposes non-destructive cancellation form',
+      'SUB_LIFECYCLE_CANCEL_FORM_ENABLED',
+      'Cancellation form validation is non-destructive. Creates a disposable paid user when no fixture is set.',
       async ({ page }) => {
-        await purchasePaidPlanForDisposableUser(
+        await loginPreparedPaidUser(
           page,
-          'sub-lifecycle-overlay-monthly',
-          'Overlay Strategists',
-          'monthly'
+          {
+            scenario:
+              'sub-lifecycle-cancel-form',
+            plan:
+              'Income Builder',
+            interval:
+              'monthly',
+            usedFor:
+              'cancel-form'
+          }
         );
-      }
-    );
 
-    controlledLifecycleTest(
-      'Disposable user can purchase Portfolio Hedger monthly and reach Billing',
-      'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED',
-      'Paid Portfolio Hedger purchase creates a new disposable user and submits Stripe test payment.',
-      async ({ page }) => {
-        await purchasePaidPlanForDisposableUser(
-          page,
-          'sub-lifecycle-portfolio-monthly',
-          'Portfolio Hedger',
-          'monthly'
-        );
-      }
-    );
-
-    controlledLifecycleTest(
-      'Disposable user can purchase Marketplace monthly and reach Billing',
-      'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
-      'Paid Marketplace purchase creates a new disposable user and submits Stripe test payment.',
-      async ({ page }) => {
-        await purchasePaidPlanForDisposableUser(
-          page,
-          'sub-lifecycle-marketplace-monthly',
-          'Marketplace',
-          'monthly'
-        );
-      }
-    );
-
-    controlledLifecycleTest(
-      'Disposable user can purchase configured paid annual plan and reach Billing',
-      'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED',
-      'Annual paid purchase creates a new disposable user and submits Stripe test payment. Set SUB_LIFECYCLE_PAID_ANNUAL_PLAN to choose the plan.',
-      async ({ page }) => {
-        const plan =
-          paidAnnualPlan();
-
-        await purchasePaidPlanForDisposableUser(
-          page,
-          `sub-lifecycle-${plan.toLowerCase().replace(/\s+/g, '-')}-annual`,
-          plan,
-          'annual'
-        );
+        await new BillingPage(
+          page
+        ).validateCancelSubscriptionFormWithoutCancelling();
       }
     );
 

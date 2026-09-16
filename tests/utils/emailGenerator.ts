@@ -76,8 +76,8 @@ export function generateEmail(
 
   const uniqueSuffix =
     normalizedTag
-      ? `${normalizedTag}-${Date.now()}`
-      : `${Date.now()}`;
+      ? `${normalizedTag.slice(0, 12)}-${Date.now().toString(36)}`
+      : Date.now().toString(36);
 
   return `${cleanLocalPart}+${uniqueSuffix}@${domain}`;
 

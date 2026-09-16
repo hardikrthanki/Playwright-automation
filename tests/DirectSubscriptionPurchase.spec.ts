@@ -5,6 +5,7 @@ import {
 } from '@playwright/test';
 
 import {
+  BASE_URL,
   TEST_USERS
 } from './config/testData';
 import {
@@ -14,6 +15,9 @@ import {
 import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
+import {
+  dismissOverlays
+} from './helpers/dismissOverlays';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -135,18 +139,55 @@ async function openPlanSelectionForFreshUser(
     page
   ).fill();
 
-  await expect(
-    page.getByText(
-      /choose your plan|select a plan|get started/i
-    ).first()
-  ).toBeVisible({
-    timeout: 30000
-  });
+  await expectPlanSelectionVisible(
+    page
+  );
 
   return {
     email,
     mobileNumber
   };
+}
+
+async function expectPlanSelectionVisible(
+  page: Page
+) {
+  await dismissOverlays(
+    page
+  );
+
+  const planHeading =
+    page.getByRole(
+      'heading',
+      {
+        name: /choose your plan/i
+      }
+    );
+
+  if (
+    !await planHeading.isVisible({
+      timeout: 8000
+    }).catch(
+      () => false
+    )
+  ) {
+    await page.goto(
+      `${BASE_URL}/onboarding`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    await dismissOverlays(
+      page
+    );
+  }
+
+  await expect(
+    planHeading
+  ).toBeVisible({
+    timeout: 30000
+  });
 }
 
 async function validateCheckoutSummaryAndReturn(
@@ -222,13 +263,9 @@ async function validateCheckoutSummaryAndReturn(
         }
       );
 
-      await expect(
-        page.getByText(
-          /choose your plan|select a plan|get started/i
-        ).first()
-      ).toBeVisible({
-        timeout: 30000
-      });
+      await expectPlanSelectionVisible(
+        page
+      );
     }
   );
 }
@@ -402,10 +439,35 @@ if (
               }
             );
 
+            await dismissOverlays(
+              page
+            );
+
+            const planHeading =
+              page.getByRole(
+                'heading',
+                {
+                  name: /choose your plan/i
+                }
+              );
+
+            if (
+              !await planHeading.isVisible({
+                timeout: 8000
+              }).catch(
+                () => false
+              )
+            ) {
+              await page.goto(
+                `${BASE_URL}/onboarding`,
+                {
+                  waitUntil: 'domcontentloaded'
+                }
+              );
+            }
+
             await expect(
-              page.getByText(
-                /choose your plan|select a plan|get started/i
-              ).first()
+              planHeading
             ).toBeVisible({
               timeout: 30000
             });

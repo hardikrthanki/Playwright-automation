@@ -80,7 +80,8 @@ if ($watch) {
 $env:AIR_REPORT_SCOPE = 'latest'
 $env:AIR_RESTORE_HISTORY = 'true'
 
-Write-Host 'Complete suite: full speed, duplicate paid-user flows off, then AIR.' -ForegroundColor Cyan
+Write-Host 'Complete suite: user-journey file order, full speed, duplicate paid-user flows off, then AIR.' -ForegroundColor Cyan
+node -e "require('./scripts/execution-order').assertAllSpecsAreListed(); require('./scripts/execution-order').printOrder()"
 if ($watch) {
   Write-Host 'WATCH=true: headed browser. Set SLOW_MO=500 to slow clicks.' -ForegroundColor Cyan
 } else {

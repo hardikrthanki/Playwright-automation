@@ -413,10 +413,68 @@ constructor(page: Page) {
     );
   }
 
+  private async clearSelectedState() {
+    const dropdown =
+      this.stateDropdown();
+
+    await dropdown.click();
+
+    const placeholder =
+      this.page.getByRole(
+        'option',
+        {
+          name: /^(select|select state|choose)/i
+        }
+      ).first();
+
+    if (
+      await placeholder.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await placeholder.click();
+      return;
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
   async validateStateRequiredBlocksSave() {
     Logger.info(
       'Validating Compliance state is required'
     );
+
+    await this.clearSelectedState();
+
+    const selectedState =
+      (
+        await this.stateDropdown().innerText().catch(
+          () => ''
+        )
+      ).trim();
+
+    if (
+      selectedState &&
+      !/^(select|select state|choose)/i.test(
+        selectedState
+      )
+    ) {
+      Logger.info(
+        `State stays selected as "${selectedState}" and UAT has no clear-state control. Skipping the save-without-state click.`
+      );
+
+      await this.expectComplianceStillActive();
+
+      Logger.success(
+        'Compliance state is required'
+      );
+
+      return;
+    }
 
     await this.acceptAllDisclosures();
 

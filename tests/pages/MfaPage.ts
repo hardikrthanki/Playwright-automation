@@ -23,6 +23,9 @@ import {
   openAuthenticatedPath,
   restoreSubscriberSession
 } from '../helpers/subscriberSession';
+import {
+  dismissOverlays
+} from '../helpers/dismissOverlays';
 
 /* =============================================================================
 PAGE OBJECT: MfaPage
@@ -93,11 +96,10 @@ export class MfaPage
 
     const routes =
       [
-        '/dashboard/security',
-        '/dashboard/profile/security',
-        '/dashboard/settings/security',
+        '/dashboard/profile',
         '/dashboard/settings',
-        '/dashboard/profile'
+        '/dashboard/profile/security',
+        '/dashboard/settings/security'
       ];
 
     for (const route of routes) {
@@ -119,6 +121,10 @@ export class MfaPage
             }
           );
         }
+      );
+
+      await dismissOverlays(
+        this.page
       );
 
       const securityTab =
@@ -156,12 +162,12 @@ export class MfaPage
 
       const securitySignal =
         this.page.getByText(
-          /mfa|2fa|two-factor|multi-factor|authenticator|backup codes/i
+          /two-factor authentication|two-factor|mfa|2fa|multi-factor|authenticator|backup codes|trusted devices/i
         ).first();
 
       if (
         await securitySignal.isVisible({
-          timeout: 5000
+          timeout: 15000
         }).catch(() => false)
       ) {
         Logger.success(

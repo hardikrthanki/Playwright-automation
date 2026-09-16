@@ -175,16 +175,23 @@ export class DashboardPage
     );
   }
 
-  private async openProfileMenu() {
+  async openProfileMenu() {
 
     await this.dismissMarketingOverlays();
 
     const menuTrigger =
-      this.page.getByText(
-        'HT',
+      this.page.getByRole(
+        'button',
         {
-          exact: true
+          name: /^ht$/i
         }
+      ).or(
+        this.page.getByText(
+          'HT',
+          {
+            exact: true
+          }
+        )
       ).or(
         this.page.locator(
           'header button'
@@ -204,6 +211,18 @@ export class DashboardPage
       menuTrigger,
       'Open Profile Menu'
     );
+
+    await expect(
+      this.profileMenuItem(
+        'Billing'
+      ).or(
+        this.page.getByText(
+          /sign out/i
+        )
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
   }
 
   private profileMenuItem(
@@ -211,10 +230,10 @@ export class DashboardPage
   ) {
     const labelPattern =
       new RegExp(
-        `^${label.replace(
+        label.replace(
           /[.*+?^${}()|[\]\\]/g,
           '\\$&'
-        )}$`,
+        ),
         'i'
       );
 
@@ -236,6 +255,10 @@ export class DashboardPage
         {
           name: labelPattern
         }
+      )
+    ).or(
+      this.page.getByText(
+        labelPattern
       )
     ).first();
   }
@@ -825,11 +848,9 @@ export class DashboardPage
     );
 
     const billingMenuItem =
-      this.page
-        .getByText(
-          /billing/i
-        )
-        .first();
+      this.profileMenuItem(
+        'Billing'
+      );
 
     await this.openProfileMenu();
 

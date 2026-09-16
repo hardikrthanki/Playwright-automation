@@ -1,44 +1,42 @@
 {
-  "generatedAt": "2026-09-16T05:49:05.117Z",
+  "generatedAt": "2026-09-16T12:50:30.174Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-16T05:49:04.449Z",
+    "generatedAt": "2026-09-16T12:50:29.790Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 602,
-    "rawTestCount": 602,
-    "attempts": 602,
-    "passed": 101,
-    "failed": 11,
-    "skipped": 490,
+    "total": 4,
+    "rawTestCount": 4,
+    "attempts": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 101,
-      "skipped": 490,
-      "unexpected": 11
+      "expected": 4
     }
   },
   "airExecution": {
-    "total": 602,
-    "attempts": 602,
-    "passed": 101,
-    "failed": 11,
-    "skipped": 490,
+    "total": 4,
+    "attempts": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 602,
-    "expectedAirTotal": 602,
-    "airTotal": 602,
+    "sourceTotal": 4,
+    "expectedAirTotal": 4,
+    "airTotal": 4,
     "difference": 0
   },
   "duplicates": {
@@ -49,248 +47,121 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 44,
+    "perTestEvidence": 0,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 46,
+    "totalWithRawReports": 2,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
   "invalidJourneyReferences": [],
   "historicalContaminationDetected": false,
   "evidenceTraceability": {
-    "failedTests": [
-      {
-        "testId": "chromium > AuthNegative.spec.ts > Auth Negative Scenarios > Forgot password form blocks empty email",
-        "testName": "Auth Negative Scenarios > Forgot password form blocks empty email",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Login password visibility control is exposed without submitting form",
-        "testName": "Auth UI Validation > Login password visibility control is exposed without submitting form",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > BillingEdgeValidation.spec.ts > Billing Edge Validation > Billing plans history invoices and back-forward in one session",
-        "testName": "Billing Edge Validation > Billing plans history invoices and back-forward in one session",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-        "testName": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DashboardNavigation.spec.ts > Dashboard Navigation > Profile menu navigation actions open the expected pages",
-        "testName": "Dashboard Navigation > Profile menu navigation actions open the expected pages",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "testName": "Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > ProfileMobileValidation.spec.ts > Profile Mobile Number Validation > Profile mobile section validation in one session",
-        "testName": "Profile Mobile Number Validation > Profile mobile section validation in one session",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > ProfileNegative.spec.ts > Profile Negative Scenarios > Profile identity drafts password toggles and navigation in one session",
-        "testName": "Profile Negative Scenarios > Profile identity drafts password toggles and navigation in one session",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > ProfilePasswordMismatch.spec.ts > Password mismatch and wrong current password in one session",
-        "testName": "Password mismatch and wrong current password in one session",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > ProfileSecurityDisplay.spec.ts > Profile Security Display > Profile security MFA backup codes trusted devices and refresh",
-        "testName": "Profile Security Display > Profile security MFA backup codes trusted devices and refresh",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > RiskComplianceUpdate.spec.ts > Risk & Compliance Dashboard Update > Saved Risk Profile and Compliance load edit and survive refresh in one session",
-        "testName": "Risk & Compliance Dashboard Update > Saved Risk Profile and Compliance load edit and survive refresh in one session",
-        "evidenceCount": 4,
-        "status": "Evidence Available"
-      }
-    ]
+    "failedTests": []
   },
   "releaseTraceability": {
     "status": "PASS",
     "reasons": [
-      "Release thresholds were not met",
-      "Failures or missing critical data require review",
-      "Resolve blockers before release approval"
+      "Critical journeys are not blocked",
+      "Warnings require review",
+      "Release can proceed after evidence review"
     ],
     "reasonTraceability": [
       {
-        "reason": "Release thresholds were not met",
-        "source": "blockers",
+        "reason": "Critical journeys are not blocked",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Negative Scenarios > Profile identity drafts password toggles and navigation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Password mismatch and wrong current password in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Security Display > Profile security MFA backup codes trusted devices and refresh",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Failures or missing critical data require review",
-        "source": "blockers",
+        "reason": "Warnings require review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Negative Scenarios > Profile identity drafts password toggles and navigation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Password mismatch and wrong current password in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Security Display > Profile security MFA backup codes trusted devices and refresh",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Resolve blockers before release approval",
-        "source": "blockers",
+        "reason": "Release can proceed after evidence review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Dashboard Navigation > Authenticated dashboard remains usable on mobile viewport",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Negative Scenarios > Profile identity drafts password toggles and navigation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Password mismatch and wrong current password in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Profile Security Display > Profile security MFA backup codes trusted devices and refresh",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Not Executed."
           },
           {
             "type": "Business Journey",
             "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Not Executed."
           },
           {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "MFA",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       }
     ],
-    "warnings": 22,
-    "blockers": 9
+    "warnings": 5,
+    "blockers": 0
   }
 }

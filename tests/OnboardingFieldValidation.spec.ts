@@ -318,10 +318,10 @@ test.describe(
             'Compliance required fields and disclosures block save',
             async () => {
               await compliance.validateRequiredFieldsBlockSave();
-              await compliance.validateStateRequiredBlocksSave();
               await compliance.validateDisclosureRequiredBlocksSave();
               await compliance.validateEachDisclosureRequired();
               await compliance.validateDisclosureCancelDoesNotAccept();
+              await compliance.validateStateRequiredBlocksSave();
             }
           );
 

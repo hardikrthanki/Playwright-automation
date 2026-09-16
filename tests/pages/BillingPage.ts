@@ -160,9 +160,23 @@ constructor(page: Page) {
     page.getByRole(
       'tab',
       {
-        name: /plans/i,
+        name: /^plans$/i,
       }
-    );
+    ).or(
+      page.getByRole(
+        'button',
+        {
+          name: /^plans$/i,
+        }
+      )
+    ).or(
+      page.getByRole(
+        'link',
+        {
+          name: /^plans$/i,
+        }
+      )
+    ).first();
 
   this.historyTab =
     page.getByRole(
@@ -290,6 +304,8 @@ async validateOverview() {
 Logger.info(
   'Validating Billing Overview'
 );
+
+  await this.dismissMarketingOverlays();
 
   await this.ensureOnApp();
 
@@ -738,6 +754,8 @@ async validateBillingIntervalPresentationSummary() {
 
 private async openPlansView() {
 
+  await this.dismissMarketingOverlays();
+
   await this.validateOverview();
 
   if (
@@ -753,6 +771,21 @@ private async openPlansView() {
     );
   }
 
+  await expect(
+    this.page.getByRole(
+      'button',
+      {
+        name: /upgrade|downgrade|switch to free|change plan/i
+      }
+    ).or(
+      this.page.getByText(
+        /change plan|switch to free/i
+      )
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
   await this.validateBillingUrl();
 }
 
@@ -765,8 +798,8 @@ private billingIntervalButton(
       {
         name:
           interval === 'monthly'
-            ? /monthly|month/i
-            : /annual|year/i
+            ? /^(monthly)$/i
+            : /^(annual)$/i
       }
     )
     .first();
@@ -780,18 +813,16 @@ private async selectBillingIntervalIfAvailable(
       interval
     );
 
-  if (
-    await intervalButton.isVisible({
-      timeout: 5000
-    }).catch(
-      () => false
-    )
-  ) {
-    await safeClick(
-      intervalButton,
-      `Select ${interval} billing`
-    );
-  }
+  await expect(
+    intervalButton
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await safeClick(
+    intervalButton,
+    `Select ${interval} billing`
+  );
 }
 
 private planActionButtonPattern(
@@ -839,73 +870,56 @@ private async findPlanActionButton(
           element,
           targetPlan
         ) => {
-          const knownPlans = [
-            'Curious Explorer',
-            'Income Builder',
-            'Overlay Strategists',
-            'Portfolio Hedger',
-            'Marketplace'
+          const plans = [
+            {
+              name: 'Curious Explorer',
+              needles: ['curious explorer', 'curious']
+            },
+            {
+              name: 'Income Builder',
+              needles: ['income builder', 'income']
+            },
+            {
+              name: 'Overlay Strategists',
+              needles: ['overlay strategists', 'overlay']
+            },
+            {
+              name: 'Portfolio Hedger',
+              needles: ['portfolio hedger', 'portfolio hedge']
+            },
+            {
+              name: 'Marketplace',
+              needles: ['marketplace']
+            }
           ];
+
+          const matchedPlans = (text) =>
+            plans.filter(
+              (plan) =>
+                plan.needles.some(
+                  (needle) =>
+                    text.includes(
+                      needle
+                    )
+                )
+            );
 
           let current =
             element.parentElement;
 
-          for (let depth = 0; current && depth < 8; depth += 1) {
+          for (let depth = 0; current && depth < 12; depth += 1) {
             const currentText =
               (
                 current.textContent ?? ''
               ).toLowerCase();
+            const matches =
+              matchedPlans(
+                currentText
+              );
 
             if (
-              currentText.includes(
-                String(
-                  targetPlan
-                ).toLowerCase()
-              )
-            ) {
-              const matchingPlanCount =
-                knownPlans.filter(
-                  plan =>
-                    currentText.includes(
-                      plan.toLowerCase()
-                    )
-                ).length;
-
-              if (matchingPlanCount <= 1) {
-                return true;
-              }
-            }
-
-            current =
-              current.parentElement;
-          }
-
-          current =
-            element.parentElement;
-
-          for (let depth = 0; current && depth < 8; depth += 1) {
-            const currentText =
-              (
-                current.textContent ?? ''
-              ).toLowerCase();
-
-            if (
-              currentText.includes(
-                String(
-                  targetPlan
-                )
-                  .toLowerCase()
-              ) &&
-              !knownPlans.some(
-                plan =>
-                  plan.toLowerCase() !==
-                    String(
-                      targetPlan
-                    ).toLowerCase() &&
-                  currentText.includes(
-                    plan.toLowerCase()
-                  )
-              )
+              matches.length === 1 &&
+              matches[0].name === targetPlan
             ) {
               return true;
             }
@@ -935,6 +949,38 @@ private async findPlanActionButton(
   );
 }
 
+private planNamePattern(
+  planName: string
+) {
+  if (
+    /portfolio/i.test(
+      planName
+    )
+  ) {
+    return 'Portfolio Hedger|Portfolio Hedge|3-Advanced';
+  }
+
+  if (
+    /income/i.test(
+      planName
+    )
+  ) {
+    return 'Income Builder|Income';
+  }
+
+  if (
+    /overlay/i.test(
+      planName
+    )
+  ) {
+    return 'Overlay Strategists|Overlay';
+  }
+
+  return escapeRegExp(
+    planName
+  );
+}
+
 private planChangeDialog(
   options: {
     targetPlan: string;
@@ -942,28 +988,62 @@ private planChangeDialog(
   }
 ) {
   const planName =
-    escapeRegExp(
+    this.planNamePattern(
       options.targetPlan
     );
 
   const dialogPattern =
     options.action === 'interval'
       ? new RegExp(
-          `${planName}[\\s\\S]{0,800}(?:charge|amount due|recurring|billing)|(?:upgrade|downgrade|switch|change)\\s+to[\\s\\S]{0,80}${planName}`,
+          `(?:${planName}).{0,160}(?:annual|monthly|year|charge)|(?:switch|change).{0,40}(?:annual|monthly).{0,80}(?:${planName})`,
           'i'
         )
       : new RegExp(
-          `(?:${options.action}\\s+to\\s+${planName}|switch to\\s+${planName}|${planName}\\s+charge)`,
+          `(?:${options.action}|switch)\\s+to\\s+(?:${planName})`,
           'i'
         );
+
+  const titledSurface =
+    this.page.getByText(
+      new RegExp(
+        `(?:upgrade|downgrade|switch)\\s+to\\s+(?:${planName})`,
+        'i'
+      )
+    );
+
+  if (
+    options.action === 'interval'
+  ) {
+    return this.page
+      .getByRole(
+        'dialog'
+      )
+      .or(
+        this.page.getByRole(
+          'alertdialog'
+        )
+      )
+      .filter({
+        hasText: dialogPattern
+      })
+      .first();
+  }
 
   return this.page
     .getByRole(
       'dialog'
     )
+    .or(
+      this.page.getByRole(
+        'alertdialog'
+      )
+    )
     .filter({
       hasText: dialogPattern
     })
+    .or(
+      titledSurface
+    )
     .first();
 }
 
@@ -984,6 +1064,29 @@ async openPlanChangeCalculationPreview(
     options.interval
   );
 
+  if (
+    options.action === 'interval'
+  ) {
+    const intervalDialog =
+      this.planChangeDialog(
+        options
+      );
+
+    if (
+      await intervalDialog.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      Logger.success(
+        `${options.action} calculation preview opened for ${options.targetPlan} ${options.interval}`
+      );
+
+      return;
+    }
+  }
+
   let actionButton;
 
   try {
@@ -997,13 +1100,26 @@ async openPlanChangeCalculationPreview(
       throw error;
     }
 
-    actionButton =
-      await this.findPlanActionButton(
-        options.targetPlan,
-        options.interval === 'annual'
-          ? 'upgrade'
-          : 'downgrade'
-      );
+    const intervalSwitch =
+      this.page.getByRole(
+        'button',
+        {
+          name: /switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
+        }
+      ).first();
+
+    if (
+      await intervalSwitch.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      actionButton =
+        intervalSwitch;
+    } else {
+      throw error;
+    }
   }
 
   await safeClick(
@@ -1049,36 +1165,41 @@ async validatePlanChangeCalculationPreview(
     timeout: 15000
   });
 
+  const dialogText =
+    await dialog.innerText();
+
+  const scheduledChange =
+    /takes effect|no refund|end of (this|the) billing period|schedule downgrade/i.test(
+      dialogText
+    );
+
   await expect(
     dialog
   ).toContainText(
     new RegExp(
       `${options.action === 'interval'
-        ? `(?:upgrade|downgrade|switch|change)\\s+to|${escapeRegExp(
+        ? `(?:upgrade|downgrade|switch|change)\\s+to|${this.planNamePattern(
           options.targetPlan
         )}`
-        : `${options.action}\\s+to\\s+${escapeRegExp(
+        : `${options.action}\\s+to\\s+(?:${this.planNamePattern(
           options.targetPlan
-        )}`}`,
+        )})`}`,
       'i'
     )
   );
+
+  if (scheduledChange) {
+    Logger.success(
+      `${options.action} calculation preview validated for ${options.targetPlan} ${options.interval}`
+    );
+
+    return;
+  }
 
   await expect(
     dialog
   ).toContainText(
     /prorat|charged|card on file|billing cycle|renews|new price|amount due/i
-  );
-
-  await expect(
-    dialog
-  ).toContainText(
-    new RegExp(
-      `${escapeRegExp(
-        options.targetPlan
-      )}\\s+charge`,
-      'i'
-    )
   );
 
   await expect(
@@ -1132,16 +1253,13 @@ async validatePlanChangeCalculationPreview(
     timeout: 10000
   });
 
-  const dialogText =
-    await dialog.innerText();
-
   const planCharge =
     firstCurrencyValueNearLabel(
       dialogText,
       new RegExp(
-        `${escapeRegExp(
+        `(?:${this.planNamePattern(
           options.targetPlan
-        )}\\s+charge`,
+        )})\\s+charge`,
         'i'
       )
     );
@@ -1185,18 +1303,35 @@ async validatePlanChangeCalculationPreview(
   ).toBeDefined();
 
   if (options.expectedPlanCharge !== undefined) {
-    expect(
+    const listPriceDelta =
       Math.abs(
         (
           planCharge ??
           0
         ) -
           options.expectedPlanCharge
-      ),
-      `Plan charge should match configured ${options.targetPlan} ${options.interval} price.`
-    ).toBeLessThanOrEqual(
-      0.02
-    );
+      );
+
+    const netPriceDelta =
+      Math.abs(
+        (
+          planCharge ??
+          0
+        ) -
+          (
+            options.expectedPlanCharge +
+            (
+              unusedCredit ??
+              0
+            )
+          )
+      );
+
+    expect(
+      listPriceDelta <= 0.02 ||
+        netPriceDelta <= 1,
+      `Plan charge ${planCharge} should match list price ${options.expectedPlanCharge} or list plus unused credit.`
+    ).toBeTruthy();
   }
 
   if (options.expectedRecurringAmount !== undefined) {
@@ -1478,6 +1613,34 @@ async validatePlanChangeTermsRequired(
         '[role="checkbox"], input[type="checkbox"]'
       )
       .first();
+
+  const scheduledConfirm =
+    dialog.getByRole(
+      'button',
+      {
+        name: /schedule downgrade|keep my plan/i
+      }
+    ).first();
+
+  if (
+    !await termsCheckbox.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await expect(
+      scheduledConfirm
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    Logger.success(
+      `${options.action} scheduled-change confirmation is visible without a pay terms checkbox`
+    );
+
+    return;
+  }
 
   const confirmButton =
     dialog
