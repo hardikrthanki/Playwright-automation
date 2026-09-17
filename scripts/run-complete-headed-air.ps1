@@ -88,7 +88,7 @@ if ($watch) {
 } else {
   Write-Host 'Headless. Set WATCH=true only if you need to see the browser.' -ForegroundColor Cyan
 }
-Write-Host 'Matrix rows still skip on purpose so AIR can classify skipped/blocked.' -ForegroundColor Cyan
+Write-Host 'Stripe FRD matrix automated rows execute; user-journey matrix stays skip-only AIR.' -ForegroundColor Cyan
 
 if ($watch) {
   & .\node_modules\.bin\playwright.cmd test --headed

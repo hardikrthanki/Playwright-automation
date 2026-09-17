@@ -75,6 +75,10 @@ Enable-Flag 'OVERLAY_STRATEGISTS_TERMS_ENABLED'
 # Plan-ladder inspect: disposable Users A/B/D, paid upgrades, cancel/retention
 # copy checks. Creates Stripe test users. Extra submit flags stay off.
 Enable-Flag 'SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED'
 Enable-Flag 'SUB_LIFECYCLE_PLAN_LADDER_ENABLED'
 
 Set-DefaultEnv 'AUTH_OTP_CODE' '111111'

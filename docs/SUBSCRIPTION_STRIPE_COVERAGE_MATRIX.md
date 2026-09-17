@@ -102,11 +102,10 @@ external billing, scheduler, refund, or audit dependencies.
 
 ## AIR Traceability Matrix Files
 
-These matrix specs are executable Playwright files. Automated rows run the
-linked UI coverage key once per Playwright process (`workers: 1`); sibling
-rows reuse that result. Blocked, future, known-bug, AIR-ingestion, and
-BlockedScenario rows stay skipped. Destructive Stripe submits stay behind
-extra flags.
+`npm run executable:headed`, `npm run executable:headless`, and
+`npm run test:executable` include the nine Stripe FRD matrix specs. Automated
+rows run unique coverage keys once per process. `UserJourneyCoverageMatrix`
+stays skip-only AIR and is not part of the executable suite.
 
 | Area | File | Rows |
 | --- | --- | --- |

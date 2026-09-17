@@ -1,8 +1,9 @@
 <#
-Clean headless run of executable specs only.
+Clean headless run of executable specs, including Stripe FRD matrix files.
 
-Skips skip-only matrix files (~478 AIR rows). Enables gated executable
-Stripe/onboarding flags. Does not open a browser. Does not record video.
+Automated matrix rows run unique UI coverage keys. UserJourneyCoverageMatrix
+stays skip-only AIR. Enables gated executable Stripe/onboarding flags. Does
+not open a browser. Does not record video.
 
 Usage:
   powershell -ExecutionPolicy Bypass -File scripts\run-executable-headless.ps1
@@ -85,7 +86,7 @@ $env:HEADED = 'false'
 $env:AIR_REPORT_SCOPE = 'latest'
 $env:AIR_RESTORE_HISTORY = 'true'
 
-Write-Host 'Clean executable headless run: journey order, no matrix rows, SLOW_MO=0.' -ForegroundColor Cyan
+Write-Host 'Clean executable headless run: journey order, Stripe FRD matrix included, SLOW_MO=0.' -ForegroundColor Cyan
 node -e "require('./scripts/execution-order').assertAllSpecsAreListed(); require('./scripts/execution-order').printOrder(require('./scripts/execution-order').executableJourneyOrder)"
 
 node scripts\run-ordered-tests.js executable
