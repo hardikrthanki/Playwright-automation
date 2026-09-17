@@ -46,6 +46,12 @@ is once per lifetime and yearly refund ends paid access.
 
 RUN
 ---
+Included in the executable suite (inspect Users A/B/D; extra submit flags stay off):
+
+npm run executable:headed
+
+Or only this slice:
+
 $env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
 npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "plan ladder|retention offer" --headed
