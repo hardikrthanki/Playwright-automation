@@ -89,6 +89,15 @@ Run the broadest practical suite with safe controlled gates enabled:
 npm run executable:headed
 ```
 
+Complete headed suite (journey order + new plan-ladder tests + AIR). Creates disposable Stripe users:
+
+```powershell
+git checkout main
+git pull origin main
+$env:WATCH="true"
+npm run complete:headed
+```
+
 Same command without npm:
 
 ```powershell
