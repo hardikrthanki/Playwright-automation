@@ -57,6 +57,11 @@ Enable-Flag 'SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_FLOW_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_TERMS_ENABLED'
 
+# Plan-ladder inspect: disposable Users A/B/D, paid upgrades, cancel/retention
+# copy checks. Creates Stripe test users. Extra submit flags stay off.
+Enable-Flag 'SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PLAN_LADDER_ENABLED'
+
 Set-DefaultEnv 'AUTH_OTP_CODE' '111111'
 Set-DefaultEnv 'PLAN_SELECTION_EXISTING_EMAIL' 'imhardikthanki+plan-selection-prepared@gmail.com'
 Set-DefaultEnv 'PLAN_SELECTION_EXISTING_PASSWORD' 'H@rdik9944'
@@ -64,6 +69,9 @@ Set-DefaultEnv 'AIR_RESTORE_HISTORY' 'true'
 Set-DefaultEnv 'AIR_INCLUDE_MANUAL_DEFECTS' 'false'
 Set-DefaultEnv 'ADMIN_EMAIL' 'admin@ooltool.com'
 Set-DefaultEnv 'ADMIN_PASSWORD' 'Admin@1234!'
+
+# Plan-ladder inspect is on. Keep extra submit flags off (monthly cancel submit,
+# yearly cancel-at-expiry submit, yearly refund, retention accept, downgrade submit).
 
 $batches = @(
   @{
@@ -149,6 +157,12 @@ $batches = @(
       'tests/AnnualMonthlyBillingChangeMatrix.spec.ts',
       'tests/SubscriptionCancellationMatrix.spec.ts',
       'tests/FailedPaymentDunningMatrix.spec.ts'
+    )
+  },
+  @{
+    Name = '10-subscription-lifecycle'
+    Files = @(
+      'tests/SubscriptionLifecycleExecution.spec.ts'
     )
   }
 )

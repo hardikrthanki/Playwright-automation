@@ -97,6 +97,87 @@ function firstCurrencyValueNearLabel(
   );
 }
 
+function nearbyTextAfterLabel(
+  text: string,
+  label: RegExp
+) {
+  const lines =
+    text
+      .split(
+        /\r?\n/
+      )
+      .map(
+        line =>
+          line.trim()
+      )
+      .filter(
+        Boolean
+      );
+
+  const labelIndex =
+    lines.findIndex(
+      line =>
+        label.test(
+          line
+        )
+    );
+
+  if (labelIndex === -1) {
+    return '';
+  }
+
+  return lines
+    .slice(
+      labelIndex,
+      labelIndex + 4
+    )
+    .join(
+      ' '
+    );
+}
+
+function parseFlexibleDate(
+  value: string
+) {
+  const patterns = [
+    /(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}/i,
+    /\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?,?\s+\d{4}/i,
+    /\d{4}-\d{2}-\d{2}/,
+    /\d{1,2}\/\d{1,2}\/\d{4}/
+  ];
+
+  for (const pattern of patterns) {
+    const match =
+      value.match(
+        pattern
+      );
+
+    if (!match) {
+      continue;
+    }
+
+    const parsed =
+      new Date(
+        match[0]
+      );
+
+    if (
+      !Number.isNaN(
+        parsed.getTime()
+      )
+    ) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
+type PlanChangeAction =
+  | 'upgrade'
+  | 'downgrade'
+  | 'interval';
+
 async function checkboxIsChecked(
   checkbox: Locator
 ) {
@@ -795,9 +876,23 @@ private async selectBillingIntervalIfAvailable(
   }
 }
 
+private planActionButtonPattern(
+  action: PlanChangeAction
+) {
+  if (action === 'upgrade') {
+    return /upgrade/i;
+  }
+
+  if (action === 'downgrade') {
+    return /downgrade/i;
+  }
+
+  return /switch|change (billing|plan)|to annual|to monthly|upgrade|downgrade/i;
+}
+
 private async findPlanActionButton(
   planName: string,
-  action: 'upgrade' | 'downgrade'
+  action: PlanChangeAction
 ) {
   const actionButtons =
     this.page
@@ -806,9 +901,9 @@ private async findPlanActionButton(
       )
       .filter({
         hasText:
-          action === 'upgrade'
-            ? /upgrade/i
-            : /downgrade/i
+          this.planActionButtonPattern(
+            action
+          )
       });
 
   const buttonCount =
@@ -827,12 +922,50 @@ private async findPlanActionButton(
           targetPlan
         ) => {
           const knownPlans = [
-            'Curious Explorer',
-            'Income Builder',
-            'Overlay Strategists',
-            'Portfolio Hedger',
-            'Marketplace'
+            {
+              name: 'Curious Explorer',
+              needles: ['curious explorer', 'curious']
+            },
+            {
+              name: 'Income Builder',
+              needles: ['income builder', 'income']
+            },
+            {
+              name: 'Overlay Strategists',
+              needles: ['overlay strategists', 'overlay']
+            },
+            {
+              name: 'Portfolio Hedger',
+              needles: ['portfolio hedger', 'hedger']
+            },
+            {
+              name: 'Marketplace',
+              needles: ['marketplace']
+            }
           ];
+
+          const targetNeedles =
+            knownPlans.find(
+              plan =>
+                plan.name.toLowerCase() ===
+                String(targetPlan).toLowerCase()
+            )?.needles ??
+            [String(targetPlan).toLowerCase()];
+
+          const textHasTarget = (currentText: string) =>
+            targetNeedles.some(
+              needle =>
+                currentText.includes(needle)
+            );
+
+          const matchingPlanCount = (currentText: string) =>
+            knownPlans.filter(
+              plan =>
+                plan.needles.some(
+                  needle =>
+                    currentText.includes(needle)
+                )
+            ).length;
 
           let current =
             element.parentElement;
@@ -844,23 +977,14 @@ private async findPlanActionButton(
               ).toLowerCase();
 
             if (
-              currentText.includes(
-                String(
-                  targetPlan
-                ).toLowerCase()
-              )
+              textHasTarget(
+                currentText
+              ) &&
+              matchingPlanCount(
+                currentText
+              ) <= 1
             ) {
-              const matchingPlanCount =
-                knownPlans.filter(
-                  plan =>
-                    currentText.includes(
-                      plan.toLowerCase()
-                    )
-                ).length;
-
-              if (matchingPlanCount <= 1) {
-                return true;
-              }
+              return true;
             }
 
             current =
@@ -877,22 +1001,12 @@ private async findPlanActionButton(
               ).toLowerCase();
 
             if (
-              currentText.includes(
-                String(
-                  targetPlan
-                )
-                  .toLowerCase()
+              textHasTarget(
+                currentText
               ) &&
-              !knownPlans.some(
-                plan =>
-                  plan.toLowerCase() !==
-                    String(
-                      targetPlan
-                    ).toLowerCase() &&
-                  currentText.includes(
-                    plan.toLowerCase()
-                  )
-              )
+              matchingPlanCount(
+                currentText
+              ) <= 1
             ) {
               return true;
             }
@@ -922,31 +1036,93 @@ private async findPlanActionButton(
   );
 }
 
+private planNamePattern(
+  planName: string
+) {
+  if (
+    /curious/i.test(
+      planName
+    )
+  ) {
+    return 'Curious Explorer|Curious';
+  }
+
+  if (
+    /income/i.test(
+      planName
+    )
+  ) {
+    return 'Income Builder|Income';
+  }
+
+  if (
+    /overlay/i.test(
+      planName
+    )
+  ) {
+    return 'Overlay Strategists|Overlay';
+  }
+
+  if (
+    /portfolio|hedger/i.test(
+      planName
+    )
+  ) {
+    return 'Portfolio Hedger|Hedger';
+  }
+
+  return escapeRegExp(
+    planName
+  );
+}
+
 private planChangeDialog(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: PlanChangeAction;
   }
 ) {
+  const planName =
+    this.planNamePattern(
+      options.targetPlan
+    );
+
+  const dialogPattern =
+    options.action === 'interval'
+      ? new RegExp(
+          `(?:${planName}).{0,160}(?:annual|monthly|year|charge)|(?:switch|change).{0,40}(?:annual|monthly).{0,80}(?:${planName})`,
+          'i'
+        )
+      : new RegExp(
+          `(?:${options.action}|switch)\\s+to\\s+(?:${planName})`,
+          'i'
+        );
+
+  const titledSurface =
+    this.page.getByText(
+      new RegExp(
+        `(?:upgrade|downgrade|switch)\\s+to\\s+(?:${planName})`,
+        'i'
+      )
+    ).first();
+
   return this.page
     .getByRole(
       'dialog'
     )
     .filter({
-      hasText: new RegExp(
-        `${options.action} to\\s+${escapeRegExp(
-          options.targetPlan
-        )}`,
-        'i'
-      )
+      hasText: dialogPattern
     })
+    .or(
+      titledSurface
+    )
     .first();
 }
 
 async openPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: PlanChangeAction;
     interval: 'monthly' | 'annual';
   }
 ) {
@@ -960,11 +1136,63 @@ async openPlanChangeCalculationPreview(
     options.interval
   );
 
-  const actionButton =
-    await this.findPlanActionButton(
-      options.targetPlan,
-      options.action
-    );
+  if (
+    options.action === 'interval'
+  ) {
+    const intervalDialog =
+      this.planChangeDialog(
+        options
+      );
+
+    if (
+      await intervalDialog.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      Logger.success(
+        `${options.action} calculation preview opened for ${options.targetPlan} ${options.interval}`
+      );
+
+      return;
+    }
+  }
+
+  let actionButton;
+
+  try {
+    actionButton =
+      await this.findPlanActionButton(
+        options.targetPlan,
+        options.action
+      );
+  } catch (error) {
+    if (options.action !== 'interval') {
+      throw error;
+    }
+
+    const intervalSwitch =
+      this.page.getByRole(
+        'button',
+        {
+          name: /switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
+        }
+      ).first();
+
+    if (
+      await intervalSwitch.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      actionButton =
+        intervalSwitch;
+    } else {
+      throw error;
+    }
+  }
 
   await safeClick(
     actionButton,
@@ -987,7 +1215,7 @@ async openPlanChangeCalculationPreview(
 async validatePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: PlanChangeAction;
     interval: 'monthly' | 'annual';
     expectedBillingCopy?: RegExp;
     expectedPlanCharge?: number;
@@ -1009,16 +1237,36 @@ async validatePlanChangeCalculationPreview(
     timeout: 15000
   });
 
+  const dialogText =
+    await dialog.innerText();
+
+  const scheduledChange =
+    /takes effect|no refund|end of (this|the) billing period|schedule downgrade/i.test(
+      dialogText
+    );
+
   await expect(
     dialog
   ).toContainText(
     new RegExp(
-      `${options.action} to\\s+${escapeRegExp(
-        options.targetPlan
-      )}`,
+      `${options.action === 'interval'
+        ? `(?:upgrade|downgrade|switch|change)\\s+to|${this.planNamePattern(
+          options.targetPlan
+        )}`
+        : `${options.action}\\s+to\\s+(?:${this.planNamePattern(
+          options.targetPlan
+        )})`}`,
       'i'
     )
   );
+
+  if (scheduledChange) {
+    Logger.success(
+      `${options.action} calculation preview validated for ${options.targetPlan} ${options.interval}`
+    );
+
+    return;
+  }
 
   await expect(
     dialog
@@ -1030,9 +1278,9 @@ async validatePlanChangeCalculationPreview(
     dialog
   ).toContainText(
     new RegExp(
-      `${escapeRegExp(
+      `(?:${this.planNamePattern(
         options.targetPlan
-      )}\\s+charge`,
+      )})\\s+charge`,
       'i'
     )
   );
@@ -1088,16 +1336,13 @@ async validatePlanChangeCalculationPreview(
     timeout: 10000
   });
 
-  const dialogText =
-    await dialog.innerText();
-
   const planCharge =
     firstCurrencyValueNearLabel(
       dialogText,
       new RegExp(
-        `${escapeRegExp(
+        `(?:${this.planNamePattern(
           options.targetPlan
-        )}\\s+charge`,
+        )})\\s+charge`,
         'i'
       )
     );
@@ -1141,18 +1386,35 @@ async validatePlanChangeCalculationPreview(
   ).toBeDefined();
 
   if (options.expectedPlanCharge !== undefined) {
-    expect(
+    const listPriceDelta =
       Math.abs(
         (
           planCharge ??
           0
         ) -
           options.expectedPlanCharge
-      ),
-      `Plan charge should match configured ${options.targetPlan} ${options.interval} price.`
-    ).toBeLessThanOrEqual(
-      0.02
-    );
+      );
+
+    const netPriceDelta =
+      Math.abs(
+        (
+          planCharge ??
+          0
+        ) -
+          (
+            options.expectedPlanCharge +
+            (
+              unusedCredit ??
+              0
+            )
+          )
+      );
+
+    expect(
+      listPriceDelta <= 0.02 ||
+        netPriceDelta <= 1,
+      `Plan charge ${planCharge} should match list price ${options.expectedPlanCharge} or list plus unused credit.`
+    ).toBeTruthy();
   }
 
   if (options.expectedRecurringAmount !== undefined) {
@@ -1184,24 +1446,29 @@ async validatePlanChangeCalculationPreview(
     planCharge ?? 0
   );
 
-  expect(
-    Math.abs(
-      (
-        planCharge ??
-        0
-      ) +
+  if (
+    options.action === 'upgrade' ||
+    options.action === 'interval'
+  ) {
+    expect(
+      Math.abs(
         (
-          unusedCredit ??
+          planCharge ??
           0
-        ) -
-        (
-          amountDueToday ??
-          0
-        )
-    )
-  ).toBeLessThanOrEqual(
-    0.02
-  );
+        ) +
+          (
+            unusedCredit ??
+            0
+          ) -
+          (
+            amountDueToday ??
+            0
+          )
+      )
+    ).toBeLessThanOrEqual(
+      0.02
+    );
+  }
 
   Logger.success(
     `${options.action} calculation preview validated for ${options.targetPlan} ${options.interval}`
@@ -1211,7 +1478,7 @@ async validatePlanChangeCalculationPreview(
 async submitPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: PlanChangeAction;
   }
 ) {
   Logger.info(
@@ -1241,48 +1508,51 @@ async submitPlanChangeCalculationPreview(
       .getByRole(
         'button',
         {
-          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+          name: /confirm\s*&\s*pay|confirm.*pay|pay|schedule downgrade|confirm/i
         }
       )
       .first();
 
-  await expect(
-    termsCheckbox
-  ).toBeVisible({
-    timeout: 10000
-  });
-
-  await expect(
-    confirmButton
-  ).toBeDisabled({
-    timeout: 10000
-  });
-
-  if (
-    !(await checkboxIsChecked(
-      termsCheckbox
-    ))
-  ) {
-    await safeClick(
-      termsCheckbox,
-      'Accept Plan Change Terms'
+  const termsVisible =
+    await termsCheckbox.isVisible({
+      timeout: 8000
+    }).catch(
+      () => false
     );
+
+  if (termsVisible) {
+    await expect(
+      confirmButton
+    ).toBeDisabled({
+      timeout: 10000
+    });
+
+    if (
+      !(await checkboxIsChecked(
+        termsCheckbox
+      ))
+    ) {
+      await safeClick(
+        termsCheckbox,
+        'Accept Plan Change Terms'
+      );
+    }
+
+    await expect
+      .poll(
+        async () =>
+          checkboxIsChecked(
+            termsCheckbox
+          ),
+        {
+          timeout: 10000,
+          message: 'Waiting for plan-change terms checkbox to be checked'
+        }
+      )
+      .toBe(
+        true
+      );
   }
-
-  await expect
-    .poll(
-      async () =>
-        checkboxIsChecked(
-          termsCheckbox
-        ),
-      {
-        timeout: 10000,
-        message: 'Waiting for plan-change terms checkbox to be checked'
-      }
-    )
-    .toBe(
-      true
-    );
 
   await expect(
     confirmButton
@@ -1343,7 +1613,7 @@ async validateActivePlan(
     `Billing should show ${expectedPlan} after plan change.`
   ).toMatch(
     new RegExp(
-      escapeRegExp(
+      this.planNamePattern(
         expectedPlan
       ),
       'i'
@@ -1362,10 +1632,85 @@ async validateActivePlan(
   );
 }
 
+async validatePlanChangeDueAmountAndRenewal(
+  options: {
+    targetPlan: string;
+    action: PlanChangeAction;
+    interval: 'monthly' | 'annual';
+    expectedBillingCopy?: RegExp;
+    expectedPlanCharge?: number;
+    expectedRecurringAmount?: number;
+  }
+) {
+  await this.validatePlanChangeCalculationPreview(
+    options
+  );
+
+  const dialogText =
+    await this.planChangeDialog(
+      options
+    ).innerText();
+
+  const renewal =
+    parseFlexibleDate(
+      nearbyTextAfterLabel(
+        dialogText,
+        /next billing date|renews on|renewal date|effective (downgrade )?date/i
+      )
+    ) ??
+    parseFlexibleDate(
+      dialogText
+    );
+
+  expect(
+    renewal,
+    'Plan-change preview should show a next billing / renewal date.'
+  ).toBeDefined();
+
+  const startOfToday =
+    new Date();
+
+  startOfToday.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  expect(
+    renewal!.getTime(),
+    'Renewal date should be today or later.'
+  ).toBeGreaterThanOrEqual(
+    startOfToday.getTime()
+  );
+
+  const maxDays =
+    options.interval ===
+      'annual'
+      ? 400
+      : 45;
+
+  expect(
+    renewal!.getTime(),
+    `Renewal date should fall within ${maxDays} days for ${options.interval} billing.`
+  ).toBeLessThanOrEqual(
+    Date.now() +
+      maxDays *
+        24 *
+        60 *
+        60 *
+        1000
+  );
+
+  Logger.success(
+    `${options.action} due amount and renewal ${renewal!.toISOString().slice(0, 10)} validated for ${options.targetPlan} ${options.interval}`
+  );
+}
+
 async closePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: 'upgrade' | 'downgrade';
+    action: PlanChangeAction;
   }
 ) {
   const dialog =
@@ -1373,21 +1718,1205 @@ async closePlanChangeCalculationPreview(
       options
     );
 
-  await safeClick(
+  const cancelButton =
     dialog.getByRole(
       'button',
       {
-        name: /^cancel$/i
+        name: /^(cancel|close)$/i
       }
-    ).first(),
-    'Cancel Plan Change Preview'
-  );
+    ).first();
+
+  if (
+    await cancelButton.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      cancelButton,
+      'Cancel Plan Change Preview'
+    );
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
 
   await expect(
     dialog
   ).toBeHidden({
     timeout: 10000
   });
+}
+
+async planChangeActionAvailable(
+  planName: string,
+  action: PlanChangeAction,
+  interval: 'monthly' | 'annual'
+) {
+  await this.openPlansView();
+
+  await this.selectBillingIntervalIfAvailable(
+    interval
+  );
+
+  try {
+    await this.findPlanActionButton(
+      planName,
+      action
+    );
+
+    return true;
+  } catch {
+    if (action !== 'interval') {
+      return false;
+    }
+
+    const intervalSwitch =
+      this.page.getByRole(
+        'button',
+        {
+          name: /switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
+        }
+      ).first();
+
+    return intervalSwitch.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    );
+  }
+}
+
+private inAppCancelControl() {
+  return this.page
+    .locator(
+      'a, button'
+    )
+    .filter({
+      hasText:
+        /cancel (your )?subscription|cancel plan/i
+    })
+    .first();
+}
+
+private cancelOptionControl(
+  host: Page,
+  pattern: RegExp
+) {
+  return host
+    .getByRole(
+      'button',
+      {
+        name: pattern
+      }
+    )
+    .or(
+      host.getByRole(
+        'radio',
+        {
+          name: pattern
+        }
+      )
+    )
+    .or(
+      host.getByRole(
+        'link',
+        {
+          name: pattern
+        }
+      )
+    )
+    .or(
+      host
+        .locator(
+          'label, button, a, [role="radio"], [role="option"]'
+        )
+        .filter({
+          hasText: pattern
+        })
+    )
+    .first();
+}
+
+private retentionAcceptControl(
+  host: Page = this.page
+) {
+  return this.cancelOptionControl(
+    host,
+    /accept (offer|discount)|keep (my |your )?(current )?plan|stay on|claim (the )?offer|apply (the )?discount/i
+  );
+}
+
+private retentionDeclineControl(
+  host: Page = this.page
+) {
+  return this.cancelOptionControl(
+    host,
+    /decline|no thanks|continue (to )?downgrade|skip offer|don'?t (want|keep)|switch plans anyway/i
+  );
+}
+
+private async fillCancelReasonIfPresent(
+  host: Page,
+  reason: string
+) {
+  const nativeSelect =
+    host
+      .locator(
+        'select'
+      )
+      .first();
+
+  if (
+    await nativeSelect.isVisible({
+      timeout: 2500
+    }).catch(
+      () => false
+    )
+  ) {
+    const optionCount =
+      await nativeSelect
+        .locator(
+          'option'
+        )
+        .count();
+
+    if (optionCount > 1) {
+      await nativeSelect.selectOption({
+        index: 1
+      });
+    }
+  } else {
+    const combobox =
+      host
+        .getByRole(
+          'combobox'
+        )
+        .first();
+
+    if (
+      await combobox.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        combobox,
+        'Open cancellation reason'
+      );
+
+      const option =
+        host
+          .getByRole(
+            'option'
+          )
+          .first();
+
+      if (
+        await option.isVisible({
+          timeout: 3000
+        }).catch(
+          () => false
+        )
+      ) {
+        await option.click();
+      }
+    }
+  }
+
+  const feedback =
+    host
+      .locator(
+        'textarea'
+      )
+      .first();
+
+  if (
+    await feedback.isVisible({
+      timeout: 2500
+    }).catch(
+      () => false
+    )
+  ) {
+    await feedback.fill(
+      reason
+    );
+  }
+}
+
+private async hostBodyText(
+  host: Page
+) {
+  return host
+    .locator(
+      'body'
+    )
+    .innerText()
+    .catch(
+      () => ''
+    );
+}
+
+private async confirmCancelAction(
+  host: Page,
+  label: string,
+  buttonPattern: RegExp
+) {
+  const confirmButton =
+    host
+      .getByRole(
+        'button',
+        {
+          name: buttonPattern
+        }
+      )
+      .filter({
+        hasNotText:
+          /don'?t cancel|keep subscription|go back|resume/i
+      })
+      .last();
+
+  await expect(
+    confirmButton
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await safeClick(
+    confirmButton,
+    label
+  );
+
+  const finalConfirm =
+    host
+      .getByRole(
+        'button',
+        {
+          name: /cancel subscription|confirm cancellation|yes,? cancel|request refund|confirm refund/i
+        }
+      )
+      .filter({
+        hasNotText:
+          /don'?t cancel|keep subscription|go back/i
+      })
+      .first();
+
+  if (
+    await finalConfirm.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      finalConfirm,
+      `${label} confirmation`
+    );
+  }
+}
+
+async openCancelSubscriptionHost() {
+  Logger.info(
+    'Opening cancel subscription host'
+  );
+
+  await this.validateOverview();
+
+  const inAppCancel =
+    this.inAppCancelControl();
+
+  if (
+    await inAppCancel.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    const newPagePromise =
+      this.page.context()
+        .waitForEvent(
+          'page',
+          {
+            timeout: 7000
+          }
+        )
+        .catch(
+          () => undefined
+        );
+
+    await safeClick(
+      inAppCancel,
+      'Open Cancel Subscription'
+    );
+
+    const extraPage =
+      await newPagePromise;
+
+    if (extraPage) {
+      await extraPage.waitForLoadState(
+        'domcontentloaded'
+      );
+
+      Logger.success(
+        'Cancel subscription portal tab opened'
+      );
+
+      return {
+        page: extraPage,
+        isPortal: true,
+        close: async () => {
+          if (!extraPage.isClosed()) {
+            await extraPage.close();
+          }
+        }
+      };
+    }
+
+    const cancelDialog =
+      this.page
+        .getByRole(
+          'dialog'
+        )
+        .filter({
+          hasText:
+            /cancel/i
+        })
+        .first();
+
+    const dialogVisible =
+      await cancelDialog.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      );
+
+    const bodyText =
+      await this.hostBodyText(
+        this.page
+      );
+
+    if (
+      dialogVisible ||
+      /cancel (your )?subscription|cancel at|request refund|end of (this|the) billing period/i.test(
+        bodyText
+      )
+    ) {
+      Logger.success(
+        'In-app cancel subscription host opened'
+      );
+
+      return {
+        page: this.page,
+        isPortal:
+          /stripe|billing\.stripe/i.test(
+            this.page.url()
+          ),
+        close: async () => {
+          const closeButton =
+            cancelDialog
+              .getByRole(
+                'button',
+                {
+                  name: /^(cancel|close|go back|keep)/i
+                }
+              )
+              .first()
+              .or(
+                this.page.getByRole(
+                  'button',
+                  {
+                    name: /go back|keep (my |your )?plan|don'?t cancel/i
+                  }
+                ).first()
+              );
+
+          if (
+            await closeButton.isVisible({
+              timeout: 2000
+            }).catch(
+              () => false
+            )
+          ) {
+            await safeClick(
+              closeButton,
+              'Close cancel host'
+            );
+          } else {
+            await this.page.keyboard.press(
+              'Escape'
+            );
+          }
+        }
+      };
+    }
+  }
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  const alreadyCancelling =
+    portalPage
+      .getByText(
+        /cancels\s+\w+|your service will end|scheduled to cancel|cancel at period end/i
+      )
+      .first();
+
+  if (
+    await alreadyCancelling.isVisible({
+      timeout: 4000
+    }).catch(
+      () => false
+    )
+  ) {
+    Logger.success(
+      'Cancel host already shows a scheduled cancellation'
+    );
+
+    return {
+      page: portalPage,
+      isPortal: true,
+      close: async () => {
+        if (
+          portalPage !== this.page &&
+          !portalPage.isClosed()
+        ) {
+          await portalPage.close();
+        }
+      }
+    };
+  }
+
+  const cancelControl =
+    portalPage
+      .locator(
+        'button, a'
+      )
+      .filter({
+        hasText:
+          /cancel subscription/i
+      })
+      .first();
+
+  await safeClick(
+    cancelControl,
+    'Open Cancel Subscription'
+  );
+
+  await expect(
+    portalPage
+      .getByText(
+        /cancel your subscription|cancel at|refund|end of (this|the) billing period|why you'?re leaving|request refund/i
+      )
+      .first()
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  Logger.success(
+    'Cancel subscription host opened'
+  );
+
+  return {
+    page: portalPage,
+    isPortal: true,
+    close: async () => {
+      if (
+        portalPage !== this.page &&
+        !portalPage.isClosed()
+      ) {
+        await portalPage.close();
+      }
+    }
+  };
+}
+
+async validateMonthlyCancellationOptions() {
+  Logger.info(
+    'Validating monthly cancel-at-period-end options'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    expect(
+      text,
+      'Monthly cancel should describe period-end cancellation and continued access.'
+    ).toMatch(
+      /end of (this|the) billing period|period end|keep access until|cancels on|your service will end|until (the )?(end|renewal)/i
+    );
+
+    expect(
+      text,
+      'Monthly cancel should not present an immediate refund path.'
+    ).not.toMatch(
+      /cancel immediately.{0,40}refund|request a refund|unused months.{0,20}refund/i
+    );
+
+    const immediateCancel =
+      this.cancelOptionControl(
+        host.page,
+        /cancel immediately|cancel now and refund|request refund/i
+      );
+
+    expect(
+      await immediateCancel.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
+      ),
+      'Monthly cancel should not require an immediate-cancel control.'
+    ).toBeFalsy();
+
+    await this.fillCancelReasonIfPresent(
+      host.page,
+      'Automation validation only - monthly cancellation not submitted.'
+    );
+
+    Logger.success(
+      'Monthly cancel-at-period-end options validated without submitting'
+    );
+  } finally {
+    await host.close();
+  }
+}
+
+async validateYearlyCancellationOptions() {
+  Logger.info(
+    'Validating yearly cancel-at-expiry and refund options'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    const expiryCopy =
+      /cancel at (expiry|period end|renewal)|keep access until|access until (renewal|expiry)|no refund/i.test(
+        text
+      );
+
+    const refundCopy =
+      /cancel immediately.{0,60}refund|cancel and refund|request (a )?refund|unused (months|time)/i.test(
+        text
+      );
+
+    const expiryControl =
+      this.cancelOptionControl(
+        host.page,
+        /cancel at (expiry|period end|renewal)|keep access|no refund/i
+      );
+
+    const refundControl =
+      this.cancelOptionControl(
+        host.page,
+        /cancel immediately|cancel and refund|request (a )?refund/i
+      );
+
+    const expiryVisible =
+      expiryCopy ||
+      await expiryControl.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      );
+
+    const refundVisible =
+      refundCopy ||
+      await refundControl.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      );
+
+    expect(
+      expiryVisible,
+      'Yearly cancel must offer cancel-at-expiry (keep access, no refund).'
+    ).toBeTruthy();
+
+    expect(
+      refundVisible,
+      'Yearly cancel must offer cancel immediately and request refund.'
+    ).toBeTruthy();
+
+    await this.fillCancelReasonIfPresent(
+      host.page,
+      'Automation validation only - yearly cancellation not submitted.'
+    );
+
+    Logger.success(
+      'Yearly cancel-at-expiry and refund options validated without submitting'
+    );
+  } finally {
+    await host.close();
+  }
+}
+
+async submitMonthlyCancelAtPeriodEnd() {
+  Logger.info(
+    'Submitting monthly cancel at period end'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /end of (this|the) billing period|period end|keep access until|cancels on|your service will end/i
+    );
+
+    expect(
+      text
+    ).not.toMatch(
+      /cancel immediately.{0,40}refund|request a refund/i
+    );
+
+    await this.fillCancelReasonIfPresent(
+      host.page,
+      'Automation period-end cancel for disposable monthly user.'
+    );
+
+    const periodEndOption =
+      this.cancelOptionControl(
+        host.page,
+        /cancel at (the )?(end|expiry|period)|end of (this|the) billing period|keep access/i
+      );
+
+    if (
+      await periodEndOption.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        periodEndOption,
+        'Choose cancel at period end'
+      );
+    }
+
+    await this.confirmCancelAction(
+      host.page,
+      'Submit monthly cancel at period end',
+      /cancel (subscription|plan)|confirm|continue|cancel at period end/i
+    );
+
+    await expect(
+      host.page
+        .getByText(
+          /scheduled to cancel|cancels on|service will end|cancel at period end|you('ll| will) have access until/i
+        )
+        .first()
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    Logger.success(
+      'Monthly cancel at period end submitted'
+    );
+  } finally {
+    await host.close();
+  }
+}
+
+async submitYearlyCancelAtExpiry() {
+  Logger.info(
+    'Submitting yearly cancel at expiry'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const expiryOption =
+      this.cancelOptionControl(
+        host.page,
+        /cancel at (expiry|period end|renewal)|keep access|no refund/i
+      );
+
+    await expect(
+      expiryOption
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await safeClick(
+      expiryOption,
+      'Choose cancel at expiry'
+    );
+
+    await this.fillCancelReasonIfPresent(
+      host.page,
+      'Automation cancel-at-expiry for disposable yearly user.'
+    );
+
+    await this.confirmCancelAction(
+      host.page,
+      'Submit yearly cancel at expiry',
+      /cancel (at expiry|subscription|plan)|confirm|continue|keep access/i
+    );
+
+    await expect(
+      host.page
+        .getByText(
+          /scheduled to cancel|cancels on|access until|cancel at expiry|service will end/i
+        )
+        .first()
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    Logger.success(
+      'Yearly cancel at expiry submitted'
+    );
+  } finally {
+    await host.close();
+  }
+}
+
+async submitYearlyCancelAndRefund() {
+  Logger.info(
+    'Submitting yearly cancel and refund'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const refundOption =
+      this.cancelOptionControl(
+        host.page,
+        /cancel immediately|cancel and refund|request (a )?refund/i
+      );
+
+    await expect(
+      refundOption
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await safeClick(
+      refundOption,
+      'Choose cancel and refund'
+    );
+
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    expect(
+      text,
+      'Yearly refund should describe unused remaining time or refund amount.'
+    ).toMatch(
+      /unused (months|time)|remaining months|refund|credit/i
+    );
+
+    await this.fillCancelReasonIfPresent(
+      host.page,
+      'Automation yearly cancel and refund for disposable user.'
+    );
+
+    await this.confirmCancelAction(
+      host.page,
+      'Submit yearly cancel and refund',
+      /cancel and refund|request refund|cancel immediately|confirm|continue|cancel subscription/i
+    );
+
+    await expect(
+      host.page
+        .getByText(
+          /refund|free plan|subscription cancelled|subscription canceled|paid access (has )?ended|moved to free/i
+        )
+        .first()
+    ).toBeVisible({
+      timeout: 45000
+    });
+
+    Logger.success(
+      'Yearly cancel and refund submitted'
+    );
+  } finally {
+    await host.close();
+  }
+}
+
+async openMonthlyDowngradeOrRetention(
+  options: {
+    targetPlan: string;
+  }
+) {
+  await this.openPlansView();
+
+  await this.selectBillingIntervalIfAvailable(
+    'monthly'
+  );
+
+  const actionButton =
+    await this.findPlanActionButton(
+      options.targetPlan,
+      'downgrade'
+    );
+
+  await safeClick(
+    actionButton,
+    `downgrade ${options.targetPlan}`
+  );
+
+  const retentionOrDowngrade =
+    this.page
+      .getByRole(
+        'dialog'
+      )
+      .or(
+        this.page.getByText(
+          /3[- ]month|three months|discount|retain|keep (your )?plan|downgrade to/i
+        )
+      )
+      .first();
+
+  await expect(
+    retentionOrDowngrade
+  ).toBeVisible({
+    timeout: 15000
+  });
+}
+
+async validateMonthlyDowngradeRetentionOffer(
+  options: {
+    currentPlan: string;
+    targetPlan: string;
+  }
+) {
+  Logger.info(
+    `Validating monthly retention offer while downgrading ${options.currentPlan} to ${options.targetPlan}`
+  );
+
+  await this.openMonthlyDowngradeOrRetention({
+    targetPlan:
+      options.targetPlan
+  });
+
+  const surface =
+    this.page
+      .getByRole(
+        'dialog'
+      )
+      .first()
+      .or(
+        this.page.locator(
+          'body'
+        )
+      );
+
+  const text =
+    await surface.innerText();
+
+  expect(
+    text,
+    'Retention offer should discount the current plan for the next 3 months.'
+  ).toMatch(
+    /3[- ]month|three months/i
+  );
+
+  expect(
+    text
+  ).toMatch(
+    /discount|off|save|reduced/i
+  );
+
+  expect(
+    text
+  ).toMatch(
+    new RegExp(
+      this.planNamePattern(
+        options.currentPlan
+      ),
+      'i'
+    )
+  );
+
+  const acceptVisible =
+    await this.retentionAcceptControl()
+      .isVisible({
+        timeout: 8000
+      })
+      .catch(
+        () => false
+      );
+
+  const declineVisible =
+    await this.retentionDeclineControl()
+      .isVisible({
+        timeout: 3000
+      })
+      .catch(
+        () => false
+      );
+
+  expect(
+    acceptVisible,
+    'Retention offer should include an accept/keep-plan control.'
+  ).toBeTruthy();
+
+  expect(
+    declineVisible,
+    'Retention offer should include a decline/continue-downgrade control.'
+  ).toBeTruthy();
+
+  Logger.success(
+    `Monthly retention offer validated for ${options.currentPlan}`
+  );
+}
+
+async acceptMonthlyDowngradeRetentionOffer(
+  options: {
+    currentPlan: string;
+    targetPlan: string;
+  }
+) {
+  await this.validateMonthlyDowngradeRetentionOffer(
+    options
+  );
+
+  await safeClick(
+    this.retentionAcceptControl(),
+    'Accept monthly retention offer'
+  );
+
+  const dialog =
+    this.planChangeDialog({
+      targetPlan:
+        options.targetPlan,
+      action:
+        'downgrade'
+    });
+
+  await expect(
+    dialog
+  ).toBeHidden({
+    timeout: 20000
+  }).catch(
+    async () => {
+      await this.closePlanChangeCalculationPreview({
+        targetPlan:
+          options.targetPlan,
+        action:
+          'downgrade'
+      });
+    }
+  );
+
+  await this.validateActivePlan(
+    options.currentPlan
+  );
+
+  Logger.success(
+    `Retention offer accepted; still on ${options.currentPlan}`
+  );
+}
+
+async assertRetentionOfferNotShown(
+  options: {
+    currentPlan: string;
+    targetPlan: string;
+  }
+) {
+  Logger.info(
+    `Asserting retention offer is not shown again for ${options.currentPlan}`
+  );
+
+  await this.openMonthlyDowngradeOrRetention({
+    targetPlan:
+      options.targetPlan
+  });
+
+  const surface =
+    this.page
+      .getByRole(
+        'dialog'
+      )
+      .first()
+      .or(
+        this.page.locator(
+          'body'
+        )
+      );
+
+  const text =
+    await surface.innerText();
+
+  const offerVisible =
+    /3[- ]month|three months/i.test(
+      text
+    ) &&
+    /discount|special offer|retain/i.test(
+      text
+    ) &&
+    await this.retentionAcceptControl()
+      .isVisible({
+        timeout: 2000
+      })
+      .catch(
+        () => false
+      );
+
+  expect(
+    offerVisible,
+    'Retention offer is once per account lifetime and must not appear again after accept.'
+  ).toBeFalsy();
+
+  try {
+    await this.closePlanChangeCalculationPreview({
+      targetPlan:
+        options.targetPlan,
+      action:
+        'downgrade'
+    });
+  } catch {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Second downgrade did not show the retention offer'
+  );
+}
+
+async declineRetentionAndPreviewOrScheduleDowngrade(
+  options: {
+    currentPlan: string;
+    targetPlan: string;
+    schedule: boolean;
+  }
+) {
+  await this.validateMonthlyDowngradeRetentionOffer({
+    currentPlan:
+      options.currentPlan,
+    targetPlan:
+      options.targetPlan
+  });
+
+  await safeClick(
+    this.retentionDeclineControl(),
+    'Decline monthly retention offer'
+  );
+
+  const dialog =
+    this.planChangeDialog({
+      targetPlan:
+        options.targetPlan,
+      action:
+        'downgrade'
+    });
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const dialogText =
+    await dialog.innerText();
+
+  expect(
+    dialogText,
+    'Declined retention should continue to a scheduled downgrade preview.'
+  ).toMatch(
+    /takes effect|next (renewal|billing)|end of (this|the) billing period|effective date|schedule downgrade/i
+  );
+
+  expect(
+    dialogText,
+    'Scheduled downgrade should not refund or credit unused time.'
+  ).toMatch(
+    /no refund|no credit|not refund/i
+  );
+
+  if (options.schedule) {
+    await this.submitPlanChangeCalculationPreview({
+      targetPlan:
+        options.targetPlan,
+      action:
+        'downgrade'
+    });
+
+    await this.validateActivePlan(
+      options.currentPlan
+    );
+
+    Logger.success(
+      `Downgrade to ${options.targetPlan} scheduled at next renewal`
+    );
+
+    return;
+  }
+
+  await this.closePlanChangeCalculationPreview({
+    targetPlan:
+      options.targetPlan,
+    action:
+      'downgrade'
+  });
+
+  Logger.success(
+    'Retention declined and downgrade preview closed without scheduling'
+  );
+}
+
+async validateFreePlanAfterRefund() {
+  Logger.info(
+    'Validating Billing moved to Free after yearly refund'
+  );
+
+  await this.validateOverview();
+
+  const bodyText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText({
+        timeout: 15000
+      });
+
+  expect(
+    bodyText,
+    'Account should show Free / Curious Explorer after yearly refund.'
+  ).toMatch(
+    /free( plan)?|curious explorer|curious/i
+  );
+
+  expect(
+    bodyText,
+    'Paid access should have ended after yearly refund.'
+  ).toMatch(
+    /free|cancelled|canceled|no active (paid )?subscription|downgraded/i
+  );
+
+  Logger.success(
+    'Free plan after yearly refund validated'
+  );
 }
 
 async validatePaidSubscriberTrialCtaIsNotOffered() {

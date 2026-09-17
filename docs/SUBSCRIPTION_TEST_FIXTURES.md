@@ -94,6 +94,12 @@ $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+$env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="false"
+$env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="false"
 
 # Prepared paid-user slices:
 $env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
@@ -233,4 +239,40 @@ $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
 $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
 
 npm run test:controlled:subscription-lifecycle-execution -- --headed -g "submit upgrade payment"
+```
+
+## Four disposable plan-ladder users
+
+Do not put upgrade, yearly refund, and monthly retention on one account.
+Retention is once per lifetime. Yearly refund ends paid access immediately.
+
+```powershell
+$env:BASE_URL="https://uat.ooltool.com"
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+npm run test:controlled:plan-ladder -- --headed
+```
+
+That inspect pass uses four tracks only as needed:
+
+- User A: Income monthly, upgrade Overlay then Hedger then Marketplace monthly, assert amount due / unused credit / recurring amount / renewal, inspect period-end cancel (no refund).
+- User B: Income monthly, switch to annual, upgrade remaining yearly plans with the same due/renewal checks, inspect cancel-at-expiry and cancel-and-refund options. Do not submit refund here.
+- User D inspect: Overlay monthly, open downgrade, assert 3-month retention on the current plan, decline and close without scheduling.
+
+Keep these off unless a throwaway account is approved:
+
+```powershell
+$env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="true"
+$env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="true"
+```
+
+User C yearly refund is a separate disposable Overlay annual purchase:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "yearly cancel and refund" --headed
 ```

@@ -86,6 +86,12 @@ long Playwright process gets stuck.
 Run the broadest practical suite with safe controlled gates enabled:
 
 ```powershell
+npm run executable:headed
+```
+
+Same command without npm:
+
+```powershell
 .\scripts\run-all-executable-tests.ps1 -Headed
 ```
 
@@ -98,7 +104,12 @@ Run the broadest practical suite and generate AIR:
 This enables non-destructive controlled validations such as onboarding field
 validation, Risk & Compliance update checks, plan-selection validation, profile
 mobile display checks, billing management display checks, profile security
-display checks, signup OTP length/resend checks, and duplicate-email validation.
+display checks, signup OTP length/resend checks, duplicate-email validation,
+and the four-user plan-ladder inspect (Users A/B/D: paid upgrades, cancel copy,
+retention offer). That ladder creates disposable Stripe test users.
+
+Yearly refund, period-end cancel submit, retention accept, and scheduled
+downgrade stay off unless you set their extra flags.
 
 Some tests will still skip until their one-time/manual data is provided:
 
@@ -846,6 +857,32 @@ Controlled Overlay Strategists Stripe missing-card negative validation:
 $env:OVERLAY_STRATEGISTS_FLOW_ENABLED="true"
 $env:OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED="true"
 npm run test:controlled:stripe-overlay -- --headed -g "missing Stripe card"
+```
+
+Controlled four-user plan ladder (inspect upgrades, monthly cancel copy, yearly cancel options, retention offer). This is included in `npm run executable:headed`. To run only this slice:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+npm run test:controlled:plan-ladder -- --headed
+```
+
+Optional destructive submits. Keep these off for `npm run executable:headed` / `npm run executable:headless` / run-all-executable:
+
+```powershell
+$env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="true"
+$env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="true"
+```
+
+Yearly refund is its own disposable user:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "yearly cancel and refund" --headed
 ```
 
 Overlay test users are generated with scenario-specific aliases, for example:

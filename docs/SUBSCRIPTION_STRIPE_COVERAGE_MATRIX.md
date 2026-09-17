@@ -197,11 +197,11 @@ Confirmed behavior:
 
 | Use Case | Browser-Safe Tests To Add Next | Blocked Until |
 | --- | --- | --- |
-| Upgrade Subscription | Matrix completed; current coverage validates plan lifecycle action/status summary, monthly/annual in-app upgrade calculation previews including target price, unused-time credit, amount due, recurring price, and controlled one-time upgrade submission after terms acceptance | Stripe API/billing-cycle visibility for exact invoice/proration reconciliation |
-| Downgrade Subscription | Matrix completed; next executable slice is lost-feature warning and acknowledgement guardrail validation | Dedicated higher-tier accounts and data-limit fixtures |
+| Upgrade Subscription | Matrix completed; current coverage validates plan lifecycle action/status summary, monthly/annual in-app upgrade calculation previews including target price, unused-time credit, amount due, recurring price, controlled one-time upgrade submission after terms acceptance, and a gated four-user plan ladder that asserts amount due today, unused credit, recurring amount, and renewal date on each upgrade | Stripe API/billing-cycle visibility for exact invoice/proration reconciliation |
+| Downgrade Subscription | Matrix completed; next executable slice is lost-feature warning and acknowledgement guardrail validation; gated monthly retention inspect/accept/schedule-downgrade exists behind extra flags | Dedicated higher-tier accounts and data-limit fixtures |
 | Monthly To Annual | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is safe checkout-open and failed-checkout interval preservation | Dedicated monthly accounts and Stripe proration validation |
 | Annual To Monthly | Matrix completed; current safe coverage validates interval presentation and pricing; next executable slice is effective-date and pending-change messaging validation | Dedicated annual accounts and renewal-date fixtures |
-| Subscription Cancellation | Matrix completed; safe portal form and cancellation lifecycle-state validation exists; destructive final-cancel remains blocked | Dedicated destructive cancellation account and refund/admin workflow |
+| Subscription Cancellation | Matrix completed; safe portal form and cancellation lifecycle-state validation exists; gated monthly period-end cancel, yearly cancel-at-expiry, and yearly refund submits stay behind extra flags | Dedicated destructive cancellation account and refund/admin workflow |
 | Dunning Management | Matrix completed; checkout negatives, authentication-required checkout context, and payment-recovery portal entry points exist; renewal/dunning remains blocked | Stripe dunning test fixture, webhook/scheduler/admin controls |
 
 ## First Automation Slice
@@ -270,6 +270,12 @@ $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+$env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="false"
+$env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="false"
 
 # Prepared paid-user slices need:
 $env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
