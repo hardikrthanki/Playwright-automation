@@ -1,16 +1,22 @@
 import {
   expect,
+  Page,
   test
 } from '@playwright/test';
 
 import {
-  AUTH_SETTINGS,
   TEST_USERS
 } from './config/testData';
 import {
   generateEmail,
   generateMobileNumber
 } from './utils/emailGenerator';
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
+import {
+  continueAfterWithCardTrialCheckout
+} from './helpers/withCardTrial';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -42,7 +48,12 @@ verification in UAT.
 
 Run:
 $env:OVERLAY_STRATEGISTS_FLOW_ENABLED="true"
-npx playwright test tests/OverlayStrategistsTrial.spec.ts --headed
+$env:OVERLAY_STRATEGISTS_WITH_CARD_ENABLED="true"
+npx playwright test tests/OverlayStrategistsTrial.spec.ts --headed -g "with card"
+
+QA-CL-005: with-card trial needs a fresh user and a unique Stripe test card.
+Reusing 4242 trips already_redeemed and bounces to Plan Selection / Free.
+/verify-mobile?trial=success means the trial was granted.
 ============================================================================= */
 
 function envEnabled(
@@ -61,6 +72,71 @@ function envEnabled(
   );
 }
 
+async function registerOverlayUserAndReachPlanSelection(
+  page: Page,
+  scenario: string
+) {
+  const email =
+    generateEmail(
+      scenario
+    );
+
+  const mobileNumber =
+    generateMobileNumber();
+
+  console.log(
+    `${scenario} Email:`,
+    email
+  );
+
+  console.log(
+    `${scenario} Mobile:`,
+    mobileNumber
+  );
+
+  await new RegistrationPage(
+    page
+  ).open();
+
+  await new RegistrationPage(
+    page
+  ).register(
+    email,
+    mobileNumber
+  );
+
+  await waitForManualEmailVerification(
+    page,
+    email
+  );
+
+  await new LoginPage(
+    page
+  ).login(
+    email,
+    TEST_USERS.onboarding.password
+  );
+
+  await new MobileVerificationPage(
+    page
+  ).completeIfVisible(
+    mobileNumber
+  );
+
+  await new RiskProfilePage(
+    page
+  ).fill();
+
+  await new CompliancePage(
+    page
+  ).fill();
+
+  return {
+    email,
+    mobileNumber
+  };
+}
+
 if (
   envEnabled(
     'OVERLAY_STRATEGISTS_FLOW_ENABLED'
@@ -77,6 +153,12 @@ if (
     test(
       'New user can reach Overlay Strategists trial option',
       async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'PLAN_SELECTION_VALIDATION_ENABLED'
+          ),
+          'Plan catalog validation already covers Overlay Strategists trial options.'
+        );
 
         const email =
           generateEmail(
@@ -114,26 +196,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -194,94 +262,17 @@ if (
       test(
         'New user can start Overlay Strategists trial with card',
         async ({ page }) => {
-
-        const email =
-          generateEmail(
+        const user =
+          await registerOverlayUserAndReachPlanSelection(
+            page,
             'overlay-with-card'
           );
 
+        const email =
+          user.email;
+
         const mobileNumber =
-          generateMobileNumber();
-
-        console.log(
-          'Overlay With Card Trial Email:',
-          email
-        );
-
-        console.log(
-          'Overlay With Card Trial Mobile:',
-          mobileNumber
-        );
-
-        await test.step(
-          'Register new user',
-          async () => {
-            const registration =
-              new RegistrationPage(
-                page
-              );
-
-            await registration.open();
-
-            await registration.register(
-              email,
-              mobileNumber
-            );
-          }
-        );
-
-        await test.step(
-          'Verify email manually when enabled',
-          async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
-          }
-        );
-
-        await test.step(
-          'Login and complete onboarding prerequisites',
-          async () => {
-            const login =
-              new LoginPage(
-                page
-              );
-
-            await login.login(
-              email,
-              TEST_USERS.onboarding.password
-            );
-
-            await new MobileVerificationPage(
-              page
-            ).completeIfVisible(
-              mobileNumber
-            );
-
-            await new RiskProfilePage(
-              page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
-          }
-        );
+          user.mobileNumber;
 
         await test.step(
           'Select Overlay Strategists with-card trial',
@@ -307,7 +298,60 @@ if (
               email
             );
 
-            await stripe.completePayment();
+            if (
+              envEnabled(
+                'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
+              )
+            ) {
+              await stripe.validateMissingCardDetailsBlocked();
+            }
+
+            if (
+              envEnabled(
+                'OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED'
+              )
+            ) {
+              await stripe.validateDeclinedCardRejected();
+            }
+
+            await stripe.completeTrialPayment();
+
+            let reachedDashboard =
+              await continueAfterWithCardTrialCheckout(
+                page,
+                mobileNumber
+              );
+
+            for (
+              let retry = 1;
+              !reachedDashboard &&
+                retry <= 2;
+              retry++
+            ) {
+              console.log(
+                `Retrying Overlay with-card checkout with a different Stripe test card (${retry}/2)`
+              );
+
+              await new PlanSelectionPage(
+                page
+              ).selectOverlayStrategistsTrialWithCard();
+
+              await stripe.completeTrialPayment();
+
+              reachedDashboard =
+                await continueAfterWithCardTrialCheckout(
+                  page,
+                  mobileNumber
+                );
+            }
+
+            if (
+              !reachedDashboard
+            ) {
+              throw new Error(
+                'QA-CL-005: with-card trial bounced to Plan Selection after unique-card retries. Use a fresh user and an unused Stripe test card.'
+              );
+            }
           }
         );
 
@@ -319,7 +363,9 @@ if (
                 page
               );
 
-            await dashboard.validateLoaded();
+            await dashboard.validateLoaded({
+              acceptTrialSuccessMobileGate: true
+            });
           }
         );
 
@@ -345,6 +391,12 @@ if (
       test(
         'Overlay Strategists with-card trial opens Stripe checkout with trial details',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Checkout details are validated on the with-card trial user.'
+        );
 
         const email =
           generateEmail(
@@ -382,26 +434,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -471,6 +509,12 @@ if (
       test(
         'Overlay Strategists with-card trial blocks missing Stripe card details',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Missing card validation is folded into the with-card trial user.'
+        );
 
         const email =
           generateEmail(
@@ -508,26 +552,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -595,6 +625,12 @@ if (
       test(
         'Overlay Strategists with-card trial rejects declined Stripe card',
         async ({ page }) => {
+        test.skip(
+          envEnabled(
+            'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+          ),
+          'Declined card validation is folded into the with-card trial user.'
+        );
 
         const email =
           generateEmail(
@@ -632,26 +668,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -756,26 +778,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 
@@ -894,26 +902,12 @@ if (
         );
 
         await test.step(
-          'Verify email manually when enabled',
+          'Verify email manually',
           async () => {
-            if (
-              AUTH_SETTINGS.emailVerificationRequired
-            ) {
-              console.log(
-                '\nMANUAL EMAIL VERIFICATION REQUIRED'
-              );
-              console.log(
-                `Verify email sent to: ${email}`
-              );
-              console.log(
-                'Open Gmail and click the verification link.'
-              );
-              console.log(
-                'After verification, resume Playwright.'
-              );
-
-              await page.pause();
-            }
+            await waitForManualEmailVerification(
+              page,
+              email
+            );
           }
         );
 

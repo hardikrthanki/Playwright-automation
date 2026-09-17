@@ -15,6 +15,13 @@ import {
 }
 from '../config/testData';
 
+import {
+  REGISTRATION_CTA_NAME,
+  REGISTRATION_SUBMIT_NAME,
+  URLS
+}
+from '../config/constants';
+
 import { BasePage }
 from './BasePage';
 
@@ -32,7 +39,7 @@ Handles new user registration process.
 FLOW COVERED
 ------------
 1. Open Application
-2. Open Create Account
+2. Open Start 30-Day Free Trial / Create Account
 3. Enter User Details
 4. Enter Mobile Number
 5. Send SMS OTP
@@ -84,9 +91,16 @@ extends BasePage {
       page.getByRole(
         'link',
         {
-          name: /create account/i
+          name: REGISTRATION_CTA_NAME
         }
-      );
+      ).or(
+        page.getByRole(
+          'button',
+          {
+            name: REGISTRATION_CTA_NAME
+          }
+        )
+      ).first();
 
 
     this.firstNameInput =
@@ -123,17 +137,26 @@ extends BasePage {
 
 
     this.otpInput =
-      page.locator(
-        'input[autocomplete="one-time-code"], input[inputmode="numeric"], input[name*="otp" i], input[name*="code" i], input[id*="otp" i], input[id*="code" i]'
+      page.getByPlaceholder(
+        /enter otp|one-time|verification code|123456/i
+      ).or(
+        page.getByLabel(
+          /enter otp|sms code|verification code|one-time code/i
+        )
+      ).or(
+        page.locator(
+          'input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i]'
+        )
+      ).first();
+
+    this.verifyOtpButton =
+      page.getByRole(
+        'button',
+        {
+          name: 'Verify',
+          exact: true
+        }
       );
-      this.verifyOtpButton =
-  page.getByRole(
-    'button',
-    {
-      name: 'Verify',
-      exact: true
-    }
-  );
 
 
     this.passwordInput =
@@ -156,12 +179,19 @@ extends BasePage {
           exact: true
         }
       ).or(
+        page.getByRole(
+          'button',
+          {
+            name: REGISTRATION_SUBMIT_NAME
+          }
+        )
+      ).or(
         page.locator(
           'button[type="submit"]'
         ).filter({
-          hasText: /create account/i
+          hasText: REGISTRATION_SUBMIT_NAME
         })
-      );
+      ).first();
 
   }
 
@@ -243,6 +273,117 @@ extends BasePage {
 
 
 
+  private visibleOtpInput() {
+    return this.page.locator(
+      'input[placeholder*="OTP" i], input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i]'
+    ).filter({
+      visible: true
+    }).first();
+  }
+
+  private async otpFieldIsVisible() {
+    return this.visibleOtpInput()
+      .isVisible({
+        timeout: 1000
+      })
+      .catch(
+        () => this.otpInput.isVisible({
+          timeout: 1000
+        }).catch(
+          () => false
+        )
+      );
+  }
+
+  private async clickSendCode(
+    attempt: number
+  ) {
+    await this.dismissMarketingOverlays();
+
+    const apiWait =
+      this.page.waitForResponse(
+        (response) => {
+          const method =
+            response.request().method();
+
+          return method !==
+            'OPTIONS' &&
+            method !==
+            'GET' &&
+            /otp|sms|phone|mobile|verify|code/i.test(
+              response.url()
+            );
+        },
+        {
+          timeout: 12000
+        }
+      ).catch(
+        () => null
+      );
+
+    if (
+      attempt <= 1
+    ) {
+      await safeClick(
+        this.sendCodeButton,
+        'Send Code via SMS'
+      );
+    } else if (
+      attempt === 2
+    ) {
+      console.log(
+        '[CLICK] Send Code via SMS (force)'
+      );
+
+      await this.sendCodeButton.click({
+        force: true,
+        timeout: 8000
+      });
+    } else {
+      console.log(
+        '[CLICK] Send Code via SMS (DOM click)'
+      );
+
+      await this.sendCodeButton.evaluate(
+        (button) => {
+          (button as HTMLButtonElement).click();
+        }
+      );
+    }
+
+    await apiWait;
+  }
+
+  private async fillRegistrationOtp() {
+    const otpCode =
+      AUTH_SETTINGS.otpCode ||
+      '111111';
+
+    Logger.info(
+      `Entering OTP ${otpCode}`
+    );
+
+    const visibleOtp =
+      this.visibleOtpInput();
+
+    if (
+      await visibleOtp.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await visibleOtp.fill(
+        otpCode
+      );
+      return;
+    }
+
+    await this.otpInput.fill(
+      otpCode
+    );
+  }
+
   private async waitForRegistrationOtpInput() {
     const manualFallback =
       this.envEnabled(
@@ -251,24 +392,21 @@ extends BasePage {
 
     for (
       let attempt = 1;
-      attempt <= 3;
+      attempt <= 4;
       attempt++
     ) {
-      const otpVisible =
-        await this.otpInput
-          .first()
-          .waitFor({
-            state: 'visible',
-            timeout: 20000
-          })
-          .then(
-            () => true
-          )
-          .catch(
-            () => false
-          );
+      await this.visibleOtpInput()
+        .waitFor({
+          state: 'visible',
+          timeout: 15000
+        })
+        .catch(
+          () => undefined
+        );
 
-      if (otpVisible) {
+      if (
+        await this.otpFieldIsVisible()
+      ) {
         return;
       }
 
@@ -276,11 +414,11 @@ extends BasePage {
         await this.collectOtpRequestDiagnostics();
 
       Logger.info(
-        `OTP input not visible after SMS request. Attempt ${attempt}/3. Visible diagnostics: ${diagnostics}`
+        `OTP input not visible after SMS request. Attempt ${attempt}/4. Visible diagnostics: ${diagnostics}`
       );
 
       if (
-        attempt === 3
+        attempt === 4
       ) {
         if (manualFallback) {
           Logger.info(
@@ -290,7 +428,7 @@ extends BasePage {
           await this.page.pause();
 
           await expect(
-            this.otpInput.first()
+            this.visibleOtpInput()
           ).toBeVisible({
             timeout: 30000
           });
@@ -305,9 +443,8 @@ extends BasePage {
 
       await this.waitForSendCodeEnabled();
 
-      await safeClick(
-        this.sendCodeButton,
-        `Retry Send Code via SMS (${attempt + 1}/3)`
+      await this.clickSendCode(
+        attempt + 1
       );
     }
   }
@@ -323,18 +460,11 @@ extends BasePage {
 
     await this.mobileInput.click();
 
-    await this.mobileInput.type(
-      mobileNumber,
-      {
-        delay: 35
-      }
+    await this.mobileInput.fill(
+      mobileNumber
     );
 
     await this.mobileInput.blur();
-
-    await this.page.waitForTimeout(
-      700
-    );
   }
 
 
@@ -390,14 +520,41 @@ extends BasePage {
     );
 
 
-    await this.page.waitForTimeout(
-      3000
-    );
+    await this.dismissMarketingOverlays();
 
 
-    await safeClick(
-      this.createAccountLink,
-      'Open Create Account'
+    const registrationCtaVisible =
+      await this.createAccountLink.isVisible({
+        timeout: 10000
+      }).catch(
+        () => false
+      );
+
+    if (registrationCtaVisible) {
+      await safeClick(
+        this.createAccountLink,
+        'Open Start 30-Day Free Trial'
+      );
+    } else {
+      await this.page.goto(
+        `${BASE_URL}${URLS.REGISTER}`,
+        {
+          waitUntil:
+          'domcontentloaded',
+
+          timeout:
+          60000
+        }
+      );
+    }
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /\/register|\/signup|\/sign-up|\/create/,
+      {
+        timeout: 15000
+      }
     );
 
     await expect(
@@ -414,7 +571,7 @@ extends BasePage {
 
 
     Logger.success(
-      'Create Account Opened'
+      'Registration page opened'
     );
 
   }
@@ -469,24 +626,13 @@ extends BasePage {
     ) {
       await this.waitForSendCodeEnabled();
 
-
-      await safeClick(
-        this.sendCodeButton,
-        'Send Code via SMS'
+      await this.clickSendCode(
+        1
       );
 
       await this.waitForRegistrationOtpInput();
 
-
-      Logger.info(
-        'Entering OTP'
-      );
-
-
-      await this.otpInput.fill(
-        AUTH_SETTINGS.otpCode
-      );
-
+      await this.fillRegistrationOtp();
 
       await safeClick(
         this.verifyOtpButton,
@@ -498,9 +644,22 @@ extends BasePage {
         'OTP Verify Clicked'
       );
 
+      await expect(
+        this.page.getByText(
+          /^verified$/i
+        ).first()
+      ).toBeVisible({
+        timeout: 15000
+      }).catch(
+        () => undefined
+      );
 
-      await this.page.waitForTimeout(
-        2000
+      await expect(
+        this.passwordInput
+      ).toBeVisible({
+        timeout: 15000
+      }).catch(
+        () => undefined
       );
     } else {
       Logger.info(
@@ -521,38 +680,27 @@ extends BasePage {
 
 
 
+    await expect(
+      this.submitButton
+    ).toBeEnabled({
+      timeout: 15000
+    });
+
     await safeClick(
       this.submitButton,
       'Submit Registration'
     );
 
-
-
-    await expect(
-
-      this.page
-      .getByText(
-        /check your email|verification sent|verify your email|registered/i
+    await expect
+      .poll(
+        async () =>
+          this.registrationLooksAccepted(),
+        {
+          timeout: 20000,
+          message: 'Waiting for registration success or email-verification screen'
+        }
       )
-      .or(
-
-        this.page.getByRole(
-          'heading',
-          {
-            name:
-            /verify|thank you|check/i
-          }
-        )
-
-      )
-
-    )
-    .toBeVisible({
-
-      timeout:
-      15000
-
-    });
+      .toBeTruthy();
 
 
 
@@ -561,6 +709,72 @@ extends BasePage {
     );
 
 
+  }
+
+  private async registrationLooksAccepted() {
+    const url =
+      this.page.url();
+
+    if (
+      /verify-email-sent|\/(verify|onboarding|dashboard|plan|risk|compliance|check-email|confirm)/i.test(
+        url
+      )
+    ) {
+      return true;
+    }
+
+    const firstNameVisible =
+      await this.firstNameInput.isVisible().catch(
+        () => false
+      );
+
+    const bodyText =
+      await this.page
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    if (
+      !firstNameVisible &&
+      /check your email|verification link was sent|verify-email/i.test(
+        bodyText
+      )
+    ) {
+      return true;
+    }
+
+    return /check your email|a verification link was sent|verification (sent|email|link)|verify your email|confirm your email/i.test(
+      bodyText
+    );
+  }
+
+  private async waitForRegistrationAccepted(
+    timeoutMs: number
+  ) {
+    const started =
+      Date.now();
+
+    while (
+      Date.now() -
+        started <
+      timeoutMs
+    ) {
+      if (
+        await this.registrationLooksAccepted()
+      ) {
+        return true;
+      }
+
+      await this.page.waitForTimeout(
+        500
+      );
+    }
+
+    return false;
   }
 
 

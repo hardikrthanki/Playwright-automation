@@ -18,6 +18,15 @@ import {
   MFA_SETTINGS
 } from '../config/testData';
 
+import {
+  isLoginUrl,
+  openAuthenticatedPath,
+  restoreSubscriberSession
+} from '../helpers/subscriberSession';
+import {
+  dismissOverlays
+} from '../helpers/dismissOverlays';
+
 /* =============================================================================
 PAGE OBJECT: MfaPage
 
@@ -75,31 +84,90 @@ export class MfaPage
       'Opening user Security / MFA settings'
     );
 
+    if (
+      isLoginUrl(
+        this.page.url()
+      )
+    ) {
+      await restoreSubscriberSession(
+        this.page
+      );
+    }
+
     const routes =
       [
-        '/dashboard/security',
-        '/dashboard/profile/security',
         '/dashboard/profile',
-        '/dashboard/settings/security',
-        '/dashboard/settings'
+        '/dashboard/settings',
+        '/dashboard/profile/security',
+        '/dashboard/settings/security'
       ];
 
     for (const route of routes) {
-      await this.page.goto(
-        `${BASE_URL}${route}`,
-        {
-          waitUntil: 'domcontentloaded'
+      await openAuthenticatedPath(
+        this.page,
+        route,
+        new RegExp(
+          route.replace(
+            /[.*+?^${}()|[\]\\]/g,
+            '\\$&'
+          )
+        )
+      ).catch(
+        async () => {
+          await this.page.goto(
+            `${BASE_URL}${route}`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
         }
       );
 
+      await dismissOverlays(
+        this.page
+      );
+
+      const securityTab =
+        this.page.getByRole(
+          'tab',
+          {
+            name: /security/i
+          }
+        ).or(
+          this.page.getByRole(
+            'link',
+            {
+              name: /^security$/i
+            }
+          )
+        ).or(
+          this.page.getByRole(
+            'button',
+            {
+              name: /^security$/i
+            }
+          )
+        );
+
+      if (
+        await securityTab.first().isVisible({
+          timeout: 3000
+        }).catch(() => false)
+      ) {
+        await safeClick(
+          securityTab.first(),
+          'Open Security Tab'
+        );
+      }
+
       const securitySignal =
         this.page.getByText(
-          /mfa|2fa|two-factor|multi-factor|authenticator|backup codes|security/i
+          /two-factor authentication|two-factor|mfa|2fa|multi-factor|authenticator|backup codes|trusted devices/i
         ).first();
 
       if (
         await securitySignal.isVisible({
-          timeout: 5000
+          timeout: 15000
         }).catch(() => false)
       ) {
         Logger.success(

@@ -1,0 +1,77 @@
+import {
+  Page
+} from '@playwright/test';
+
+/* =============================================================================
+HELPER: dismissOverlays
+
+PURPOSE
+-------
+Closes the UAT cookie banner and beta announcement so they cannot steal
+clicks from Sign up, Create Account, profile menu, or billing tabs.
+Playwright force-clicks hit whatever sits at the button's center, so these
+overlays must be gone before a real click.
+============================================================================= */
+
+export async function dismissOverlays(
+  page: Page
+) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const cookieRegion =
+      page.getByRole(
+        'region',
+        {
+          name: /cookie consent/i
+        }
+      );
+
+    const overlayButton =
+      page.getByRole(
+        'button',
+        {
+          name: /^(essential only|accept( all)?|allow essential cookies|dismiss announcement)$/i
+        }
+      ).or(
+        page.getByRole(
+          'button',
+          {
+            name: /dismiss announcement/i
+          }
+        )
+      ).first();
+
+    const cookieVisible =
+      await cookieRegion.isVisible().catch(
+        () => false
+      );
+
+    const overlayVisible =
+      await overlayButton.isVisible().catch(
+        () => false
+      );
+
+    if (!cookieVisible && !overlayVisible) {
+      return;
+    }
+
+    if (overlayVisible) {
+      await overlayButton.click({
+        force: true,
+        timeout: 3000
+      }).catch(
+        () => undefined
+      );
+    }
+
+    await cookieRegion.waitFor({
+      state: 'hidden',
+      timeout: 1500
+    }).catch(
+      () => undefined
+    );
+
+    await page.waitForTimeout(
+      200
+    );
+  }
+}

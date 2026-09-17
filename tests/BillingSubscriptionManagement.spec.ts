@@ -1,12 +1,13 @@
 import {
-  test
-} from '@playwright/test';
-
-import {
   TEST_USERS
 } from './config/testData';
+
+import { test }
+  from './fixtures/subscriberAuth';
+
 import { BillingPage }
   from './pages/BillingPage';
+
 import { LoginPage }
   from './pages/LoginPage';
 
@@ -15,13 +16,12 @@ TEST SUITE: Billing Subscription Management
 
 PURPOSE
 -------
-Validates Stripe subscription-management portal access without mutating the
-subscription. Cancellation is opened for form validation only; the final
-cancellation action is never submitted.
+One authenticated session opens the Stripe customer portal once and
+validates overview, invoices, and return. Mutating-adjacent screens stay
+opt-in and do not submit cancellation.
 
 RUN
 ---
-$env:BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED="true"
 npx playwright test tests/BillingSubscriptionManagement.spec.ts --headed
 ============================================================================= */
 
@@ -41,117 +41,115 @@ function envEnabled(
   );
 }
 
+const billingUser = {
+  email:
+    process.env.BILLING_MANAGEMENT_EMAIL ??
+    TEST_USERS.subscriber.email,
+
+  password:
+    process.env.BILLING_MANAGEMENT_PASSWORD ??
+    TEST_USERS.subscriber.password
+};
+
+const usesSharedSubscriber =
+  billingUser.email ===
+  TEST_USERS.subscriber.email;
+
 test.describe(
   'Billing Subscription Management',
   () => {
 
     test.describe.configure({
-      timeout: 3 * 60 * 1000
+      timeout: 5 * 60 * 1000
     });
 
-    test.beforeEach(
+    test(
+      'Billing portal plans invoices and return in one session',
       async ({ page }) => {
-        await new LoginPage(
-          page
-        ).login(
-          process.env.BILLING_MANAGEMENT_EMAIL ??
-            TEST_USERS.subscriber.email,
-          process.env.BILLING_MANAGEMENT_PASSWORD ??
-            TEST_USERS.subscriber.password
+        if (
+          !usesSharedSubscriber
+        ) {
+          await new LoginPage(
+            page
+          ).login(
+            billingUser.email,
+            billingUser.password
+          );
+        }
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await test.step(
+          'Paid subscriber is not offered Overlay Strategists trial CTA',
+          async () => {
+            await billing.validatePaidSubscriberTrialCtaIsNotOffered();
+          }
+        );
+
+        await test.step(
+          'Stripe portal overview invoices and return in one visit',
+          async () => {
+            await billing.validateStripePortalSession({
+              restore: !envEnabled(
+                'BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED'
+              )
+            });
+          }
+        );
+
+        if (
+          !envEnabled(
+            'BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED'
+          )
+        ) {
+          return;
+        }
+
+        await test.step(
+          'Add payment method opens without saving',
+          async () => {
+            await billing.validateAddPaymentMethodOpensWithoutSaving();
+          }
+        );
+
+        await test.step(
+          'Payment recovery entry points',
+          async () => {
+            await billing.validatePaymentRecoveryEntryPointsSummary();
+          }
+        );
+
+        await test.step(
+          'Billing information update opens without saving',
+          async () => {
+            await billing.validateBillingInformationUpdateOpensWithoutSaving();
+          }
+        );
+
+        await test.step(
+          'Cancel form accepts reason without cancelling',
+          async () => {
+            await billing.validateCancelSubscriptionFormWithoutCancelling();
+          }
+        );
+
+        await test.step(
+          'Cancellation lifecycle is readable without cancelling',
+          async () => {
+            await billing.validateSubscriptionPortalCancellationLifecycleSummary();
+          }
+        );
+
+        await test.step(
+          'Return from Stripe portal to the application',
+          async () => {
+            await billing.leaveStripePortal();
+          }
         );
       }
     );
-
-    test(
-      'Manage subscription opens Stripe portal with subscription details',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateSubscriptionPortalOverview();
-      }
-    );
-
-    test(
-      'Billing plans show plan action or status controls',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validatePlanActionControls();
-      }
-    );
-
-    test(
-      'Paid subscriber is not offered Overlay Strategists trial CTA',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validatePaidSubscriberTrialCtaIsNotOffered();
-      }
-    );
-
-    test(
-      'Stripe portal shows paid invoice history',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateSubscriptionPortalInvoiceHistory();
-      }
-    );
-
-    test(
-      'Stripe portal return link opens application content',
-      async ({ page }) => {
-        await new BillingPage(
-          page
-        ).validateSubscriptionPortalReturnToApplication();
-      }
-    );
-
-    if (envEnabled('BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED')) {
-      test(
-        'Stripe add payment method screen opens without saving',
-        async ({ page }) => {
-          await new BillingPage(
-            page
-          ).validateAddPaymentMethodOpensWithoutSaving();
-        }
-      );
-
-      test(
-        'Stripe portal exposes payment recovery entry points without saving',
-        async ({ page }) => {
-          await new BillingPage(
-            page
-          ).validatePaymentRecoveryEntryPointsSummary();
-        }
-      );
-
-      test(
-        'Stripe billing information update screen opens without saving',
-        async ({ page }) => {
-          await new BillingPage(
-            page
-          ).validateBillingInformationUpdateOpensWithoutSaving();
-        }
-      );
-
-      test(
-        'Cancel subscription form accepts reason and feedback without cancelling',
-        async ({ page }) => {
-          await new BillingPage(
-            page
-          ).validateCancelSubscriptionFormWithoutCancelling();
-        }
-      );
-
-      test(
-        'Stripe portal cancellation lifecycle state is readable without cancelling',
-        async ({ page }) => {
-          await new BillingPage(
-            page
-          ).validateSubscriptionPortalCancellationLifecycleSummary();
-        }
-      );
-    }
   }
 );

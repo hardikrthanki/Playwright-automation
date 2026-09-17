@@ -1,5 +1,13 @@
 import { Page } from '@playwright/test';
 
+import { URLS }
+  from '../config/constants';
+import { BASE_URL }
+  from '../config/testData';
+import {
+  dismissOverlays
+} from '../helpers/dismissOverlays';
+
 /* ============================================================================
 PAGE OBJECT: BasePage
 
@@ -23,9 +31,45 @@ export class BasePage {
   }
 
   async refresh() {
-    await this.page.reload({
-      waitUntil: 'domcontentloaded',
-    });
+    const currentUrl =
+      this.page.url();
+
+    try {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded',
+        timeout: 15000
+      });
+      return;
+    } catch {
+      // Dashboard widgets can keep reload from reaching
+      // domcontentloaded during a long suite.
+    }
+
+    try {
+      await this.page.reload({
+        waitUntil: 'commit',
+        timeout: 10000
+      });
+      return;
+    } catch {
+      // Fall through to a fresh navigation.
+    }
+
+    if (
+      /^https?:\/\//i.test(
+        currentUrl
+      )
+    ) {
+      await this.page.goto(
+        currentUrl,
+        {
+          waitUntil: 'domcontentloaded',
+          timeout: 20000
+        }
+      ).catch(
+        () => undefined
+      );
+    }
   }
 
   async navigate(url: string) {
@@ -34,7 +78,70 @@ export class BasePage {
     });
   }
 
+  async dismissMarketingOverlays() {
+    await dismissOverlays(
+      this.page
+    );
+  }
+
   getCurrentUrl() {
     return this.page.url();
+  }
+
+  appUrl(
+    path: string
+  ) {
+    try {
+      const currentUrl =
+        new URL(
+          this.page.url()
+        );
+      const appUrlBase =
+        new URL(
+          BASE_URL
+        );
+
+      if (
+        currentUrl.origin ===
+        appUrlBase.origin
+      ) {
+        return new URL(
+          path,
+          currentUrl
+        ).toString();
+      }
+    } catch {
+      // Fall through to BASE_URL when the current tab is about:blank or Stripe.
+    }
+
+    return new URL(
+      path,
+      BASE_URL
+    ).toString();
+  }
+
+  async ensureOnApp() {
+    const currentUrl =
+      this.page.url();
+
+    if (
+      /^https?:\/\//i.test(
+        currentUrl
+      ) &&
+      !/stripe\.com/i.test(
+        currentUrl
+      )
+    ) {
+      return;
+    }
+
+    await this.page.goto(
+      this.appUrl(
+        URLS.DASHBOARD
+      ),
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
   }
 }

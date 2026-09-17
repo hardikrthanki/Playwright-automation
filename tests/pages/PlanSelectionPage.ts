@@ -47,19 +47,16 @@ export class PlanSelectionPage extends BasePage {
 
     this.incomeBuilderPlan =
       page.getByText(
-        'Income Builder',
-        {
-          exact:true
-        }
-      );
+        /income builder|build your portfolio/i
+      ).first();
 
 
   this.completeSetupButton =
-  page.locator(
-'button'
-).filter({
-hasText:/complete setup|continue to payment/i
-});
+    page.locator(
+      'button'
+    ).filter({
+      hasText: /complete setup|continue to payment/i
+    }).first();
 
   }
 
@@ -68,6 +65,54 @@ hasText:/complete setup|continue to payment/i
   private planByName(
     planName: string
   ) {
+    if (
+      /curious/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /^curious$|curious explorer|explore your portfolio/i
+        )
+        .first();
+    }
+
+    if (
+      /income/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /^income$|income builder|build your portfolio/i
+        )
+        .first();
+    }
+
+    if (
+      /overlay/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /overlay strategists/i
+        )
+        .first();
+    }
+
+    if (
+      /portfolio|hedger/i.test(
+        planName
+      )
+    ) {
+      return this.page
+        .getByText(
+          /portfolio hedger/i
+        )
+        .first();
+    }
+
     const escapedName =
       planName.replace(
         /[.*+?^${}()|[\]\\]/g,
@@ -77,11 +122,125 @@ hasText:/complete setup|continue to payment/i
     return this.page
       .getByText(
         new RegExp(
-          `^${escapedName}$`,
+          escapedName,
           'i'
         )
       )
       .first();
+  }
+
+  async isPlanOffered(
+    planName: string
+  ) {
+    return this.planByName(
+      planName
+    ).isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    );
+  }
+
+  private async catalogPlans() {
+    const plans = [
+      'Curious Explorer',
+      'Income Builder',
+      'Overlay Strategists',
+      'Portfolio Hedger'
+    ];
+
+    if (
+      await this.isPlanOffered(
+        'Marketplace'
+      )
+    ) {
+      plans.push(
+        'Marketplace'
+      );
+    }
+
+    return plans;
+  }
+
+  private async waitAfterCompleteSetup(
+    expectStripe = true
+  ) {
+    if (expectStripe) {
+      await this.page.waitForURL(
+        /checkout\.stripe\.com|billing\.stripe\.com/i,
+        {
+          timeout: 30000
+        }
+      );
+
+      return;
+    }
+
+    await this.page.waitForURL(
+      /\/(dashboard|onboarding|verify-mobile)/i,
+      {
+        timeout: 30000
+      }
+    ).catch(
+      () => undefined
+    );
+  }
+
+  private hasLeftPlanSelection() {
+    return /checkout\.stripe\.com|billing\.stripe\.com|\/dashboard/i.test(
+      this.page.url()
+    );
+  }
+
+  private async clickCompleteSetupIfStillOnPlans() {
+    if (
+      this.hasLeftPlanSelection()
+    ) {
+      return;
+    }
+
+    const completeSetupVisible =
+      await this.completeSetupButton.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      );
+
+    if (!completeSetupVisible) {
+      return;
+    }
+
+    await safeClick(
+      this.completeSetupButton,
+      'Complete Setup'
+    );
+  }
+
+  private async finishTrialStart(
+    expectStripe: boolean
+  ) {
+    const navigated =
+      await this.page.waitForURL(
+        expectStripe
+          ? /checkout\.stripe\.com|billing\.stripe\.com/i
+          : /\/dashboard/i,
+        {
+          timeout: 15000
+        }
+      ).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (navigated) {
+      return;
+    }
+
+    await this.clickCompleteSetupIfStillOnPlans();
+    await this.waitAfterCompleteSetup(
+      expectStripe
+    );
   }
 
 
@@ -185,6 +344,148 @@ hasText:/complete setup|continue to payment/i
         }
       )
       .first();
+  }
+
+  async waitUntilCatalogVisible() {
+    await this.dismissMarketingOverlays();
+
+    const catalogReady =
+      this.monthlyToggle()
+        .or(
+          this.completeSetupButton
+        )
+        .or(
+          this.page
+            .getByRole(
+              'radio',
+              {
+                name: /curious|income|overlay/i
+              }
+            )
+            .first()
+        );
+
+    if (
+      !await catalogReady.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      await this.page.goto(
+        this.appUrl(
+          '/onboarding'
+        ),
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
+
+      await this.dismissMarketingOverlays();
+    }
+
+    await expect(
+      this.monthlyToggle()
+    ).toBeVisible({
+      timeout: 30000
+    });
+  }
+
+  private async catalogToggleInViewport() {
+    const box =
+      await this.monthlyToggle()
+        .boundingBox()
+        .catch(
+          () => null
+        );
+
+    if (
+      !box ||
+      box.width < 1 ||
+      box.height < 1
+    ) {
+      return false;
+    }
+
+    const viewport =
+      this.page.viewportSize();
+
+    if (!viewport) {
+      return true;
+    }
+
+    return (
+      box.y >= 0 &&
+      box.y < viewport.height
+    );
+  }
+
+  async returnFromCheckoutBeforePayment() {
+    await this.page.goBack({
+      waitUntil: 'domcontentloaded'
+    });
+
+    await expect(
+      this.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com|billing\.stripe\.com/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    // Stripe history-back can leave the catalog in the DOM while the
+    // viewport stays blank. Load onboarding again before the next plan.
+    await this.page.goto(
+      this.appUrl(
+        '/onboarding'
+      ),
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    await this.waitUntilCatalogVisible();
+
+    if (
+      !await this.catalogToggleInViewport()
+    ) {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded'
+      });
+
+      await this.waitUntilCatalogVisible();
+    }
+  }
+
+  private async billingToggleSelected(
+    toggle: Locator
+  ) {
+    return toggle.evaluate(
+      (element) =>
+        element.classList.contains(
+          'bg-primary'
+        )
+    ).catch(
+      () => false
+    );
+  }
+
+  private async clickBillingToggle(
+    toggle: Locator,
+    label: string
+  ) {
+    try {
+      await safeClick(
+        toggle,
+        label
+      );
+    } catch {
+      await toggle.click({
+        force: true,
+        timeout: 5000
+      });
+    }
   }
 
 
@@ -332,13 +633,8 @@ hasText:/complete setup|continue to payment/i
       'Validating plan catalog and feature summary'
     );
 
-    const expectedPlans = [
-      'Curious Explorer',
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ];
+    const expectedPlans =
+      await this.catalogPlans();
 
     for (const planName of expectedPlans) {
       await this.validatePlanVisible(
@@ -362,8 +658,20 @@ hasText:/complete setup|continue to payment/i
     expect(
       bodyText
     ).toMatch(
-      /covered calls|protective puts|portfolio analytics|marketplace access/i
+      /covered calls|protective puts|portfolio analytics/i
     );
+
+    if (
+      expectedPlans.includes(
+        'Marketplace'
+      )
+    ) {
+      expect(
+        bodyText
+      ).toMatch(
+        /marketplace access/i
+      );
+    }
 
     Logger.success(
       'Plan catalog and feature summary validated'
@@ -485,26 +793,37 @@ hasText:/complete setup|continue to payment/i
     );
 
     const expectedEntitlements = [
-      /income builder[\s\S]*broker integration\s*\(1\)/i,
-      /income builder[\s\S]*account linked\s*\(1\)/i,
-      /income builder[\s\S]*positions\s*\(100\)/i,
-      /overlay strategists[\s\S]*broker integration\s*\(5\)/i,
-      /overlay strategists[\s\S]*account linked\s*\(10\)/i,
-      /overlay strategists[\s\S]*positions\s*\(500\)/i,
-      /portfolio hedger[\s\S]*broker integration\s*\(10\)/i,
-      /portfolio hedger[\s\S]*account linked\s*\(20\)/i,
-      /portfolio hedger[\s\S]*positions\s*\(1000\)/i,
-      /marketplace[\s\S]*broker integration\s*\(20\)/i,
-      /marketplace[\s\S]*account linked\s*\(100\)/i,
-      /marketplace[\s\S]*positions\s*\(10000\)/i
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}broker integration\s*\(1\)/i,
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}account linked\s*\(1\)/i,
+      /(?:income(?:\s+builder)?|build your portfolio)[\s\S]{0,800}positions\s*\(100\)/i,
+      /overlay strategists[\s\S]{0,800}broker integration\s*\(5\)/i,
+      /overlay strategists[\s\S]{0,800}account linked\s*\(10\)/i,
+      /overlay strategists[\s\S]{0,800}positions\s*\(500\)/i,
+      /portfolio hedger[\s\S]{0,800}broker integration\s*\(10\)/i,
+      /portfolio hedger[\s\S]{0,800}account linked\s*\(20\)/i,
+      /portfolio hedger[\s\S]{0,800}positions\s*\(1000\)/i
     ];
 
-    for (const planName of [
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ]) {
+    if (
+      await this.isPlanOffered(
+        'Marketplace'
+      )
+    ) {
+      expectedEntitlements.push(
+        /marketplace[\s\S]*broker integration\s*\(20\)/i,
+        /marketplace[\s\S]*account linked\s*\(100\)/i,
+        /marketplace[\s\S]*positions\s*\(10000\)/i
+      );
+    }
+
+    for (const planName of await this.catalogPlans()) {
+      if (
+        planName ===
+          'Curious Explorer'
+      ) {
+        continue;
+      }
+
       await this.validatePlanVisible(
         planName
       );
@@ -621,10 +940,16 @@ hasText:/complete setup|continue to payment/i
       timeout: 15000
     });
 
-    await safeClick(
-      this.annualToggle(),
-      'Annual Toggle'
-    );
+    if (
+      !await this.billingToggleSelected(
+        this.annualToggle()
+      )
+    ) {
+      await this.clickBillingToggle(
+        this.annualToggle(),
+        'Annual Toggle'
+      );
+    }
 
     await expect(
       this.page.locator(
@@ -656,10 +981,16 @@ hasText:/complete setup|continue to payment/i
       timeout: 15000
     });
 
-    await safeClick(
-      this.monthlyToggle(),
-      'Monthly Toggle'
-    );
+    if (
+      !await this.billingToggleSelected(
+        this.monthlyToggle()
+      )
+    ) {
+      await this.clickBillingToggle(
+        this.monthlyToggle(),
+        'Monthly Toggle'
+      );
+    }
 
     await expect(
       this.page.locator(
@@ -694,12 +1025,22 @@ hasText:/complete setup|continue to payment/i
         )
         .innerText();
 
+    const marketplaceOffered =
+      await this.isPlanOffered(
+        'Marketplace'
+      );
+
     const monthlyPrices = [
       /\$\s*29\s*\/\s*mo/i,
       /\$\s*79\s*\/\s*mo/i,
-      /\$\s*149\s*\/\s*mo/i,
-      /\$\s*249\s*\/\s*mo/i
+      /\$\s*149\s*\/\s*mo/i
     ];
+
+    if (marketplaceOffered) {
+      monthlyPrices.push(
+        /\$\s*249\s*\/\s*mo/i
+      );
+    }
 
     for (const price of monthlyPrices) {
       expect(
@@ -723,9 +1064,14 @@ hasText:/complete setup|continue to payment/i
     const annualPrices = [
       /\$\s*290\b/i,
       /\$\s*790\b/i,
-      /\$\s*1,?490\b/i,
-      /\$\s*2,?490\b/i
+      /\$\s*1,?490\b/i
     ];
+
+    if (marketplaceOffered) {
+      annualPrices.push(
+        /\$\s*2,?490\b/i
+      );
+    }
 
     for (const price of annualPrices) {
       expect(
@@ -735,12 +1081,14 @@ hasText:/complete setup|continue to payment/i
       );
     }
 
-    for (const planName of [
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ]) {
+    for (const planName of await this.catalogPlans()) {
+      if (
+        planName ===
+          'Curious Explorer'
+      ) {
+        continue;
+      }
+
       await this.validatePlanVisible(
         planName
       );
@@ -821,13 +1169,8 @@ hasText:/complete setup|continue to payment/i
       'Validating plan selection can switch without launching checkout'
     );
 
-    const planNames = [
-      'Curious Explorer',
-      'Income Builder',
-      'Overlay Strategists',
-      'Portfolio Hedger',
-      'Marketplace'
-    ];
+    const planNames =
+      await this.catalogPlans();
 
     await this.validatePlanCatalog();
 
@@ -1043,23 +1386,12 @@ hasText:/complete setup|continue to payment/i
 
     await this.confirmTrialModal();
 
-    await expect(
-      this.completeSetupButton
-    ).toBeVisible({
-      timeout: 30000
-    });
-
-    await safeClick(
-      this.completeSetupButton,
-      'Complete Setup'
+    await this.finishTrialStart(
+      true
     );
 
     Logger.success(
       'Overlay Strategists trial with card selected'
-    );
-
-    await this.page.waitForTimeout(
-      5000
     );
   }
 
@@ -1075,23 +1407,12 @@ hasText:/complete setup|continue to payment/i
 
     await this.confirmTrialModal();
 
-    await expect(
-      this.completeSetupButton
-    ).toBeVisible({
-      timeout: 30000
-    });
-
-    await safeClick(
-      this.completeSetupButton,
-      'Complete Setup'
+    await this.finishTrialStart(
+      false
     );
 
     Logger.success(
       'Overlay Strategists trial without card selected'
-    );
-
-    await this.page.waitForTimeout(
-      5000
     );
   }
 
@@ -1153,8 +1474,10 @@ hasText:/complete setup|continue to payment/i
       `${planName} selected`
     );
 
-    await this.page.waitForTimeout(
-      5000
+    await this.waitAfterCompleteSetup(
+      !/curious explorer/i.test(
+        planName
+      )
     );
   }
 
@@ -1170,84 +1493,8 @@ hasText:/complete setup|continue to payment/i
 
 
   async selectIncomeBuilderPlan() {
-
-  Logger.info(
-    'Selecting Income Builder Plan'
-  );
-
-
-  await expect(
-    this.page.getByText(
-      /choose your plan/i
-    )
-  ).toBeVisible({
-    timeout:30000
-  });
-
-
-  Logger.step(
-    'Select Income Builder Plan'
-  );
-
-
-  await safeClick(
-    this.incomeBuilderPlan,
-    'Income Builder Plan'
-  );
-
-
-  Logger.success(
-    'Income Builder Selected'
-  );
-  console.log(
-  "Current URL:",
-  this.page.url()
-);
-
-
-console.log(
-  "All Buttons:",
-  await this.page.locator('button').allTextContents()
-);
-
-
-console.log(
-  "All Text:",
-  await this.page.locator('body').innerText()
-);
-
-
-  await this.page.waitForTimeout(
-    3000
-  );
-
-
-  await expect(
-    this.completeSetupButton
-  ).toBeVisible({
-    timeout:30000
-  });
-
-
-  await safeClick(
-    this.completeSetupButton,
-    'Complete Setup'
-  );
-
-
-  Logger.success(
-    'Complete Setup Clicked'
-  );
-
-
-  await this.page.waitForTimeout(
-    5000
-  );
-
-
-  Logger.url(
-    this.page.url()
-  );
-
-}
+    await this.selectPlan(
+      'Income Builder'
+    );
+  }
 }

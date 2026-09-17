@@ -76,20 +76,25 @@ export function generateEmail(
 
   const uniqueSuffix =
     normalizedTag
-      ? `${normalizedTag}-${Date.now()}`
-      : `${Date.now()}`;
+      ? `${normalizedTag.slice(0, 12)}-${Date.now().toString(36)}`
+      : Date.now().toString(36);
 
   return `${cleanLocalPart}+${uniqueSuffix}@${domain}`;
 
 }
 
+let mobileSequence = 0;
+
 export function generateMobileNumber(): string {
+  mobileSequence += 1;
 
   const suffix =
-    Date.now()
+    (
+      Date.now() +
+      mobileSequence * 37
+    )
       .toString()
       .slice(-4);
 
   return `201555${suffix}`;
-
 }

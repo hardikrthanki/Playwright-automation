@@ -20,6 +20,11 @@ import {
 }
 from '../utils/logger';
 
+import {
+  REGISTRATION_SUBMIT_NAME
+}
+from '../config/constants';
+
 /* =============================================================================
 PAGE OBJECT: OnboardingPage
 
@@ -124,7 +129,7 @@ this.createAccountButton =
 page.getByRole(
 'button',
 {
-name:/create account/i
+name: REGISTRATION_SUBMIT_NAME
 }
 );
 

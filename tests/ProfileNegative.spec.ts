@@ -1,16 +1,16 @@
 import {
-  expect,
-  Locator,
-  test
+  Locator
 } from '@playwright/test';
+
+import {
+  expect,
+  test
+} from './fixtures/subscriberAuth';
 
 import {
   BASE_URL,
   TEST_USERS
 } from './config/testData';
-
-import { LoginPage }
-  from './pages/LoginPage';
 
 import { ProfilePage }
   from './pages/ProfilePage';
@@ -20,7 +20,8 @@ TEST SUITE: Profile Negative Scenarios
 
 PURPOSE
 -------
-Validate profile-page guardrails without changing persistent account data.
+One authenticated session validates profile guardrails without saving account
+changes.
 
 Run:
 npx playwright test tests/ProfileNegative.spec.ts --headed
@@ -39,388 +40,353 @@ test.describe(
   () => {
 
     test.describe.configure({
-      timeout: 90000
+      timeout: 180000
     });
 
-    test.beforeEach(
+    test(
+      'Profile identity drafts password toggles and navigation in one session',
       async ({ page }) => {
-        const login =
-          new LoginPage(page);
-
         const profile =
-          new ProfilePage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
+          new ProfilePage(
+            page
+          );
 
         await profile.open();
-      }
-    );
+        await profile.validateProfileLoaded();
 
-    test(
-      'Profile email field cannot be edited',
-      async ({ page }) => {
+        await test.step(
+          'Email is read-only and matches subscriber',
+          async () => {
+            const originalEmail =
+              await profile.emailInput.inputValue();
 
-        const profile =
-          new ProfilePage(page);
+            await expect(
+              profile.emailInput
+            ).toBeDisabled();
 
-        const originalEmail =
-          await profile.emailInput.inputValue();
-
-        await expect(
-          profile.emailInput
-        ).toBeDisabled();
-
-        await expect(
-          profile.emailInput
-        ).toHaveValue(
-          originalEmail
-        );
-      }
-    );
-
-    test(
-      'Profile email matches logged-in subscriber identity',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        await expect(
-          profile.emailInput
-        ).toHaveValue(
-          TEST_USERS.subscriber.email,
-          {
-            timeout: 10000
-          }
-        );
-
-        await expect(
-          profile.emailInput
-        ).toBeDisabled();
-      }
-    );
-
-    test(
-      'Profile personal information controls are visible and safe',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        await profile.validatePersonalInfoControls();
-
-        await expect(
-          profile.firstNameInput
-        ).not.toHaveValue(
-          ''
-        );
-
-        await expect(
-          profile.lastNameInput
-        ).not.toHaveValue(
-          ''
-        );
-
-        await expect(
-          profile.emailInput
-        ).toBeDisabled();
-      }
-    );
-
-    test(
-      'Profile first name empty draft is not persisted without saving',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        const originalFirstName =
-          await profile.firstNameInput.inputValue();
-
-        await profile.firstNameInput.fill(
-          ''
-        );
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await profile.waitForProfileData();
-
-        await expect(
-          profile.firstNameInput
-        ).toHaveValue(
-          originalFirstName
-        );
-      }
-    );
-
-    test(
-      'Profile last name empty draft is not persisted without saving',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        const originalLastName =
-          await profile.lastNameInput.inputValue();
-
-        await profile.lastNameInput.fill(
-          ''
-        );
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await profile.waitForProfileData();
-
-        await expect(
-          profile.lastNameInput
-        ).toHaveValue(
-          originalLastName
-        );
-      }
-    );
-
-    test(
-      'Profile page keeps data after refresh',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        const originalFirstName =
-          await profile.firstNameInput.inputValue();
-
-        const originalLastName =
-          await profile.lastNameInput.inputValue();
-
-        const originalEmail =
-          await profile.emailInput.inputValue();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await profile.waitForProfileData();
-
-        await expect(
-          profile.firstNameInput
-        ).toHaveValue(
-          originalFirstName
-        );
-
-        await expect(
-          profile.lastNameInput
-        ).toHaveValue(
-          originalLastName
-        );
-
-        await expect(
-          profile.emailInput
-        ).toHaveValue(
-          originalEmail
-        );
-      }
-    );
-
-    test(
-      'Profile direct route remains usable after browser back and forward',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        await page.goto(
-          `${BASE_URL}/dashboard`,
-          {
-            waitUntil: 'domcontentloaded'
-          }
-        );
-
-        await page.goBack({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard\/profile/,
-          {
-            timeout: 15000
-          }
-        );
-
-        await profile.waitForProfileData();
-
-        await page.goForward({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/,
-          {
-            timeout: 15000
-          }
-        );
-      }
-    );
-
-    test(
-      'Profile password change button stays safe with empty password fields',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        await expect(
-          profile.currentPasswordInput
-        ).toBeVisible();
-
-        await expect(
-          profile.newPasswordInput
-        ).toBeVisible();
-
-        await expect(
-          profile.confirmPasswordInput
-        ).toBeVisible();
-
-        await profile.changePasswordButton.click();
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard\/profile/
-        );
-      }
-    );
-
-    test(
-      'Profile password visibility controls are usable without saving drafts',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        const passwordInputs = [
-          page.getByLabel(
-            /^current password$/i
-          ),
-          page.getByLabel(
-            /^new password$/i
-          ),
-          page.getByLabel(
-            /^confirm new password$/i
-          )
-        ];
-
-        await profile.currentPasswordInput.fill(
-          'DraftCurrentPassword1!'
-        );
-
-        await profile.newPasswordInput.fill(
-          'DraftNewPassword1!'
-        );
-
-        await profile.confirmPasswordInput.fill(
-          'DraftNewPassword1!'
-        );
-
-        for (let index = 0; index < passwordInputs.length; index += 1) {
-          const input =
-            passwordInputs[index];
-
-          await expect(
-            input
-          ).toHaveAttribute(
-            'type',
-            'password'
-          );
-
-          const toggle =
-            await findLocalPasswordToggle(
-              input
+            await expect(
+              profile.emailInput
+            ).toHaveValue(
+              originalEmail
             );
 
-          await expect(
-            toggle
-          ).toBeVisible({
-            timeout: 10000
-          });
+            await expect(
+              profile.emailInput
+            ).toHaveValue(
+              TEST_USERS.subscriber.email,
+              {
+                timeout: 10000
+              }
+            );
+          }
+        );
 
-          await toggle.click();
+        await test.step(
+          'Personal information controls are populated',
+          async () => {
+            await profile.validatePersonalInfoControls();
 
-          await expect(
-            input
-          ).not.toHaveValue(
-            ''
-          );
+            await expect(
+              profile.firstNameInput
+            ).not.toHaveValue(
+              ''
+            );
 
-          await toggle.click();
+            await expect(
+              profile.lastNameInput
+            ).not.toHaveValue(
+              ''
+            );
+          }
+        );
 
-          await expect(
-            input
-          ).not.toHaveValue(
-            ''
+        await test.step(
+          'Empty name drafts are not persisted',
+          async () => {
+            const originalFirstName =
+              await profile.firstNameInput.inputValue();
+
+            const originalLastName =
+              await profile.lastNameInput.inputValue();
+
+            await profile.firstNameInput.fill(
+              ''
+            );
+
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await profile.waitForProfileData();
+
+            await expect(
+              profile.firstNameInput
+            ).toHaveValue(
+              originalFirstName
+            );
+
+            await profile.lastNameInput.fill(
+              ''
+            );
+
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await profile.waitForProfileData();
+
+            await expect(
+              profile.lastNameInput
+            ).toHaveValue(
+              originalLastName
+            );
+          }
+        );
+
+        await test.step(
+          'Profile data remains after refresh',
+          async () => {
+            const originalFirstName =
+              await profile.firstNameInput.inputValue();
+
+            const originalLastName =
+              await profile.lastNameInput.inputValue();
+
+            const originalEmail =
+              await profile.emailInput.inputValue();
+
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await profile.waitForProfileData();
+
+            await expect(
+              profile.firstNameInput
+            ).toHaveValue(
+              originalFirstName
+            );
+
+            await expect(
+              profile.lastNameInput
+            ).toHaveValue(
+              originalLastName
+            );
+
+            await expect(
+              profile.emailInput
+            ).toHaveValue(
+              originalEmail
+            );
+          }
+        );
+
+        await test.step(
+          'Empty password fields stay on profile',
+          async () => {
+            await expect(
+              profile.currentPasswordInput
+            ).toBeVisible();
+
+            await expect(
+              profile.newPasswordInput
+            ).toBeVisible();
+
+            await expect(
+              profile.confirmPasswordInput
+            ).toBeVisible();
+
+            await profile.changePasswordButton.click();
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard\/profile/
+            );
+          }
+        );
+
+        await test.step(
+          'Password visibility toggles without saving',
+          async () => {
+            const passwordInputs = [
+              page.getByLabel(
+                /^current password$/i
+              ),
+              page.getByLabel(
+                /^new password$/i
+              ),
+              page.getByLabel(
+                /^confirm new password$/i
+              )
+            ];
+
+            await profile.currentPasswordInput.fill(
+              'DraftCurrentPassword1!'
+            );
+
+            await profile.newPasswordInput.fill(
+              'DraftNewPassword1!'
+            );
+
+            await profile.confirmPasswordInput.fill(
+              'DraftNewPassword1!'
+            );
+
+            for (
+              let index = 0;
+              index < passwordInputs.length;
+              index += 1
+            ) {
+              const input =
+                passwordInputs[index];
+
+              await expect(
+                input
+              ).toHaveAttribute(
+                'type',
+                'password'
+              );
+
+              const toggle =
+                await findLocalPasswordToggle(
+                  input
+                );
+
+              await expect(
+                toggle
+              ).toBeVisible({
+                timeout: 10000
+              });
+
+              await toggle.click();
+
+              await expect(
+                input
+              ).not.toHaveValue(
+                ''
+              );
+
+              await toggle.click();
+
+              await expect(
+                input
+              ).not.toHaveValue(
+                ''
+              );
+            }
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard\/profile/
+            );
+          }
+        );
+
+        await test.step(
+          'Password drafts clear after refresh',
+          async () => {
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await profile.waitForProfileData();
+
+            await expect(
+              profile.currentPasswordInput
+            ).toHaveValue(
+              ''
+            );
+
+            await expect(
+              profile.newPasswordInput
+            ).toHaveValue(
+              ''
+            );
+
+            await expect(
+              profile.confirmPasswordInput
+            ).toHaveValue(
+              ''
+            );
+          }
+        );
+
+        await test.step(
+          'Direct route survives back and forward',
+          async () => {
+            await page.goto(
+              `${BASE_URL}/dashboard`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+
+            await page.goBack({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard\/profile/,
+              {
+                timeout: 15000
+              }
+            );
+
+            await profile.waitForProfileData();
+
+            await page.goForward({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard/,
+              {
+                timeout: 15000
+              }
+            );
+          }
+        );
+
+        if (
+          process.env.PROFILE_UPDATE_VALIDATION_ENABLED ===
+          'true'
+        ) {
+          await test.step(
+            'Name update persists and is restored',
+            async () => {
+              await profile.open();
+
+              const originalFirstName =
+                await profile.firstNameInput.inputValue();
+
+              const originalLastName =
+                await profile.lastNameInput.inputValue();
+
+              const uniqueSuffix =
+                Date.now()
+                  .toString()
+                  .slice(-4);
+
+              try {
+                await profile.updateProfileAndValidatePersistence(
+                  `QA${uniqueSuffix}`,
+                  `User${uniqueSuffix}`
+                );
+              } finally {
+                await profile.updateProfileAndValidatePersistence(
+                  originalFirstName,
+                  originalLastName
+                );
+              }
+            }
           );
         }
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard\/profile/
-        );
-      }
-    );
-
-    test(
-      'Profile password drafts are cleared after refresh without saving',
-      async ({ page }) => {
-
-        const profile =
-          new ProfilePage(page);
-
-        await profile.currentPasswordInput.fill(
-          'DraftCurrentPassword1!'
-        );
-
-        await profile.newPasswordInput.fill(
-          'DraftNewPassword1!'
-        );
-
-        await profile.confirmPasswordInput.fill(
-          'DraftNewPassword1!'
-        );
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await profile.waitForProfileData();
-
-        await expect(
-          profile.currentPasswordInput
-        ).toHaveValue(
-          ''
-        );
-
-        await expect(
-          profile.newPasswordInput
-        ).toHaveValue(
-          ''
-        );
-
-        await expect(
-          profile.confirmPasswordInput
-        ).toHaveValue(
-          ''
-        );
       }
     );
   }

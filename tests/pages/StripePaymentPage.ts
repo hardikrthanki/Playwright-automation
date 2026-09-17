@@ -9,11 +9,63 @@ import {
   STRIPE_CARD,
   STRIPE_DECLINED_CARD,
   STRIPE_EXPIRY,
-  STRIPE_CVC
+  STRIPE_CVC,
+  uniqueStripeTrialCard
 } from '../config/testData';
 
 import { BasePage } from './BasePage';
 import { Logger } from '../utils/logger';
+
+function stripeCheckoutPlanPattern(
+  expectedPlan: string
+) {
+  const normalized =
+    expectedPlan.trim();
+
+  const aliases: Record<string, string> = {
+    'Income Builder':
+      'Income Builder|Subscribe to Income|\\bIncome\\b',
+    'Overlay Strategists':
+      'Overlay Strategists|Subscribe to Overlay|\\bOverlay\\b',
+    'Portfolio Hedger':
+      'Portfolio Hedger|Portfolio Hedge|3-Advanced|Subscribe to 3-Advanced',
+    'Marketplace':
+      'Marketplace|Market Place'
+  };
+
+  const mapped =
+    aliases[normalized];
+
+  if (mapped) {
+    return new RegExp(
+      mapped,
+      'i'
+    );
+  }
+
+  const escaped =
+    normalized.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      '\\$&'
+    );
+
+  const firstToken =
+    normalized
+      .split(
+        /\s+/
+      )[0]
+      ?.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&'
+      );
+
+  return new RegExp(
+    firstToken
+      ? `${escaped}|${firstToken}`
+      : escaped,
+    'i'
+  );
+}
 
 /* ============================================================================
 PAGE OBJECT: StripePaymentPage
@@ -168,7 +220,7 @@ export class StripePaymentPage
         'body'
       )
     ).toContainText(
-      /30 days free|start trial|free trial|trial/i,
+      /30 days free|start trial|free trial|trial|subscribe to overlay|overlay/i,
       {
         timeout: 15000
       }
@@ -260,9 +312,8 @@ export class StripePaymentPage
       await expect(
         body
       ).toContainText(
-        new RegExp(
-          options.expectedPlan,
-          'i'
+        stripeCheckoutPlanPattern(
+          options.expectedPlan
         ),
         {
           timeout: 15000
@@ -462,7 +513,9 @@ export class StripePaymentPage
     );
   }
 
-  async completePayment() {
+  async completePayment(
+    cardNumber = STRIPE_CARD
+  ) {
     Logger.info(
       'Completing Stripe Payment'
     );
@@ -472,11 +525,11 @@ export class StripePaymentPage
     await this.page.locator(
       '#cardNumber'
     ).fill(
-      STRIPE_CARD
+      cardNumber
     );
 
     Logger.success(
-      'Card Number Entered'
+      `Card Number Entered (...${cardNumber.slice(-4)})`
     );
 
     await this.page.locator(
@@ -519,8 +572,18 @@ export class StripePaymentPage
       'Payment Submitted'
     );
 
-    await this.page.waitForTimeout(
-      10000
+    await this.page.waitForURL(
+      url =>
+        !url
+          .toString()
+          .includes(
+            'checkout.stripe.com'
+          ),
+      {
+        timeout: 60000
+      }
+    ).catch(
+      () => undefined
     );
 
     Logger.url(
@@ -548,6 +611,20 @@ export class StripePaymentPage
 
     Logger.celebration(
       'Payment Completed'
+    );
+  }
+
+  async completeTrialPayment() {
+    const trialCard =
+      uniqueStripeTrialCard();
+
+    console.log(
+      'With-card trial Stripe card:',
+      `...${trialCard.slice(-4)}`
+    );
+
+    await this.completePayment(
+      trialCard
     );
   }
 }

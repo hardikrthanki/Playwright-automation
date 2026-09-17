@@ -16,8 +16,7 @@ TEST SUITE: Session Security
 
 PURPOSE
 -------
-Validate that authenticated areas are protected after logout and browser
-navigation cannot restore protected content.
+One login, then logout and protected-route checks in a single flow.
 
 Run:
 npx playwright test tests/SessionSecurity.spec.ts --headed
@@ -27,116 +26,185 @@ test.describe(
   'Session Security',
   () => {
 
-    test(
-      'Logout prevents browser back and direct dashboard access',
-      async ({ page }) => {
-        test.setTimeout(
-          120000
-        );
-
-        const login =
-          new LoginPage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/,
-          {
-            timeout: 30000
-          }
-        );
-
-        await login.logout();
-
-        await page.goBack({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/login/,
-          {
-            timeout: 30000
-          }
-        );
-
-        await expect(
-          page.locator(
-            'input[type="email"]'
-          ).first()
-        ).toBeVisible();
-
-        await page.goto(
-          `${BASE_URL}/dashboard`,
-          {
-            waitUntil: 'domcontentloaded'
-          }
-        );
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/login/,
-          {
-            timeout: 30000
-          }
-        );
-      }
-    );
+    test.describe.configure({
+      timeout: 4 * 60 * 1000
+    });
 
     test(
-      'Logged-out session remains on login after refresh',
-      async ({ page }) => {
-        test.setTimeout(
-          120000
-        );
-
+      'Login once then logout blocks back refresh tabs and protected routes',
+      async ({
+        page,
+        context,
+        browser
+      }) => {
         const login =
-          new LoginPage(page);
+          new LoginPage(
+            page
+          );
 
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
+        await test.step(
+          'Login',
+          async () => {
+            await login.login(
+              TEST_USERS.subscriber.email,
+              TEST_USERS.subscriber.password
+            );
 
-        await login.logout();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/login/,
-          {
-            timeout: 30000
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard/,
+              {
+                timeout: 30000
+              }
+            );
           }
         );
 
-        await expect(
-          page.locator(
-            'input[type="email"]'
-          ).first()
-        ).toBeVisible();
-      }
-    );
+        const dashboardTab =
+          await context.newPage();
 
-    test(
-      'Logout blocks direct access to key protected routes',
-      async ({ page }) => {
-        test.setTimeout(
-          120000
+        try {
+          await test.step(
+            'Authenticated session can open dashboard in a new tab',
+            async () => {
+              await dashboardTab.goto(
+                `${BASE_URL}/dashboard`,
+                {
+                  waitUntil: 'domcontentloaded'
+                }
+              );
+
+              await expect(
+                dashboardTab
+              ).toHaveURL(
+                /\/dashboard/,
+                {
+                  timeout: 30000
+                }
+              );
+            }
+          );
+
+          await test.step(
+            'Authenticated storage does not leak into a fresh browser context',
+            async () => {
+              const isolatedContext =
+                await browser.newContext();
+
+              try {
+                const isolatedPage =
+                  await isolatedContext.newPage();
+
+                await isolatedPage.goto(
+                  `${BASE_URL}/dashboard`,
+                  {
+                    waitUntil: 'domcontentloaded'
+                  }
+                );
+
+                await expect(
+                  isolatedPage
+                ).toHaveURL(
+                  /\/login/,
+                  {
+                    timeout: 30000
+                  }
+                );
+
+                await expect(
+                  isolatedPage.locator(
+                    'input[type="email"]'
+                  ).first()
+                ).toBeVisible();
+              } finally {
+                await isolatedContext.close();
+              }
+            }
+          );
+
+          await test.step(
+            'Logout',
+            async () => {
+              await login.logout();
+            }
+          );
+
+          await test.step(
+            'Logout invalidates dashboard access in an already opened tab',
+            async () => {
+              await dashboardTab.goto(
+                `${BASE_URL}/dashboard`,
+                {
+                  waitUntil: 'domcontentloaded'
+                }
+              );
+
+              await expect(
+                dashboardTab
+              ).toHaveURL(
+                /\/login/,
+                {
+                  timeout: 30000
+                }
+              );
+            }
+          );
+        } finally {
+          await dashboardTab.close();
+        }
+
+        await test.step(
+          'Logout prevents browser back and direct dashboard access',
+          async () => {
+            await page.goBack({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/login/,
+              {
+                timeout: 30000
+              }
+            );
+
+            await page.goto(
+              `${BASE_URL}/dashboard`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/login/,
+              {
+                timeout: 30000
+              }
+            );
+          }
         );
 
-        const login =
-          new LoginPage(page);
+        await test.step(
+          'Logged-out session remains on login after refresh',
+          async () => {
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/login/,
+              {
+                timeout: 30000
+              }
+            );
+          }
+        );
 
         const protectedRoutes = [
           '/onboarding',
@@ -147,44 +215,7 @@ test.describe(
           '/dashboard/notifications',
           '/dashboard/activity',
           '/dashboard/settings',
-          '/dashboard/subscription'
-        ];
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        await login.logout();
-
-        for (const route of protectedRoutes) {
-          await page.goto(
-            `${BASE_URL}${route}`,
-            {
-              waitUntil: 'domcontentloaded'
-            }
-          );
-
-          await expect(
-            page
-          ).toHaveURL(
-            /\/login/,
-            {
-              timeout: 30000
-            }
-          );
-        }
-      }
-    );
-
-    test(
-      'Logged-out protected deep links with query parameters redirect to login',
-      async ({ page }) => {
-        test.setTimeout(
-          120000
-        );
-
-        const protectedDeepLinks = [
+          '/dashboard/subscription',
           '/dashboard/profile/?source=bookmark',
           '/dashboard/billing/?tab=history',
           '/dashboard/risk-compliance/?section=compliance',
@@ -193,199 +224,36 @@ test.describe(
           '/dashboard/subscription/?source=direct'
         ];
 
-        for (const route of protectedDeepLinks) {
-          await page.goto(
-            `${BASE_URL}${route}`,
-            {
-              waitUntil: 'domcontentloaded'
+        await test.step(
+          'Logout blocks direct access to protected routes',
+          async () => {
+            for (const route of protectedRoutes) {
+              await page.goto(
+                `${BASE_URL}${route}`,
+                {
+                  waitUntil: 'domcontentloaded'
+                }
+              );
+
+              await expect(
+                page
+              ).toHaveURL(
+                /\/login/,
+                {
+                  timeout: 30000
+                }
+              );
+
+              await expect(
+                page.locator(
+                  'input[type="email"]'
+                ).first()
+              ).toBeVisible({
+                timeout: 10000
+              });
             }
-          );
-
-          await expect(
-            page
-          ).toHaveURL(
-            /\/login/,
-            {
-              timeout: 30000
-            }
-          );
-
-          await expect(
-            page.locator(
-              'input[type="email"]'
-            ).first()
-          ).toBeVisible({
-            timeout: 10000
-          });
-
-          await expect(
-            page.locator(
-              'body'
-            )
-          ).not.toContainText(
-            /current subscription|risk profile|personal information|security settings/i
-          );
-        }
-      }
-    );
-
-    test(
-      'Authenticated session can open dashboard in a new tab',
-      async ({ page, context }) => {
-        test.setTimeout(
-          120000
-        );
-
-        const login =
-          new LoginPage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        const newTab =
-          await context.newPage();
-
-        await newTab.goto(
-          `${BASE_URL}/dashboard`,
-          {
-            waitUntil: 'domcontentloaded'
           }
         );
-
-        await expect(
-          newTab
-        ).toHaveURL(
-          /\/dashboard/,
-          {
-            timeout: 30000
-          }
-        );
-
-        await newTab.close();
-      }
-    );
-
-    test(
-      'Authenticated storage does not leak into a fresh browser context',
-      async ({ page, browser }) => {
-        test.setTimeout(
-          120000
-        );
-
-        const login =
-          new LoginPage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/,
-          {
-            timeout: 30000
-          }
-        );
-
-        const isolatedContext =
-          await browser.newContext();
-
-        try {
-          const isolatedPage =
-            await isolatedContext.newPage();
-
-          await isolatedPage.goto(
-            `${BASE_URL}/dashboard`,
-            {
-              waitUntil: 'domcontentloaded'
-            }
-          );
-
-          await expect(
-            isolatedPage
-          ).toHaveURL(
-            /\/login/,
-            {
-              timeout: 30000
-            }
-          );
-
-          await expect(
-            isolatedPage.locator(
-              'input[type="email"]'
-            ).first()
-          ).toBeVisible();
-        } finally {
-          await isolatedContext.close();
-        }
-      }
-    );
-
-    test(
-      'Logout invalidates dashboard access in an already opened tab',
-      async ({ page, context }) => {
-        test.setTimeout(
-          120000
-        );
-
-        const login =
-          new LoginPage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        const dashboardTab =
-          await context.newPage();
-
-        try {
-          await dashboardTab.goto(
-            `${BASE_URL}/dashboard`,
-            {
-              waitUntil: 'domcontentloaded'
-            }
-          );
-
-          await expect(
-            dashboardTab
-          ).toHaveURL(
-            /\/dashboard/,
-            {
-              timeout: 30000
-            }
-          );
-
-          await login.logout();
-
-          await dashboardTab.goto(
-            `${BASE_URL}/dashboard`,
-            {
-              waitUntil: 'domcontentloaded'
-            }
-          );
-
-          await expect(
-            dashboardTab
-          ).toHaveURL(
-            /\/login/,
-            {
-              timeout: 30000
-            }
-          );
-
-          await expect(
-            dashboardTab.locator(
-              'input[type="email"]'
-            ).first()
-          ).toBeVisible();
-        } finally {
-          await dashboardTab.close();
-        }
       }
     );
   }

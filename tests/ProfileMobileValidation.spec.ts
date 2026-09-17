@@ -1,11 +1,13 @@
 import {
-  Page,
-  test
+  Page
 } from '@playwright/test';
 
 import {
   TEST_USERS
 } from './config/testData';
+
+import { test }
+  from './fixtures/subscriberAuth';
 
 import { LoginPage }
   from './pages/LoginPage';
@@ -25,18 +27,12 @@ TEST SUITE: Profile Mobile Number Validation
 
 PURPOSE
 -------
-Validates profile mobile-number controls without changing account data by default.
+One authenticated session validates the mobile section. OTP/update remains
+opt-in.
 
 RUN
 ---
-$env:PROFILE_MOBILE_VALIDATION_ENABLED="true"
 npx playwright test tests/ProfileMobileValidation.spec.ts --headed
-
-OPTIONAL SMS FLOW
------------------
-$env:PROFILE_MOBILE_CHANGE_ENABLED="true"
-$env:PROFILE_MOBILE_COMPLETE_ENABLED="true"
-
 ============================================================================= */
 
 const profileMobileChangeEnabled =
@@ -57,20 +53,28 @@ const profileMobileUser = {
     TEST_USERS.subscriber.password
 };
 
-async function loginAndOpenProfile(
+const usesSharedSubscriber =
+  profileMobileUser.email ===
+  TEST_USERS.subscriber.email;
+
+async function openProfile(
   page: Page
 ) {
-
-  const login =
-    new LoginPage(page);
+  if (
+    !usesSharedSubscriber
+  ) {
+    await new LoginPage(
+      page
+    ).login(
+      profileMobileUser.email,
+      profileMobileUser.password
+    );
+  }
 
   const profile =
-    new ProfilePage(page);
-
-  await login.login(
-    profileMobileUser.email,
-    profileMobileUser.password
-  );
+    new ProfilePage(
+      page
+    );
 
   await profile.open();
 
@@ -82,100 +86,75 @@ test.describe(
   () => {
 
     test.describe.configure({
-      timeout: 90000
+      timeout: 180000
     });
 
     test(
-      'Profile mobile number section is visible',
+      'Profile mobile section validation in one session',
       async ({ page }) => {
-
         const profile =
-          await loginAndOpenProfile(
+          await openProfile(
             page
           );
 
-        await profile.validateMobileSectionLoaded();
-      }
-    );
-
-    test(
-      'Profile mobile change blocks invalid mobile number',
-      async ({ page }) => {
-
-        const profile =
-          await loginAndOpenProfile(
-            page
-          );
-
-        await profile.validateInvalidMobileNumberBlocked();
-      }
-    );
-
-    test(
-      'Profile mobile change blocks invalid mobile number formats',
-      async ({ page }) => {
-
-        const profile =
-          await loginAndOpenProfile(
-            page
-          );
-
-        await profile.validateInvalidMobileNumberCandidatesBlocked();
-      }
-    );
-
-    test(
-      'Profile mobile section remains visible after refresh',
-      async ({ page }) => {
-
-        const profile =
-          await loginAndOpenProfile(
-            page
-          );
-
-        await profile.validateMobileSectionLoaded();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await profile.waitForProfileData();
-        await profile.validateMobileSectionLoaded();
-      }
-    );
-
-    if (profileMobileChangeEnabled) {
-      test(
-        'Profile mobile change can request OTP for valid mobile number',
-        async ({ page }) => {
-
-        const mobileNumber =
-          generateMobileNumber();
-
-        Logger.info(
-          `Profile Mobile Candidate: ${mobileNumber}`
+        await test.step(
+          'Mobile section is visible',
+          async () => {
+            await profile.validateMobileSectionLoaded();
+          }
         );
 
-        const profile =
-          await loginAndOpenProfile(
-            page
-          );
+        await test.step(
+          'Invalid mobile number is blocked',
+          async () => {
+            await profile.validateInvalidMobileNumberBlocked();
+          }
+        );
+
+        await test.step(
+          'Invalid mobile formats are blocked',
+          async () => {
+            await profile.validateInvalidMobileNumberCandidatesBlocked();
+          }
+        );
+
+        await test.step(
+          'Mobile section remains visible after refresh',
+          async () => {
+            await profile.validateMobileSectionLoaded();
+
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await profile.waitForProfileData();
+            await profile.validateMobileSectionLoaded();
+          }
+        );
 
         if (
-          profileMobileCompleteEnabled
+          profileMobileChangeEnabled
         ) {
-          await profile.completeMobileNumberChange(
-            mobileNumber
+          const mobileNumber =
+            generateMobileNumber();
+
+          Logger.info(
+            `Profile Mobile Candidate: ${mobileNumber}`
           );
 
-          return;
+          if (
+            profileMobileCompleteEnabled
+          ) {
+            await profile.completeMobileNumberChange(
+              mobileNumber
+            );
+          } else {
+            await profile.requestMobileNumberOtp(
+              mobileNumber
+            );
+          }
         }
-
-        await profile.requestMobileNumberOtp(
-          mobileNumber
-        );
-        }
-      );
-    }
+      }
+    );
   }
 );

@@ -18,6 +18,10 @@ import {
   BASE_URL
 } from '../config/testData';
 
+import {
+  openAuthenticatedPath
+} from '../helpers/subscriberSession';
+
 /* =============================================================================
 PAGE OBJECT: ProfilePage
 
@@ -68,7 +72,23 @@ export class ProfilePage
 constructor(page: Page) {
   super(page);
   this.emailInput =
-  page.locator('#email');
+    page.locator(
+      '#email:disabled'
+    ).or(
+      page.locator(
+        'form'
+      ).filter({
+        has: page.getByLabel(
+          /first name/i
+        )
+      }).locator(
+        '#email'
+      )
+    ).or(
+      page.getByLabel(
+        /^email$/i
+      )
+    ).first();
     this.firstNameInput =
       page.getByLabel(
         /first name/i
@@ -111,8 +131,15 @@ constructor(page: Page) {
       );
 
     this.mobileSectionHeading =
-      page.getByText(
-        /mobile number/i
+      page.getByRole(
+        'heading',
+        {
+          name: /mobile number|phone number|mobile/i
+        }
+      ).or(
+        page.getByText(
+          /mobile number|phone number|change number/i
+        )
       ).first();
 
     this.changeMobileNumberButton =
@@ -125,8 +152,8 @@ constructor(page: Page) {
 
     this.mobileNumberInput =
       page.locator(
-        'input[type="tel"], input[inputmode="tel"], input[autocomplete="tel"]'
-      ).first();
+        'input[type="tel"]:enabled, input[inputmode="tel"]:enabled'
+      ).last();
 
     this.sendMobileCodeButton =
       page.getByRole(
@@ -157,12 +184,13 @@ constructor(page: Page) {
 
   async open() {
 
-    await this.page.goto(
-      `${BASE_URL}/dashboard/profile`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
+    await openAuthenticatedPath(
+      this.page,
+      '/dashboard/profile',
+      /\/dashboard\/profile/
     );
+
+    await this.dismissMarketingOverlays();
 
     await this.waitForProfileData();
   }
@@ -257,11 +285,20 @@ constructor(page: Page) {
 async waitForProfileData() {
 
   await expect(
+    this.page
+  ).toHaveURL(
+    /\/dashboard\/profile/,
+    {
+      timeout: 15000
+    }
+  );
+
+  await expect(
     this.emailInput
   ).not.toHaveValue(
     '',
     {
-      timeout: 10000
+      timeout: 20000
     }
   );
 }
@@ -427,6 +464,23 @@ async openMobileNumberChange() {
   Logger.info(
     'Opening Mobile Number Change Form'
   );
+
+  const formAlreadyOpen =
+    await this.sendMobileCodeButton.isVisible({
+      timeout: 1500
+    }).catch(
+      () => false
+    );
+
+  if (
+    formAlreadyOpen
+  ) {
+    Logger.success(
+      'Mobile Number Change Form Already Open'
+    );
+
+    return;
+  }
 
   await expect(
     this.changeMobileNumberButton

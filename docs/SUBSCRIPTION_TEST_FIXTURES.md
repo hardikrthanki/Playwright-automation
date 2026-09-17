@@ -93,6 +93,8 @@ $env:SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED="true"
 $env:SUB_LIFECYCLE_CANCEL_FORM_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
 $env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="false"
@@ -100,6 +102,10 @@ $env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="false"
 $env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="false"
 $env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="false"
+$env:SUB_LIFECYCLE_OVERLAY_MONTHLY_ENABLED="false"
+$env:SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED="false"
+$env:SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED="false"
+$env:SUB_LIFECYCLE_PAID_ANNUAL_ENABLED="false"
 
 # Prepared paid-user slices:
 $env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
@@ -108,6 +114,11 @@ $env:SUB_LIFECYCLE_UPGRADE_TARGET_PLAN="Portfolio Hedger"
 $env:SUB_LIFECYCLE_UPGRADE_INTERVALS="monthly,annual"
 $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_TARGET_PLAN="Overlay Strategists"
 $env:SUB_LIFECYCLE_SUBMIT_UPGRADE_INTERVAL="monthly"
+$env:SUB_LIFECYCLE_DOWNGRADE_TARGET_PLAN="Income Builder"
+$env:SUB_LIFECYCLE_DOWNGRADE_INTERVALS="monthly"
+$env:SUB_LIFECYCLE_INTERVAL_TARGET_PLAN="Income Builder"
+$env:SUB_LIFECYCLE_INTERVAL_TO="annual"
+$env:SUB_LIFECYCLE_PAID_ANNUAL_PLAN="Overlay Strategists"
 ```
 
 ## Use Case 1 Trial Execution Commands
@@ -135,6 +146,32 @@ $env:SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED="false"
 $env:SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED="true"
 
 npm run test:controlled:subscription-lifecycle-execution -- --headed -g "with card"
+```
+
+Run downgrade preview against a prepared higher-tier paid user. This opens the
+in-app calculation dialog, checks terms, and closes without submitting.
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-overlay-monthly@gmail.com"
+$env:SUB_LIFECYCLE_PAID_PASSWORD=$env:SUBSCRIPTION_FIXTURE_PASSWORD
+$env:SUB_LIFECYCLE_DOWNGRADE_TARGET_PLAN="Income Builder"
+
+npm run test:controlled:subscription-lifecycle-execution -- --headed -g "downgrade"
+```
+
+Run billing-interval preview without submitting the change:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED="true"
+$env:SUB_LIFECYCLE_PAID_EMAIL="imhardikthanki+sub-income-monthly@gmail.com"
+$env:SUB_LIFECYCLE_PAID_PASSWORD=$env:SUBSCRIPTION_FIXTURE_PASSWORD
+$env:SUB_LIFECYCLE_INTERVAL_TARGET_PLAN="Income Builder"
+$env:SUB_LIFECYCLE_INTERVAL_TO="annual"
+
+npm run test:controlled:subscription-lifecycle-execution -- --headed -g "interval"
 ```
 
 Generate AIR from the latest run:
@@ -191,9 +228,14 @@ Only run destructive lifecycle tests when:
 
 ## Current Known Product Issues
 
-- With-card Overlay Strategists trial activation succeeds, but Billing may still
-  show Free Plan and may not display saved card details. Expected behavior:
-  Billing should show active Free Trial with associated payment method.
+- With-card Overlay Strategists trial grants correctly for a fresh user and a
+  unique Stripe test card (QA-CL-005 DEF-250-02). Billing showing Free, or a
+  bounce back to Plan Selection, is the silent `already_redeemed` card-reuse
+  gate — not a failed trial grant. Use a different test card per user
+  (`4242…4242`, `5555…4444`, `4000 0566 5566 5556`). `/verify-mobile?trial=success`
+  means the trial succeeded; the phone gate is separate.
+- The genuine remaining defect is that `trial=already_redeemed` is dropped when
+  the dashboard bounces the user to onboarding, so the member sees no reason.
 - No-card trial broker integration limit needs clarification because current
   product behavior counts manual entry as broker integration.
 - FRD no-card trial linked-account limit needs business confirmation because the
@@ -210,6 +252,11 @@ Dedicated users allow automation to safely validate:
 - Upgrade and downgrade eligibility.
 - Monthly and annual in-app upgrade calculation previews, including target
   price, unused-time credit, amount-due, and recurring-price checks.
+- Downgrade calculation preview, terms required, and cancel-before-submit
+  without changing the subscription.
+- Monthly-to-annual and annual-to-monthly interval previews without submitting.
+- Gated Overlay Strategists, Portfolio Hedger, and Marketplace paid purchases
+  with disposable users.
 - One-time upgrade submission after terms acceptance, using a dedicated
   lower-tier paid user with a saved card.
 - Monthly-to-annual and annual-to-monthly behavior.

@@ -35,6 +35,45 @@ function getStoredExecutions(history) {
   return Array.isArray(history?.executions) ? history.executions : [];
 }
 
+function writeFileRetry(filePath, contents) {
+  let lastError;
+  const tempPath = `${filePath}.${process.pid}.tmp`;
+
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
+    try {
+      fs.writeFileSync(tempPath, contents);
+
+      try {
+        fs.unlinkSync(filePath);
+      } catch (unlinkError) {
+        if (unlinkError?.code !== 'ENOENT') {
+          throw unlinkError;
+        }
+      }
+
+      fs.renameSync(tempPath, filePath);
+      return;
+    } catch (error) {
+      lastError = error;
+      const code = error?.code;
+
+      try {
+        fs.unlinkSync(tempPath);
+      } catch {
+        // The temp file may not exist if writeFileSync itself failed.
+      }
+
+      if (!['UNKNOWN', 'EBUSY', 'EPERM', 'EACCES'].includes(code) || attempt === 8) {
+        throw error;
+      }
+
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 200 * attempt);
+    }
+  }
+
+  throw lastError;
+}
+
 function buildAirResults(projectRoot = path.resolve(__dirname, '..', '..'), options = {}) {
   const config = loadAirConfig(projectRoot);
   const loaded = loadAutomationResults(projectRoot, config);
@@ -711,8 +750,8 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
   );
 
   restoredWithManualDefects.validation = validateAirResults(restoredWithManualDefects);
-  fs.writeFileSync(outputPath, `${JSON.stringify(restoredWithManualDefects, null, 2)}\n`);
-  fs.writeFileSync(historyPath, `${JSON.stringify(restoredWithManualDefects.history, null, 2)}\n`);
+  writeFileRetry(outputPath, `${JSON.stringify(restoredWithManualDefects, null, 2)}\n`);
+  writeFileRetry(historyPath, `${JSON.stringify(restoredWithManualDefects.history, null, 2)}\n`);
 
   return restoredWithManualDefects;
 }
@@ -781,12 +820,12 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
         config,
       });
       restoredAirResults.validation = validateAirResults(restoredAirResults);
-      fs.writeFileSync(outputPath, `${JSON.stringify(restoredAirResults, null, 2)}\n`);
-      fs.writeFileSync(
+      writeFileRetry(outputPath, `${JSON.stringify(restoredAirResults, null, 2)}\n`);
+      writeFileRetry(
         path.join(outputDir, 'air-data-integrity-audit.json'),
         `${JSON.stringify(restoredAirResults.dataIntegrity, null, 2)}\n`
       );
-      fs.writeFileSync(
+      writeFileRetry(
         validationSummaryPath,
         buildValidationSummaryMarkdown(restoredAirResults)
       );
@@ -797,13 +836,13 @@ function writeAirResults(projectRoot = path.resolve(__dirname, '..', '..')) {
     }
   }
 
-  fs.writeFileSync(outputPath, `${JSON.stringify(airResults, null, 2)}\n`);
-  fs.writeFileSync(historyPath, `${JSON.stringify(airResults.history, null, 2)}\n`);
-  fs.writeFileSync(
+  writeFileRetry(outputPath, `${JSON.stringify(airResults, null, 2)}\n`);
+  writeFileRetry(historyPath, `${JSON.stringify(airResults.history, null, 2)}\n`);
+  writeFileRetry(
     path.join(outputDir, 'air-data-integrity-audit.json'),
     `${JSON.stringify(airResults.dataIntegrity, null, 2)}\n`
   );
-  fs.writeFileSync(
+  writeFileRetry(
     validationSummaryPath,
     buildValidationSummaryMarkdown(airResults)
   );

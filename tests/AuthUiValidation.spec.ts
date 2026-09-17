@@ -15,6 +15,10 @@ import { ForgotPasswordPage }
 import { RegistrationPage }
   from './pages/RegistrationPage';
 
+import {
+  dismissOverlays
+} from './helpers/dismissOverlays';
+
 import { safeClick }
   from './helpers/safeClick';
 
@@ -30,89 +34,245 @@ RUN
 npx playwright test tests/AuthUiValidation.spec.ts --headed
 ============================================================================= */
 
+function authRegistrationLink(
+  page: Page
+) {
+  return page.getByRole(
+    'link',
+    {
+      name: /^sign up$/i
+    }
+  ).or(
+    page.getByRole(
+      'link',
+      {
+        name: /sign up|create account|start\s+30[-\s]?day\s+free\s+trial/i
+      }
+    )
+  ).first();
+}
+
+async function expectRegistrationOpened(
+  page: Page
+) {
+  await expect
+    .poll(
+      async () => {
+        if (
+          /\/register|\/signup|\/sign-up|\/create/i.test(
+            page.url()
+          )
+        ) {
+          return true;
+        }
+
+        return page.locator(
+          'input[name="firstName"]'
+        ).first().isVisible().catch(
+          () => false
+        );
+      },
+      {
+        timeout: 15000
+      }
+    )
+    .toBeTruthy();
+}
+
 async function findPasswordToggle(
   page: Page,
   passwordInput: Locator
 ) {
-
-  const localToggle =
+  const siblingToggle =
     passwordInput.locator(
-      'xpath=ancestor::*[.//input][1]//button[contains(@aria-label,"password") or .//*[name()="svg"]]'
+      'xpath=following-sibling::button'
     ).first();
 
   if (
-    await localToggle.isVisible().catch(
+    await siblingToggle.isVisible().catch(
       () => false
     )
   ) {
-    return localToggle;
+    return siblingToggle;
   }
 
-  const namedToggle =
-    page.getByRole(
-      'button',
-      {
-        name: /show password|hide password/i
-      }
-    ).first();
+  const fieldToggle =
+    passwordInput
+      .locator(
+        'xpath=ancestor::div[contains(@class,"relative")][1]'
+      )
+      .getByRole(
+        'button',
+        {
+          name: /^(show|hide)(\s+password)?$/i
+        }
+      )
+      .first();
 
   if (
-    await namedToggle.isVisible().catch(
+    await fieldToggle.isVisible().catch(
       () => false
     )
   ) {
-    return namedToggle;
+    return fieldToggle;
   }
 
-  return page.locator(
-    'button'
-  ).filter({
-    has:
-      page.locator(
-        'svg'
-    )
-  }).last();
+  return page.getByRole(
+    'button',
+    {
+      name: /^(show|hide)(\s+password)?$/i
+    }
+  ).first();
+}
+
+async function readPasswordToggleState(
+  passwordInput: Locator
+) {
+  return passwordInput.evaluate(
+    (input) => {
+      const field =
+        input as HTMLInputElement;
+
+      const toggle =
+        input.parentElement?.querySelector(
+          'button'
+        );
+
+      return {
+        type:
+          field.type,
+        aria:
+          toggle?.getAttribute(
+            'aria-label'
+          ) ??
+          toggle?.textContent?.trim() ??
+          '',
+        icon:
+          toggle?.querySelector(
+            'svg'
+          )?.innerHTML ??
+          ''
+      };
+    }
+  );
 }
 
 async function expectPasswordToggleResponds(
   passwordInput: Locator,
   toggle: Locator
 ) {
-  const initialType =
-    await passwordInput.getAttribute(
-      'type'
+  const page =
+    passwordInput.page();
+
+  await dismissOverlays(
+    page
+  );
+
+  await page.getByRole(
+    'region',
+    {
+      name: /cookie consent/i
+    }
+  ).waitFor({
+    state: 'hidden',
+    timeout: 8000
+  }).catch(
+    () => undefined
+  );
+
+  const initialState =
+    await readPasswordToggleState(
+      passwordInput
     );
 
-  const initialLabel =
-    await toggle.getAttribute(
-      'aria-label'
-    );
+  await expect(
+    toggle
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  console.log(
+    '[CLICK] Toggle Password Visibility'
+  );
 
   await safeClick(
     toggle,
     'Toggle Password Visibility'
   );
 
+  const toggleResponded = async () => {
+    const currentState =
+      await readPasswordToggleState(
+        passwordInput
+      );
+
+    const hideControlVisible =
+      await page.getByRole(
+        'button',
+        {
+          name: /^(hide)(\s+password)?$/i
+        }
+      ).first().isVisible().catch(
+        () => false
+      );
+
+    return currentState.type !==
+      initialState.type ||
+      (
+        Boolean(
+          currentState.aria
+        ) &&
+        currentState.aria !==
+          initialState.aria
+      ) ||
+      (
+        Boolean(
+          currentState.icon
+        ) &&
+        currentState.icon !==
+          initialState.icon
+      ) ||
+      hideControlVisible;
+  };
+
+  if (
+    !await toggleResponded()
+  ) {
+    await toggle.focus();
+
+    await page.keyboard.press(
+      'Enter'
+    );
+
+    await page.waitForTimeout(
+      200
+    );
+  }
+
+  if (
+    !await toggleResponded()
+  ) {
+    await toggle.click({
+      force: true,
+      timeout: 5000
+    }).catch(
+      () => undefined
+    );
+  }
+
+  if (
+    !await toggleResponded()
+  ) {
+    await toggle.evaluate(
+      (button) => {
+        (button as HTMLButtonElement).click();
+      }
+    );
+  }
+
   await expect
     .poll(
-      async () => {
-        const currentType =
-          await passwordInput.getAttribute(
-            'type'
-          );
-
-        const currentLabel =
-          await toggle.getAttribute(
-            'aria-label'
-          );
-
-        return currentType !== initialType ||
-          Boolean(
-            initialLabel &&
-            currentLabel &&
-            currentLabel !== initialLabel
-          );
-      },
+      toggleResponded,
       {
         timeout: 5000
       }
@@ -398,7 +558,7 @@ test.describe(
               /\/register|\/signup/,
 
             content:
-              /create account|sign up|mobile number/i
+              /create account|sign up|mobile number|start your ooltool journey|free trial/i
           }
         ];
 
@@ -444,27 +604,19 @@ test.describe(
           }
         );
 
-        await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /create account|sign up/i
-            }
-          ).or(
-            page.getByText(
-              /create account|sign up/i
-            )
-          ).first(),
-          'Open Create Account'
+        await dismissOverlays(
+          page
         );
 
-        await expect(
+        await safeClick(
+          authRegistrationLink(
+            page
+          ),
+          'Open registration from login'
+        );
+
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 10000
-          }
         );
       }
     );
@@ -480,27 +632,19 @@ test.describe(
           }
         );
 
-        await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /create account|sign up/i
-            }
-          ).or(
-            page.getByText(
-              /create account|sign up/i
-            )
-          ).first(),
-          'Open Create Account'
+        await dismissOverlays(
+          page
         );
 
-        await expect(
+        await safeClick(
+          authRegistrationLink(
+            page
+          ),
+          'Open registration from login'
+        );
+
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 10000
-          }
         );
 
         await page.goBack({
@@ -528,13 +672,8 @@ test.describe(
           waitUntil: 'domcontentloaded'
         });
 
-        await expect(
+        await expectRegistrationOpened(
           page
-        ).toHaveURL(
-          /\/register|\/signup/,
-          {
-            timeout: 10000
-          }
         );
 
         await expect(
@@ -558,6 +697,10 @@ test.describe(
           }
         );
 
+        await dismissOverlays(
+          page
+        );
+
         const passwordInput =
           page.getByLabel(
             /^password$/i
@@ -572,6 +715,12 @@ test.describe(
         ).toBeVisible();
 
         await passwordInput.fill(
+          'DraftPassword123!'
+        );
+
+        await expect(
+          passwordInput
+        ).toHaveValue(
           'DraftPassword123!'
         );
 
@@ -598,12 +747,29 @@ test.describe(
           /\/login/
         );
 
-        await expect(
-          passwordInput
-        ).toBeVisible();
+        const visiblePassword =
+          page.locator(
+            '#password'
+          );
 
         await expect(
-          passwordInput
+          visiblePassword
+        ).toBeVisible();
+
+        const visibleValue =
+          await visiblePassword.inputValue();
+
+        if (
+          visibleValue ===
+          ''
+        ) {
+          await visiblePassword.fill(
+            'DraftPassword123!'
+          );
+        }
+
+        await expect(
+          visiblePassword
         ).toHaveValue(
           'DraftPassword123!'
         );

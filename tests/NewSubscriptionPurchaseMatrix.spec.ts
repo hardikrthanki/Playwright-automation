@@ -80,7 +80,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Paid subscription can be started from onboarding plan selection',
     priority: 'Critical',
     status: 'automated',
-    automation: 'PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts and DirectSubscriptionPurchase.spec.ts'
+    automation: 'PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts, DirectSubscriptionPurchase.spec.ts, and SubscriptionLifecycleExecution.spec.ts gated Overlay/Portfolio/Marketplace paid purchases'
   },
   {
     id: 'SC-42',
@@ -169,7 +169,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Dashboard shows active subscription after successful purchase',
     priority: 'Critical',
     status: 'automated',
-    automation: 'Subscriber.spec.ts and BillingDeep.spec.ts'
+    automation: 'Subscriber.spec.ts'
   },
   {
     id: 'SC-53',
@@ -177,7 +177,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Billing overview shows current paid plan and active status',
     priority: 'Critical',
     status: 'automated',
-    automation: 'BillingDeep.spec.ts and BillingSubscriptionManagement.spec.ts'
+    automation: 'BillingSubscriptionManagement.spec.ts'
   },
   {
     id: 'SC-54',
@@ -300,7 +300,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal shows current subscription and payment method',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalOverview'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-69',
@@ -308,7 +308,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal invoice history is available',
     priority: 'High',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalInvoiceHistory'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-70',
@@ -316,7 +316,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Stripe portal return link navigates back to OOLTool',
     priority: 'Medium',
     status: 'automated',
-    automation: 'BillingSubscriptionManagement.spec.ts > validateSubscriptionPortalReturnToApplication'
+    automation: 'BillingSubscriptionManagement.spec.ts > validateStripePortalSession'
   },
   {
     id: 'SC-71',

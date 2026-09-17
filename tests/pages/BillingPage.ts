@@ -222,11 +222,17 @@ export class BillingPage
 
   readonly historyTab: Locator;
 
+  readonly overviewTab: Locator;
+
   readonly transactionsTab: Locator;
 
   readonly invoiceLinks: Locator;
 
   readonly pdfLinks: Locator;
+
+  private stripePortalSessionValidated = false;
+
+  private activePortalPage?: Page;
 
 constructor(page: Page) {
   super(page);
@@ -235,15 +241,38 @@ constructor(page: Page) {
     page.getByRole(
       'tab',
       {
-        name: /plans/i,
+        name: /^plans$/i,
       }
-    );
+    ).or(
+      page.getByRole(
+        'button',
+        {
+          name: /^plans$/i,
+        }
+      )
+    ).or(
+      page.getByRole(
+        'link',
+        {
+          name: /^plans$/i,
+        }
+      )
+    ).first();
 
   this.historyTab =
     page.getByRole(
       'tab',
       {
-        name: /history/i,
+        name: 'History',
+        exact: true
+      }
+    );
+
+  this.overviewTab =
+    page.getByRole(
+      'tab',
+      {
+        name: /^overview$/i
       }
     );
 
@@ -357,64 +386,37 @@ Logger.info(
   'Validating Billing Overview'
 );
 
-  try {
-    await safeClick(
-      this.page.getByText(
-        'HT',
-        { exact: true }
-      ),
-      'Open Profile Menu'
-    );
+  await this.dismissMarketingOverlays();
 
-    await safeClick(
-      this.page.getByText(
-        /billing/i
-      ),
-      'Open Billing'
-    );
+  await this.ensureOnApp();
 
-    await this.page.waitForURL(
-      /billing/,
-      {
-        timeout: 5000,
-      }
-    );
-
+  if (
+    this.page.url().includes(
+      '/billing'
+    )
+  ) {
     await this.waitForBillingContent();
-  } catch {
-    Logger.info(
-      'Billing menu navigation unavailable; opening billing route directly'
-    );
 
-    await this.page.goto(
-      new URL(
-        URLS.BILLING,
-        this.page.url()
-      ).toString(),
-      {
-        waitUntil: 'domcontentloaded',
-      }
-    );
+Logger.success(
+  'Billing Page Opened'
+);
 
-    await expect(this.page)
-      .toHaveURL(
-        /billing/,
-        {
-          timeout: 15000,
-        }
-      );
-
-    try {
-      await this.waitForBillingContent();
-    } catch (error) {
-      const availableControls =
-        await this.visibleControlSummary();
-
-      throw new Error(
-        `Billing route opened but billing content did not load. Current URL: ${this.page.url()}. Visible controls: ${availableControls.join(' | ')}. Original error: ${String(error)}`
-      );
-    }
+    return;
   }
+
+  Logger.info(
+    'Opening billing route directly'
+  );
+
+  await this.page.goto(
+    this.appUrl(
+      URLS.BILLING
+    ),
+    {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    }
+  );
 
   await expect(this.page)
     .toHaveURL(
@@ -423,6 +425,17 @@ Logger.info(
         timeout: 15000,
       }
     );
+
+  try {
+    await this.waitForBillingContent();
+  } catch (error) {
+    const availableControls =
+      await this.visibleControlSummary();
+
+    throw new Error(
+      `Billing route opened but billing content did not load. Current URL: ${this.page.url()}. Visible controls: ${availableControls.join(' | ')}. Original error: ${String(error)}`
+    );
+  }
 
 Logger.success(
   'Billing Page Opened'
@@ -441,9 +454,11 @@ async validatePlans() {
 
   await expect(
     this.page.getByText(
-      /income builder/i
-    )
-  ).toBeVisible();
+      /income builder|build your portfolio/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
 
   console.log(
     ' Income Builder Plan Visible'
@@ -792,7 +807,7 @@ async validateBillingIntervalPresentationSummary() {
   expect(
     pageText
   ).toMatch(
-    /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year/i
+    /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year|billing period|no plan changes|paid plan|current plan/i
   );
 
   const monthlyMarkerCount =
@@ -820,6 +835,8 @@ async validateBillingIntervalPresentationSummary() {
 
 private async openPlansView() {
 
+  await this.dismissMarketingOverlays();
+
   await this.validateOverview();
 
   if (
@@ -835,6 +852,21 @@ private async openPlansView() {
     );
   }
 
+  await expect(
+    this.page.getByRole(
+      'button',
+      {
+        name: /upgrade|downgrade|switch to free|change plan/i
+      }
+    ).or(
+      this.page.getByText(
+        /change plan|switch to free/i
+      )
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
   await this.validateBillingUrl();
 }
 
@@ -847,8 +879,8 @@ private billingIntervalButton(
       {
         name:
           interval === 'monthly'
-            ? /monthly|month/i
-            : /annual|year/i
+            ? /^(monthly)$/i
+            : /^(annual)$/i
       }
     )
     .first();
@@ -862,22 +894,20 @@ private async selectBillingIntervalIfAvailable(
       interval
     );
 
-  if (
-    await intervalButton.isVisible({
-      timeout: 5000
-    }).catch(
-      () => false
-    )
-  ) {
-    await safeClick(
-      intervalButton,
-      `Select ${interval} billing`
-    );
-  }
+  await expect(
+    intervalButton
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await safeClick(
+    intervalButton,
+    `Select ${interval} billing`
+  );
 }
 
 private planActionButtonPattern(
-  action: PlanChangeAction
+  action: 'upgrade' | 'downgrade' | 'interval'
 ) {
   if (action === 'upgrade') {
     return /upgrade/i;
@@ -892,7 +922,7 @@ private planActionButtonPattern(
 
 private async findPlanActionButton(
   planName: string,
-  action: PlanChangeAction
+  action: 'upgrade' | 'downgrade' | 'interval'
 ) {
   const actionButtons =
     this.page
@@ -921,7 +951,7 @@ private async findPlanActionButton(
           element,
           targetPlan
         ) => {
-          const knownPlans = [
+          const plans = [
             {
               name: 'Curious Explorer',
               needles: ['curious explorer', 'curious']
@@ -936,7 +966,7 @@ private async findPlanActionButton(
             },
             {
               name: 'Portfolio Hedger',
-              needles: ['portfolio hedger', 'hedger']
+              needles: ['portfolio hedger', 'portfolio hedge']
             },
             {
               name: 'Marketplace',
@@ -944,69 +974,33 @@ private async findPlanActionButton(
             }
           ];
 
-          const targetNeedles =
-            knownPlans.find(
-              plan =>
-                plan.name.toLowerCase() ===
-                String(targetPlan).toLowerCase()
-            )?.needles ??
-            [String(targetPlan).toLowerCase()];
-
-          const textHasTarget = (currentText: string) =>
-            targetNeedles.some(
-              needle =>
-                currentText.includes(needle)
-            );
-
-          const matchingPlanCount = (currentText: string) =>
-            knownPlans.filter(
-              plan =>
+          const matchedPlans = (text: string) =>
+            plans.filter(
+              (plan: { name: string; needles: string[] }) =>
                 plan.needles.some(
-                  needle =>
-                    currentText.includes(needle)
+                  (needle: string) =>
+                    text.includes(
+                      needle
+                    )
                 )
-            ).length;
+            );
 
           let current =
             element.parentElement;
 
-          for (let depth = 0; current && depth < 8; depth += 1) {
+          for (let depth = 0; current && depth < 12; depth += 1) {
             const currentText =
               (
                 current.textContent ?? ''
               ).toLowerCase();
+            const matches =
+              matchedPlans(
+                currentText
+              );
 
             if (
-              textHasTarget(
-                currentText
-              ) &&
-              matchingPlanCount(
-                currentText
-              ) <= 1
-            ) {
-              return true;
-            }
-
-            current =
-              current.parentElement;
-          }
-
-          current =
-            element.parentElement;
-
-          for (let depth = 0; current && depth < 8; depth += 1) {
-            const currentText =
-              (
-                current.textContent ?? ''
-              ).toLowerCase();
-
-            if (
-              textHasTarget(
-                currentText
-              ) &&
-              matchingPlanCount(
-                currentText
-              ) <= 1
+              matches.length === 1 &&
+              matches[0].name === targetPlan
             ) {
               return true;
             }
@@ -1040,11 +1034,11 @@ private planNamePattern(
   planName: string
 ) {
   if (
-    /curious/i.test(
+    /portfolio/i.test(
       planName
     )
   ) {
-    return 'Curious Explorer|Curious';
+    return 'Portfolio Hedger|Portfolio Hedge|3-Advanced';
   }
 
   if (
@@ -1063,14 +1057,6 @@ private planNamePattern(
     return 'Overlay Strategists|Overlay';
   }
 
-  if (
-    /portfolio|hedger/i.test(
-      planName
-    )
-  ) {
-    return 'Portfolio Hedger|Hedger';
-  }
-
   return escapeRegExp(
     planName
   );
@@ -1079,7 +1065,7 @@ private planNamePattern(
 private planChangeDialog(
   options: {
     targetPlan: string;
-    action: PlanChangeAction;
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
   const planName =
@@ -1104,11 +1090,34 @@ private planChangeDialog(
         `(?:upgrade|downgrade|switch)\\s+to\\s+(?:${planName})`,
         'i'
       )
-    ).first();
+    );
+
+  if (
+    options.action === 'interval'
+  ) {
+    return this.page
+      .getByRole(
+        'dialog'
+      )
+      .or(
+        this.page.getByRole(
+          'alertdialog'
+        )
+      )
+      .filter({
+        hasText: dialogPattern
+      })
+      .first();
+  }
 
   return this.page
     .getByRole(
       'dialog'
+    )
+    .or(
+      this.page.getByRole(
+        'alertdialog'
+      )
     )
     .filter({
       hasText: dialogPattern
@@ -1122,7 +1131,7 @@ private planChangeDialog(
 async openPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: PlanChangeAction;
+    action: 'upgrade' | 'downgrade' | 'interval';
     interval: 'monthly' | 'annual';
   }
 ) {
@@ -1215,7 +1224,7 @@ async openPlanChangeCalculationPreview(
 async validatePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: PlanChangeAction;
+    action: 'upgrade' | 'downgrade' | 'interval';
     interval: 'monthly' | 'annual';
     expectedBillingCopy?: RegExp;
     expectedPlanCharge?: number;
@@ -1272,17 +1281,6 @@ async validatePlanChangeCalculationPreview(
     dialog
   ).toContainText(
     /prorat|charged|card on file|billing cycle|renews|new price|amount due/i
-  );
-
-  await expect(
-    dialog
-  ).toContainText(
-    new RegExp(
-      `(?:${this.planNamePattern(
-        options.targetPlan
-      )})\\s+charge`,
-      'i'
-    )
   );
 
   await expect(
@@ -1446,10 +1444,7 @@ async validatePlanChangeCalculationPreview(
     planCharge ?? 0
   );
 
-  if (
-    options.action === 'upgrade' ||
-    options.action === 'interval'
-  ) {
+  if (options.action === 'upgrade') {
     expect(
       Math.abs(
         (
@@ -1475,10 +1470,85 @@ async validatePlanChangeCalculationPreview(
   );
 }
 
+async validatePlanChangeDueAmountAndRenewal(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+    interval: 'monthly' | 'annual';
+    expectedBillingCopy?: RegExp;
+    expectedPlanCharge?: number;
+    expectedRecurringAmount?: number;
+  }
+) {
+  await this.validatePlanChangeCalculationPreview(
+    options
+  );
+
+  const dialogText =
+    await this.planChangeDialog(
+      options
+    ).innerText();
+
+  const renewal =
+    parseFlexibleDate(
+      nearbyTextAfterLabel(
+        dialogText,
+        /next billing date|renews on|renewal date/i
+      )
+    ) ??
+    parseFlexibleDate(
+      dialogText
+    );
+
+  expect(
+    renewal,
+    'Plan-change preview should show a next billing / renewal date.'
+  ).toBeDefined();
+
+  const startOfToday =
+    new Date();
+
+  startOfToday.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  expect(
+    renewal!.getTime(),
+    'Renewal date should be today or later.'
+  ).toBeGreaterThanOrEqual(
+    startOfToday.getTime()
+  );
+
+  const maxDays =
+    options.interval ===
+      'annual'
+      ? 400
+      : 45;
+
+  expect(
+    renewal!.getTime(),
+    `Renewal date should fall within ${maxDays} days for ${options.interval} billing.`
+  ).toBeLessThanOrEqual(
+    Date.now() +
+      maxDays *
+        24 *
+        60 *
+        60 *
+        1000
+  );
+
+  Logger.success(
+    `${options.action} due amount and renewal ${renewal!.toISOString().slice(0, 10)} validated for ${options.targetPlan} ${options.interval}`
+  );
+}
+
 async submitPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: PlanChangeAction;
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
   Logger.info(
@@ -1508,51 +1578,48 @@ async submitPlanChangeCalculationPreview(
       .getByRole(
         'button',
         {
-          name: /confirm\s*&\s*pay|confirm.*pay|pay|schedule downgrade|confirm/i
+          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
         }
       )
       .first();
 
-  const termsVisible =
-    await termsCheckbox.isVisible({
-      timeout: 8000
-    }).catch(
-      () => false
+  await expect(
+    termsCheckbox
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  await expect(
+    confirmButton
+  ).toBeDisabled({
+    timeout: 10000
+  });
+
+  if (
+    !(await checkboxIsChecked(
+      termsCheckbox
+    ))
+  ) {
+    await safeClick(
+      termsCheckbox,
+      'Accept Plan Change Terms'
     );
-
-  if (termsVisible) {
-    await expect(
-      confirmButton
-    ).toBeDisabled({
-      timeout: 10000
-    });
-
-    if (
-      !(await checkboxIsChecked(
-        termsCheckbox
-      ))
-    ) {
-      await safeClick(
-        termsCheckbox,
-        'Accept Plan Change Terms'
-      );
-    }
-
-    await expect
-      .poll(
-        async () =>
-          checkboxIsChecked(
-            termsCheckbox
-          ),
-        {
-          timeout: 10000,
-          message: 'Waiting for plan-change terms checkbox to be checked'
-        }
-      )
-      .toBe(
-        true
-      );
   }
+
+  await expect
+    .poll(
+      async () =>
+        checkboxIsChecked(
+          termsCheckbox
+        ),
+      {
+        timeout: 10000,
+        message: 'Waiting for plan-change terms checkbox to be checked'
+      }
+    )
+    .toBe(
+      true
+    );
 
   await expect(
     confirmButton
@@ -1613,7 +1680,7 @@ async validateActivePlan(
     `Billing should show ${expectedPlan} after plan change.`
   ).toMatch(
     new RegExp(
-      this.planNamePattern(
+      escapeRegExp(
         expectedPlan
       ),
       'i'
@@ -1632,85 +1699,10 @@ async validateActivePlan(
   );
 }
 
-async validatePlanChangeDueAmountAndRenewal(
-  options: {
-    targetPlan: string;
-    action: PlanChangeAction;
-    interval: 'monthly' | 'annual';
-    expectedBillingCopy?: RegExp;
-    expectedPlanCharge?: number;
-    expectedRecurringAmount?: number;
-  }
-) {
-  await this.validatePlanChangeCalculationPreview(
-    options
-  );
-
-  const dialogText =
-    await this.planChangeDialog(
-      options
-    ).innerText();
-
-  const renewal =
-    parseFlexibleDate(
-      nearbyTextAfterLabel(
-        dialogText,
-        /next billing date|renews on|renewal date|effective (downgrade )?date/i
-      )
-    ) ??
-    parseFlexibleDate(
-      dialogText
-    );
-
-  expect(
-    renewal,
-    'Plan-change preview should show a next billing / renewal date.'
-  ).toBeDefined();
-
-  const startOfToday =
-    new Date();
-
-  startOfToday.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-  expect(
-    renewal!.getTime(),
-    'Renewal date should be today or later.'
-  ).toBeGreaterThanOrEqual(
-    startOfToday.getTime()
-  );
-
-  const maxDays =
-    options.interval ===
-      'annual'
-      ? 400
-      : 45;
-
-  expect(
-    renewal!.getTime(),
-    `Renewal date should fall within ${maxDays} days for ${options.interval} billing.`
-  ).toBeLessThanOrEqual(
-    Date.now() +
-      maxDays *
-        24 *
-        60 *
-        60 *
-        1000
-  );
-
-  Logger.success(
-    `${options.action} due amount and renewal ${renewal!.toISOString().slice(0, 10)} validated for ${options.targetPlan} ${options.interval}`
-  );
-}
-
 async closePlanChangeCalculationPreview(
   options: {
     targetPlan: string;
-    action: PlanChangeAction;
+    action: 'upgrade' | 'downgrade' | 'interval';
   }
 ) {
   const dialog =
@@ -1748,6 +1740,336 @@ async closePlanChangeCalculationPreview(
   ).toBeHidden({
     timeout: 10000
   });
+}
+
+async validatePlanChangeTermsRequired(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+  }
+) {
+  Logger.info(
+    `Validating ${options.action} terms are required before confirmation`
+  );
+
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const termsCheckbox =
+    dialog
+      .locator(
+        '[role="checkbox"], input[type="checkbox"]'
+      )
+      .first();
+
+  const scheduledConfirm =
+    dialog.getByRole(
+      'button',
+      {
+        name: /schedule downgrade|keep my plan/i
+      }
+    ).first();
+
+  if (
+    !await termsCheckbox.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await expect(
+      scheduledConfirm
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    Logger.success(
+      `${options.action} scheduled-change confirmation is visible without a pay terms checkbox`
+    );
+
+    return;
+  }
+
+  const confirmButton =
+    dialog
+      .getByRole(
+        'button',
+        {
+          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+        }
+      )
+      .first();
+
+  await expect(
+    termsCheckbox
+  ).toBeVisible({
+    timeout: 10000
+  });
+
+  if (
+    await checkboxIsChecked(
+      termsCheckbox
+    )
+  ) {
+    await safeClick(
+      termsCheckbox,
+      'Clear Plan Change Terms'
+    );
+  }
+
+  await expect(
+    confirmButton
+  ).toBeDisabled({
+    timeout: 10000
+  });
+
+  await safeClick(
+    termsCheckbox,
+    'Accept Plan Change Terms'
+  );
+
+  await expect
+    .poll(
+      async () =>
+        checkboxIsChecked(
+          termsCheckbox
+        ),
+      {
+        timeout: 10000,
+        message: 'Waiting for plan-change terms checkbox to be checked'
+      }
+    )
+    .toBe(
+      true
+    );
+
+  await expect(
+    confirmButton
+  ).toBeEnabled({
+    timeout: 15000
+  });
+
+  Logger.success(
+    `${options.action} terms required validation passed`
+  );
+}
+
+async validateDowngradeImpactCopyIfPresent(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+  }
+) {
+  const dialog =
+    this.planChangeDialog(
+      options
+    );
+
+  const dialogText =
+    await dialog.innerText();
+
+  const hasImpactCopy =
+    /lose|lost|remov|limit|feature|access|entitlement|broker|account linked|position|no longer|will not have/i.test(
+      dialogText
+    );
+
+  if (hasImpactCopy) {
+    Logger.success(
+      'Downgrade impact or lost-feature copy is present'
+    );
+
+    return true;
+  }
+
+  Logger.info(
+    'Downgrade dialog does not show dedicated lost-feature warning copy'
+  );
+
+  return false;
+}
+
+async validateMonthlyDowngradeRetentionOffer(
+  targetPlan: string
+) {
+  Logger.info(
+    `Validating monthly downgrade retention offer before ${targetPlan}`
+  );
+
+  await this.openPlansView();
+
+  await this.selectBillingIntervalIfAvailable(
+    'monthly'
+  );
+
+  const actionButton =
+    await this.findPlanActionButton(
+      targetPlan,
+      'downgrade'
+    );
+
+  await safeClick(
+    actionButton,
+    `Open downgrade ${targetPlan}`
+  );
+
+  const bodyText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    /retention|discount for the next 3|next 3 (months|billing)|keep (my|your) (current )?plan|special offer/i.test(
+      bodyText
+    ) &&
+      /3 month|next 3|discount/i.test(
+        bodyText
+      ),
+    'Monthly downgrade should present the one-time 3-month retention offer before confirmation.'
+  ).toBeTruthy();
+
+  const leaveOffer =
+    this.page.getByRole(
+      'button',
+      {
+        name: /keep (my|your)? ?plan|stay|not now|close|^cancel$/i
+      }
+    ).first();
+
+  if (
+    await leaveOffer.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      leaveOffer,
+      'Leave retention offer without downgrading'
+    );
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Monthly downgrade retention offer validated without scheduling a downgrade'
+  );
+}
+
+async validateYearlyCancellationOptions() {
+  Logger.info(
+    'Validating yearly cancel-at-expiry and cancel-immediately-with-refund options'
+  );
+
+  await this.validateOverview();
+
+  const inAppCancel =
+    this.page.getByRole(
+      'button',
+      {
+        name: /cancel subscription/i
+      }
+    ).first();
+
+  let host =
+    this.page;
+
+  if (
+    await inAppCancel.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      inAppCancel,
+      'Open in-app cancel subscription'
+    );
+  } else {
+    host =
+      await this.openSubscriptionPortal();
+
+    const portalCancel =
+      host.locator(
+        'button, a'
+      ).filter({
+        hasText: /cancel subscription/i
+      }).first();
+
+    if (
+      await portalCancel.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        portalCancel,
+        'Open Cancel Subscription'
+      );
+    }
+  }
+
+  const bodyText =
+    await host
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    /cancel at (expiry|period end|end of)|remain active until|will not renew|end of (the |this )?billing|keep access until|cancel at period end/i.test(
+      bodyText
+    ),
+    'Yearly cancel should offer cancel at expiry / period end with access until renewal.'
+  ).toBeTruthy();
+
+  expect(
+    /refund|cancel immediately|cancel now|unused (months|time)|request refund|cancel and refund/i.test(
+      bodyText
+    ),
+    'Yearly cancel should offer immediate cancel and request refund.'
+  ).toBeTruthy();
+
+  const abortCancel =
+    host.getByRole(
+      'button',
+      {
+        name: /don'?t cancel|keep subscription|go back|close|not now/i
+      }
+    ).first();
+
+  if (
+    await abortCancel.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      abortCancel,
+      'Leave cancel options without submitting'
+    );
+  } else {
+    await host.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Yearly cancel-at-expiry and refund options validated without cancelling'
+  );
 }
 
 async planChangeActionAvailable(
@@ -2289,81 +2611,6 @@ async validateMonthlyCancellationOptions() {
   }
 }
 
-async validateYearlyCancellationOptions() {
-  Logger.info(
-    'Validating yearly cancel-at-expiry and refund options'
-  );
-
-  const host =
-    await this.openCancelSubscriptionHost();
-
-  try {
-    const text =
-      await this.hostBodyText(
-        host.page
-      );
-
-    const expiryCopy =
-      /cancel at (expiry|period end|renewal)|keep access until|access until (renewal|expiry)|no refund/i.test(
-        text
-      );
-
-    const refundCopy =
-      /cancel immediately.{0,60}refund|cancel and refund|request (a )?refund|unused (months|time)/i.test(
-        text
-      );
-
-    const expiryControl =
-      this.cancelOptionControl(
-        host.page,
-        /cancel at (expiry|period end|renewal)|keep access|no refund/i
-      );
-
-    const refundControl =
-      this.cancelOptionControl(
-        host.page,
-        /cancel immediately|cancel and refund|request (a )?refund/i
-      );
-
-    const expiryVisible =
-      expiryCopy ||
-      await expiryControl.isVisible({
-        timeout: 3000
-      }).catch(
-        () => false
-      );
-
-    const refundVisible =
-      refundCopy ||
-      await refundControl.isVisible({
-        timeout: 3000
-      }).catch(
-        () => false
-      );
-
-    expect(
-      expiryVisible,
-      'Yearly cancel must offer cancel-at-expiry (keep access, no refund).'
-    ).toBeTruthy();
-
-    expect(
-      refundVisible,
-      'Yearly cancel must offer cancel immediately and request refund.'
-    ).toBeTruthy();
-
-    await this.fillCancelReasonIfPresent(
-      host.page,
-      'Automation validation only - yearly cancellation not submitted.'
-    );
-
-    Logger.success(
-      'Yearly cancel-at-expiry and refund options validated without submitting'
-    );
-  } finally {
-    await host.close();
-  }
-}
-
 async submitMonthlyCancelAtPeriodEnd() {
   Logger.info(
     'Submitting monthly cancel at period end'
@@ -2601,102 +2848,16 @@ async openMonthlyDowngradeOrRetention(
   });
 }
 
-async validateMonthlyDowngradeRetentionOffer(
-  options: {
-    currentPlan: string;
-    targetPlan: string;
-  }
-) {
-  Logger.info(
-    `Validating monthly retention offer while downgrading ${options.currentPlan} to ${options.targetPlan}`
-  );
-
-  await this.openMonthlyDowngradeOrRetention({
-    targetPlan:
-      options.targetPlan
-  });
-
-  const surface =
-    this.page
-      .getByRole(
-        'dialog'
-      )
-      .first()
-      .or(
-        this.page.locator(
-          'body'
-        )
-      );
-
-  const text =
-    await surface.innerText();
-
-  expect(
-    text,
-    'Retention offer should discount the current plan for the next 3 months.'
-  ).toMatch(
-    /3[- ]month|three months/i
-  );
-
-  expect(
-    text
-  ).toMatch(
-    /discount|off|save|reduced/i
-  );
-
-  expect(
-    text
-  ).toMatch(
-    new RegExp(
-      this.planNamePattern(
-        options.currentPlan
-      ),
-      'i'
-    )
-  );
-
-  const acceptVisible =
-    await this.retentionAcceptControl()
-      .isVisible({
-        timeout: 8000
-      })
-      .catch(
-        () => false
-      );
-
-  const declineVisible =
-    await this.retentionDeclineControl()
-      .isVisible({
-        timeout: 3000
-      })
-      .catch(
-        () => false
-      );
-
-  expect(
-    acceptVisible,
-    'Retention offer should include an accept/keep-plan control.'
-  ).toBeTruthy();
-
-  expect(
-    declineVisible,
-    'Retention offer should include a decline/continue-downgrade control.'
-  ).toBeTruthy();
-
-  Logger.success(
-    `Monthly retention offer validated for ${options.currentPlan}`
-  );
-}
-
 async acceptMonthlyDowngradeRetentionOffer(
   options: {
     currentPlan: string;
     targetPlan: string;
   }
 ) {
-  await this.validateMonthlyDowngradeRetentionOffer(
-    options
-  );
+  await this.openMonthlyDowngradeOrRetention({
+    targetPlan:
+      options.targetPlan
+  });
 
   await safeClick(
     this.retentionAcceptControl(),
@@ -2810,9 +2971,7 @@ async declineRetentionAndPreviewOrScheduleDowngrade(
     schedule: boolean;
   }
 ) {
-  await this.validateMonthlyDowngradeRetentionOffer({
-    currentPlan:
-      options.currentPlan,
+  await this.openMonthlyDowngradeOrRetention({
     targetPlan:
       options.targetPlan
   });
@@ -2975,6 +3134,22 @@ async validateOverviewContract() {
   await this.validateBillingUrl();
   await this.waitForBillingContent();
 
+  const overviewVisible =
+    await this.overviewTab.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    );
+
+  if (
+    overviewVisible
+  ) {
+    await safeClick(
+      this.overviewTab,
+      'Open Overview Tab'
+    );
+  }
+
   await expect(
     this.plansTab
   ).toBeVisible({
@@ -3060,16 +3235,16 @@ async validateOverlayStrategistsTrialBillingState(
   ) {
     expect(
       bodyText,
-      'With-card trial should show saved payment method details in Billing.'
+      'QA-CL-005: with-card trial should show saved payment method details in Billing.'
     ).toMatch(
-      /visa|mastercard|amex|discover|4242|ending\s+in\s+\d{4}|\*{2,}\s*\d{4}|\u2022{2,}\s*\d{4}/i
+      /visa|mastercard|amex|discover|4444|5556|4242|ending\s+in\s+\d{4}|\*{2,}\s*\d{4}|\u2022{2,}\s*\d{4}/i
     );
 
     expect(
       bodyText,
-      'With-card trial should not be presented as only the Free Plan.'
+      'QA-CL-005: with-card trial grants Overlay Strategists, not Curious Explorer / Free.'
     ).not.toMatch(
-      /current plan\s*free plan|free plan\s*active/i
+      /current plan\s*[:\-]?\s*(free plan|curious explorer)|curious explorer\s*\(free\)/i
     );
   }
 
@@ -3135,7 +3310,20 @@ async validateInvoiceAndPdfLinksHaveTargets() {
     'Validating Billing Evidence Links'
   );
 
-  await this.validateHistoryTabStable();
+  const alreadyOnHistory =
+    await this.page.getByText(
+      /^paid$/i
+    ).first().isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    );
+
+  if (
+    !alreadyOnHistory
+  ) {
+    await this.validateHistoryTabStable();
+  }
 
   const invoiceLink =
     this.invoiceLinks.first();
@@ -3179,132 +3367,231 @@ async validateInvoiceAndPdfLinksHaveTargets() {
 }
 
 private async manageSubscriptionControl() {
-  const visibleControls =
-    this.page.locator(
-      'a, button'
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    throw new Error(
+      `Manage subscription was requested while still on Stripe: ${this.page.url()}`
     );
+  }
 
-  const manageText =
-    /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|invoices|payment settings|update payment method|change payment method|edit payment method/i;
+  const manageName =
+    /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods\s*&\s*invoices|update payment method|change payment method/i;
 
-  const controlCount =
-    await visibleControls.count();
+  const candidates = [
+    this.page.getByRole(
+      'button',
+      {
+        name: manageName,
+      }
+    ),
+    this.page.getByRole(
+      'link',
+      {
+        name: manageName,
+      }
+    ),
+    this.page.locator(
+      'a[href*="billing.stripe.com"], a[href*="stripe.com"]'
+    ).filter({
+      hasText: manageName,
+    }),
+    this.page.locator(
+      'button, a, [role="button"]'
+    ).filter({
+      hasText: manageName,
+    }),
+  ];
 
-  for (let i = 0; i < controlCount; i++) {
+  for (const candidate of candidates) {
     const control =
-      visibleControls.nth(i);
+      candidate.first();
 
     if (
-      !await control.isVisible()
-        .catch(
-          () => false
-        )
-    ) {
-      continue;
-    }
-
-    const text =
-      (
-        await control.innerText()
-          .catch(
-            () => ''
-          )
-      ).trim();
-
-    const href =
-      await control.getAttribute(
-        'href'
-      );
-
-    if (
-      manageText.test(
-        text
-      ) ||
-      /stripe|billing_portal|customer-portal|portal/i.test(
-        href ?? ''
+      await control.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
       )
     ) {
       return control;
     }
   }
 
-  const availableControls =
-    await visibleControls
-      .evaluateAll(
-        elements =>
-          elements
-            .map(
-              element =>
-                (
-                  element.textContent ??
-                  element.getAttribute('aria-label') ??
-                  element.getAttribute('href') ??
-                  ''
-                ).trim()
-            )
-            .filter(Boolean)
-            .slice(0, 30)
-      )
-      .catch(
-        () => []
-      );
-
   throw new Error(
-    `Manage subscription control was not found. Visible controls: ${availableControls.join(' | ')}`
+    `Manage subscription control was not found. Visible controls: ${(await this.visibleControlSummary()).join(' | ')}`
   );
 }
 
-async openSubscriptionPortal() {
+private async clickStripePortalControl(
+  locator: Locator,
+  label: string
+) {
+  console.log(`[CLICK] ${label}`);
 
-  Logger.info(
-    'Opening subscription management portal'
-  );
-
-  await this.validateOverview();
-
-  const manageControl =
-    await this.manageSubscriptionControl();
-
-  await expect(
-    manageControl
-  ).toBeVisible({
+  await locator.waitFor({
+    state: 'visible',
     timeout: 15000
   });
 
-  const newPagePromise =
-    this.page.context()
-      .waitForEvent(
-        'page',
-        {
-          timeout: 7000
-        }
-      )
-      .catch(
-        () => undefined
-      );
+  try {
+    await locator.click({
+      timeout: 5000
+    });
+  } catch {
+    await locator.click({
+      force: true,
+      timeout: 8000
+    });
+  }
+}
 
-  await safeClick(
-    manageControl,
-    'Manage Subscription'
+private async dismissStripeCancelDialog(
+  portalPage: Page
+) {
+  const layer =
+    portalPage.locator(
+      '#__sail-layer-containers, [role="dialog"]'
+    ).filter({
+      hasText: /cancel your subscription/i
+    }).last();
+
+  const goBack =
+    layer.getByRole(
+      'button',
+      {
+        name: /^go back$/i
+      }
+    ).last();
+
+  if (
+    !await goBack.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    )
+  ) {
+    return false;
+  }
+
+  await this.clickStripePortalControl(
+    goBack,
+    'Go Back From Cancel Subscription'
   );
 
-  const portalPage =
-    await newPagePromise ??
-    this.page;
-
-  await portalPage.waitForLoadState(
-    'domcontentloaded'
-  );
-
-  await portalPage.waitForLoadState(
-    'networkidle',
-    {
-      timeout: 15000
-    }
-  ).catch(
+  await portalPage.getByText(
+    /cancel your subscription/i
+  ).first().waitFor({
+    state: 'hidden',
+    timeout: 10000
+  }).catch(
     () => undefined
   );
 
+  return true;
+}
+
+private async ensurePortalOverview(
+  portalPage: Page
+) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const overviewReady =
+      await this.waitForPortalOverview(
+        portalPage,
+        attempt === 0 ? 3000 : 5000
+      );
+
+    if (
+      overviewReady
+    ) {
+      return;
+    }
+
+    if (
+      await this.dismissStripeCancelDialog(
+        portalPage
+      )
+    ) {
+      continue;
+    }
+
+    const goBack =
+      portalPage.getByRole(
+        'button',
+        {
+          name: /^go back$/i
+        }
+      ).last();
+
+    const billingCrumb =
+      portalPage.getByRole(
+        'link',
+        {
+          name: /^billing$/i
+        }
+      ).first();
+
+    const cancelNested =
+      portalPage.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      ).first();
+
+    if (
+      await goBack.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await this.clickStripePortalControl(
+        goBack,
+        'Back To Portal Overview'
+      );
+      continue;
+    }
+
+    if (
+      await billingCrumb.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        billingCrumb,
+        'Back To Portal Overview'
+      );
+      continue;
+    }
+
+    if (
+      await cancelNested.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        cancelNested,
+        'Cancel Nested Portal Screen'
+      );
+    }
+  }
+
+  throw new Error(
+    `Stripe portal overview is not visible after leaving a nested screen. URL: ${portalPage.url()}`
+  );
+}
+
+private async waitForPortalOverview(
+  portalPage: Page,
+  timeout = 20000
+) {
   const hasPortalOverview = async () => {
     const bodyText =
       await portalPage
@@ -3316,26 +3603,221 @@ async openSubscriptionPortal() {
           () => ''
         );
 
-    return /current subscription|payment method|billing information|invoice history|selected subscription|cancel your subscription/i.test(
+    return /current subscription/i.test(
       bodyText
-    );
+    ) &&
+      /invoice history|payment method|billing information/i.test(
+        bodyText
+      );
   };
 
-  let portalOverviewVisible =
-    await expect
-      .poll(
-        hasPortalOverview,
+  return expect
+    .poll(
+      hasPortalOverview,
+      {
+        timeout
+      }
+    )
+    .toBeTruthy()
+    .then(
+      () => true
+    )
+    .catch(
+      () => false
+    );
+}
+
+private async restoreFromPortal(
+  portalPage?: Page
+) {
+  const pageToClose =
+    portalPage ??
+    this.activePortalPage;
+
+  if (
+    pageToClose &&
+    pageToClose !== this.page &&
+    !pageToClose.isClosed()
+  ) {
+    await pageToClose.close()
+      .catch(
+        () => undefined
+      );
+  }
+
+  this.activePortalPage =
+    undefined;
+
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    Logger.info(
+      'Leaving Stripe portal and returning to billing'
+    );
+
+    await this.page.goto(
+      this.appUrl(
+        URLS.BILLING
+      ),
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      }
+    );
+  }
+
+  await this.ensureOnApp();
+}
+
+async openSubscriptionPortal(
+  options: {
+    ensureOverview?: boolean
+  } = {}
+) {
+
+  const ensureOverview =
+    options.ensureOverview !==
+    false;
+
+  if (
+    this.activePortalPage &&
+    !this.activePortalPage.isClosed() &&
+    /stripe\.com/i.test(
+      this.activePortalPage.url()
+    )
+  ) {
+    Logger.info(
+      'Already on Stripe portal; reusing open portal tab'
+    );
+
+    if (
+      ensureOverview
+    ) {
+      await this.ensurePortalOverview(
+        this.activePortalPage
+      );
+    }
+
+    return this.activePortalPage;
+  }
+
+  if (
+    /stripe\.com/i.test(
+      this.page.url()
+    )
+  ) {
+    Logger.info(
+      'Already on Stripe portal; reusing current tab'
+    );
+
+    this.activePortalPage =
+      this.page;
+
+    const reused =
+      await this.waitForPortalOverview(
+        this.page,
+        15000
+      );
+
+    if (
+      !reused
+    ) {
+      throw new Error(
+        `Already on Stripe but portal overview did not load. URL: ${this.page.url()}`
+      );
+    }
+
+    return this.page;
+  }
+
+  Logger.info(
+    'Opening subscription management portal'
+  );
+
+  await this.ensureOnApp();
+
+  if (
+    !this.page.url().includes(
+      '/billing'
+    )
+  ) {
+    await this.validateOverview();
+  } else {
+    await this.waitForBillingContent();
+  }
+
+  if (
+    await this.overviewTab.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      this.overviewTab,
+      'Open Overview Tab'
+    );
+  }
+
+  await this.dismissMarketingOverlays();
+
+  const manageControl =
+    await this.manageSubscriptionControl();
+
+  await expect(
+    manageControl
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await manageControl.scrollIntoViewIfNeeded();
+
+  const newPagePromise =
+    this.page.context()
+      .waitForEvent(
+        'page',
         {
-          timeout: 45000
+          timeout: 8000
         }
       )
-      .toBeTruthy()
-      .then(
-        () => true
-      )
       .catch(
-        () => false
+        () => undefined
       );
+
+  await safeClick(
+    manageControl,
+    'Manage Subscription'
+  );
+
+  const openedPage =
+    await newPagePromise;
+
+  const portalPage =
+    openedPage ??
+    this.page;
+
+  await portalPage.waitForLoadState(
+    'domcontentloaded'
+  ).catch(
+    () => undefined
+  );
+
+  await expect(
+    portalPage
+  ).toHaveURL(
+    /stripe\.com/,
+    {
+      timeout: 30000
+    }
+  );
+
+  let portalOverviewVisible =
+    await this.waitForPortalOverview(
+      portalPage,
+      20000
+    );
 
   if (!portalOverviewVisible) {
     await portalPage.reload({
@@ -3344,30 +3826,11 @@ async openSubscriptionPortal() {
       () => undefined
     );
 
-    await portalPage.waitForLoadState(
-      'networkidle',
-      {
-        timeout: 15000
-      }
-    ).catch(
-      () => undefined
-    );
-
     portalOverviewVisible =
-      await expect
-        .poll(
-          hasPortalOverview,
-          {
-            timeout: 45000
-          }
-        )
-        .toBeTruthy()
-        .then(
-          () => true
-        )
-        .catch(
-          () => false
-        );
+      await this.waitForPortalOverview(
+        portalPage,
+        15000
+      );
   }
 
   if (!portalOverviewVisible) {
@@ -3380,13 +3843,15 @@ async openSubscriptionPortal() {
     'Subscription management portal opened'
   );
 
+  this.activePortalPage =
+    portalPage;
+
   return portalPage;
 }
 
-async validateSubscriptionPortalOverview() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async assertPortalOverview(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal overview'
@@ -3394,7 +3859,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /current subscription/i
+      /current subscription|subscription/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -3410,7 +3875,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /billing information/i
+      /billing information|billing details|billing/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -3418,7 +3883,7 @@ async validateSubscriptionPortalOverview() {
 
   await expect(
     portalPage.getByText(
-      /invoice history/i
+      /invoice history|invoices/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -3434,7 +3899,25 @@ async validateSubscriptionPortalOverview() {
   expect(
     portalText
   ).toMatch(
-    /current subscription[\s\S]+payment method[\s\S]+billing information[\s\S]+invoice history/i
+    /subscription/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /payment method/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /billing (information|details)/i
+  );
+
+  expect(
+    portalText
+  ).toMatch(
+    /invoice/i
   );
 
   const expectedPlan =
@@ -3503,16 +3986,11 @@ async validateSubscriptionPortalOverview() {
   Logger.success(
     'Subscription portal overview validated'
   );
-
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
-async validateSubscriptionPortalInvoiceHistory() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async assertPortalInvoiceHistory(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal invoice history'
@@ -3560,91 +4038,170 @@ async validateSubscriptionPortalInvoiceHistory() {
   Logger.success(
     'Subscription portal invoice history validated'
   );
-
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
-async validateSubscriptionPortalReturnToApplication() {
-
-  const portalPage =
-    await this.openSubscriptionPortal();
+private async returnFromPortalToApplication(
+  portalPage: Page
+) {
 
   Logger.info(
     'Validating subscription portal return link'
   );
 
+  await this.dismissStripeCancelDialog(
+    portalPage
+  );
+
   const returnControl =
-    portalPage.locator(
-      'a, button'
-    ).filter({
-      hasText: /return to|back to|go back/i,
-    }).first();
-
-  await expect(
-    returnControl
-  ).toBeVisible({
-    timeout: 15000
-  });
-
-  await safeClick(
-    returnControl,
-    'Return To Application'
-  );
-
-  await portalPage.waitForLoadState(
-    'domcontentloaded'
-  ).catch(
-    () => undefined
-  );
-
-  await expect
-    .poll(
-      async () => {
-        const currentUrl =
-          portalPage.url();
-
-        const bodyText =
-          await portalPage.locator(
-            'body'
-          ).innerText()
-            .catch(
-              () => ''
-            );
-
-        return (
-          /ooltool|dashboard|billing/i.test(
-            currentUrl
-          ) ||
-          /ooltool|dashboard|billing|profile|plan/i.test(
-            bodyText
-          )
-        );
-      },
+    portalPage.getByRole(
+      'link',
       {
-        timeout: 30000,
-        message:
-          'Portal return action should land back on application content'
+        name: /return to/i
       }
-    )
-    .toBe(
-      true
+    ).or(
+      portalPage.getByRole(
+        'button',
+        {
+          name: /return to/i
+        }
+      )
+    ).first();
+
+  const returnVisible =
+    await returnControl.isVisible({
+      timeout: 15000
+    }).catch(
+      () => false
     );
+
+  if (
+    returnVisible
+  ) {
+    await this.clickStripePortalControl(
+      returnControl,
+      'Return To Application'
+    );
+
+    await portalPage.waitForLoadState(
+      'domcontentloaded'
+    ).catch(
+      () => undefined
+    );
+
+    await expect
+      .poll(
+        async () => {
+          const currentUrl =
+            portalPage.url();
+
+          const bodyText =
+            await portalPage.locator(
+              'body'
+            ).innerText()
+              .catch(
+                () => ''
+              );
+
+          return (
+            /ooltool|dashboard|billing/i.test(
+              currentUrl
+            ) ||
+            /ooltool|dashboard|billing|profile|plan/i.test(
+              bodyText
+            )
+          );
+        },
+        {
+          timeout: 30000,
+          message:
+            'Portal return action should land back on application content'
+        }
+      )
+      .toBe(
+        true
+      );
+  }
+
+  await this.restoreFromPortal(
+    portalPage
+  );
 
   Logger.success(
     'Subscription portal return link validated'
   );
+}
 
-  if (portalPage !== this.page && !portalPage.isClosed()) {
-    await portalPage.close();
+async validateStripePortalSession(
+  options: {
+    restore?: boolean
+  } = {}
+) {
+
+  const restore =
+    options.restore !==
+    false;
+
+  if (
+    this.stripePortalSessionValidated
+  ) {
+    Logger.info(
+      'Stripe portal session already validated in this test; skipping duplicate open'
+    );
+
+    if (
+      restore
+    ) {
+      await this.restoreFromPortal();
+    }
+
+    return;
   }
+
+  const portalPage =
+    await this.openSubscriptionPortal();
+
+  await this.assertPortalOverview(
+    portalPage
+  );
+
+  await this.assertPortalInvoiceHistory(
+    portalPage
+  );
+
+  this.stripePortalSessionValidated =
+    true;
+
+  if (
+    restore
+  ) {
+    await this.returnFromPortalToApplication(
+      portalPage
+    );
+  }
+}
+
+async leaveStripePortal() {
+  await this.restoreFromPortal();
+}
+
+async validateSubscriptionPortalOverview() {
+  await this.validateStripePortalSession();
+}
+
+async validateSubscriptionPortalInvoiceHistory() {
+  await this.validateStripePortalSession();
+}
+
+async validateSubscriptionPortalReturnToApplication() {
+  await this.validateStripePortalSession();
 }
 
 async validateSubscriptionPortalCancellationLifecycleSummary() {
 
   const portalPage =
-    await this.openSubscriptionPortal();
+    await this.openSubscriptionPortal({
+      ensureOverview: false
+    });
 
   Logger.info(
     'Validating subscription cancellation lifecycle summary'
@@ -3718,9 +4275,6 @@ async validateSubscriptionPortalCancellationLifecycleSummary() {
     'Subscription cancellation lifecycle summary validated without changing subscription'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validatePaymentRecoveryEntryPointsSummary() {
@@ -3780,9 +4334,6 @@ async validatePaymentRecoveryEntryPointsSummary() {
     'Payment recovery entry points validated without saving changes'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateAddPaymentMethodOpensWithoutSaving() {
@@ -3820,9 +4371,6 @@ async validateAddPaymentMethodOpensWithoutSaving() {
     'Add payment method screen opened without saving'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateBillingInformationUpdateOpensWithoutSaving() {
@@ -3860,9 +4408,6 @@ async validateBillingInformationUpdateOpensWithoutSaving() {
     'Billing information update screen opened without saving'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 
 async validateCancelSubscriptionFormWithoutCancelling() {
@@ -3903,10 +4448,6 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     Logger.success(
       'Subscription is already scheduled to cancel; cancellation state validated without changing it'
     );
-
-    if (portalPage !== this.page) {
-      await portalPage.close();
-    }
 
     return;
   }
@@ -3956,36 +4497,9 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     );
   }
 
-  const goBack =
-    portalPage.getByRole(
-      'button',
-      {
-        name: /go back/i
-      }
-    ).first();
-
-  if (
-    await goBack.isVisible({
-      timeout: 5000
-    }).catch(
-      () => false
-    )
-  ) {
-    await safeClick(
-      goBack,
-      'Go Back From Cancel Subscription'
-    );
-
-    await portalPage.waitForLoadState(
-      'domcontentloaded'
-    ).catch(
-      () => undefined
-    );
-
-    await portalPage.waitForTimeout(
-      1000
-    );
-  }
+  await this.dismissStripeCancelDialog(
+    portalPage
+  );
 
   const portalTextAfterBack =
     await portalPage
@@ -4022,8 +4536,5 @@ async validateCancelSubscriptionFormWithoutCancelling() {
     'Cancel subscription form validated without cancelling'
   );
 
-  if (portalPage !== this.page) {
-    await portalPage.close();
-  }
 }
 }

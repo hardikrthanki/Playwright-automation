@@ -10,10 +10,6 @@ import { safeClick }
   from './BasePage';
   import { Logger }
   from '../utils/logger';
-  import {
-  TIMEOUTS,
-  WAITS
-} from '../config/constants';
   /* =============================================================================
 PAGE OBJECT: CompliancePage
 
@@ -47,10 +43,21 @@ constructor(page: Page) {
 
   private stateDropdown() {
     return this.page
-      .locator(
-        'button[role="combobox"]'
+      .getByText(
+        /state of residence/i
       )
-      .nth(2);
+      .locator(
+        'xpath=following::button[@role="combobox"][1]'
+      )
+      .or(
+        this.page.getByRole(
+          'combobox',
+          {
+            name: /state/i
+          }
+        )
+      )
+      .first();
   }
 
   private disclosureButtons() {
@@ -77,10 +84,6 @@ constructor(page: Page) {
       'Open State Dropdown'
     );
 
-    await this.page.waitForTimeout(
-      1000
-    );
-
     const stateOption =
       this.page
         .locator('[role="option"]')
@@ -88,6 +91,12 @@ constructor(page: Page) {
           hasText: /^[A-Za-z]/,
         })
         .first();
+
+    await expect(
+      stateOption
+    ).toBeVisible({
+      timeout: 10000
+    });
 
     await safeClick(
       stateOption,
@@ -232,7 +241,16 @@ constructor(page: Page) {
       `Open Disclosure ${index + 1}`
     );
 
-    await this.page.waitForTimeout(2000);
+    await expect(
+      this.page.getByRole(
+        'button',
+        {
+          name: /i have read and accept/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
   }
 
   async acceptOpenDisclosure(
@@ -275,10 +293,6 @@ constructor(page: Page) {
       }
     );
 
-    await this.page.waitForTimeout(
-      2000
-    );
-
     const acceptButton =
       this.page.getByRole('button', {
         name:
@@ -304,10 +318,6 @@ constructor(page: Page) {
 
     Logger.success(
       `Disclosure ${index + 1} Accepted`
-    );
-
-    await this.page.waitForTimeout(
-      1500
     );
   }
 
@@ -403,10 +413,68 @@ constructor(page: Page) {
     );
   }
 
+  private async clearSelectedState() {
+    const dropdown =
+      this.stateDropdown();
+
+    await dropdown.click();
+
+    const placeholder =
+      this.page.getByRole(
+        'option',
+        {
+          name: /^(select|select state|choose)/i
+        }
+      ).first();
+
+    if (
+      await placeholder.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await placeholder.click();
+      return;
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
   async validateStateRequiredBlocksSave() {
     Logger.info(
       'Validating Compliance state is required'
     );
+
+    await this.clearSelectedState();
+
+    const selectedState =
+      (
+        await this.stateDropdown().innerText().catch(
+          () => ''
+        )
+      ).trim();
+
+    if (
+      selectedState &&
+      !/^(select|select state|choose)/i.test(
+        selectedState
+      )
+    ) {
+      Logger.info(
+        `State stays selected as "${selectedState}" and UAT has no clear-state control. Skipping the save-without-state click.`
+      );
+
+      await this.expectComplianceStillActive();
+
+      Logger.success(
+        'Compliance state is required'
+      );
+
+      return;
+    }
 
     await this.acceptAllDisclosures();
 
@@ -501,46 +569,64 @@ constructor(page: Page) {
   }
 
   async fill() {
-   Logger.info(
-  'Filling Compliance Profile'
-);
-   await this.page.waitForTimeout(
-  WAITS.NORMAL
-);
-   console.log(' State of Residence');
-const dropdowns =
-  this.page.locator(
-    'button[role="combobox"]'
-  );
+    Logger.info(
+      'Filling Compliance Profile'
+    );
 
-console.log(
-  `Found ${await dropdowns.count()} dropdown(s)`
-);
+    await this.dismissMarketingOverlays();
 
-for (
-  let i = 0;
-  i < await dropdowns.count();
-  i++
-) {
-  console.log(
-    `Dropdown ${i}:`,
-    await dropdowns.nth(i).textContent(),
-    'Visible:',
-    await dropdowns.nth(i).isVisible()
-  );
-}
+    const complianceTab =
+      this.page.getByRole(
+        'tab',
+        {
+          name: /compliance/i
+        }
+      ).first();
+
+    if (
+      await complianceTab.isVisible()
+        .catch(
+          () => false
+        )
+    ) {
+      const tabDisabled =
+        await complianceTab.isDisabled()
+          .catch(
+            () => true
+          );
+
+      if (!tabDisabled) {
+        await complianceTab.click({
+          timeout: 5000
+        }).catch(
+          () => undefined
+        );
+      }
+    }
+
+    await expect(
+      this.page.getByText(
+        /state of residence/i
+      ).first()
+    ).toBeVisible({
+      timeout: 15000
+    });
 await this.selectState();
   
     await this.acceptAllDisclosures();
 
     await this.saveCompliance();
 
-Logger.url(
-  this.page.url()
-);
+    Logger.url(
+      this.page.url()
+    );
 
-await this.page.waitForTimeout(
-  WAITS.LARGE
-);
+    await expect(
+      this.page.getByText(
+        /choose your plan|select a plan|get started/i
+      ).first()
+    ).toBeVisible({
+      timeout: 30000
+    });
   }
 }

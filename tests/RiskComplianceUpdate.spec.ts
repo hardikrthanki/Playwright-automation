@@ -1,13 +1,14 @@
 import {
   expect,
-  Page,
-  test
+  Page
 } from '@playwright/test';
 
 import {
   BASE_URL,
   TEST_USERS
 } from './config/testData';
+import { test }
+  from './fixtures/subscriberAuth';
 import { LoginPage }
   from './pages/LoginPage';
 import { MobileVerificationPage }
@@ -70,15 +71,23 @@ const riskComplianceUser = {
     TEST_USERS.onboarding.mobile
 };
 
-async function loginAndOpenRiskCompliance(
+const usesSharedSubscriber =
+  riskComplianceUser.email ===
+  TEST_USERS.subscriber.email;
+
+async function openRiskCompliance(
   page: Page
 ) {
-  await new LoginPage(
-    page
-  ).login(
-    riskComplianceUser.email,
-    riskComplianceUser.password
-  );
+  if (
+    !usesSharedSubscriber
+  ) {
+    await new LoginPage(
+      page
+    ).login(
+      riskComplianceUser.email,
+      riskComplianceUser.password
+    );
+  }
 
   await new MobileVerificationPage(
     page
@@ -131,171 +140,142 @@ test.describe(
     });
 
     test(
-      'Saved Risk Profile and Compliance details load',
+      'Saved Risk Profile and Compliance load edit and survive refresh in one session',
       async ({ page }) => {
         const riskCompliance =
-          await loginAndOpenRiskCompliance(
+          await openRiskCompliance(
             page
           );
 
-        await riskCompliance.validateSavedRiskProfileLoaded();
-        await riskCompliance.validateSavedComplianceLoaded();
-      }
-    );
-
-    test(
-      'Risk Profile editable controls are available',
-      async ({ page }) => {
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
-          );
-
-        await riskCompliance.validateRiskProfileEditableControls();
-      }
-    );
-
-    test(
-      'Compliance editable controls are available',
-      async ({ page }) => {
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
-          );
-
-        await riskCompliance.validateComplianceEditableControls();
-      }
-    );
-
-    test(
-      'Risk and Compliance tabs remain available after refresh',
-      async ({ page }) => {
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
-          );
-
-        await riskCompliance.validateSavedRiskProfileLoaded();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await riskCompliance.validateSavedComplianceLoaded();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await riskCompliance.validateSavedRiskProfileLoaded();
-      }
-    );
-
-    test(
-      'Risk and Compliance route remains usable after browser back and forward',
-      async ({ page }) => {
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
-          );
-
-        await riskCompliance.openRiskProfile();
-        await riskCompliance.openCompliance();
-
-        await page.goto(
-          `${BASE_URL}/dashboard`,
-          {
-            waitUntil: 'domcontentloaded'
+        await test.step(
+          'Saved details load',
+          async () => {
+            await riskCompliance.validateSavedRiskProfileLoaded();
+            await riskCompliance.validateSavedComplianceLoaded();
           }
         );
 
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/
+        await test.step(
+          'Risk Profile editable controls',
+          async () => {
+            await riskCompliance.validateRiskProfileEditableControls();
+          }
         );
 
-        await page.goBack({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard\/risk-compliance/
+        await test.step(
+          'Compliance editable controls',
+          async () => {
+            await riskCompliance.validateComplianceEditableControls();
+          }
         );
 
-        await riskCompliance.openRiskProfile();
-        await riskCompliance.openCompliance();
+        await test.step(
+          'Tabs remain available after refresh',
+          async () => {
+            await riskCompliance.validateSavedRiskProfileLoaded();
 
-        await page.goForward({
-          waitUntil: 'domcontentloaded'
-        });
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
 
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/
+            await riskCompliance.validateSavedComplianceLoaded();
+
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await riskCompliance.validateSavedRiskProfileLoaded();
+          }
+        );
+
+        await test.step(
+          'Route remains usable after browser back and forward',
+          async () => {
+            await riskCompliance.openRiskProfile();
+            await riskCompliance.openCompliance();
+
+            await page.goto(
+              `${BASE_URL}/dashboard`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard/
+            );
+
+            await page.goBack({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard\/risk-compliance/
+            );
+
+            await riskCompliance.openRiskProfile();
+            await riskCompliance.openCompliance();
+
+            await page.goForward({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard/
+            );
+          }
         );
       }
     );
 
     if (envEnabled('RISK_COMPLIANCE_UPDATE_ENABLED')) {
       test(
-        'Risk Profile can be updated from dashboard',
+        'Risk Profile and Compliance can be updated from dashboard in one session',
         async ({ page }) => {
+          const riskCompliance =
+            await openRiskCompliance(
+              page
+            );
 
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
+          await test.step(
+            'Update Risk Profile',
+            async () => {
+              await riskCompliance.updateRiskProfile();
+            }
           );
 
-        await riskCompliance.updateRiskProfile();
-        }
-      );
-
-      test(
-        'Compliance can be updated from dashboard',
-        async ({ page }) => {
-
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
+          await test.step(
+            'Update Compliance',
+            async () => {
+              await skipWhenNoAlternateOption(
+                () => riskCompliance.updateCompliance()
+              );
+            }
           );
 
-        await skipWhenNoAlternateOption(
-          () => riskCompliance.updateCompliance()
-        );
-        }
-      );
-
-      test(
-        'Risk Profile additional editable fields persist after update',
-        async ({ page }) => {
-
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
+          await test.step(
+            'Risk Profile additional fields persist',
+            async () => {
+              await skipWhenNoAlternateOption(
+                () => riskCompliance.updateRiskProfileAdditionalFields()
+              );
+            }
           );
 
-        await skipWhenNoAlternateOption(
-          () => riskCompliance.updateRiskProfileAdditionalFields()
-        );
-        }
-      );
-
-      test(
-        'Compliance additional editable fields persist after update',
-        async ({ page }) => {
-
-        const riskCompliance =
-          await loginAndOpenRiskCompliance(
-            page
+          await test.step(
+            'Compliance additional fields persist',
+            async () => {
+              await skipWhenNoAlternateOption(
+                () => riskCompliance.updateComplianceAdditionalFields()
+              );
+            }
           );
-
-        await skipWhenNoAlternateOption(
-          () => riskCompliance.updateComplianceAdditionalFields()
-        );
         }
       );
     }

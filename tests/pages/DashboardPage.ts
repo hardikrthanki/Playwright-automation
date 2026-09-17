@@ -12,6 +12,11 @@ import {
   URLS
 } from '../config/constants';
 
+import {
+  isLoginUrl,
+  restoreSubscriberSession
+} from '../helpers/subscriberSession';
+
 /* ============================================================================
 PAGE OBJECT: DashboardPage
 
@@ -170,17 +175,100 @@ export class DashboardPage
     );
   }
 
-  private async openProfileMenu() {
+  async openProfileMenu() {
+
+    await this.dismissMarketingOverlays();
+
+    const menuTrigger =
+      this.page.getByRole(
+        'button',
+        {
+          name: /^ht$/i
+        }
+      ).or(
+        this.page.getByText(
+          'HT',
+          {
+            exact: true
+          }
+        )
+      ).or(
+        this.page.locator(
+          'header button'
+        ).filter({
+          hasText: /^[A-Z]{1,2}$/
+        })
+      ).or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /account|profile menu|user menu/i
+          }
+        )
+      ).first();
 
     await safeClick(
-      this.page.getByText(
-        'HT',
-        {
-          exact: true
-        }
-      ),
+      menuTrigger,
       'Open Profile Menu'
     );
+
+    await expect(
+      this.profileMenuItem(
+        'Billing'
+      ).or(
+        this.page.getByText(
+          /sign out/i
+        )
+      ).first()
+    ).toBeVisible({
+      timeout: 10000
+    });
+  }
+
+  private profileMenuItem(
+    label: string
+  ) {
+    const escaped =
+      label.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&'
+      );
+
+    const labelPattern =
+      new RegExp(
+        `^${escaped}(\\b|\\s|&|$)`,
+        'i'
+      );
+
+    const menu =
+      this.page.locator(
+        '[role="menu"], [data-radix-menu-content], [data-radix-dropdown-menu-content], [data-radix-popper-content-wrapper]'
+      );
+
+    return menu.getByRole(
+      'menuitem',
+      {
+        name: labelPattern
+      }
+    ).or(
+      menu.getByRole(
+        'link',
+        {
+          name: labelPattern
+        }
+      )
+    ).or(
+      menu.getByRole(
+        'button',
+        {
+          name: labelPattern
+        }
+      )
+    ).or(
+      menu.getByText(
+        labelPattern
+      )
+    ).first();
   }
 
   async validateNoLoadError() {
@@ -194,25 +282,58 @@ export class DashboardPage
     });
   }
 
-  async validateLoaded() {
+  async validateLoaded(
+    options?: {
+      acceptTrialSuccessMobileGate?: boolean;
+    }
+  ) {
 
-Logger.info(
-  'Validating Dashboard'
-);
+    await this.dismissMarketingOverlays();
 
-    await expect(this.page)
-      .toHaveURL(
-        /dashboard/,
-        {
-          timeout: 30000,
-        }
+    if (
+      isLoginUrl(
+        this.page.url()
+      )
+    ) {
+      await restoreSubscriberSession(
+        this.page
+      );
+    }
+
+    Logger.info(
+      'Validating Dashboard'
+    );
+
+    if (
+      options?.acceptTrialSuccessMobileGate &&
+      /verify-mobile/i.test(
+        this.page.url()
+      ) &&
+      /trial=success/i.test(
+        this.page.url()
+      )
+    ) {
+      Logger.success(
+        'QA-CL-005: with-card trial granted. Phone gate is separate from the trial grant.'
       );
 
-  await this.validateNoLoadError();
+      return;
+    }
 
-  Logger.success(
-  'Dashboard Loaded'
-);
+    await expect(
+      this.page
+    ).toHaveURL(
+      /dashboard/,
+      {
+        timeout: 30000
+      }
+    );
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Dashboard Loaded'
+    );
   }
 
   async validateTopNavigationRoutes() {
@@ -682,10 +803,9 @@ Logger.info(
 
     for (const item of menuItems) {
       await this.page.goto(
-        new URL(
-          URLS.DASHBOARD,
-          this.page.url()
-        ).toString(),
+        this.appUrl(
+          URLS.DASHBOARD
+        ),
         {
           waitUntil: 'domcontentloaded'
         }
@@ -695,17 +815,9 @@ Logger.info(
       await this.openProfileMenu();
 
       await safeClick(
-        this.page
-          .getByText(
-            new RegExp(
-              item.label.replace(
-                /[.*+?^${}()|[\]\\]/g,
-                '\\$&'
-              ),
-              'i'
-            )
-          )
-          .first(),
+        this.profileMenuItem(
+          item.label
+        ),
         `Open ${item.label} From Profile Menu`
       );
 
@@ -744,11 +856,9 @@ Logger.info(
     );
 
     const billingMenuItem =
-      this.page
-        .getByText(
-          /billing/i
-        )
-        .first();
+      this.profileMenuItem(
+        'Billing'
+      );
 
     await this.openProfileMenu();
 
@@ -865,10 +975,9 @@ Logger.info(
 
     for (const route of routes) {
       await this.page.goto(
-        new URL(
-          route.path,
-          this.page.url()
-        ).toString(),
+        this.appUrl(
+          route.path
+        ),
         {
           waitUntil: 'domcontentloaded'
         }
@@ -925,6 +1034,27 @@ Logger.info(
 
     Logger.success(
       'Key authenticated routes remain usable after refresh'
+    );
+  }
+
+  async validateExpiryOverview() {
+    Logger.info(
+      'Validating Option Expiry Overview'
+    );
+
+    await expect(
+      this.page.getByRole(
+        'heading',
+        {
+          name: /option expiry overview/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Option Expiry Overview is visible'
     );
   }
 

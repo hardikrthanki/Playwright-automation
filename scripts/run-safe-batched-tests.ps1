@@ -56,11 +56,31 @@ Enable-Flag 'SIGNUP_OTP_RESEND_VALIDATION_ENABLED'
 Enable-Flag 'SIGNUP_DUPLICATE_EMAIL_VALIDATION_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_FLOW_ENABLED'
 Enable-Flag 'OVERLAY_STRATEGISTS_TERMS_ENABLED'
-
-# Plan-ladder inspect: disposable Users A/B/D, paid upgrades, cancel/retention
-# copy checks. Creates Stripe test users. Extra submit flags stay off.
+Enable-Flag 'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_STRIPE_CHECKOUT_DETAILS_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
+Enable-Flag 'OVERLAY_STRATEGISTS_DECLINED_CARD_ENABLED'
+Enable-Flag 'DIRECT_SUBSCRIPTION_PURCHASE_ENABLED'
 Enable-Flag 'SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PLAN_CONTROLS_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_CANCEL_FORM_ENABLED'
 Enable-Flag 'SUB_LIFECYCLE_PLAN_LADDER_ENABLED'
+
+# Extra paid purchases stay on from this branch. Extra destructive submits stay off.
+# Do not enable MONTHLY_CANCEL_SUBMIT, YEARLY_CANCEL_EXPIRY_SUBMIT, YEARLY_REFUND,
+# RETENTION_ACCEPT, or DOWNGRADE_SUBMIT here.
+Enable-Flag 'SUB_LIFECYCLE_OVERLAY_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED'
+Enable-Flag 'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED'
 
 Set-DefaultEnv 'AUTH_OTP_CODE' '111111'
 Set-DefaultEnv 'PLAN_SELECTION_EXISTING_EMAIL' 'imhardikthanki+plan-selection-prepared@gmail.com'
@@ -70,102 +90,8 @@ Set-DefaultEnv 'AIR_INCLUDE_MANUAL_DEFECTS' 'false'
 Set-DefaultEnv 'ADMIN_EMAIL' 'admin@ooltool.com'
 Set-DefaultEnv 'ADMIN_PASSWORD' 'Admin@1234!'
 
-# Plan-ladder inspect is on. Keep extra submit flags off (monthly cancel submit,
-# yearly cancel-at-expiry submit, yearly refund, retention accept, downgrade submit).
-
-$batches = @(
-  @{
-    Name = '01-auth-session-dashboard'
-    Files = @(
-      'tests/AuthNegative.spec.ts',
-      'tests/AuthUiValidation.spec.ts',
-      'tests/SessionSecurity.spec.ts',
-      'tests/DashboardHealth.spec.ts',
-      'tests/DashboardNavigation.spec.ts'
-    )
-  },
-  @{
-    Name = '02-signup-password-accessibility'
-    Files = @(
-      'tests/SignupNegative.spec.ts',
-      'tests/PasswordPolicy.spec.ts',
-      'tests/AccessibilityBrowser.spec.ts'
-    )
-  },
-  @{
-    Name = '03-profile'
-    Files = @(
-      'tests/Profile.spec.ts',
-      'tests/ProfileNegative.spec.ts',
-      'tests/ProfileSecurityDisplay.spec.ts',
-      'tests/ProfileMobileValidation.spec.ts',
-      'tests/ProfilePasswordMismatch.spec.ts',
-      'tests/ProfileWrongCurrentPassword.spec.ts'
-    )
-  },
-  @{
-    Name = '04-risk-compliance-onboarding-fields'
-    Files = @(
-      'tests/RiskComplianceUpdate.spec.ts',
-      'tests/OnboardingFieldValidation.spec.ts'
-    )
-  },
-  @{
-    Name = '05-plan-reset-overlay'
-    Files = @(
-      'tests/PlanSelectionValidation.spec.ts',
-      'tests/ResetPasswordNegative.spec.ts',
-      'tests/OverlayStrategistsTrial.spec.ts'
-    )
-  },
-  @{
-    Name = '06-billing'
-    Files = @(
-      'tests/BillingDeep.spec.ts',
-      'tests/BillingEdgeValidation.spec.ts',
-      'tests/BillingSubscriptionManagement.spec.ts',
-      'tests/Subscriber.spec.ts'
-    )
-  },
-  @{
-    Name = '07-onboarding'
-    Files = @(
-      'tests/onboarding.spec.ts'
-    )
-  },
-  @{
-    Name = '08-controlled-gated'
-    Files = @(
-      'tests/forgotpassword.spec.ts',
-      'tests/UnlockAccount.spec.ts',
-      'tests/AuthConfigurationLimits.spec.ts',
-      'tests/MfaUserFlow.spec.ts',
-      'tests/PermissionAccess.spec.ts',
-      'tests/DirectSubscriptionPurchase.spec.ts',
-      'tests/PaymentNegative.spec.ts'
-    )
-  },
-  @{
-    Name = '09-coverage-matrix'
-    Files = @(
-      'tests/UserJourneyCoverageMatrix.spec.ts',
-      'tests/OverlayStrategistsTrialMatrix.spec.ts',
-      'tests/NewSubscriptionPurchaseMatrix.spec.ts',
-      'tests/UpgradeSubscriptionMatrix.spec.ts',
-      'tests/DowngradeSubscriptionMatrix.spec.ts',
-      'tests/MonthlyAnnualBillingChangeMatrix.spec.ts',
-      'tests/AnnualMonthlyBillingChangeMatrix.spec.ts',
-      'tests/SubscriptionCancellationMatrix.spec.ts',
-      'tests/FailedPaymentDunningMatrix.spec.ts'
-    )
-  },
-  @{
-    Name = '10-subscription-lifecycle'
-    Files = @(
-      'tests/SubscriptionLifecycleExecution.spec.ts'
-    )
-  }
-)
+node -e "require('./scripts/execution-order').assertAllSpecsAreListed()"
+$batches = node -e "process.stdout.write(JSON.stringify(require('./scripts/execution-order').allBatches))" | ConvertFrom-Json
 
 $batchDir = Join-Path $PWD 'execution-report\playwright-batches'
 New-Item -ItemType Directory -Force -Path $batchDir | Out-Null

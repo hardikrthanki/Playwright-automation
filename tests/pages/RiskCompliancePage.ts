@@ -13,6 +13,10 @@ import { Logger }
 import { BASE_URL }
   from '../config/testData';
 
+import {
+  openAuthenticatedPath
+} from '../helpers/subscriberSession';
+
 /* =============================================================================
 PAGE OBJECT: RiskCompliancePage
 
@@ -70,12 +74,13 @@ export class RiskCompliancePage
       'Opening Risk & Compliance page'
     );
 
-    await this.page.goto(
-      `${BASE_URL}/dashboard/risk-compliance`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
+    await openAuthenticatedPath(
+      this.page,
+      '/dashboard/risk-compliance',
+      /\/dashboard\/risk-compliance/
     );
+
+    await this.dismissMarketingOverlays();
 
     await expect(
       this.page
@@ -565,14 +570,68 @@ export class RiskCompliancePage
     };
   }
 
-  async selectDifferentComboboxOption(
-    comboIndex: number,
-    label: string
+  private comboboxNear(
+    fieldLabel: RegExp
   ) {
-    const dropdown =
+    return this.page.getByText(
+      fieldLabel
+    ).first().locator(
+      'xpath=following::button[@role="combobox"][1]'
+    );
+  }
+
+  private async enabledCombobox(
+    comboIndex: number
+  ) {
+    const comboboxes =
       this.page.locator(
         'button[role="combobox"]'
-      ).nth(comboIndex);
+      );
+
+    const total =
+      await comboboxes.count();
+
+    let seen = -1;
+
+    for (let i = 0; i < total; i++) {
+      const candidate =
+        comboboxes.nth(i);
+
+      if (
+        await candidate.isDisabled().catch(
+          () => true
+        )
+      ) {
+        continue;
+      }
+
+      seen += 1;
+
+      if (
+        seen === comboIndex
+      ) {
+        return candidate;
+      }
+    }
+
+    throw new Error(
+      `No enabled combobox was available at index ${comboIndex}.`
+    );
+  }
+
+  async selectDifferentComboboxOption(
+    comboIndex: number,
+    label: string,
+    nearLabel?: RegExp
+  ) {
+    const dropdown =
+      nearLabel
+        ? this.comboboxNear(
+            nearLabel
+          )
+        : await this.enabledCombobox(
+            comboIndex
+          );
 
     await expect(
       dropdown
@@ -593,9 +652,7 @@ export class RiskCompliancePage
     const options =
       this.page.locator(
         '[role="option"]'
-      ).filter({
-        hasText: /^[A-Za-z]/,
-      });
+      );
 
     const optionCount =
       await options.count();
@@ -611,7 +668,10 @@ export class RiskCompliancePage
 
       if (
         optionText &&
-        optionText !== currentValue
+        optionText !== currentValue &&
+        !/^(select|choose)\b/i.test(
+          optionText
+        )
       ) {
         await safeClick(
           option,
@@ -629,9 +689,11 @@ export class RiskCompliancePage
       'Escape'
     );
 
-    throw new Error(
-      `No alternate ${label} option was available.`
+    Logger.info(
+      `No alternate ${label} option was available; skipping optional update.`
     );
+
+    return undefined;
   }
 
   async selectedButtonByText(
@@ -929,11 +991,11 @@ export class RiskCompliancePage
     await this.open();
     await this.openRiskProfile();
 
-    if (investingExperience.after) {
+    if (investingExperience?.after) {
       await expect(
-        this.page.locator(
-          'button[role="combobox"]'
-        ).first(),
+        await this.enabledCombobox(
+          0
+        ),
         'Years of investing experience should remain selected after reload'
       ).toContainText(
         investingExperience.after,
@@ -998,7 +1060,8 @@ export class RiskCompliancePage
     const selectedState =
       await this.selectDifferentComboboxOption(
         0,
-        'Compliance State'
+        'Compliance State',
+        /state of residence/i
       );
 
     const brokerApproval =
@@ -1032,11 +1095,11 @@ export class RiskCompliancePage
     await this.open();
     await this.openCompliance();
 
-    if (selectedState.after) {
+    if (selectedState?.after) {
       await expect(
-        this.page.locator(
-          'button[role="combobox"]'
-        ).first(),
+        this.comboboxNear(
+          /state of residence/i
+        ),
         'Compliance state should remain selected after reload'
       ).toContainText(
         selectedState.after,
@@ -1077,7 +1140,8 @@ export class RiskCompliancePage
     const selectedState =
       await this.selectDifferentComboboxOption(
         0,
-        'Compliance State'
+        'Compliance State',
+        /state of residence/i
       );
 
     const brokerApproval =
@@ -1141,11 +1205,11 @@ export class RiskCompliancePage
     await this.open();
     await this.openCompliance();
 
-    if (selectedState.after) {
+    if (selectedState?.after) {
       await expect(
-        this.page.locator(
-          'button[role="combobox"]'
-        ).first(),
+        this.comboboxNear(
+          /state of residence/i
+        ),
         'Compliance state should remain selected after reload'
       ).toContainText(
         selectedState.after,

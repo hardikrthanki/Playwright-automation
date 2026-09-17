@@ -1,3 +1,5 @@
+import './loadLocalEnv';
+
 /* =============================================================================
 TEST DATA CONFIGURATION
 
@@ -618,6 +620,45 @@ export const STRIPE_CARD =
   process.env.STRIPE_CARD ??
   '4242424242424242';
 
+export const STRIPE_TRIAL_CARDS = [
+  '4000056655665556',
+  '2223003122003222',
+  '5200828282828210',
+  '5105105105105100',
+  '6011111111111117',
+  '5555555555554444',
+  '378282246310005',
+  '4000000000000077'
+];
+
+let stripeTrialCardIndex =
+  Date.now() %
+  STRIPE_TRIAL_CARDS.length;
+
+export function uniqueStripeTrialCard(
+  _seed?: string
+) {
+  const configuredCard =
+    process.env.STRIPE_TRIAL_CARD?.replace(
+      /\s+/g,
+      ''
+    );
+
+  if (configuredCard) {
+    return configuredCard;
+  }
+
+  const card =
+    STRIPE_TRIAL_CARDS[
+      stripeTrialCardIndex %
+      STRIPE_TRIAL_CARDS.length
+    ];
+
+  stripeTrialCardIndex += 1;
+
+  return card;
+}
+
 export const STRIPE_DECLINED_CARD =
   process.env.STRIPE_DECLINED_CARD ??
   '4000000000000002';
@@ -649,3 +690,52 @@ export const STRIPE_CVC =
 export const COUNTRY =
   process.env.COUNTRY ??
   'IN';
+
+export const ADD_POSITION_CASH = {
+  amount:
+    process.env.ADD_POSITION_AMOUNT ??
+    '1000',
+
+  currencyOption:
+    /united states dollar|\(usd\)/i
+};
+
+export const ADD_POSITION_EQUITY = {
+  search:
+    process.env.ADD_POSITION_EQUITY_SEARCH ??
+    'FICO',
+
+  symbol:
+    process.env.ADD_POSITION_EQUITY_SYMBOL ??
+    'FICO',
+
+  quantity:
+    process.env.ADD_POSITION_EQUITY_QUANTITY ??
+    '2',
+
+  price:
+    process.env.ADD_POSITION_EQUITY_PRICE ??
+    '10'
+};
+
+export const ADD_POSITION_OPTION = {
+  search:
+    process.env.ADD_POSITION_OPTION_SEARCH ??
+    'MSFT',
+
+  symbol:
+    process.env.ADD_POSITION_OPTION_SYMBOL ??
+    'MSFT',
+
+  right:
+    process.env.ADD_POSITION_OPTION_RIGHT ??
+    'Call',
+
+  quantity:
+    process.env.ADD_POSITION_OPTION_QUANTITY ??
+    '1',
+
+  price:
+    process.env.ADD_POSITION_OPTION_PRICE ??
+    '1.50'
+};

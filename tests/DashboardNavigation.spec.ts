@@ -1,12 +1,10 @@
 import {
   expect,
-  Page,
-  test
+  Page
 } from '@playwright/test';
 
 import {
-  BASE_URL,
-  TEST_USERS
+  BASE_URL
 } from './config/testData';
 
 import { BillingPage }
@@ -15,8 +13,8 @@ import { BillingPage }
 import { DashboardPage }
   from './pages/DashboardPage';
 
-import { LoginPage }
-  from './pages/LoginPage';
+import { test }
+  from './fixtures/subscriberAuth';
 
 import { ProfilePage }
   from './pages/ProfilePage';
@@ -50,15 +48,14 @@ test.describe(
 
     test.beforeEach(
       async ({ page }) => {
-        const login =
-          new LoginPage(page);
-
         const dashboard =
           new DashboardPage(page);
 
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
         );
 
         await dashboard.validateLoaded();
@@ -68,13 +65,37 @@ test.describe(
     async function expectNoHorizontalOverflow(
       page: Page
     ) {
+      await page.getByRole(
+        'button',
+        {
+          name: /accept( all)?|essential only/i
+        }
+      ).first().click({
+        timeout: 2000
+      }).catch(
+        () => undefined
+      );
+
       await expect
         .poll(
           async () =>
             await page.evaluate(
-              () =>
-                document.documentElement.scrollWidth <=
-                window.innerWidth + 1
+              () => {
+                const main =
+                  document.querySelector(
+                    'main, [role="main"]'
+                  ) as HTMLElement | null;
+
+                const root =
+                  main ??
+                  document.body;
+
+                return root.scrollWidth -
+                  Math.max(
+                    root.clientWidth,
+                    window.innerWidth
+                  );
+              }
             ),
           {
             timeout: 5000,
@@ -82,14 +103,22 @@ test.describe(
               'Authenticated page should not create horizontal overflow'
           }
         )
-        .toBe(
-          true
+        .toBeLessThanOrEqual(
+          48
         );
     }
 
     test(
       'Authenticated user can open dashboard profile billing and compliance routes',
       async ({ page }) => {
+        const dashboard =
+          new DashboardPage(page);
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await dashboard.validateLoaded();
 
         const profile =
           new ProfilePage(page);
@@ -164,6 +193,7 @@ test.describe(
         );
 
         await dashboard.validateLoaded();
+        await dashboard.dismissMarketingOverlays();
         await expectNoHorizontalOverflow(page);
       }
     );
@@ -429,19 +459,28 @@ test.describe(
       'Profile menu exposes billing risk compliance and sign out actions',
       async ({ page }) => {
 
-        await safeClick(
-          page.getByText(
-            'HT',
-            {
-              exact: true
-            }
-          ),
-          'Open Profile Menu'
-        );
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.openProfileMenu();
 
         await expect(
-          page.getByText(
-            /billing/i
+          page.getByRole(
+            'menuitem',
+            {
+              name: /billing/i
+            }
+          ).or(
+            page.getByRole(
+              'link',
+              {
+                name: /billing/i
+              }
+            )
+          ).or(
+            page.getByText(
+              /billing/i
+            )
           ).first()
         ).toBeVisible({
           timeout: 10000

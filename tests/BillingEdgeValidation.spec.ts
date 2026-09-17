@@ -1,26 +1,22 @@
 import {
   expect,
   test
-} from '@playwright/test';
+} from './fixtures/subscriberAuth';
 
 import {
-  BASE_URL,
-  TEST_USERS
+  BASE_URL
 } from './config/testData';
 
 import { BillingPage }
   from './pages/BillingPage';
-
-import { LoginPage }
-  from './pages/LoginPage';
 
 /* =============================================================================
 TEST SUITE: Billing Edge Validation
 
 PURPOSE
 -------
-Validates billing navigation and evidence links without changing plans,
-starting Stripe checkout, or mutating subscription state.
+One authenticated session validates in-app billing Overview, Plans, and
+History once. It does not click Manage Subscription.
 
 RUN
 ---
@@ -35,161 +31,82 @@ test.describe(
       timeout: 120000
     });
 
-    test.beforeEach(
-      async ({ page }) => {
-        const login =
-          new LoginPage(page);
-
-        const billing =
-          new BillingPage(page);
-
-        await login.login(
-          TEST_USERS.subscriber.email,
-          TEST_USERS.subscriber.password
-        );
-
-        await billing.validateOverview();
-      }
-    );
-
     test(
-      'Billing plans tab remains stable without launching checkout',
+      'Billing overview plans and history in one session',
       async ({ page }) => {
-
         const billing =
-          new BillingPage(page);
+          new BillingPage(
+            page
+          );
 
-        await billing.validatePlansTabStable();
-
-        await expect(
-          page
-        ).toHaveURL(
-          /billing/
-        );
-      }
-    );
-
-    test(
-      'Billing overview exposes plan status and management controls',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await billing.validateOverviewContract();
-      }
-    );
-
-    test(
-      'Billing plans expose lifecycle action summary without changing subscription',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await billing.validatePlanLifecycleActionSummary();
-      }
-    );
-
-    test(
-      'Billing plans expose billing interval summary without changing subscription',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await billing.validateBillingIntervalPresentationSummary();
-      }
-    );
-
-    test(
-      'Billing history and transactions remain stable after refresh',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await billing.validateHistoryTabStable();
-
-        await page.reload({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await billing.validateHistoryTabStable();
-      }
-    );
-
-    test(
-      'Billing plans and history tabs can be revisited safely',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await billing.validatePlansTabStable();
-        await billing.validateHistoryTabStable();
-        await billing.validatePlansTabStable();
-
-        await expect(
-          page
-        ).toHaveURL(
-          /billing/
-        );
-      }
-    );
-
-    test(
-      'Billing route remains usable after browser back and forward',
-      async ({ page }) => {
-
-        const billing =
-          new BillingPage(page);
-
-        await page.goto(
-          `${BASE_URL}/dashboard`,
-          {
-            waitUntil: 'domcontentloaded'
+        await test.step(
+          'Overview shows current plan and management control',
+          async () => {
+            await billing.validateOverview();
+            await billing.validateOverviewContract();
           }
         );
 
-        await page.goBack({
-          waitUntil: 'domcontentloaded'
-        });
+        await test.step(
+          'Plans show Income Builder and billing interval',
+          async () => {
+            await billing.validatePlans();
 
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard\/billing/,
-          {
-            timeout: 15000
+            await expect(
+              page.locator(
+                'body'
+              )
+            ).toContainText(
+              /monthly|annual|month|year|\/mo|\/yr|billing period|no plan changes|paid plan|current plan/i
+            );
           }
         );
 
-        await billing.validateOverviewContract();
-
-        await page.goForward({
-          waitUntil: 'domcontentloaded'
-        });
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/dashboard/,
-          {
-            timeout: 15000
+        await test.step(
+          'History shows paid transactions and invoice PDF targets',
+          async () => {
+            await billing.validateTransactions();
+            await billing.validateInvoiceAndPdfLinksHaveTargets();
           }
         );
-      }
-    );
 
-    test(
-      'Billing invoice and PDF links have usable targets',
-      async ({ page }) => {
+        await test.step(
+          'Route remains usable after back and forward',
+          async () => {
+            await page.goto(
+              `${BASE_URL}/dashboard`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
 
-        const billing =
-          new BillingPage(page);
+            await page.goBack({
+              waitUntil: 'domcontentloaded'
+            });
 
-        await billing.validateInvoiceAndPdfLinksHaveTargets();
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard\/billing/,
+              {
+                timeout: 15000
+              }
+            );
+
+            await page.goForward({
+              waitUntil: 'domcontentloaded'
+            });
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/dashboard/,
+              {
+                timeout: 15000
+              }
+            );
+          }
+        );
       }
     );
   }

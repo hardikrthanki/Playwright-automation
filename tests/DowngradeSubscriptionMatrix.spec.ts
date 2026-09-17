@@ -95,8 +95,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-008'],
     title: 'Downgrade confirmation displays current plan and target plan',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires safe downgrade confirmation UI or Stripe portal flow fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview downgrade calculations without submitting'
   },
   {
     id: 'SC-121',
@@ -104,7 +104,7 @@ const downgradeScenarios: DowngradeScenario[] = [
     title: 'Downgrade confirmation displays lost feature warning',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires downgraded-plan comparison copy and selectors.'
+    dependency: 'SubscriptionLifecycleExecution.spec.ts looks for lost-feature/limit copy when present. Dedicated comparison warning copy is still not a guaranteed selector, so this FRD row stays blocked until product shows stable lost-feature text.'
   },
   {
     id: 'SC-122',
@@ -119,16 +119,16 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-011'],
     title: 'Downgrade requires user acknowledgement before confirmation',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires downgrade acknowledgement UI fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > downgrade preview terms checkbox is required before Confirm & pay'
   },
   {
     id: 'SC-124',
     sourceIds: ['SUB-DOWN-012'],
     title: 'User can cancel downgrade before confirmation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe downgrade confirmation fixture and return behavior.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > downgrade preview is closed without submitting'
   },
   {
     id: 'SC-125',
