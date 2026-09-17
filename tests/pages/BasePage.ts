@@ -31,9 +31,45 @@ export class BasePage {
   }
 
   async refresh() {
-    await this.page.reload({
-      waitUntil: 'domcontentloaded',
-    });
+    const currentUrl =
+      this.page.url();
+
+    try {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded',
+        timeout: 15000
+      });
+      return;
+    } catch {
+      // Dashboard widgets can keep reload from reaching
+      // domcontentloaded during a long suite.
+    }
+
+    try {
+      await this.page.reload({
+        waitUntil: 'commit',
+        timeout: 10000
+      });
+      return;
+    } catch {
+      // Fall through to a fresh navigation.
+    }
+
+    if (
+      /^https?:\/\//i.test(
+        currentUrl
+      )
+    ) {
+      await this.page.goto(
+        currentUrl,
+        {
+          waitUntil: 'domcontentloaded',
+          timeout: 20000
+        }
+      ).catch(
+        () => undefined
+      );
+    }
   }
 
   async navigate(url: string) {

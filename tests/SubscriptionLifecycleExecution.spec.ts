@@ -810,6 +810,14 @@ test.describe(
         await continueAfterWithCardTrialCheckout(
           page,
           user.mobileNumber
+        ).then(
+          (reachedDashboard) => {
+            if (!reachedDashboard) {
+              throw new Error(
+                'QA-CL-005: with-card trial bounced to Plan Selection. Use a unique Stripe test card per fresh user.'
+              );
+            }
+          }
         );
 
         await validateDashboardAndBilling(

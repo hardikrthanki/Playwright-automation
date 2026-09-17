@@ -316,10 +316,42 @@ if (
 
             await stripe.completeTrialPayment();
 
-            await continueAfterWithCardTrialCheckout(
-              page,
-              mobileNumber
-            );
+            let reachedDashboard =
+              await continueAfterWithCardTrialCheckout(
+                page,
+                mobileNumber
+              );
+
+            for (
+              let retry = 1;
+              !reachedDashboard &&
+                retry <= 2;
+              retry++
+            ) {
+              console.log(
+                `Retrying Overlay with-card checkout with a different Stripe test card (${retry}/2)`
+              );
+
+              await new PlanSelectionPage(
+                page
+              ).selectOverlayStrategistsTrialWithCard();
+
+              await stripe.completeTrialPayment();
+
+              reachedDashboard =
+                await continueAfterWithCardTrialCheckout(
+                  page,
+                  mobileNumber
+                );
+            }
+
+            if (
+              !reachedDashboard
+            ) {
+              throw new Error(
+                'QA-CL-005: with-card trial bounced to Plan Selection after unique-card retries. Use a fresh user and an unused Stripe test card.'
+              );
+            }
           }
         );
 

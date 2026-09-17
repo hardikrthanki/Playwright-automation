@@ -33,7 +33,7 @@ export async function continueAfterWithCardTrialCheckout(
   await page.waitForURL(
     /\/(dashboard|verify-mobile)/i,
     {
-      timeout: 20000
+      timeout: 30000
     }
   ).catch(
     () => undefined
@@ -63,7 +63,7 @@ export async function continueAfterWithCardTrialCheckout(
     )
   ) {
     throw new Error(
-      'QA-CL-005: with-card trial was refused by the once-per-lifetime gate (already_redeemed). Use a fresh user and a unique Stripe test card (4242, 5555...4444, or 4000 0566 5566 5556). This is not a failed trial grant.'
+      'QA-CL-005: with-card trial was refused by the once-per-lifetime gate (already_redeemed). Use a fresh user and a unique Stripe test card. This is not a failed trial grant.'
     );
   }
 
@@ -93,7 +93,15 @@ export async function continueAfterWithCardTrialCheckout(
       () => undefined
     );
 
-    return;
+    return true;
+  }
+
+  if (
+    /\/dashboard/i.test(
+      returnUrl
+    )
+  ) {
+    return true;
   }
 
   const planSelectionVisible =
@@ -112,20 +120,24 @@ export async function continueAfterWithCardTrialCheckout(
     /onboarding/i.test(
       page.url()
     ) &&
-    !/\/dashboard/i.test(
+    planSelectionVisible
+  ) {
+    Logger.info(
+      'With-card trial bounced to Plan Selection. Retrying with a different Stripe test card.'
+    );
+
+    return false;
+  }
+
+  if (
+    /onboarding/i.test(
       page.url()
     )
   ) {
-    if (
-      planSelectionVisible
-    ) {
-      throw new Error(
-        'QA-CL-005: with-card trial bounced to Plan Selection. That is the silent already_redeemed card-reuse gate, not a Free-plan trial bug. Use a unique Stripe test card per fresh user.'
-      );
-    }
-
     throw new Error(
       `QA-CL-005: with-card trial did not reach dashboard after checkout. URL: ${page.url()}`
     );
   }
+
+  return true;
 }

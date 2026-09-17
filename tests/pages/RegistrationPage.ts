@@ -138,10 +138,14 @@ extends BasePage {
 
     this.otpInput =
       page.getByPlaceholder(
-        /enter otp/i
+        /enter otp|one-time|verification code|123456/i
+      ).or(
+        page.getByLabel(
+          /enter otp|sms code|verification code|one-time code/i
+        )
       ).or(
         page.locator(
-          'input[autocomplete="one-time-code"], input[inputmode="numeric"], input[name*="otp" i], input[name*="code" i], input[id*="otp" i], input[id*="code" i]'
+          'input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i]'
         )
       ).first();
 
@@ -269,6 +273,117 @@ extends BasePage {
 
 
 
+  private visibleOtpInput() {
+    return this.page.locator(
+      'input[placeholder*="OTP" i], input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i]'
+    ).filter({
+      visible: true
+    }).first();
+  }
+
+  private async otpFieldIsVisible() {
+    return this.visibleOtpInput()
+      .isVisible({
+        timeout: 1000
+      })
+      .catch(
+        () => this.otpInput.isVisible({
+          timeout: 1000
+        }).catch(
+          () => false
+        )
+      );
+  }
+
+  private async clickSendCode(
+    attempt: number
+  ) {
+    await this.dismissMarketingOverlays();
+
+    const apiWait =
+      this.page.waitForResponse(
+        (response) => {
+          const method =
+            response.request().method();
+
+          return method !==
+            'OPTIONS' &&
+            method !==
+            'GET' &&
+            /otp|sms|phone|mobile|verify|code/i.test(
+              response.url()
+            );
+        },
+        {
+          timeout: 12000
+        }
+      ).catch(
+        () => null
+      );
+
+    if (
+      attempt <= 1
+    ) {
+      await safeClick(
+        this.sendCodeButton,
+        'Send Code via SMS'
+      );
+    } else if (
+      attempt === 2
+    ) {
+      console.log(
+        '[CLICK] Send Code via SMS (force)'
+      );
+
+      await this.sendCodeButton.click({
+        force: true,
+        timeout: 8000
+      });
+    } else {
+      console.log(
+        '[CLICK] Send Code via SMS (DOM click)'
+      );
+
+      await this.sendCodeButton.evaluate(
+        (button) => {
+          (button as HTMLButtonElement).click();
+        }
+      );
+    }
+
+    await apiWait;
+  }
+
+  private async fillRegistrationOtp() {
+    const otpCode =
+      AUTH_SETTINGS.otpCode ||
+      '111111';
+
+    Logger.info(
+      `Entering OTP ${otpCode}`
+    );
+
+    const visibleOtp =
+      this.visibleOtpInput();
+
+    if (
+      await visibleOtp.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await visibleOtp.fill(
+        otpCode
+      );
+      return;
+    }
+
+    await this.otpInput.fill(
+      otpCode
+    );
+  }
+
   private async waitForRegistrationOtpInput() {
     const manualFallback =
       this.envEnabled(
@@ -277,24 +392,21 @@ extends BasePage {
 
     for (
       let attempt = 1;
-      attempt <= 3;
+      attempt <= 4;
       attempt++
     ) {
-      const otpVisible =
-        await this.otpInput
-          .first()
-          .waitFor({
-            state: 'visible',
-            timeout: 20000
-          })
-          .then(
-            () => true
-          )
-          .catch(
-            () => false
-          );
+      await this.visibleOtpInput()
+        .waitFor({
+          state: 'visible',
+          timeout: 15000
+        })
+        .catch(
+          () => undefined
+        );
 
-      if (otpVisible) {
+      if (
+        await this.otpFieldIsVisible()
+      ) {
         return;
       }
 
@@ -302,11 +414,11 @@ extends BasePage {
         await this.collectOtpRequestDiagnostics();
 
       Logger.info(
-        `OTP input not visible after SMS request. Attempt ${attempt}/3. Visible diagnostics: ${diagnostics}`
+        `OTP input not visible after SMS request. Attempt ${attempt}/4. Visible diagnostics: ${diagnostics}`
       );
 
       if (
-        attempt === 3
+        attempt === 4
       ) {
         if (manualFallback) {
           Logger.info(
@@ -316,7 +428,7 @@ extends BasePage {
           await this.page.pause();
 
           await expect(
-            this.otpInput.first()
+            this.visibleOtpInput()
           ).toBeVisible({
             timeout: 30000
           });
@@ -331,9 +443,8 @@ extends BasePage {
 
       await this.waitForSendCodeEnabled();
 
-      await safeClick(
-        this.sendCodeButton,
-        `Retry Send Code via SMS (${attempt + 1}/3)`
+      await this.clickSendCode(
+        attempt + 1
       );
     }
   }
@@ -515,24 +626,13 @@ extends BasePage {
     ) {
       await this.waitForSendCodeEnabled();
 
-
-      await safeClick(
-        this.sendCodeButton,
-        'Send Code via SMS'
+      await this.clickSendCode(
+        1
       );
 
       await this.waitForRegistrationOtpInput();
 
-
-      Logger.info(
-        'Entering OTP'
-      );
-
-
-      await this.otpInput.fill(
-        AUTH_SETTINGS.otpCode
-      );
-
+      await this.fillRegistrationOtp();
 
       await safeClick(
         this.verifyOtpButton,

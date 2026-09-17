@@ -282,7 +282,8 @@ export class LoginPage
     });
 
     await otpInput.fill(
-      AUTH_SETTINGS.otpCode
+      AUTH_SETTINGS.otpCode ||
+        '111111'
     );
 
     await safeClick(

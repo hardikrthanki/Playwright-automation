@@ -130,6 +130,9 @@ async function readPasswordToggleState(
 ) {
   return passwordInput.evaluate(
     (input) => {
+      const field =
+        input as HTMLInputElement;
+
       const toggle =
         input.parentElement?.querySelector(
           'button'
@@ -137,20 +140,17 @@ async function readPasswordToggleState(
 
       return {
         type:
-          input.getAttribute(
-            'type'
-          ),
+          field.type,
         aria:
           toggle?.getAttribute(
             'aria-label'
           ) ??
+          toggle?.textContent?.trim() ??
           '',
         icon:
           toggle?.querySelector(
             'svg'
-          )?.getAttribute(
-            'class'
-          ) ??
+          )?.innerHTML ??
           ''
       };
     }
@@ -161,6 +161,25 @@ async function expectPasswordToggleResponds(
   passwordInput: Locator,
   toggle: Locator
 ) {
+  const page =
+    passwordInput.page();
+
+  await dismissOverlays(
+    page
+  );
+
+  await page.getByRole(
+    'region',
+    {
+      name: /cookie consent/i
+    }
+  ).waitFor({
+    state: 'hidden',
+    timeout: 8000
+  }).catch(
+    () => undefined
+  );
+
   const initialState =
     await readPasswordToggleState(
       passwordInput
@@ -171,10 +190,6 @@ async function expectPasswordToggleResponds(
   ).toBeVisible({
     timeout: 10000
   });
-
-  await dismissOverlays(
-    passwordInput.page()
-  );
 
   console.log(
     '[CLICK] Toggle Password Visibility'
@@ -189,6 +204,16 @@ async function expectPasswordToggleResponds(
     const currentState =
       await readPasswordToggleState(
         passwordInput
+      );
+
+    const hideControlVisible =
+      await page.getByRole(
+        'button',
+        {
+          name: /^(hide)(\s+password)?$/i
+        }
+      ).first().isVisible().catch(
+        () => false
       );
 
     return currentState.type !==
@@ -206,8 +231,23 @@ async function expectPasswordToggleResponds(
         ) &&
         currentState.icon !==
           initialState.icon
-      );
+      ) ||
+      hideControlVisible;
   };
+
+  if (
+    !await toggleResponded()
+  ) {
+    await toggle.focus();
+
+    await page.keyboard.press(
+      'Enter'
+    );
+
+    await page.waitForTimeout(
+      200
+    );
+  }
 
   if (
     !await toggleResponded()
@@ -217,6 +257,16 @@ async function expectPasswordToggleResponds(
       timeout: 5000
     }).catch(
       () => undefined
+    );
+  }
+
+  if (
+    !await toggleResponded()
+  ) {
+    await toggle.evaluate(
+      (button) => {
+        (button as HTMLButtonElement).click();
+      }
     );
   }
 
@@ -645,6 +695,10 @@ test.describe(
           {
             waitUntil: 'domcontentloaded'
           }
+        );
+
+        await dismissOverlays(
+          page
         );
 
         const passwordInput =

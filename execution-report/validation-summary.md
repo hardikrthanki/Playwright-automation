@@ -1,12 +1,12 @@
 # AIR Automation Validation Summary
 
-Generated: 9/16/2026, 6:54:34 PM
+Generated: 9/16/2026, 8:00:58 PM
 
 Project: OOLTool
 
 Environment: UAT
 
-Release Decision: CONDITIONAL GO
+Release Decision: NO GO
 
 ## Purpose
 
@@ -17,8 +17,8 @@ This document explains what the latest automation execution validated in plain b
 | Metric | Count |
 | --- | ---: |
 | Unique Tests | 153 |
-| Passed | 124 |
-| Failed | 5 |
+| Passed | 125 |
+| Failed | 4 |
 | Skipped / Not Executed | 24 |
 | Flaky | 0 |
 | Attempts | 153 |
@@ -27,8 +27,8 @@ This document explains what the latest automation execution validated in plain b
 
 | Status | Count |
 | --- | ---: |
-| failed | 5 |
-| passed | 124 |
+| failed | 4 |
+| passed | 125 |
 | skipped | 24 |
 
 ## Area Breakdown
@@ -142,7 +142,7 @@ This document explains what the latest automation execution validated in plain b
 | SKIPPED | Billing | Overlay Strategists with-card trial opens Stripe checkout with trial details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
 | SKIPPED | Billing | Overlay Strategists with-card trial blocks missing Stripe card details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | SKIPPED | Billing | Overlay Strategists with-card trial rejects declined Stripe card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Billing | New user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | New user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Overlay Strategists trial requires terms acceptance | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | Income Builder monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Portfolio Hedger annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
@@ -176,7 +176,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Authentication | Authenticated direct routes tolerate trailing slash and unknown query parameters | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Dashboard | Dashboard footer legal and support links expose usable targets | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Profile menu exposes billing risk compliance and sign out actions | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| FAIL | Dashboard | Profile menu navigation actions open the expected pages | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Profile menu navigation actions open the expected pages | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Dashboard | Profile menu closes with Escape and outside click | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Dashboard | Dashboard top navigation tabs are visible | Confirm authenticated users can navigate the product without load errors. | Expected controls and information should be visible to the user. |
 | PASS | Dashboard | Dashboard top navigation links open without load errors | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
@@ -196,10 +196,10 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Profile | Profile mobile section validation in one session | Confirm profile data and account controls remain visible, stable, and protected. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Password | Password mismatch and wrong current password in one session | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Dashboard | Saved Risk Profile and Compliance load edit and survive refresh in one session | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
-| FAIL | Dashboard | Risk Profile and Compliance can be updated from dashboard in one session | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Dashboard | Risk Profile and Compliance can be updated from dashboard in one session | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Billing overview plans and history in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | Billing portal plans invoices and return in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Billing portal plans invoices and return in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Authentication | Login once then logout blocks back refresh tabs and protected routes | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Authentication | Invalid reset password link does not authenticate user | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 

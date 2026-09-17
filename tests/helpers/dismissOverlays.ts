@@ -16,7 +16,15 @@ overlays must be gone before a real click.
 export async function dismissOverlays(
   page: Page
 ) {
-  for (let attempt = 0; attempt < 6; attempt += 1) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const cookieRegion =
+      page.getByRole(
+        'region',
+        {
+          name: /cookie consent/i
+        }
+      );
+
     const overlayButton =
       page.getByRole(
         'button',
@@ -32,28 +40,38 @@ export async function dismissOverlays(
         )
       ).first();
 
+    const cookieVisible =
+      await cookieRegion.isVisible().catch(
+        () => false
+      );
+
     const overlayVisible =
       await overlayButton.isVisible().catch(
         () => false
       );
 
-    if (!overlayVisible) {
+    if (!cookieVisible && !overlayVisible) {
       return;
     }
 
-    await overlayButton.click({
-      timeout: 3000
-    }).catch(
-      () => overlayButton.click({
+    if (overlayVisible) {
+      await overlayButton.click({
         force: true,
         timeout: 3000
       }).catch(
         () => undefined
-      )
+      );
+    }
+
+    await cookieRegion.waitFor({
+      state: 'hidden',
+      timeout: 1500
+    }).catch(
+      () => undefined
     );
 
     await page.waitForTimeout(
-      250
+      200
     );
   }
 }
