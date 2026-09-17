@@ -2,6 +2,10 @@ import {
   test
 } from '@playwright/test';
 
+import {
+  executeStripeMatrixScenario
+} from './helpers/stripeMatrixExecution';
+
 test.use({
   screenshot: 'off',
   trace: 'off',
@@ -24,9 +28,9 @@ can report exactly what is covered, blocked, known-bug, or future across:
 - immediate cancellation and refunds
 - renewal, expiry, dunning, and audit visibility
 
-Most rows intentionally skip because they are traceability rows or require
-Stripe/admin/scheduler fixtures. This file must not mutate real subscription
-state unless a linked controlled executable spec is run with explicit env flags.
+Automated rows run unique coverage keys once per process. Blocked, known-bug,
+and future rows stay skipped. This file must not submit destructive Stripe
+changes unless a linked controlled executable spec is run with extra env flags.
 
 RUN
 ---
@@ -465,51 +469,49 @@ const lifecycleScenarios: LifecycleScenario[] = [
 test.describe(
   'Subscription Lifecycle E2E Matrix',
   () => {
-    for (const scenario of lifecycleScenarios) {
-      test(
-        `${scenario.id} - ${scenario.title}`,
-        async () => {
-          test.info().annotations.push(
-            {
-              type: 'priority',
-              description: scenario.priority
-            },
-            {
-              type: 'automation-status',
-              description: scenario.status
-            },
-            {
-              type: 'source-test-id',
-              description: scenario.sourceIds.join(', ')
-            },
-            {
-              type: 'module',
-              description: 'Billing'
-            },
-            {
-              type: 'journey',
-              description: 'Subscription Lifecycle E2E'
-            },
-            {
-              type: 'lifecycle-phase',
-              description: scenario.phase
-            }
-          );
+    test.describe.configure({
+      timeout: 20 * 60 * 1000
+    });
 
-          if (scenario.status !== 'automated') {
-            test.skip(
-              true,
-              scenario.dependency ??
-                'Scenario requires a controlled subscription lifecycle fixture.'
+    for (const scenario of lifecycleScenarios) {
+      const run = async (
+        browser?: Parameters<typeof executeStripeMatrixScenario>[1]
+      ) => {
+        await executeStripeMatrixScenario(
+          scenario,
+          browser,
+            {
+              module: 'Billing',
+              journey: 'Subscription Lifecycle E2E',
+              blockedReason:
+                'Scenario requires a controlled subscription lifecycle fixture.',
+              extraAnnotations: [
+                {
+                  type: 'lifecycle-phase',
+                  description: scenario.phase
+                }
+              ]
+            }
+        );
+      };
+
+      if (scenario.status !== 'automated') {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async () => {
+            await run();
+          }
+        );
+      } else {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async ({ browser }) => {
+            await run(
+              browser
             );
           }
-
-          test.skip(
-            true,
-            `Covered by ${scenario.automation}. Run the linked executable spec for full UI validation.`
-          );
-        }
-      );
+        );
+      }
     }
   }
 );

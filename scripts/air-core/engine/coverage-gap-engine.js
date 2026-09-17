@@ -351,8 +351,14 @@ function classifyGap(test = {}) {
 
   if (automationStatus === 'blocked') return 'Blocked';
   if (automationStatus === 'future') return 'Future';
-  if (automationStatus === 'automated') return 'Traceability';
-  if (title.includes('matrix')) return 'Traceability';
+  if (automationStatus === 'automated') {
+    if (reason.includes('air coverage-ingestion') || reason.includes('covered by')) {
+      return 'Traceability';
+    }
+
+    return 'Controlled';
+  }
+  if (title.includes('matrix') && reason.includes('covered by')) return 'Traceability';
   if (reason.includes('covered by')) return 'Traceability';
   if (title.includes('mfa') || title.includes('forgot') || title.includes('stripe') || title.includes('email')) {
     return 'Controlled';

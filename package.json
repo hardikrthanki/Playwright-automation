@@ -8,6 +8,7 @@
     "execution:headed": "npm run test:stable -- --headed && npm run report:execution",
     "executable:headed": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1 -Headed",
     "executable:headless": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1",
+    "test:executable": "node scripts/run-ordered-tests.js executable",
     "controlled": "npm run test:controlled && npm run report:execution",
     "test": "playwright test",
     "test:smoke": "node scripts/run-ordered-tests.js smoke",

@@ -1,3 +1,6 @@
+export const coreExecutableJourneyOrder: string[];
+export const stripeMatrixOrder: string[];
+export const userJourneyMatrixOrder: string[];
 export const executableJourneyOrder: string[];
 export const matrixOrder: string[];
 export const playwrightTestMatch: string[];

@@ -102,9 +102,10 @@ external billing, scheduler, refund, or audit dependencies.
 
 ## AIR Traceability Matrix Files
 
-These matrix specs are intentionally executable Playwright files. Most rows are
-skipped by design so AIR can show exactly what is automated, blocked, or future
-without mutating billing state.
+`npm run executable:headed`, `npm run executable:headless`, and
+`npm run test:executable` include the nine Stripe FRD matrix specs. Automated
+rows run unique coverage keys once per process. `UserJourneyCoverageMatrix`
+stays skip-only AIR and is not part of the executable suite.
 
 | Area | File | Rows |
 | --- | --- | --- |
@@ -120,6 +121,23 @@ without mutating billing state.
 | End-to-End Subscription Lifecycle | `tests/SubscriptionLifecycleE2EMatrix.spec.ts` | 45 |
 
 Total documented matrix coverage: 473 rows.
+
+Automated Stripe matrix rows share coverage keys from
+`tests/helpers/stripeMatrixExecution.ts`. The first row for a key runs the UI;
+later rows reuse that result in the same Playwright process.
+
+| Coverage key | What it executes | Gate |
+| --- | --- | --- |
+| `billing-inapp` | Billing overview, plans, history, invoices, trial CTA | Paid subscriber login |
+| `billing-portal` | Stripe portal overview, invoices, cancel form, recovery | `BILLING_SUBSCRIPTION_MANAGEMENT_ENABLED` for cancel/recovery extras |
+| `plan-catalog` | Onboarding plan catalog, pricing toggle, trial terms | `PLAN_SELECTION_VALIDATION_ENABLED` or prepared plan-selection user |
+| `direct-checkout` | Income Builder checkout summary, currency, refresh/back; no payment | `DIRECT_SUBSCRIPTION_PURCHASE_ENABLED` |
+| `overlay-without-card` | Start Overlay Strategists trial without card | `OVERLAY_STRATEGISTS_FLOW_ENABLED` and `OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED` |
+| `overlay-with-card-checkout` | With-card trial checkout details; declined card when that flag is on; no successful payment | Overlay flow plus checkout-details, with-card, or declined-card flag |
+| `upgrade-preview` | Upgrade calculation preview, then close | `SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED` and `SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED` |
+| `downgrade-preview` | Downgrade calculation preview, then close | `SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED` and `SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED` |
+| `interval-preview` | Billing-interval calculation preview, then close | `SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED` and `SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED` |
+| `payment-negative` | Stripe Checkout card-field guardrails | `STRIPE_CHECKOUT_URL` |
 
 ## Use Case 1 - Overlay Strategists Trial Experience
 

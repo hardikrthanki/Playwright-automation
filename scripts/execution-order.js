@@ -18,13 +18,14 @@ Journey sequence:
 5. Authenticated dashboard, positions, profile
 6. Billing, logout, and session
 7. Password recovery, unlock, MFA, and permission access
-8. Skip-only coverage matrix last (AIR only)
+8. Stripe FRD matrix (automated rows execute unique UI keys; blocked/future stay skip)
+9. User-journey coverage matrix last (skip-only AIR)
 ============================================================================= */
 
 const fs = require('fs');
 const path = require('path');
 
-const executableJourneyOrder = [
+const coreExecutableJourneyOrder = [
   'onboarding.spec.ts',
   'SignupNegative.spec.ts',
   'PasswordPolicy.spec.ts',
@@ -64,8 +65,7 @@ const executableJourneyOrder = [
   'PermissionAccess.spec.ts'
 ];
 
-const matrixOrder = [
-  'UserJourneyCoverageMatrix.spec.ts',
+const stripeMatrixOrder = [
   'OverlayStrategistsTrialMatrix.spec.ts',
   'NewSubscriptionPurchaseMatrix.spec.ts',
   'UpgradeSubscriptionMatrix.spec.ts',
@@ -77,7 +77,19 @@ const matrixOrder = [
   'SubscriptionLifecycleE2EMatrix.spec.ts'
 ];
 
-const playwrightTestMatch = executableJourneyOrder.concat(matrixOrder);
+const userJourneyMatrixOrder = [
+  'UserJourneyCoverageMatrix.spec.ts'
+];
+
+const matrixOrder = userJourneyMatrixOrder.concat(stripeMatrixOrder);
+
+const executableJourneyOrder = coreExecutableJourneyOrder.concat(
+  stripeMatrixOrder
+);
+
+const playwrightTestMatch = executableJourneyOrder.concat(
+  userJourneyMatrixOrder
+);
 
 function pick(names) {
   const wanted = new Set(names);
@@ -273,13 +285,17 @@ const executableBatches = [
       'MfaUserFlow.spec.ts',
       'PermissionAccess.spec.ts'
     ])
+  },
+  {
+    name: '08-stripe-matrix',
+    files: testPaths(stripeMatrixOrder)
   }
 ];
 
 const allBatches = executableBatches.concat([
   {
-    name: '08-coverage-matrix',
-    files: testPaths(matrixOrder)
+    name: '09-user-journey-matrix',
+    files: testPaths(userJourneyMatrixOrder)
   }
 ]);
 
@@ -325,6 +341,9 @@ function journeyProjectName(index) {
 }
 
 module.exports = {
+  coreExecutableJourneyOrder,
+  stripeMatrixOrder,
+  userJourneyMatrixOrder,
   executableJourneyOrder,
   matrixOrder,
   playwrightTestMatch,

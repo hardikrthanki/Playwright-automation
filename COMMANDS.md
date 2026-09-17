@@ -83,7 +83,10 @@ then generates AIR. This lets AIR show executed, passed, failed, skipped,
 blocked, and not-executed coverage together instead of losing progress if one
 long Playwright process gets stuck.
 
-Run the broadest practical suite with safe controlled gates enabled:
+Run the broadest practical suite with safe controlled gates enabled.
+Includes Stripe FRD matrix automated rows (`08-stripe-matrix`). The skip-only
+user-journey matrix stays out of `npm run test:executable` / executable
+headless and remains last in the complete AIR run.
 
 ```powershell
 npm run executable:headed
@@ -115,7 +118,9 @@ validation, Risk & Compliance update checks, plan-selection validation, profile
 mobile display checks, billing management display checks, profile security
 display checks, signup OTP length/resend checks, duplicate-email validation,
 and the four-user plan-ladder inspect (Users A/B/D: paid upgrades, cancel copy,
-retention offer). That ladder creates disposable Stripe test users.
+retention offer). That ladder creates disposable Stripe test users. Upgrade,
+downgrade, and interval calculation previews are also on, so Stripe matrix
+automated rows can execute those coverage keys without submitting.
 
 Yearly refund, period-end cancel submit, retention accept, and scheduled
 downgrade stay off unless you set their extra flags.
@@ -708,6 +713,17 @@ $env:OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED="true"
 $env:OVERLAY_STRATEGISTS_TERMS_ENABLED="true"
 $env:OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED="true"
 npm run test:controlled:stripe-overlay -- --headed
+```
+
+Stripe FRD matrix files now execute unique coverage keys instead of skip-only
+AIR rows. They are included in the executable suite. Blocked/future rows still
+skip. Billing-in-app and portal checks use the paid subscriber. Gated keys
+follow the same flags as the linked specs:
+
+```powershell
+npm run test:executable -- --headed
+npm run test:controlled:stripe-use-case-3-matrix -- --headed
+npm run test:controlled:coverage-matrix -- --headed
 ```
 
 Accessibility scenarios:
