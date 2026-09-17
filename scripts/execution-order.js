@@ -18,7 +18,7 @@ Journey sequence:
 5. Authenticated dashboard, positions, profile
 6. Billing, logout, and session
 7. Password recovery, unlock, MFA, and permission access
-8. Skip-only coverage matrix last (AIR only)
+8. Stripe coverage matrix last (automated rows execute unique UI keys; blocked/future stay skip)
 ============================================================================= */
 
 const fs = require('fs');

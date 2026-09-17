@@ -2,6 +2,10 @@ import {
   test
 } from '@playwright/test';
 
+import {
+  executeStripeMatrixScenario
+} from './helpers/stripeMatrixExecution';
+
 test.use({
   screenshot: 'off',
   trace: 'off',
@@ -14,9 +18,8 @@ TEST SUITE: Downgrade Subscription Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 4 scenarios in executable Playwright
-form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
-intentionally skipped so AIR can report downgrade coverage, blocked
-dependencies, and future work without changing live subscription state.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Automated
+rows run billing and downgrade-preview coverage without submitting a plan change.
 
 RUN
 ---
@@ -455,43 +458,23 @@ const downgradeScenarios: DowngradeScenario[] = [
 test.describe(
   'Downgrade Subscription Use Case 4 Matrix',
   () => {
+    test.describe.configure({
+      timeout: 20 * 60 * 1000
+    });
+
     for (const scenario of downgradeScenarios) {
       test(
         `${scenario.id} - ${scenario.title}`,
-        async () => {
-          test.info().annotations.push(
+        async ({ browser }) => {
+          await executeStripeMatrixScenario(
+            scenario,
+            browser,
             {
-              type: 'priority',
-              description: scenario.priority
-            },
-            {
-              type: 'automation-status',
-              description: scenario.status
-            },
-            {
-              type: 'source-test-id',
-              description: scenario.sourceIds.join(', ')
-            },
-            {
-              type: 'module',
-              description: 'Billing'
-            },
-            {
-              type: 'journey',
-              description: 'Downgrade Subscription'
+              module: 'Billing',
+              journey: 'Downgrade Subscription',
+              blockedReason:
+                'Scenario requires a downgrade-specific subscription fixture or backend support.'
             }
-          );
-
-          if (scenario.status !== 'automated') {
-            test.skip(
-              true,
-              scenario.dependency ?? 'Scenario requires a downgrade-specific subscription fixture or backend support.'
-            );
-          }
-
-          test.skip(
-            true,
-            `Covered by ${scenario.automation}. Run the linked executable spec for full UI validation.`
           );
         }
       );

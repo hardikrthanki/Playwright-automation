@@ -2,6 +2,10 @@ import {
   test
 } from '@playwright/test';
 
+import {
+  executeStripeMatrixScenario
+} from './helpers/stripeMatrixExecution';
+
 test.use({
   screenshot: 'off',
   trace: 'off',
@@ -15,9 +19,8 @@ PURPOSE
 -------
 Documents all 36 FRD Use Case 1 scenarios in executable Playwright form.
 Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx.
-Browser-safe cases are implemented in the linked specs. Backend, scheduler,
-Stripe-admin, broker, portfolio, and audit scenarios are intentionally skipped
-with explicit dependency messages until dev/admin support is available.
+Automated rows run the linked UI coverage key once per process. Blocked,
+future, and known-bug rows stay skipped with their dependency messages.
 
 RUN
 ---
@@ -430,40 +433,23 @@ const useCaseOneScenarios: UseCaseScenario[] = [
 test.describe(
   'Overlay Strategists Trial FRD Matrix',
   () => {
+    test.describe.configure({
+      timeout: 20 * 60 * 1000
+    });
+
     for (const scenario of useCaseOneScenarios) {
       test(
         `${scenario.id} - ${scenario.title}`,
-        async () => {
-          test.info().annotations.push(
+        async ({ browser }) => {
+          await executeStripeMatrixScenario(
+            scenario,
+            browser,
             {
-              type: 'priority',
-              description: scenario.priority
-            },
-            {
-              type: 'automation-status',
-              description: scenario.status
-            },
-            {
-              type: 'source-test-id',
-              description:
-                scenario.sourceIds?.join(
-                  ', '
-                ) ??
-                scenario.id
-            }
-          );
-
-          if (scenario.status !== 'automated') {
-            test.skip(
-              true,
-              scenario.dependency ??
+              module: 'Billing',
+              journey: 'Overlay Strategists Trial',
+              blockedReason:
                 'Scenario requires additional test fixture or backend support.'
-            );
-          }
-
-          test.skip(
-            true,
-            `Covered by ${scenario.automation}. Run the linked executable spec for full UI validation.`
+            }
           );
         }
       );

@@ -710,6 +710,15 @@ $env:OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED="true"
 npm run test:controlled:stripe-overlay -- --headed
 ```
 
+Stripe FRD matrix files now execute unique coverage keys instead of skip-only
+AIR rows. Blocked/future rows still skip. Billing-in-app and portal checks use
+the paid subscriber. Gated keys follow the same flags as the linked specs:
+
+```powershell
+npm run test:controlled:stripe-use-case-3-matrix -- --headed
+npm run test:controlled:coverage-matrix -- --headed
+```
+
 Accessibility scenarios:
 
 ```powershell

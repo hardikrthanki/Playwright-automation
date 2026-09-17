@@ -2,6 +2,10 @@ import {
   test
 } from '@playwright/test';
 
+import {
+  executeStripeMatrixScenario
+} from './helpers/stripeMatrixExecution';
+
 test.use({
   screenshot: 'off',
   trace: 'off',
@@ -14,9 +18,8 @@ TEST SUITE: Monthly To Annual Billing Change Matrix
 PURPOSE
 -------
 Documents Subscription Management Use Case 5 scenarios in executable Playwright
-form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Rows are
-intentionally skipped so AIR can report monthly-to-annual coverage, blocked
-dependencies, and future work without changing subscriptions.
+form. Source of truth: OOLTool_Subscription_FRD_Detailed (1).docx. Automated
+rows run plan-catalog, billing, and interval-preview coverage without submitting.
 
 RUN
 ---
@@ -327,28 +330,23 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
 test.describe(
   'Monthly To Annual Billing Change Use Case 5 Matrix',
   () => {
+    test.describe.configure({
+      timeout: 20 * 60 * 1000
+    });
+
     for (const scenario of monthlyToAnnualScenarios) {
       test(
         `${scenario.id} - ${scenario.title}`,
-        async () => {
-          test.info().annotations.push(
-            { type: 'priority', description: scenario.priority },
-            { type: 'automation-status', description: scenario.status },
-            { type: 'source-test-id', description: scenario.sourceIds.join(', ') },
-            { type: 'module', description: 'Billing' },
-            { type: 'journey', description: 'Monthly To Annual Billing Change' }
-          );
-
-          if (scenario.status !== 'automated') {
-            test.skip(
-              true,
-              scenario.dependency ?? 'Scenario requires a monthly-to-annual billing-change fixture or backend support.'
-            );
-          }
-
-          test.skip(
-            true,
-            `Covered by ${scenario.automation}. Run the linked executable spec for full UI validation.`
+        async ({ browser }) => {
+          await executeStripeMatrixScenario(
+            scenario,
+            browser,
+            {
+              module: 'Billing',
+              journey: 'Monthly To Annual Billing Change',
+              blockedReason:
+                'Scenario requires a monthly-to-annual billing-change fixture or backend support.'
+            }
           );
         }
       );
