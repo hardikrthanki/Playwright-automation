@@ -615,6 +615,26 @@ export class StripePaymentPage
   }
 
   async completeTrialPayment() {
+    await this.submitUniqueTrialCard();
+
+    if (
+      this.onStripeCheckout()
+    ) {
+      console.log(
+        'Stripe checkout still open after trial card; trying another unused test card'
+      );
+
+      await this.submitUniqueTrialCard();
+    }
+  }
+
+  private onStripeCheckout() {
+    return /checkout\.stripe\.com/i.test(
+      this.page.url()
+    );
+  }
+
+  private async submitUniqueTrialCard() {
     const trialCard =
       uniqueStripeTrialCard();
 

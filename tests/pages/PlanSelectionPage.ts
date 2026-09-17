@@ -327,10 +327,10 @@ export class PlanSelectionPage extends BasePage {
       .getByRole(
         'button',
         {
-          name: /monthly/i
+          name: /^monthly$/i
         }
       )
-      .first();
+      .last();
   }
 
 
@@ -340,10 +340,10 @@ export class PlanSelectionPage extends BasePage {
       .getByRole(
         'button',
         {
-          name: /annual/i
+          name: /^annual$/i
         }
       )
-      .first();
+      .last();
   }
 
   async waitUntilCatalogVisible() {
@@ -447,6 +447,10 @@ export class PlanSelectionPage extends BasePage {
 
     await this.waitUntilCatalogVisible();
 
+    await this.scrollCatalogToggleIntoView(
+      this.monthlyToggle()
+    );
+
     if (
       !await this.catalogToggleInViewport()
     ) {
@@ -455,7 +459,74 @@ export class PlanSelectionPage extends BasePage {
       });
 
       await this.waitUntilCatalogVisible();
+
+      await this.scrollCatalogToggleIntoView(
+        this.monthlyToggle()
+      );
     }
+  }
+
+  private async scrollCatalogToggleIntoView(
+    toggle: Locator
+  ) {
+    await toggle.evaluate(
+      (element) => {
+        element.scrollIntoView({
+          block: 'center',
+          inline: 'nearest'
+        });
+
+        let parent =
+          element.parentElement;
+
+        while (parent) {
+          const style =
+            window.getComputedStyle(
+              parent
+            );
+
+          if (
+            /auto|scroll|hidden/.test(
+              style.overflowY
+            )
+          ) {
+            const parentRect =
+              parent.getBoundingClientRect();
+
+            const elRect =
+              element.getBoundingClientRect();
+
+            parent.scrollTop +=
+              elRect.top -
+              parentRect.top -
+              parent.clientHeight / 2 +
+              elRect.height / 2;
+          }
+
+          parent =
+            parent.parentElement;
+        }
+
+        const rect =
+          element.getBoundingClientRect();
+
+        const top =
+          window.scrollY +
+          rect.top -
+          window.innerHeight / 2 +
+          rect.height / 2;
+
+        window.scrollTo(
+          0,
+          Math.max(
+            0,
+            top
+          )
+        );
+      }
+    ).catch(
+      () => undefined
+    );
   }
 
   private async billingToggleSelected(
@@ -475,16 +546,37 @@ export class PlanSelectionPage extends BasePage {
     toggle: Locator,
     label: string
   ) {
+    await this.dismissMarketingOverlays();
+
+    await this.scrollCatalogToggleIntoView(
+      toggle
+    );
+
     try {
       await safeClick(
         toggle,
         label
       );
     } catch {
-      await toggle.click({
-        force: true,
-        timeout: 5000
-      });
+      await this.scrollCatalogToggleIntoView(
+        toggle
+      );
+
+      try {
+        await toggle.click({
+          force: true,
+          timeout: 5000
+        });
+      } catch {
+        console.log(
+          `[CLICK] ${label} via DOM click`
+        );
+
+        await toggle.evaluate(
+          (element: HTMLElement) =>
+            element.click()
+        );
+      }
     }
   }
 
@@ -869,7 +961,7 @@ export class PlanSelectionPage extends BasePage {
       timeout: 15000
     });
 
-    await safeClick(
+    await this.clickBillingToggle(
       this.annualToggle(),
       'Annual Toggle'
     );
@@ -892,7 +984,7 @@ export class PlanSelectionPage extends BasePage {
       }
     );
 
-    await safeClick(
+    await this.clickBillingToggle(
       this.monthlyToggle(),
       'Monthly Toggle'
     );
