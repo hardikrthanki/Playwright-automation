@@ -41,12 +41,21 @@ These tests are separate from the matrix specs because they can create users,
 start trials, submit Stripe test payments, or inspect subscription controls.
 
 Default behavior is safe: every mutating flow is skipped until explicitly
-enabled with env flags.
+enabled with env flags. Four disposable tracks stay separate because retention
+is once per lifetime and yearly refund ends paid access.
 
 RUN
 ---
 $env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
-npx playwright test tests/SubscriptionLifecycleExecution.spec.ts --headed
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "plan ladder|retention offer" --headed
+
+Destructive submits stay off unless extra flags are set:
+SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED
+SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED
+SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED
+SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED
+SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED
 ============================================================================= */
 
 type PlanName =
@@ -277,6 +286,36 @@ function upgradeBillingCopy(
     : /per year|annual|\/yr|\/year|year|subscription|total|due|pay/i;
 }
 
+const PAID_PLAN_LADDER: PlanName[] = [
+  'Income Builder',
+  'Overlay Strategists',
+  'Portfolio Hedger',
+  'Marketplace'
+];
+
+function higherPlansThan(
+  plan: PlanName
+) {
+  const start =
+    PAID_PLAN_LADDER.indexOf(
+      plan
+    );
+
+  return PAID_PLAN_LADDER.slice(
+    start + 1
+  );
+}
+
+function lowerMonthlyPlan(
+  plan: PlanName
+): PlanName {
+  if (plan === 'Portfolio Hedger') {
+    return 'Overlay Strategists';
+  }
+
+  return 'Income Builder';
+}
+
 async function openPlanSelectionForDisposableUser(
   page: Page,
   scenario: string
@@ -397,6 +436,176 @@ async function loginPreparedPaidUser(
   );
 }
 
+async function purchasePaidPlanForDisposableUser(
+  page: Page,
+  scenario: string,
+  plan: PlanName,
+  interval: BillingInterval
+) {
+  const user =
+    await openPlanSelectionForDisposableUser(
+      page,
+      scenario
+    );
+
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  if (interval === 'annual') {
+    await planPage.selectAnnualBilling();
+  } else {
+    await planPage.selectMonthlyBilling();
+  }
+
+  await planPage.selectPlan(
+    plan
+  );
+
+  await new StripePaymentPage(
+    page
+  ).validateSubscriptionCheckoutDetails({
+    expectedEmail:
+      user.email,
+    expectedPlan:
+      plan,
+    expectedBillingCopy:
+      upgradeBillingCopy(
+        interval
+      )
+  });
+
+  await new StripePaymentPage(
+    page
+  ).completePayment();
+
+  await validateDashboardAndBilling(
+    page
+  );
+
+  return user;
+}
+
+async function submitUpgradeWithDueAndRenewal(
+  billing: BillingPage,
+  targetPlan: PlanName,
+  interval: BillingInterval,
+  preferredAction: 'upgrade' | 'interval' = 'upgrade'
+) {
+  const actions: Array<'upgrade' | 'interval'> =
+    preferredAction === 'interval'
+      ? [
+          'interval',
+          'upgrade'
+        ]
+      : [
+          'upgrade',
+          'interval'
+        ];
+
+  let openedAction:
+    | 'upgrade'
+    | 'interval'
+    | undefined;
+
+  for (const action of actions) {
+    const available =
+      await billing.planChangeActionAvailable(
+        targetPlan,
+        action,
+        interval
+      );
+
+    if (!available) {
+      continue;
+    }
+
+    await billing.openPlanChangeCalculationPreview({
+      targetPlan,
+      action,
+      interval
+    });
+
+    openedAction =
+      action;
+
+    break;
+  }
+
+  if (!openedAction) {
+    return false;
+  }
+
+  await billing.validatePlanChangeDueAmountAndRenewal({
+    targetPlan,
+    action:
+      openedAction,
+    interval,
+    expectedBillingCopy:
+      upgradeBillingCopy(
+        interval
+      ),
+    expectedPlanCharge:
+      PLAN_PRICES[targetPlan][interval],
+    expectedRecurringAmount:
+      PLAN_PRICES[targetPlan][interval]
+  });
+
+  await billing.submitPlanChangeCalculationPreview({
+    targetPlan,
+    action:
+      openedAction
+  });
+
+  await billing.validateActivePlan(
+    targetPlan
+  );
+
+  return true;
+}
+
+async function climbPaidPlanLadder(
+  billing: BillingPage,
+  fromPlan: PlanName,
+  interval: BillingInterval,
+  preferredAction: 'upgrade' | 'interval' = 'upgrade'
+) {
+  let currentPlan =
+    fromPlan;
+
+  for (const targetPlan of higherPlansThan(fromPlan)) {
+    const upgraded =
+      await submitUpgradeWithDueAndRenewal(
+        billing,
+        targetPlan,
+        interval,
+        preferredAction
+      );
+
+    if (!upgraded) {
+      if (targetPlan === 'Marketplace') {
+        console.log(
+          `Skipping Marketplace ${interval} upgrade; control was not offered in UAT.`
+        );
+
+        continue;
+      }
+
+      throw new Error(
+        `Expected ${interval} upgrade control for ${targetPlan} after ${currentPlan}.`
+      );
+    }
+
+    currentPlan =
+      targetPlan;
+    preferredAction =
+      'upgrade';
+  }
+
+  return currentPlan;
+}
+
 async function validateDashboardAndBilling(
   page: Page,
   expectedTrialMode?: 'with-card' | 'without-card'
@@ -427,7 +636,7 @@ test.describe(
   'Subscription Lifecycle Execution',
   () => {
     test.describe.configure({
-      timeout: 30 * 60 * 1000
+      timeout: 45 * 60 * 1000
     });
 
     controlledLifecycleTest(
@@ -659,6 +868,202 @@ test.describe(
         await new BillingPage(
           page
         ).validateCancelSubscriptionFormWithoutCancelling();
+      }
+    );
+
+    controlledLifecycleTest(
+      'User A monthly plan ladder then period-end cancel',
+      'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+      'Creates a disposable monthly user, upgrades the paid ladder, and inspects period-end cancel. Enable SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED to submit.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-a-monthly',
+          'Income Builder',
+          'monthly'
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await climbPaidPlanLadder(
+          billing,
+          'Income Builder',
+          'monthly'
+        );
+
+        await billing.validateMonthlyCancellationOptions();
+
+        if (
+          envEnabled(
+            'SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED'
+          )
+        ) {
+          await billing.submitMonthlyCancelAtPeriodEnd();
+        }
+      }
+    );
+
+    controlledLifecycleTest(
+      'User B yearly plan ladder then cancel at expiry',
+      'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+      'Creates a disposable user, switches monthly to annual, upgrades remaining yearly plans, and inspects yearly cancel options. Enable SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED to submit expiry only.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-b-yearly',
+          'Income Builder',
+          'monthly'
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        const switchedToAnnual =
+          await submitUpgradeWithDueAndRenewal(
+            billing,
+            'Income Builder',
+            'annual',
+            'interval'
+          );
+
+        if (!switchedToAnnual) {
+          throw new Error(
+            'Expected monthly-to-annual upgrade controls for Income Builder.'
+          );
+        }
+
+        await climbPaidPlanLadder(
+          billing,
+          'Income Builder',
+          'annual'
+        );
+
+        await billing.validateYearlyCancellationOptions();
+
+        if (
+          envEnabled(
+            'SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED'
+          )
+        ) {
+          await billing.submitYearlyCancelAtExpiry();
+        }
+      }
+    );
+
+    controlledLifecycleTest(
+      'User C yearly cancel and refund',
+      'SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED',
+      'Destructive one-shot: buys Overlay annual, submits cancel-and-refund, and expects Free plan. Keep off for executable:headless.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-c-refund',
+          'Overlay Strategists',
+          'annual'
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await billing.submitYearlyCancelAndRefund();
+        await billing.validateFreePlanAfterRefund();
+      }
+    );
+
+    controlledLifecycleTest(
+      'User D monthly retention offer inspect and decline without scheduling',
+      'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+      'Creates a disposable Overlay monthly user, asserts the 3-month retention offer, declines it, and closes without scheduling a downgrade.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-d-retention-inspect',
+          'Overlay Strategists',
+          'monthly'
+        );
+
+        await new BillingPage(
+          page
+        ).declineRetentionAndPreviewOrScheduleDowngrade({
+          currentPlan:
+            'Overlay Strategists',
+          targetPlan:
+            lowerMonthlyPlan(
+              'Overlay Strategists'
+            ),
+          schedule:
+            false
+        });
+      }
+    );
+
+    controlledLifecycleTest(
+      'User D monthly retention offer accept',
+      'SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED',
+      'Destructive to retention eligibility: accepts the once-per-lifetime offer, then asserts a second downgrade does not show it again.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-d-retention-accept',
+          'Portfolio Hedger',
+          'monthly'
+        );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        const targetPlan =
+          lowerMonthlyPlan(
+            'Portfolio Hedger'
+          );
+
+        await billing.acceptMonthlyDowngradeRetentionOffer({
+          currentPlan:
+            'Portfolio Hedger',
+          targetPlan
+        });
+
+        await billing.assertRetentionOfferNotShown({
+          currentPlan:
+            'Portfolio Hedger',
+          targetPlan
+        });
+      }
+    );
+
+    controlledLifecycleTest(
+      'User D monthly retention offer decline then schedule downgrade',
+      'SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED',
+      'Declines retention and schedules the monthly downgrade at next renewal. Keep off for executable:headless.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-user-d-downgrade-submit',
+          'Overlay Strategists',
+          'monthly'
+        );
+
+        await new BillingPage(
+          page
+        ).declineRetentionAndPreviewOrScheduleDowngrade({
+          currentPlan:
+            'Overlay Strategists',
+          targetPlan:
+            lowerMonthlyPlan(
+              'Overlay Strategists'
+            ),
+          schedule:
+            true
+        });
       }
     );
 

@@ -82,6 +82,9 @@ Set-DefaultEnv 'ADMIN_PASSWORD' 'Admin@1234!'
 
 # Avoid enabling destructive Stripe and MFA lifecycle flags by default.
 # Uncomment only when using dedicated disposable accounts / fresh one-time data.
+# Do not enable SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED, SUB_LIFECYCLE_PLAN_LADDER_ENABLED,
+# or the extra submit flags (monthly cancel, yearly cancel-at-expiry, yearly refund,
+# retention accept, downgrade submit). executable:headless must stay non-destructive.
 # Enable-Flag 'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
 # Enable-Flag 'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED'
 # Enable-Flag 'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'

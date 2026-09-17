@@ -848,6 +848,32 @@ $env:OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED="true"
 npm run test:controlled:stripe-overlay -- --headed -g "missing Stripe card"
 ```
 
+Controlled four-user plan ladder (inspect upgrades, monthly cancel copy, yearly cancel options, retention offer). This creates disposable Stripe users. Do not enable the extra submit flags unless a throwaway account is approved:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+npm run test:controlled:plan-ladder -- --headed
+```
+
+Optional destructive submits. Keep these off for `npm run executable:headless` / run-all-executable:
+
+```powershell
+$env:SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+$env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="true"
+$env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="true"
+```
+
+Yearly refund is its own disposable user:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "yearly cancel and refund" --headed
+```
+
 Overlay test users are generated with scenario-specific aliases, for example:
 
 ```text

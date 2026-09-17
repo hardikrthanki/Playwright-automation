@@ -65,6 +65,10 @@ Set-DefaultEnv 'AIR_INCLUDE_MANUAL_DEFECTS' 'false'
 Set-DefaultEnv 'ADMIN_EMAIL' 'admin@ooltool.com'
 Set-DefaultEnv 'ADMIN_PASSWORD' 'Admin@1234!'
 
+# Do not enable SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED, SUB_LIFECYCLE_PLAN_LADDER_ENABLED,
+# or extra submit flags (monthly cancel, yearly cancel-at-expiry, yearly refund,
+# retention accept, downgrade submit). Batched executable runs stay non-destructive.
+
 $batches = @(
   @{
     Name = '01-auth-session-dashboard'
