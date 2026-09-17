@@ -2,8 +2,18 @@ import {
   Page
 } from '@playwright/test';
 
+import {
+  BASE_URL
+} from '../config/testData';
+import {
+  URLS
+} from '../config/constants';
 import { MobileVerificationPage }
   from '../pages/MobileVerificationPage';
+import { PlanSelectionPage }
+  from '../pages/PlanSelectionPage';
+import { StripePaymentPage }
+  from '../pages/StripePaymentPage';
 import { Logger }
   from '../utils/logger';
 
@@ -31,9 +41,9 @@ export async function continueAfterWithCardTrialCheckout(
   );
 
   await page.waitForURL(
-    /\/(dashboard|verify-mobile)/i,
+    /\/(dashboard|verify-mobile)|trial=success/i,
     {
-      timeout: 30000
+      timeout: 45000
     }
   ).catch(
     () => undefined
@@ -68,8 +78,40 @@ export async function continueAfterWithCardTrialCheckout(
   }
 
   if (
-    /verify-mobile/i.test(
+    /checkout\.stripe\.com/i.test(
       returnUrl
+    )
+  ) {
+    Logger.info(
+      'With-card trial still on Stripe Checkout. Retrying with another unused test card.'
+    );
+
+    return false;
+  }
+
+  if (
+    /trial=success/i.test(
+      `${returnUrl} ${bodyText}`
+    ) &&
+    !/verify-mobile|\/dashboard/i.test(
+      returnUrl
+    )
+  ) {
+    Logger.info(
+      'With-card trial return includes trial=success. Opening dashboard.'
+    );
+
+    await page.goto(
+      `${BASE_URL}${URLS.DASHBOARD}`,
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+  }
+
+  if (
+    /verify-mobile/i.test(
+      page.url()
     )
   ) {
     Logger.info(
@@ -98,7 +140,7 @@ export async function continueAfterWithCardTrialCheckout(
 
   if (
     /\/dashboard/i.test(
-      returnUrl
+      page.url()
     )
   ) {
     return true;
@@ -140,4 +182,31 @@ export async function continueAfterWithCardTrialCheckout(
   }
 
   return true;
+}
+
+export async function submitAnotherWithCardTrialAttempt(
+  page: Page,
+  mobileNumber?: string
+) {
+  const stripe =
+    new StripePaymentPage(
+      page
+    );
+
+  if (
+    !/checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    await new PlanSelectionPage(
+      page
+    ).selectOverlayStrategistsTrialWithCard();
+  }
+
+  await stripe.completeTrialPayment();
+
+  return continueAfterWithCardTrialCheckout(
+    page,
+    mobileNumber
+  );
 }

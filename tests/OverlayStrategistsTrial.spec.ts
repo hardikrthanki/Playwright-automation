@@ -15,7 +15,8 @@ import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
 import {
-  continueAfterWithCardTrialCheckout
+  continueAfterWithCardTrialCheckout,
+  submitAnotherWithCardTrialAttempt
 } from './helpers/withCardTrial';
 import { CompliancePage }
   from './pages/CompliancePage';
@@ -53,6 +54,8 @@ npx playwright test tests/OverlayStrategistsTrial.spec.ts --headed -g "with card
 
 QA-CL-005: with-card trial needs a fresh user and a unique Stripe test card.
 Reusing 4242 trips already_redeemed and bounces to Plan Selection / Free.
+Automation rotates unused Visa/Mastercard country test cards and retries
+once with a new user if the card fingerprint is already redeemed.
 /verify-mobile?trial=success means the trial was granted.
 ============================================================================= */
 
@@ -262,17 +265,17 @@ if (
       test(
         'New user can start Overlay Strategists trial with card',
         async ({ page }) => {
-        const user =
+        let email: string;
+        let mobileNumber: string;
+
+        ({
+          email,
+          mobileNumber
+        } =
           await registerOverlayUserAndReachPlanSelection(
             page,
             'overlay-with-card'
-          );
-
-        const email =
-          user.email;
-
-        const mobileNumber =
-          user.mobileNumber;
+          ));
 
         await test.step(
           'Select Overlay Strategists with-card trial',
@@ -332,14 +335,21 @@ if (
                 `Retrying Overlay with-card checkout with a different Stripe test card (${retry}/2)`
               );
 
-              await new PlanSelectionPage(
-                page
-              ).selectOverlayStrategistsTrialWithCard();
-
-              await stripe.completeTrialPayment();
+              if (
+                retry === 2
+              ) {
+                ({
+                  email,
+                  mobileNumber
+                } =
+                  await registerOverlayUserAndReachPlanSelection(
+                    page,
+                    'overlay-with-card-retry'
+                  ));
+              }
 
               reachedDashboard =
-                await continueAfterWithCardTrialCheckout(
+                await submitAnotherWithCardTrialAttempt(
                   page,
                   mobileNumber
                 );

@@ -18,7 +18,8 @@ import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
 import {
-  continueAfterWithCardTrialCheckout
+  continueAfterWithCardTrialCheckout,
+  submitAnotherWithCardTrialAttempt
 } from './helpers/withCardTrial';
 import { BillingPage }
   from './pages/BillingPage';
@@ -933,18 +934,29 @@ test.describe(
           page
         ).completeTrialPayment();
 
-        await continueAfterWithCardTrialCheckout(
-          page,
-          user.mobileNumber
-        ).then(
-          (reachedDashboard) => {
-            if (!reachedDashboard) {
-              throw new Error(
-                'QA-CL-005: with-card trial bounced to Plan Selection. Use a unique Stripe test card per fresh user.'
-              );
-            }
-          }
-        );
+        let reachedDashboard =
+          await continueAfterWithCardTrialCheckout(
+            page,
+            user.mobileNumber
+          );
+
+        if (
+          !reachedDashboard
+        ) {
+          reachedDashboard =
+            await submitAnotherWithCardTrialAttempt(
+              page,
+              user.mobileNumber
+            );
+        }
+
+        if (
+          !reachedDashboard
+        ) {
+          throw new Error(
+            'QA-CL-005: with-card trial bounced to Plan Selection. Use a unique Stripe test card per fresh user.'
+          );
+        }
 
         await validateDashboardAndBilling(
           page,
