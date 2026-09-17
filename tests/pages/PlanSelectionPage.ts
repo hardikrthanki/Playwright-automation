@@ -476,6 +476,37 @@ export class PlanSelectionPage extends BasePage {
           inline: 'nearest'
         });
 
+        let parent =
+          element.parentElement;
+
+        while (parent) {
+          const style =
+            window.getComputedStyle(
+              parent
+            );
+
+          if (
+            /auto|scroll|hidden/.test(
+              style.overflowY
+            )
+          ) {
+            const parentRect =
+              parent.getBoundingClientRect();
+
+            const elRect =
+              element.getBoundingClientRect();
+
+            parent.scrollTop +=
+              elRect.top -
+              parentRect.top -
+              parent.clientHeight / 2 +
+              elRect.height / 2;
+          }
+
+          parent =
+            parent.parentElement;
+        }
+
         const rect =
           element.getBoundingClientRect();
 
@@ -930,7 +961,7 @@ export class PlanSelectionPage extends BasePage {
       timeout: 15000
     });
 
-    await safeClick(
+    await this.clickBillingToggle(
       this.annualToggle(),
       'Annual Toggle'
     );
@@ -953,7 +984,7 @@ export class PlanSelectionPage extends BasePage {
       }
     );
 
-    await safeClick(
+    await this.clickBillingToggle(
       this.monthlyToggle(),
       'Monthly Toggle'
     );
