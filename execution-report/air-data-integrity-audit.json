@@ -1,44 +1,43 @@
 {
-  "generatedAt": "2026-09-17T05:06:54.157Z",
+  "generatedAt": "2026-09-17T09:03:00.775Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-17T05:06:53.684Z",
+    "generatedAt": "2026-09-17T09:03:00.277Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 153,
-    "rawTestCount": 153,
-    "attempts": 153,
-    "passed": 128,
-    "failed": 1,
-    "skipped": 24,
+    "total": 628,
+    "rawTestCount": 628,
+    "attempts": 628,
+    "passed": 129,
+    "failed": 0,
+    "skipped": 499,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 128,
-      "skipped": 24,
-      "unexpected": 1
+      "expected": 129,
+      "skipped": 499
     }
   },
   "airExecution": {
-    "total": 153,
-    "attempts": 153,
-    "passed": 128,
-    "failed": 1,
-    "skipped": 24,
+    "total": 628,
+    "attempts": 628,
+    "passed": 129,
+    "failed": 0,
+    "skipped": 499,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 153,
-    "expectedAirTotal": 153,
-    "airTotal": 153,
+    "sourceTotal": 628,
+    "expectedAirTotal": 628,
+    "airTotal": 628,
     "difference": 0
   },
   "duplicates": {
@@ -49,113 +48,346 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 4,
+    "perTestEvidence": 2,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 6,
+    "totalWithRawReports": 4,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
   "invalidJourneyReferences": [],
   "historicalContaminationDetected": false,
   "evidenceTraceability": {
-    "failedTests": [
-      {
-        "testId": "chromium > DirectSubscriptionPurchase.spec.ts > Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-        "testName": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      }
-    ]
+    "failedTests": []
   },
   "releaseTraceability": {
     "status": "PASS",
     "reasons": [
-      "Release thresholds were not met",
-      "Failures or missing critical data require review",
-      "Resolve blockers before release approval"
+      "Critical journeys are not blocked",
+      "Warnings require review",
+      "Release can proceed after evidence review"
     ],
     "reasonTraceability": [
       {
-        "reason": "Release thresholds were not met",
-        "source": "blockers",
+        "reason": "Critical journeys are not blocked",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Subscription",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Payment",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Failures or missing critical data require review",
-        "source": "blockers",
+        "reason": "Warnings require review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Subscription",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Payment",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       },
       {
-        "reason": "Resolve blockers before release approval",
-        "source": "blockers",
+        "reason": "Release can proceed after evidence review",
+        "source": "warnings",
         "references": [
           {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
+            "type": "Business Journey",
+            "name": "Registration",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Access Control",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Risk Profile",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Compliance",
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Subscription",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
           },
           {
             "type": "Business Journey",
             "name": "Payment",
-            "detail": "Critical journey status is Critical."
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Journey status is Warning."
+          },
+          {
+            "type": "Module",
+            "name": "Access Control",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Accessibility",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Module risk is Medium."
           },
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "General",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "MFA",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Onboarding",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Profile",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Module",
+            "name": "Signup",
+            "detail": "Module risk is Medium."
+          },
+          {
+            "type": "Execution",
+            "name": "Partial execution",
+            "detail": "Execution contains skipped, interrupted, not-executed, or no-data release areas."
           }
         ]
       }
     ],
-    "warnings": 4,
-    "blockers": 4
+    "warnings": 20,
+    "blockers": 0
   }
 }
