@@ -97,6 +97,82 @@ function firstCurrencyValueNearLabel(
   );
 }
 
+function nearbyTextAfterLabel(
+  text: string,
+  label: RegExp
+) {
+  const lines =
+    text
+      .split(
+        /\r?\n/
+      )
+      .map(
+        line =>
+          line.trim()
+      )
+      .filter(
+        Boolean
+      );
+
+  const labelIndex =
+    lines.findIndex(
+      line =>
+        label.test(
+          line
+        )
+    );
+
+  if (labelIndex === -1) {
+    return '';
+  }
+
+  return lines
+    .slice(
+      labelIndex,
+      labelIndex + 4
+    )
+    .join(
+      ' '
+    );
+}
+
+function parseFlexibleDate(
+  value: string
+) {
+  const patterns = [
+    /(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}/i,
+    /\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?,?\s+\d{4}/i,
+    /\d{4}-\d{2}-\d{2}/,
+    /\d{1,2}\/\d{1,2}\/\d{4}/
+  ];
+
+  for (const pattern of patterns) {
+    const match =
+      value.match(
+        pattern
+      );
+
+    if (!match) {
+      continue;
+    }
+
+    const parsed =
+      new Date(
+        match[0]
+      );
+
+    if (
+      !Number.isNaN(
+        parsed.getTime()
+      )
+    ) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
 async function checkboxIsChecked(
   checkbox: Locator
 ) {
@@ -1389,6 +1465,81 @@ async validatePlanChangeCalculationPreview(
   );
 }
 
+async validatePlanChangeDueAmountAndRenewal(
+  options: {
+    targetPlan: string;
+    action: 'upgrade' | 'downgrade' | 'interval';
+    interval: 'monthly' | 'annual';
+    expectedBillingCopy?: RegExp;
+    expectedPlanCharge?: number;
+    expectedRecurringAmount?: number;
+  }
+) {
+  await this.validatePlanChangeCalculationPreview(
+    options
+  );
+
+  const dialogText =
+    await this.planChangeDialog(
+      options
+    ).innerText();
+
+  const renewal =
+    parseFlexibleDate(
+      nearbyTextAfterLabel(
+        dialogText,
+        /next billing date|renews on|renewal date/i
+      )
+    ) ??
+    parseFlexibleDate(
+      dialogText
+    );
+
+  expect(
+    renewal,
+    'Plan-change preview should show a next billing / renewal date.'
+  ).toBeDefined();
+
+  const startOfToday =
+    new Date();
+
+  startOfToday.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  expect(
+    renewal!.getTime(),
+    'Renewal date should be today or later.'
+  ).toBeGreaterThanOrEqual(
+    startOfToday.getTime()
+  );
+
+  const maxDays =
+    options.interval ===
+      'annual'
+      ? 400
+      : 45;
+
+  expect(
+    renewal!.getTime(),
+    `Renewal date should fall within ${maxDays} days for ${options.interval} billing.`
+  ).toBeLessThanOrEqual(
+    Date.now() +
+      maxDays *
+        24 *
+        60 *
+        60 *
+        1000
+  );
+
+  Logger.success(
+    `${options.action} due amount and renewal ${renewal!.toISOString().slice(0, 10)} validated for ${options.targetPlan} ${options.interval}`
+  );
+}
+
 async submitPlanChangeCalculationPreview(
   options: {
     targetPlan: string;
@@ -1738,6 +1889,182 @@ async validateDowngradeImpactCopyIfPresent(
   );
 
   return false;
+}
+
+async validateMonthlyDowngradeRetentionOffer(
+  targetPlan: string
+) {
+  Logger.info(
+    `Validating monthly downgrade retention offer before ${targetPlan}`
+  );
+
+  await this.openPlansView();
+
+  await this.selectBillingIntervalIfAvailable(
+    'monthly'
+  );
+
+  const actionButton =
+    await this.findPlanActionButton(
+      targetPlan,
+      'downgrade'
+    );
+
+  await safeClick(
+    actionButton,
+    `Open downgrade ${targetPlan}`
+  );
+
+  const bodyText =
+    await this.page
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    /retention|discount for the next 3|next 3 (months|billing)|keep (my|your) (current )?plan|special offer/i.test(
+      bodyText
+    ) &&
+      /3 month|next 3|discount/i.test(
+        bodyText
+      ),
+    'Monthly downgrade should present the one-time 3-month retention offer before confirmation.'
+  ).toBeTruthy();
+
+  const leaveOffer =
+    this.page.getByRole(
+      'button',
+      {
+        name: /keep (my|your)? ?plan|stay|not now|close|^cancel$/i
+      }
+    ).first();
+
+  if (
+    await leaveOffer.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      leaveOffer,
+      'Leave retention offer without downgrading'
+    );
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Monthly downgrade retention offer validated without scheduling a downgrade'
+  );
+}
+
+async validateYearlyCancellationOptions() {
+  Logger.info(
+    'Validating yearly cancel-at-expiry and cancel-immediately-with-refund options'
+  );
+
+  await this.validateOverview();
+
+  const inAppCancel =
+    this.page.getByRole(
+      'button',
+      {
+        name: /cancel subscription/i
+      }
+    ).first();
+
+  let host =
+    this.page;
+
+  if (
+    await inAppCancel.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      inAppCancel,
+      'Open in-app cancel subscription'
+    );
+  } else {
+    host =
+      await this.openSubscriptionPortal();
+
+    const portalCancel =
+      host.locator(
+        'button, a'
+      ).filter({
+        hasText: /cancel subscription/i
+      }).first();
+
+    if (
+      await portalCancel.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        portalCancel,
+        'Open Cancel Subscription'
+      );
+    }
+  }
+
+  const bodyText =
+    await host
+      .locator(
+        'body'
+      )
+      .innerText();
+
+  expect(
+    /cancel at (expiry|period end|end of)|remain active until|will not renew|end of (the |this )?billing|keep access until|cancel at period end/i.test(
+      bodyText
+    ),
+    'Yearly cancel should offer cancel at expiry / period end with access until renewal.'
+  ).toBeTruthy();
+
+  expect(
+    /refund|cancel immediately|cancel now|unused (months|time)|request refund|cancel and refund/i.test(
+      bodyText
+    ),
+    'Yearly cancel should offer immediate cancel and request refund.'
+  ).toBeTruthy();
+
+  const abortCancel =
+    host.getByRole(
+      'button',
+      {
+        name: /don'?t cancel|keep subscription|go back|close|not now/i
+      }
+    ).first();
+
+  if (
+    await abortCancel.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      abortCancel,
+      'Leave cancel options without submitting'
+    );
+  } else {
+    await host.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Yearly cancel-at-expiry and refund options validated without cancelling'
+  );
 }
 
 async validatePaidSubscriberTrialCtaIsNotOffered() {

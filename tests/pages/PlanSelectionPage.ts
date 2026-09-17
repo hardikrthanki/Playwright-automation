@@ -346,6 +346,148 @@ export class PlanSelectionPage extends BasePage {
       .first();
   }
 
+  async waitUntilCatalogVisible() {
+    await this.dismissMarketingOverlays();
+
+    const catalogReady =
+      this.monthlyToggle()
+        .or(
+          this.completeSetupButton
+        )
+        .or(
+          this.page
+            .getByRole(
+              'radio',
+              {
+                name: /curious|income|overlay/i
+              }
+            )
+            .first()
+        );
+
+    if (
+      !await catalogReady.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      )
+    ) {
+      await this.page.goto(
+        this.appUrl(
+          '/onboarding'
+        ),
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
+
+      await this.dismissMarketingOverlays();
+    }
+
+    await expect(
+      this.monthlyToggle()
+    ).toBeVisible({
+      timeout: 30000
+    });
+  }
+
+  private async catalogToggleInViewport() {
+    const box =
+      await this.monthlyToggle()
+        .boundingBox()
+        .catch(
+          () => null
+        );
+
+    if (
+      !box ||
+      box.width < 1 ||
+      box.height < 1
+    ) {
+      return false;
+    }
+
+    const viewport =
+      this.page.viewportSize();
+
+    if (!viewport) {
+      return true;
+    }
+
+    return (
+      box.y >= 0 &&
+      box.y < viewport.height
+    );
+  }
+
+  async returnFromCheckoutBeforePayment() {
+    await this.page.goBack({
+      waitUntil: 'domcontentloaded'
+    });
+
+    await expect(
+      this.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com|billing\.stripe\.com/i,
+      {
+        timeout: 15000
+      }
+    );
+
+    // Stripe history-back can leave the catalog in the DOM while the
+    // viewport stays blank. Load onboarding again before the next plan.
+    await this.page.goto(
+      this.appUrl(
+        '/onboarding'
+      ),
+      {
+        waitUntil: 'domcontentloaded'
+      }
+    );
+
+    await this.waitUntilCatalogVisible();
+
+    if (
+      !await this.catalogToggleInViewport()
+    ) {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded'
+      });
+
+      await this.waitUntilCatalogVisible();
+    }
+  }
+
+  private async billingToggleSelected(
+    toggle: Locator
+  ) {
+    return toggle.evaluate(
+      (element) =>
+        element.classList.contains(
+          'bg-primary'
+        )
+    ).catch(
+      () => false
+    );
+  }
+
+  private async clickBillingToggle(
+    toggle: Locator,
+    label: string
+  ) {
+    try {
+      await safeClick(
+        toggle,
+        label
+      );
+    } catch {
+      await toggle.click({
+        force: true,
+        timeout: 5000
+      });
+    }
+  }
+
 
 
   private async trialTermsChecked() {
@@ -798,10 +940,16 @@ export class PlanSelectionPage extends BasePage {
       timeout: 15000
     });
 
-    await safeClick(
-      this.annualToggle(),
-      'Annual Toggle'
-    );
+    if (
+      !await this.billingToggleSelected(
+        this.annualToggle()
+      )
+    ) {
+      await this.clickBillingToggle(
+        this.annualToggle(),
+        'Annual Toggle'
+      );
+    }
 
     await expect(
       this.page.locator(
@@ -833,10 +981,16 @@ export class PlanSelectionPage extends BasePage {
       timeout: 15000
     });
 
-    await safeClick(
-      this.monthlyToggle(),
-      'Monthly Toggle'
-    );
+    if (
+      !await this.billingToggleSelected(
+        this.monthlyToggle()
+      )
+    ) {
+      await this.clickBillingToggle(
+        this.monthlyToggle(),
+        'Monthly Toggle'
+      );
+    }
 
     await expect(
       this.page.locator(

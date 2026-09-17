@@ -40,6 +40,25 @@ function normalizeTitleParts(parts = []) {
     .filter(Boolean);
 }
 
+function normalizeProjectName(
+  projectName = ''
+) {
+  const name =
+    String(
+      projectName
+    ).trim();
+
+  if (
+    !name ||
+    /^j\d+$/i.test(name) ||
+    /^(\d+-)?chromium\d*$/i.test(name)
+  ) {
+    return 'chromium';
+  }
+
+  return name;
+}
+
 function createCanonicalTestId({
   project = '',
   file = '',
@@ -113,7 +132,11 @@ function buildCanonicalTestRecord({
       attemptStatus: attempt.status,
     }))
   );
-  const project = test.projectName ?? '';
+  const project =
+    normalizeProjectName(
+      test.projectName ??
+        ''
+    );
   const normalizedSuiteTitle = normalizeSuiteTitleForFile(suiteTitle, file);
   const titleParts = normalizeTitleParts([
     ...titlePrefix,

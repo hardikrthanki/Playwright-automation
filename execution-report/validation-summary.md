@@ -1,6 +1,6 @@
 # AIR Automation Validation Summary
 
-Generated: 9/16/2026, 8:00:58 PM
+Generated: 9/17/2026, 10:36:53 AM
 
 Project: OOLTool
 
@@ -17,8 +17,8 @@ This document explains what the latest automation execution validated in plain b
 | Metric | Count |
 | --- | ---: |
 | Unique Tests | 153 |
-| Passed | 125 |
-| Failed | 4 |
+| Passed | 128 |
+| Failed | 1 |
 | Skipped / Not Executed | 24 |
 | Flaky | 0 |
 | Attempts | 153 |
@@ -27,8 +27,8 @@ This document explains what the latest automation execution validated in plain b
 
 | Status | Count |
 | --- | ---: |
-| failed | 4 |
-| passed | 125 |
+| failed | 1 |
+| passed | 128 |
 | skipped | 24 |
 
 ## Area Breakdown
@@ -49,43 +49,7 @@ This document explains what the latest automation execution validated in plain b
 
 | Result | Area | Scenario | Why It Matters | Expected Outcome |
 | --- | --- | --- | --- | --- |
-| PASS | Authentication | Login screen navigates to forgot password and back | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
-| PASS | Authentication | Login direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
-| PASS | Authentication | Login password draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
-| PASS | Authentication | Forgot password back to login clears reset-only navigation state | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
-| PASS | Authentication | Forgot password email draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
-| PASS | Authentication | Forgot password direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
-| PASS | Authentication | Public auth routes tolerate trailing slash and unknown query parameters | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Login screen navigates to create account | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Accessibility | Auth pages remain usable with browser back and forward | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
-| FAIL | Authentication | Login password visibility control is exposed without submitting form | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Register screen exposes required public form controls | Confirm users can authenticate safely and invalid access is blocked. | Expected controls and information should be visible to the user. |
-| PASS | Authentication | Register screen password visibility toggle changes password field type | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Register screen navigates back to login | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
-| PASS | Authentication | Login form blocks empty required fields | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form blocks empty email only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form blocks empty password only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form does not authenticate email with leading and trailing spaces | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Login form keeps user on login when invalid credentials are submitted with Enter | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Protected route /dashboard redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/profile redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/billing redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /onboarding redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/settings redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/security redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/subscription redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/notifications redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Protected route /dashboard/activity redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Authentication | Forgot password form blocks empty email | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Forgot password form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Forgot password rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Forgot password rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Forgot password rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| PASS | Authentication | Forgot password keeps user on reset page for email with surrounding spaces | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register -> Verify Email -> Login -> Risk -> Compliance | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Signup | Signup form blocks empty required fields | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Signup | Signup form blocks invalid email format | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Accessibility | Signup name fields expose browser-friendly autocomplete metadata | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
@@ -120,6 +84,43 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Password | Lowercase rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Password | Digit rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Password | Symbol rule follows configuration | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Login screen navigates to forgot password and back | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Login direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Login password draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Forgot password back to login clears reset-only navigation state | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Forgot password email draft is cleared after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Forgot password direct link remains usable after refresh | Confirm users can authenticate safely and invalid access is blocked. | The page should remain usable after refresh without losing required state. |
+| PASS | Authentication | Public auth routes tolerate trailing slash and unknown query parameters | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Login screen navigates to create account | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Accessibility | Auth pages remain usable with browser back and forward | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Login password visibility control is exposed without submitting form | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register screen exposes required public form controls | Confirm users can authenticate safely and invalid access is blocked. | Expected controls and information should be visible to the user. |
+| PASS | Authentication | Register screen password visibility toggle changes password field type | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Register screen navigates back to login | Confirm users can authenticate safely and invalid access is blocked. | Browser navigation should not break the session or page state. |
+| PASS | Authentication | Login form blocks empty required fields | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks empty email only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks empty password only | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form does not authenticate email with leading and trailing spaces | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Login form keeps user on login when invalid credentials are submitted with Enter | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Protected route /dashboard redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/profile redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/billing redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /onboarding redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/settings redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/security redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/subscription redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/notifications redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Protected route /dashboard/activity redirects unauthenticated user to login | Confirm users can authenticate safely and invalid access is blocked. | Navigation should route the user to the correct protected or public destination. |
+| PASS | Authentication | Forgot password form blocks empty email | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password form blocks invalid email format | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects SQL injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects XSS injection input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password rejects very long email input | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
+| PASS | Authentication | Forgot password keeps user on reset page for email with surrounding spaces | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Accessibility | Login form exposes accessible email and password fields | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Expected controls and information should be visible to the user. |
 | PASS | Accessibility | Login page remains usable on mobile viewport | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Accessibility | Login form supports Enter key submission without authenticating invalid data | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
@@ -132,23 +133,22 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Accessibility | Register page exposes accessible primary actions | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Expected controls and information should be visible to the user. |
 | PASS | Accessibility | Register page remains usable on mobile viewport | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Accessibility | Register form keyboard tab order reaches primary fields | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Authentication | Register -> Verify Email -> Login -> Risk -> Compliance | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Onboarding | Fast Risk and Compliance field validation | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Onboarding | Full Risk and Compliance field validation in one session | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Plan catalog pricing overlay trial and complete-setup in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Curious Explorer free plan completes onboarding without Stripe | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | New user can reach Overlay Strategists trial option | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | New user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | New user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | Overlay Strategists with-card trial opens Stripe checkout with trial details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
 | SKIPPED | Billing | Overlay Strategists with-card trial blocks missing Stripe card details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | SKIPPED | Billing | Overlay Strategists with-card trial rejects declined Stripe card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
-| FAIL | Billing | New user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | New user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Overlay Strategists trial requires terms acceptance | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | Income Builder monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Portfolio Hedger annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Income Builder annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Marketplace monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| PASS | Billing | Paid plan checkout summaries currency refresh and return use one user | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
+| FAIL | Billing | Paid plan checkout summaries currency refresh and return use one user | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
 | SKIPPED | Billing | Income Builder checkout shows currency and conversion details before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Income Builder checkout preserves context on refresh and returns safely before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
 | SKIPPED | Billing | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -199,7 +199,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Dashboard | Risk Profile and Compliance can be updated from dashboard in one session | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Billing overview plans and history in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Billing portal plans invoices and return in one session | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Authentication | Login once then logout blocks back refresh tabs and protected routes | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Authentication | Invalid reset password link does not authenticate user | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 

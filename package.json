@@ -34,6 +34,7 @@
     "test:controlled:stripe-use-case-8-matrix": "playwright test tests/FailedPaymentDunningMatrix.spec.ts",
     "test:controlled:subscription-lifecycle-matrix": "playwright test tests/SubscriptionLifecycleE2EMatrix.spec.ts",
     "test:controlled:subscription-lifecycle-execution": "playwright test tests/SubscriptionLifecycleExecution.spec.ts",
+    "test:controlled:plan-ladder": "playwright test tests/SubscriptionLifecycleExecution.spec.ts -g \"plan ladder|retention offer\"",
     "test:controlled:blocked-scenarios": "playwright test tests/BlockedScenarioExecution.spec.ts",
     "test:controlled:user-journey-matrix": "playwright test tests/UserJourneyCoverageMatrix.spec.ts",
     "test:controlled:coverage-matrix": "node scripts/run-ordered-tests.js matrix",

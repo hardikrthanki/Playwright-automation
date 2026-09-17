@@ -6,6 +6,7 @@ import {
 } from './tests/config/watchMode';
 import {
   assertAllSpecsAreListed,
+  journeyProjectName,
   playwrightTestMatch
 } from './scripts/execution-order';
 
@@ -60,12 +61,11 @@ export default defineConfig({
     },
   },
 
-  // One project per spec keeps AIR ids as "chromium > file" while the
-  // array order from scripts/execution-order.js is the user-journey sequence.
-  // Playwright's directory walk is alphabetical, so a single project cannot
-  // run AccessibilityBrowser after Auth*.
-  projects: playwrightTestMatch.map((file) => ({
-    name: 'chromium',
+  // Unique names j01, j02, … keep journey order. Names like "01-chromium"
+  // are sanitized to "chromium" then suffixed chromium6, which workers
+  // cannot resolve. AIR still records these as chromium.
+  projects: playwrightTestMatch.map((file, index) => ({
+    name: journeyProjectName(index),
     testMatch: file,
     use: {
       ...devices['Desktop Chrome'],

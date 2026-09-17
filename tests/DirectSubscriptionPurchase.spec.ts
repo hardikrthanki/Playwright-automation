@@ -5,7 +5,6 @@ import {
 } from '@playwright/test';
 
 import {
-  BASE_URL,
   TEST_USERS
 } from './config/testData';
 import {
@@ -15,9 +14,6 @@ import {
 import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
-import {
-  dismissOverlays
-} from './helpers/dismissOverlays';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -152,42 +148,9 @@ async function openPlanSelectionForFreshUser(
 async function expectPlanSelectionVisible(
   page: Page
 ) {
-  await dismissOverlays(
+  await new PlanSelectionPage(
     page
-  );
-
-  const planHeading =
-    page.getByRole(
-      'heading',
-      {
-        name: /choose your plan/i
-      }
-    );
-
-  if (
-    !await planHeading.isVisible({
-      timeout: 8000
-    }).catch(
-      () => false
-    )
-  ) {
-    await page.goto(
-      `${BASE_URL}/onboarding`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
-    );
-
-    await dismissOverlays(
-      page
-    );
-  }
-
-  await expect(
-    planHeading
-  ).toBeVisible({
-    timeout: 30000
-  });
+  ).waitUntilCatalogVisible();
 }
 
 async function validateCheckoutSummaryAndReturn(
@@ -250,22 +213,7 @@ async function validateCheckoutSummaryAndReturn(
   await test.step(
     `Return from ${scenario.planName} ${scenario.interval} checkout before payment`,
     async () => {
-      await page.goBack({
-        waitUntil: 'domcontentloaded'
-      });
-
-      await expect(
-        page
-      ).not.toHaveURL(
-        /checkout\.stripe\.com|billing\.stripe\.com/i,
-        {
-          timeout: 15000
-        }
-      );
-
-      await expectPlanSelectionVisible(
-        page
-      );
+      await planPage.returnFromCheckoutBeforePayment();
     }
   );
 }
@@ -426,51 +374,7 @@ if (
         await test.step(
           'Navigate back before payment without activating checkout',
           async () => {
-            await page.goBack({
-              waitUntil: 'domcontentloaded'
-            });
-
-            await expect(
-              page
-            ).not.toHaveURL(
-              /checkout\.stripe\.com|billing\.stripe\.com/i,
-              {
-                timeout: 15000
-              }
-            );
-
-            await dismissOverlays(
-              page
-            );
-
-            const planHeading =
-              page.getByRole(
-                'heading',
-                {
-                  name: /choose your plan/i
-                }
-              );
-
-            if (
-              !await planHeading.isVisible({
-                timeout: 8000
-              }).catch(
-                () => false
-              )
-            ) {
-              await page.goto(
-                `${BASE_URL}/onboarding`,
-                {
-                  waitUntil: 'domcontentloaded'
-                }
-              );
-            }
-
-            await expect(
-              planHeading
-            ).toBeVisible({
-              timeout: 30000
-            });
+            await planPage.returnFromCheckoutBeforePayment();
           }
         );
       }

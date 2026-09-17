@@ -7,28 +7,32 @@ Runs Playwright specs in the OOLTool user-journey order from
 docs/USER_JOURNEY_COVERAGE.md, not alphabetical file name order.
 
 Playwright itself sorts files by name (AccessibilityBrowser first). One
-chromium project per spec, listed in this file, is what actually sequences
-a full `playwright test` run with workers: 1.
+numbered chromium project per spec is what actually sequences a full
+`playwright test` run with workers: 1.
 
-1. Public auth and signup
-2. New-user onboarding, risk/compliance, and plan catalog
-3. Stripe trial, checkout, and subscription lifecycle
-4. Authenticated dashboard, positions, profile, billing, logout
-5. Password recovery, unlock, MFA, and permission access
-6. Skip-only coverage matrix last (AIR only)
+Journey sequence:
+1. Register new user (onboarding), then signup/password rules
+2. Login screens after an account can be created
+3. Risk/compliance fields and plan catalog
+4. Stripe trial, checkout, and subscription lifecycle
+5. Authenticated dashboard, positions, profile
+6. Billing, logout, and session
+7. Password recovery, unlock, MFA, and permission access
+8. Skip-only coverage matrix last (AIR only)
 ============================================================================= */
 
 const fs = require('fs');
 const path = require('path');
 
 const executableJourneyOrder = [
-  'AuthUiValidation.spec.ts',
-  'AuthNegative.spec.ts',
+  'onboarding.spec.ts',
   'SignupNegative.spec.ts',
   'PasswordPolicy.spec.ts',
+
+  'AuthUiValidation.spec.ts',
+  'AuthNegative.spec.ts',
   'AccessibilityBrowser.spec.ts',
 
-  'onboarding.spec.ts',
   'OnboardingFieldValidation.spec.ts',
   'PlanSelectionValidation.spec.ts',
 
@@ -45,6 +49,7 @@ const executableJourneyOrder = [
   'ProfileMobileValidation.spec.ts',
   'ProfilePasswordMismatch.spec.ts',
   'RiskComplianceUpdate.spec.ts',
+
   'BillingEdgeValidation.spec.ts',
   'BillingSubscriptionManagement.spec.ts',
   'Subscriber.spec.ts',
@@ -176,9 +181,9 @@ const suites = {
     'MfaUserFlow.spec.ts'
   ]),
   userJourneyFull: pick([
-    'AuthUiValidation.spec.ts',
     'onboarding.spec.ts',
     'OnboardingFieldValidation.spec.ts',
+    'AuthUiValidation.spec.ts',
     'DashboardNavigation.spec.ts',
     'ProfileNegative.spec.ts',
     'ProfileSecurityDisplay.spec.ts',
@@ -204,25 +209,30 @@ function testPaths(files) {
 
 const executableBatches = [
   {
-    name: '01-public-auth',
+    name: '01-register',
+    files: testPaths([
+      'onboarding.spec.ts',
+      'SignupNegative.spec.ts',
+      'PasswordPolicy.spec.ts'
+    ])
+  },
+  {
+    name: '02-login-auth-ui',
     files: testPaths([
       'AuthUiValidation.spec.ts',
       'AuthNegative.spec.ts',
-      'SignupNegative.spec.ts',
-      'PasswordPolicy.spec.ts',
       'AccessibilityBrowser.spec.ts'
     ])
   },
   {
-    name: '02-onboarding-plans',
+    name: '03-onboarding-plans',
     files: testPaths([
-      'onboarding.spec.ts',
       'OnboardingFieldValidation.spec.ts',
       'PlanSelectionValidation.spec.ts'
     ])
   },
   {
-    name: '03-stripe-checkout-lifecycle',
+    name: '04-stripe-checkout-lifecycle',
     files: testPaths([
       'OverlayStrategistsTrial.spec.ts',
       'DirectSubscriptionPurchase.spec.ts',
@@ -232,20 +242,20 @@ const executableBatches = [
     ])
   },
   {
-    name: '04-dashboard-profile',
+    name: '05-dashboard-profile',
     files: testPaths([
       'DashboardNavigation.spec.ts',
       'AddManualPosition.spec.ts',
       'ProfileNegative.spec.ts',
       'ProfileSecurityDisplay.spec.ts',
       'ProfileMobileValidation.spec.ts',
-      'ProfilePasswordMismatch.spec.ts'
+      'ProfilePasswordMismatch.spec.ts',
+      'RiskComplianceUpdate.spec.ts'
     ])
   },
   {
-    name: '05-billing-session',
+    name: '06-billing-session',
     files: testPaths([
-      'RiskComplianceUpdate.spec.ts',
       'BillingEdgeValidation.spec.ts',
       'BillingSubscriptionManagement.spec.ts',
       'Subscriber.spec.ts',
@@ -253,7 +263,7 @@ const executableBatches = [
     ])
   },
   {
-    name: '06-recovery-mfa-permissions',
+    name: '07-recovery-mfa-permissions',
     files: testPaths([
       'forgotpassword.spec.ts',
       'ResetPasswordNegative.spec.ts',
@@ -268,7 +278,7 @@ const executableBatches = [
 
 const allBatches = executableBatches.concat([
   {
-    name: '07-coverage-matrix',
+    name: '08-coverage-matrix',
     files: testPaths(matrixOrder)
   }
 ]);
@@ -299,10 +309,19 @@ function assertAllSpecsAreListed() {
 }
 
 function printOrder(files = playwrightTestMatch) {
+  console.log('User-journey order (registration first):');
   files.forEach((file, index) => {
     const step = String(index + 1).padStart(2, '0');
-    console.log(`${step}  ${file}`);
+    const label =
+      index === 0
+        ? '  <- register new user'
+        : '';
+    console.log(`${step}  ${file}${label}`);
   });
+}
+
+function journeyProjectName(index) {
+  return `j${String(index + 1).padStart(2, '0')}`;
 }
 
 module.exports = {
@@ -313,6 +332,7 @@ module.exports = {
   executableBatches,
   allBatches,
   testPaths,
+  journeyProjectName,
   assertAllSpecsAreListed,
   printOrder
 };

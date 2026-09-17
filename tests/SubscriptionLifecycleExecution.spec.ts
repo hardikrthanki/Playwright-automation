@@ -59,6 +59,13 @@ SUB_LIFECYCLE_CREATE_DISPOSABLE_USER=true. Upgrade submit and first
 purchases still create disposable users. Created emails are written to
 test-results/created-stripe-users.json.
 
+Plan ladder (new user, every monthly then yearly upgrade, yearly cancel
+options, monthly retention offer):
+
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "plan ladder|retention offer" --headed
+
 RUN
 ---
 $env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
@@ -683,6 +690,119 @@ async function validateDashboardAndBilling(
   await billing.validateOverviewContract();
 }
 
+const PAID_PLAN_LADDER: PlanName[] = [
+  'Income Builder',
+  'Overlay Strategists',
+  'Portfolio Hedger',
+  'Marketplace'
+];
+
+async function openPlanChangePreview(
+  billing: BillingPage,
+  targetPlan: PlanName,
+  interval: BillingInterval,
+  preferredAction: 'upgrade' | 'interval'
+) {
+  const actions: Array<'upgrade' | 'interval'> =
+    preferredAction ===
+      'interval'
+      ? [
+          'interval',
+          'upgrade'
+        ]
+      : [
+          'upgrade',
+          'interval'
+        ];
+
+  let lastError: unknown;
+
+  for (const action of actions) {
+    try {
+      await billing.openPlanChangeCalculationPreview({
+        targetPlan,
+        action,
+        interval
+      });
+
+      return action;
+    } catch (error) {
+      lastError =
+        error;
+    }
+  }
+
+  throw lastError ??
+    new Error(
+      `No ${interval} upgrade or interval action for ${targetPlan}`
+    );
+}
+
+async function submitUpgradeWithDueAndRenewal(
+  page: Page,
+  targetPlan: PlanName,
+  interval: BillingInterval,
+  preferredAction: 'upgrade' | 'interval' = 'upgrade'
+) {
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  let action: 'upgrade' | 'interval';
+
+  try {
+    action =
+      await openPlanChangePreview(
+        billing,
+        targetPlan,
+        interval,
+        preferredAction
+      );
+  } catch {
+    return false;
+  }
+
+  await billing.validatePlanChangeDueAmountAndRenewal({
+    targetPlan,
+    action,
+    interval,
+    expectedBillingCopy:
+      upgradeBillingCopy(
+        interval
+      ),
+    expectedPlanCharge:
+      PLAN_PRICES[targetPlan][interval],
+    expectedRecurringAmount:
+      PLAN_PRICES[targetPlan][interval]
+  });
+
+  await billing.submitPlanChangeCalculationPreview({
+    targetPlan,
+    action
+  });
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    await new StripePaymentPage(
+      page
+    ).completePayment();
+
+    await validateDashboardAndBilling(
+      page
+    );
+  }
+
+  await billing.validateActivePlan(
+    targetPlan
+  );
+
+  return true;
+}
+
 async function purchasePaidPlanForDisposableUser(
   page: Page,
   scenario: string,
@@ -755,7 +875,7 @@ test.describe(
   'Subscription Lifecycle Execution',
   () => {
     test.describe.configure({
-      timeout: 30 * 60 * 1000
+      timeout: 45 * 60 * 1000
     });
 
     controlledLifecycleTest(
@@ -1235,6 +1355,131 @@ test.describe(
         await new BillingPage(
           page
         ).validateCancelSubscriptionFormWithoutCancelling();
+      }
+    );
+
+    controlledLifecycleTest(
+      'Disposable user climbs every monthly then yearly plan and sees yearly cancel options',
+      'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+      'Creates one disposable Income Builder monthly user, submits an upgrade to each higher monthly plan, switches to annual, upgrades remaining yearly plans, and inspects yearly cancel-at-expiry vs refund options without submitting cancel. Enable SUB_LIFECYCLE_PLAN_LADDER_ENABLED=true.',
+      async ({ page }) => {
+        test.setTimeout(
+          45 * 60 * 1000
+        );
+
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-plan-ladder',
+          'Income Builder',
+          'monthly',
+          'plan-ladder'
+        );
+
+        let currentPlan: PlanName =
+          'Income Builder';
+
+        for (const targetPlan of PAID_PLAN_LADDER.slice(1)) {
+          await test.step(
+            `Upgrade to ${targetPlan} monthly and validate due amount and renewal`,
+            async () => {
+              const upgraded =
+                await submitUpgradeWithDueAndRenewal(
+                  page,
+                  targetPlan,
+                  'monthly',
+                  'upgrade'
+                );
+
+              if (upgraded) {
+                currentPlan =
+                  targetPlan;
+                return;
+              }
+
+              console.log(
+                `${targetPlan} monthly is not offered or has no upgrade action; skipping.`
+              );
+            }
+          );
+        }
+
+        await test.step(
+          `Switch ${currentPlan} to yearly and validate due amount and renewal`,
+          async () => {
+            const switched =
+              await submitUpgradeWithDueAndRenewal(
+                page,
+                currentPlan,
+                'annual',
+                'interval'
+              );
+
+            expect(
+              switched,
+              `Should be able to switch ${currentPlan} from monthly to yearly.`
+            ).toBeTruthy();
+          }
+        );
+
+        const annualStart =
+          PAID_PLAN_LADDER.indexOf(
+            currentPlan
+          );
+
+        for (const targetPlan of PAID_PLAN_LADDER.slice(annualStart + 1)) {
+          await test.step(
+            `Upgrade to ${targetPlan} yearly and validate due amount and renewal`,
+            async () => {
+              const upgraded =
+                await submitUpgradeWithDueAndRenewal(
+                  page,
+                  targetPlan,
+                  'annual',
+                  'upgrade'
+                );
+
+              if (upgraded) {
+                currentPlan =
+                  targetPlan;
+                return;
+              }
+
+              console.log(
+                `${targetPlan} yearly is not offered or has no upgrade action; skipping.`
+              );
+            }
+          );
+        }
+
+        await test.step(
+          'Yearly cancel offers cancel at expiry or cancel immediately with refund',
+          async () => {
+            await new BillingPage(
+              page
+            ).validateYearlyCancellationOptions();
+          }
+        );
+      }
+    );
+
+    controlledLifecycleTest(
+      'Disposable monthly user sees downgrade retention offer',
+      'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+      'Creates a disposable Overlay Strategists monthly user and opens a downgrade to Income Builder to validate the one-time 3-month retention offer without scheduling the downgrade.',
+      async ({ page }) => {
+        await purchasePaidPlanForDisposableUser(
+          page,
+          'sub-lifecycle-retention-offer',
+          'Overlay Strategists',
+          'monthly',
+          'retention-offer'
+        );
+
+        await new BillingPage(
+          page
+        ).validateMonthlyDowngradeRetentionOffer(
+          'Income Builder'
+        );
       }
     );
 

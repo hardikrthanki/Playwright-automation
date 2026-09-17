@@ -11,5 +11,6 @@ export const allBatches: Array<{
   files: string[];
 }>;
 export function testPaths(files: string[]): string[];
+export function journeyProjectName(index: number): string;
 export function assertAllSpecsAreListed(): void;
 export function printOrder(files?: string[]): void;
