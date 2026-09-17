@@ -6,6 +6,8 @@
     "scripts": {
     "execution": "npm run test:execution && npm run report:execution",
     "execution:headed": "npm run test:stable -- --headed && npm run report:execution",
+    "executable:headed": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1 -Headed",
+    "executable:headless": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1",
     "controlled": "npm run test:controlled && npm run report:execution",
     "test": "playwright test",
     "test:smoke": "playwright test tests/Subscriber.spec.ts tests/DashboardHealth.spec.ts tests/DashboardNavigation.spec.ts tests/Profile.spec.ts tests/SessionSecurity.spec.ts",
