@@ -335,21 +335,38 @@ test.describe(
     });
 
     for (const scenario of monthlyToAnnualScenarios) {
-      test(
-        `${scenario.id} - ${scenario.title}`,
-        async ({ browser }) => {
-          await executeStripeMatrixScenario(
-            scenario,
-            browser,
+      const run = async (
+        browser?: Parameters<typeof executeStripeMatrixScenario>[1]
+      ) => {
+        await executeStripeMatrixScenario(
+          scenario,
+          browser,
             {
               module: 'Billing',
               journey: 'Monthly To Annual Billing Change',
               blockedReason:
                 'Scenario requires a monthly-to-annual billing-change fixture or backend support.'
             }
-          );
-        }
-      );
+        );
+      };
+
+      if (scenario.status !== 'automated') {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async () => {
+            await run();
+          }
+        );
+      } else {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async ({ browser }) => {
+            await run(
+              browser
+            );
+          }
+        );
+      }
     }
   }
 );

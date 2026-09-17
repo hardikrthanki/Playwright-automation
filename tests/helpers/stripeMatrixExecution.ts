@@ -1218,7 +1218,7 @@ async function runCoverageKey(
 
 export async function executeStripeMatrixScenario(
   scenario: StripeMatrixScenario,
-  browser: Browser,
+  browser: Browser | undefined,
   options: {
     module?: string;
     journey?: string;
@@ -1302,6 +1302,12 @@ export async function executeStripeMatrixScenario(
       await runCoverageKey(
         coverageKey
       );
+  } else if (
+    !browser
+  ) {
+    throw new Error(
+      `Coverage key ${coverageKey} needs a browser.`
+    );
   } else {
     const page =
       await browser.newPage();

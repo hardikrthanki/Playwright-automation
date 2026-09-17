@@ -463,21 +463,38 @@ test.describe(
     });
 
     for (const scenario of downgradeScenarios) {
-      test(
-        `${scenario.id} - ${scenario.title}`,
-        async ({ browser }) => {
-          await executeStripeMatrixScenario(
-            scenario,
-            browser,
+      const run = async (
+        browser?: Parameters<typeof executeStripeMatrixScenario>[1]
+      ) => {
+        await executeStripeMatrixScenario(
+          scenario,
+          browser,
             {
               module: 'Billing',
               journey: 'Downgrade Subscription',
               blockedReason:
                 'Scenario requires a downgrade-specific subscription fixture or backend support.'
             }
-          );
-        }
-      );
+        );
+      };
+
+      if (scenario.status !== 'automated') {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async () => {
+            await run();
+          }
+        );
+      } else {
+        test(
+          `${scenario.id} - ${scenario.title}`,
+          async ({ browser }) => {
+            await run(
+              browser
+            );
+          }
+        );
+      }
     }
   }
 );
