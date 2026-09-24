@@ -1,6 +1,6 @@
 # AIR Automation Validation Summary
 
-Generated: 9/24/2026, 11:01:45 AM
+Generated: 9/24/2026, 12:30:06 PM
 
 Project: OOLTool
 
@@ -683,21 +683,21 @@ This document explains what the latest automation execution validated in plain b
 
 | Category | Scenario | Reason / Next Action |
 | --- | --- | --- |
-| Skipped | Signup OTP input trims pasted value to six digits | Scenario was not executed in this run. |
-| Skipped | New user can reach Overlay Strategists trial option | Scenario was not executed in this run. |
-| Controlled | Overlay Strategists with-card trial opens Stripe checkout with trial details | Scenario was not executed in this run. |
-| Controlled | Overlay Strategists with-card trial blocks missing Stripe card details | Scenario was not executed in this run. |
-| Controlled | Overlay Strategists with-card trial rejects declined Stripe card | Scenario was not executed in this run. |
-| Skipped | Income Builder monthly checkout shows subscription summary before payment | Scenario was not executed in this run. |
-| Skipped | Portfolio Hedger annual checkout shows subscription summary before payment | Scenario was not executed in this run. |
-| Skipped | Income Builder annual checkout shows subscription summary before payment | Scenario was not executed in this run. |
-| Skipped | Marketplace monthly checkout shows subscription summary before payment | Scenario was not executed in this run. |
-| Skipped | Income Builder checkout shows currency and conversion details before payment | Scenario was not executed in this run. |
-| Skipped | Income Builder checkout preserves context on refresh and returns safely before payment | Scenario was not executed in this run. |
-| Controlled | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Scenario was not executed in this run. |
-| Skipped | SC-61: Missing cardholder name is blocked before subscription activation | Scenario was not executed in this run. |
-| Skipped | SC-62: Failed checkout keeps user without active paid subscription | Scenario was not executed in this run. |
-| Controlled | SC-63: Closing Stripe checkout returns user safely without activating subscription | Scenario was not executed in this run. |
+| Blocked | Signup OTP input trims pasted value to six digits | Known defect: signup OTP input currently allows pasted values longer than six digits. Known defect: signup OTP input currently allows pasted values longer than six digits. |
+| Traceability | New user can reach Overlay Strategists trial option | Plan catalog validation already covers Overlay Strategists trial options. Plan catalog validation already covers Overlay Strategists trial options. |
+| Controlled | Overlay Strategists with-card trial opens Stripe checkout with trial details | Checkout details are validated on the with-card trial user. Checkout details are validated on the with-card trial user. |
+| Controlled | Overlay Strategists with-card trial blocks missing Stripe card details | Missing card validation is folded into the with-card trial user. Missing card validation is folded into the with-card trial user. |
+| Controlled | Overlay Strategists with-card trial rejects declined Stripe card | Declined card validation is folded into the with-card trial user. Declined card validation is folded into the with-card trial user. |
+| Traceability | Income Builder monthly checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Traceability | Portfolio Hedger annual checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Traceability | Income Builder annual checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Traceability | Marketplace monthly checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Traceability | Income Builder checkout shows currency and conversion details before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Traceability | Income Builder checkout preserves context on refresh and returns safely before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
+| Controlled | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. |
+| Controlled | SC-61: Missing cardholder name is blocked before subscription activation | Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. |
+| Controlled | SC-62: Failed checkout keeps user without active paid subscription | Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. |
+| Controlled | SC-63: Closing Stripe checkout returns user safely without activating subscription | Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. |
 | Skipped | Disposable user can start Overlay Strategists trial without card | Scenario was not executed in this run. |
 | Skipped | Disposable user can start Overlay Strategists trial with card | Scenario was not executed in this run. |
 | Skipped | Disposable user can purchase Income Builder monthly and reach Billing | Scenario was not executed in this run. |
@@ -709,479 +709,479 @@ This document explains what the latest automation execution validated in plain b
 | Skipped | Prepared paid user exposes non-destructive cancellation form | Scenario was not executed in this run. |
 | Skipped | Disposable user climbs every monthly then yearly plan and sees yearly cancel options | Scenario was not executed in this run. |
 | Skipped | Disposable monthly user sees downgrade retention offer | Scenario was not executed in this run. |
-| Traceability | UJ-001 - New user registers with email, password, US mobile, and static OTP | Scenario was not executed in this run. |
-| Traceability | UJ-002 - Duplicate registered email is rejected during signup | Scenario was not executed in this run. |
-| Traceability | UJ-003 - Registration OTP input does not accept more than six digits | Scenario was not executed in this run. |
-| Traceability | UJ-004 - Invalid email, weak password, missing fields, and password mismatch are blocked | Scenario was not executed in this run. |
-| Traceability | UJ-005 - User completes email verification handoff before first login | Scenario was not executed in this run. |
-| Traceability | UJ-006 - Verified user logs in and reaches dashboard or onboarding continuation | Scenario was not executed in this run. |
-| Traceability | UJ-007 - Login validates wrong password, unregistered email, empty fields, injection, and XSS input | Scenario was not executed in this run. |
-| Traceability | UJ-008 - Temporarily locked account can request email unlock link | Scenario was not executed in this run. |
-| Traceability | UJ-009 - Protected dashboard routes redirect unauthenticated users to login | Scenario was not executed in this run. |
-| Traceability | UJ-010 - Logout prevents browser-back and direct protected URL access | Scenario was not executed in this run. |
-| Traceability | UJ-011 - Forgot password request validates empty, invalid, unregistered, and security input | Scenario was not executed in this run. |
-| Traceability | UJ-012 - Forgot password sends reset link and reset page accepts valid password update | Scenario was not executed in this run. |
-| Traceability | UJ-013 - Reset password validates mismatch, weak password, and back-to-login behavior | Scenario was not executed in this run. |
-| Traceability | UJ-014 - Risk profile field validation blocks incomplete or invalid profile submission | Scenario was not executed in this run. |
-| Traceability | UJ-015 - Risk profile saved progress persists after refresh and can be updated from dashboard | Scenario was not executed in this run. |
-| Traceability | UJ-016 - Compliance required fields, state, broker approval, and accreditation are validated | Scenario was not executed in this run. |
-| Traceability | UJ-017 - Compliance values persist and can be edited from the dashboard | Scenario was not executed in this run. |
-| Traceability | UJ-018 - Plan page displays Monthly and Annual pricing and toggles correctly | Scenario was not executed in this run. |
-| Traceability | UJ-019 - Curious Explorer free plan completes onboarding without Stripe checkout | Scenario was not executed in this run. |
-| Traceability | UJ-020 - Overlay Strategists trial can start without card and route to dashboard | Scenario was not executed in this run. |
-| Traceability | UJ-021 - Overlay Strategists trial can start with card and auto-renew terms are shown | Scenario was not executed in this run. |
-| Traceability | UJ-022 - Paid plan selection redirects to Stripe checkout and accepts sandbox card details | Scenario was not executed in this run. |
-| Traceability | UJ-023 - Stripe checkout validates incomplete, expired, invalid CVC, and declined-card scenarios | Scenario was not executed in this run. |
-| Traceability | UJ-024 - New dashboard loads after onboarding and primary dashboard health is verified | Scenario was not executed in this run. |
-| Traceability | UJ-025 - Top navigation routes open without load errors | Scenario was not executed in this run. |
-| Traceability | UJ-026 - Dashboard header notification, theme, and fullscreen controls remain healthy | Scenario was not executed in this run. |
-| Traceability | UJ-027 - Profile page loads saved user details and keeps email read-only | Scenario was not executed in this run. |
-| Traceability | UJ-028 - Profile change-password form validates mismatch and wrong current password | Scenario was not executed in this run. |
-| Traceability | UJ-029 - Profile mobile number change validation is enforced | Scenario was not executed in this run. |
-| Traceability | UJ-030 - User enables authenticator app MFA and saves generated backup codes | Scenario was not executed in this run. |
-| Traceability | UJ-031 - MFA login accepts valid OTP and rejects invalid OTP | Scenario was not executed in this run. |
-| Traceability | UJ-032 - Backup code login succeeds once and used backup code cannot be reused | Scenario was not executed in this run. |
-| Traceability | UJ-033 - Trusted-device checkbox allows remembered device to skip MFA on next login | Scenario was not executed in this run. |
-| Traceability | UJ-034 - Removing trusted device requires MFA again on next login | Scenario was not executed in this run. |
-| Traceability | UJ-035 - Disabling 2FA removes MFA challenge for future login | Scenario was not executed in this run. |
-| Traceability | UJ-036 - Billing overview displays current plan, active status, billing interval, and next renewal | Scenario was not executed in this run. |
-| Traceability | UJ-037 - Billing plans show upgrade, downgrade, or current-plan status controls | Scenario was not executed in this run. |
-| Traceability | UJ-038 - Subscription history, transaction history, invoice page, and PDF link are available | Scenario was not executed in this run. |
-| Traceability | UJ-039 - Manage subscription opens Stripe portal with subscription and payment details | Scenario was not executed in this run. |
-| Traceability | UJ-040 - Stripe portal cancel-subscription form accepts reason and feedback without accidental cancellation | Scenario was not executed in this run. |
-| Blocked | UJ-041 - Cancelled subscription retains access until end of billing cycle | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | UJ-042 - Upgrade and downgrade proration behavior is validated across monthly and annual plans | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | UJ-043 - Role-based permissions hide or block unauthorized functionality | Future coverage item documented for roadmap tracking. |
-| Future | UJ-044 - Role change from member to admin applies correct MFA policy on next login | Future coverage item documented for roadmap tracking. |
-| Blocked | UJ-045 - Notification and email events are captured for signup, trial, billing, unlock, and password reset | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | UJ-046 - Audit trail records security, billing, trial, and profile changes | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | UJ-047 - User can sign out successfully from the application | Scenario was not executed in this run. |
-| Traceability | UJ-048 - Accessibility and keyboard navigation checks cover core auth and dashboard surfaces | Scenario was not executed in this run. |
-| Traceability | UJ-049 - Password visibility toggle shows and hides entered password without changing value | Scenario was not executed in this run. |
-| Future | UJ-050 - Deep link to protected page redirects to login and returns to intended page after authentication | Future coverage item documented for roadmap tracking. |
-| Future | UJ-051 - Expired session redirects to login without exposing protected dashboard data | Future coverage item documented for roadmap tracking. |
-| Future | UJ-052 - Multiple browser tabs keep session state consistent after logout | Future coverage item documented for roadmap tracking. |
-| Future | UJ-053 - Login lockout and unlock-link rate limits follow admin configuration | Future coverage item documented for roadmap tracking. |
-| Future | UJ-054 - Signup, login, forgot-password, and plan terms links open valid policy pages | Future coverage item documented for roadmap tracking. |
-| Traceability | UJ-055 - Email input trims leading and trailing spaces before validation | Scenario was not executed in this run. |
-| Future | UJ-056 - Same mobile number is allowed across multiple accounts when business rule permits it | Future coverage item documented for roadmap tracking. |
-| Traceability | UJ-057 - Onboarding step refresh keeps saved progress and does not duplicate submissions | Scenario was not executed in this run. |
-| Traceability | UJ-058 - Profile menu displays correct user name and email after login | Scenario was not executed in this run. |
-| Traceability | UJ-059 - Authenticated dashboard footer exposes legal and support destinations | Scenario was not executed in this run. |
-| Traceability | UJ-060 - Authenticated dashboard routes tolerate trailing slash and unknown query parameters | Scenario was not executed in this run. |
-| Traceability | UJ-061 - Public login, forgot-password, and registration routes tolerate trailing slash and unknown query parameters | Scenario was not executed in this run. |
-| Traceability | UJ-062 - Dashboard notification panel can be opened, dismissed, reopened, and used after refresh | Scenario was not executed in this run. |
-| Blocked | UJ-063 - Overlay Strategists free trial is limited to one verified email and mobile identity | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-01 - Start trial without payment details | Scenario was not executed in this run. |
-| Traceability | SC-02 - Trial is displayed as available | Scenario was not executed in this run. |
-| Traceability | SC-03 - Broker account limit is one | Scenario was not executed in this run. |
-| Blocked | SC-04 - No-card trial linked-account limit requires confirmation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-05 - No-card trial portfolio position limit is 100 | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-06 - Premium Overlay Strategists features are presented | Scenario was not executed in this run. |
-| Traceability | SC-07 - Start trial with valid card | Scenario was not executed in this run. |
-| Blocked | SC-08 - No subscription charge during trial | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-09 - Card information is securely saved | Scenario was not executed in this run. |
-| Traceability | SC-10 - Existing paid subscriber cannot start trial | Scenario was not executed in this run. |
-| Blocked | SC-11 - Same email cannot receive another trial | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-12 - Same verified mobile number cannot receive another trial | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-13 - Same payment method cannot receive another trial | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-14 - Trial lasts exactly 30 days | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-15 - Day 25 no-card reminder is sent once | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-16 - Day 28 no-card reminder is sent once | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-17 - Day 29 no-card final reminder is sent once | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-18 - Day 29 with-card final reminder is sent once | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-19 - No-card trial downgrades to Free after expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-20 - Broker integrations disconnect after no-card expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-21 - Imported portfolio positions are deleted after no-card expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-22 - Premium features are unavailable after expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-23 - Subscribe prompt appears after trial expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-24 - With-card trial converts to paid after expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-25 - Billing starts automatically after with-card trial expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-26 - Trial user can subscribe before trial ends | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-27 - Billing cycle resets after trial-to-paid subscription | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-28 - Failed payment after trial expiry enters grace period | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-29 - Failed billing reminder is sent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-30 - Removing only payment method during trial keeps trial active until expiry | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-31 - Terms must be accepted before activating trial | Scenario was not executed in this run. |
-| Future | SC-32 - Communication preference selection is supported | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-33 - Trial activation audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-34 - Trial conversion audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-35 - Reminder analytics are tracked | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-36 - With-card authorization failure does not start trial | Scenario was not executed in this run. |
-| Traceability | SC-36 - New user can purchase Income Builder monthly subscription during onboarding | Scenario was not executed in this run. |
-| Traceability | SC-37 - Income Builder monthly checkout shows selected plan before payment | Scenario was not executed in this run. |
-| Traceability | SC-38 - Portfolio Hedger annual checkout shows selected plan before payment | Scenario was not executed in this run. |
-| Traceability | SC-39 - Marketplace monthly checkout shows selected plan before payment | Scenario was not executed in this run. |
-| Traceability | SC-40 - Annual paid checkout displays selected plan and billing interval before payment | Scenario was not executed in this run. |
-| Traceability | SC-41 - Paid subscription can be started from onboarding plan selection | Scenario was not executed in this run. |
-| Future | SC-42 - Paid subscription can be started from pricing entry point | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-43 - Paid subscription can be started from expired trial upgrade prompt | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-44 - Paid subscription can be started from billing/settings plan action | Scenario was not executed in this run. |
-| Traceability | SC-45 - Stripe checkout displays subscriber email | Scenario was not executed in this run. |
-| Traceability | SC-46 - Stripe checkout displays selected plan name | Scenario was not executed in this run. |
-| Traceability | SC-47 - Stripe checkout displays correct billing interval | Scenario was not executed in this run. |
-| Traceability | SC-48 - Stripe checkout displays renewal or auto-renewal copy before payment | Scenario was not executed in this run. |
-| Traceability | SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields | Scenario was not executed in this run. |
-| Traceability | SC-50 - Successful sandbox card payment activates subscription | Scenario was not executed in this run. |
-| Traceability | SC-51 - Successful payment redirects user back to OOLTool dashboard | Scenario was not executed in this run. |
-| Traceability | SC-52 - Dashboard shows active subscription after successful purchase | Scenario was not executed in this run. |
-| Traceability | SC-53 - Billing overview shows current paid plan and active status | Scenario was not executed in this run. |
-| Traceability | SC-54 - Transaction history records successful paid invoice | Scenario was not executed in this run. |
-| Traceability | SC-55 - Invoice details page opens after successful purchase | Scenario was not executed in this run. |
-| Traceability | SC-56 - Invoice PDF link is available after successful purchase | Scenario was not executed in this run. |
-| Traceability | SC-57 - Incomplete card number is blocked in Stripe checkout | Scenario was not executed in this run. |
-| Traceability | SC-58 - Expired card date is blocked in Stripe checkout | Scenario was not executed in this run. |
-| Traceability | SC-59 - Invalid CVC is blocked in Stripe checkout | Scenario was not executed in this run. |
-| Traceability | SC-60 - Declined card does not activate subscription | Scenario was not executed in this run. |
-| Traceability | SC-61 - Missing cardholder name is blocked before subscription activation | Scenario was not executed in this run. |
-| Traceability | SC-62 - Failed checkout keeps user without active paid subscription | Scenario was not executed in this run. |
-| Traceability | SC-63 - Closing Stripe checkout returns user safely without activating subscription | Scenario was not executed in this run. |
-| Traceability | SC-64 - Payment currency and conversion details are displayed correctly | Scenario was not executed in this run. |
-| Blocked | SC-65 - Successful subscription confirmation email is sent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-66 - Successful purchase creates Stripe customer and subscription records | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-67 - Manage subscription portal opens for newly purchased subscription | Scenario was not executed in this run. |
-| Traceability | SC-68 - Stripe portal shows current subscription and payment method | Scenario was not executed in this run. |
-| Traceability | SC-69 - Stripe portal invoice history is available | Scenario was not executed in this run. |
-| Traceability | SC-70 - Stripe portal return link navigates back to OOLTool | Scenario was not executed in this run. |
-| Traceability | SC-71 - Cancel subscription form accepts reason and feedback without final cancellation | Scenario was not executed in this run. |
-| Blocked | SC-72 - Subscription purchase audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-73 - Duplicate checkout session cannot create duplicate paid subscriptions | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-74 - Expired checkout session cannot activate subscription | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-75 - Retry after failed payment starts a clean checkout session | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-75A - Terms and subscription terms must be accepted before paid checkout starts | Scenario was not executed in this run. |
-| Blocked | SC-75B - Double-clicking purchase does not create duplicate checkout sessions | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-75C - Browser back from Stripe checkout returns without activating subscription | Scenario was not executed in this run. |
-| Traceability | SC-75D - Refreshing Stripe checkout keeps selected plan and customer context | Scenario was not executed in this run. |
-| Blocked | SC-75E - 3DS or authentication-required card flow is handled without losing subscription context | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-75F - Delayed Stripe webhook keeps subscription pending until payment confirmation is received | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-75G - User cannot access paid entitlements before successful payment confirmation | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-75H - Payment receipt or subscription confirmation email is received after purchase | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-75I - Invoice PDF amount, currency, and plan match the purchased subscription | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-75J - Saved payment method last four digits are shown correctly after purchase | Scenario was not executed in this run. |
-| Future | SC-75K - Checkout network interruption shows recoverable error and allows retry | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout | Scenario was not executed in this run. |
-| Traceability | SC-76 - Current lower-tier paid subscription is displayed before upgrade | Scenario was not executed in this run. |
-| Traceability | SC-77 - Eligible higher-tier plans show upgrade action | Scenario was not executed in this run. |
-| Traceability | SC-78 - Current plan does not show upgrade action for itself | Scenario was not executed in this run. |
-| Future | SC-79 - Upgrade from Income Builder to Overlay Strategists is available | Future coverage item documented for roadmap tracking. |
-| Future | SC-80 - Upgrade from Overlay Strategists to Portfolio Hedger is available | Future coverage item documented for roadmap tracking. |
-| Future | SC-81 - Upgrade from Portfolio Hedger to Marketplace is available | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-82 - Upgrade CTA opens Stripe checkout or customer portal update screen | Scenario was not executed in this run. |
-| Traceability | SC-83 - Upgrade screen displays current plan and target plan | Scenario was not executed in this run. |
-| Traceability | SC-84 - Upgrade screen displays new price and billing interval | Scenario was not executed in this run. |
-| Traceability | SC-85 - Upgrade screen displays prorated amount before confirmation | Scenario was not executed in this run. |
-| Blocked | SC-86 - Upgrade starts a new billing cycle and displays next renewal date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-87 - User can cancel upgrade before payment confirmation | Scenario was not executed in this run. |
-| Blocked | SC-88 - Successful upgrade immediately updates active plan | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-89 - Successful upgrade unlocks target-plan entitlements | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-90 - Successful upgrade keeps existing user data and portfolio data | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-91 - Successful upgrade records subscription history entry | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-92 - Successful upgrade records transaction history entry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-93 - Successful upgrade creates invoice with correct prorated amount | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-94 - Upgrade invoice PDF opens and matches plan change details | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-95 - Upgrade confirmation email is sent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-96 - Failed upgrade payment does not change current plan | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-97 - Declined card during upgrade shows payment failure message | Future coverage item documented for roadmap tracking. |
-| Future | SC-98 - Incomplete payment details during upgrade are blocked | Future coverage item documented for roadmap tracking. |
-| Future | SC-99 - Upgrade retry after failed payment starts clean retry flow | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-101 - Upgrade from annual lower plan to annual higher plan is handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-102 - Upgrade from monthly lower plan to annual higher plan is handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-103 - Upgrade preserves billing customer and payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-104 - Upgrade does not create duplicate active subscriptions | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-105 - Double-clicking upgrade action is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-106 - Browser refresh during upgrade flow does not lose selected target plan | Future coverage item documented for roadmap tracking. |
-| Future | SC-107 - Browser back from upgrade checkout returns without changing plan | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-108 - Upgrade is blocked for cancelled subscription after access end date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-109 - Upgrade is available for subscription scheduled to cancel before end date when allowed | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-110 - Upgrade audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-111 - Upgrade webhook processing updates subscription status correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-112 - Upgrade failure webhook does not unlock higher-tier entitlement | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-113 - Current higher-tier subscription is displayed before downgrade | Scenario was not executed in this run. |
-| Traceability | SC-114 - Eligible lower-tier plans show downgrade action | Scenario was not executed in this run. |
-| Traceability | SC-115 - Current plan does not show downgrade action for itself | Scenario was not executed in this run. |
-| Future | SC-116 - Downgrade from Marketplace to Portfolio Hedger is available | Future coverage item documented for roadmap tracking. |
-| Future | SC-117 - Downgrade from Portfolio Hedger to Overlay Strategists is available | Future coverage item documented for roadmap tracking. |
-| Future | SC-118 - Downgrade from Overlay Strategists to Income Builder is available | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-119 - Downgrade from paid plan to Free is only available when business rules allow it | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-120 - Downgrade confirmation displays current plan and target plan | Scenario was not executed in this run. |
-| Blocked | SC-121 - Downgrade confirmation displays lost feature warning | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-122 - Downgrade confirmation displays account limits after downgrade | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-123 - Downgrade requires user acknowledgement before confirmation | Scenario was not executed in this run. |
-| Traceability | SC-124 - User can cancel downgrade before confirmation | Scenario was not executed in this run. |
-| Blocked | SC-125 - Downgrade is scheduled for end of current billing cycle when applicable | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-126 - Immediate downgrade is blocked or allowed according to business rules | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-127 - Downgrade keeps current higher-tier access until effective date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-128 - Downgrade applies lower-tier entitlements after effective date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-129 - Downgrade does not delete user account data immediately | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-130 - Downgrade handles existing broker connections above new plan limit | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-131 - Downgrade handles portfolio positions above new plan limit | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-132 - Downgrade handles linked accounts above new plan limit | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-133 - Downgrade warning clearly explains restricted features | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-134 - Downgrade from annual higher plan to annual lower plan is handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-135 - Downgrade from monthly higher plan to monthly lower plan is handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-136 - Downgrade from annual higher plan to monthly lower plan follows business rule | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-137 - Downgrade from monthly higher plan to annual lower plan follows business rule | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-138 - Downgrade with pending cancellation follows correct precedence | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-139 - Downgrade with unpaid invoice is blocked or handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-140 - Downgrade with failed payment state is blocked or handled correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-141 - Scheduled downgrade appears in billing overview | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-142 - Scheduled downgrade appears in subscription history | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-143 - Downgrade confirmation email is sent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-144 - Downgrade audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-145 - User can resume or cancel scheduled downgrade before effective date when allowed | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-146 - Cancelling scheduled downgrade keeps current plan active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-147 - Double-clicking downgrade confirmation is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-148 - Browser refresh during downgrade confirmation does not lose selected target plan | Future coverage item documented for roadmap tracking. |
-| Future | SC-149 - Browser back from downgrade flow does not change plan | Future coverage item documented for roadmap tracking. |
-| Future | SC-150 - Downgrade is not available to users without active paid subscription | Future coverage item documented for roadmap tracking. |
-| Future | SC-151 - Downgrade target excludes plans that are not lower tier | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-152 - Downgrade preserves billing customer and saved payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-153 - Downgrade does not create duplicate subscription records | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-154 - Downgrade webhook updates subscription status correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-155 - Downgrade failure webhook keeps current plan unchanged | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-156 - Downgrade effective-date reminder notification is sent when configured | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-157 - Downgrade applies feature limits consistently across dashboard modules | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-158 - Downgrade handles broker integration removal or restriction according to rule | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-159 - Downgrade handles bulk portfolio import availability according to target plan | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-160 - Downgrade handles analytics availability according to target plan | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-161 - Downgrade invoice or credit note is generated when applicable | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-162 - Downgrade with currency conversion displays correct amount and currency | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-163 - Downgrade API rejects unauthorized or cross-account downgrade attempts | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-164 - Downgrade can be reported correctly in AIR evidence and history | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-165 - Monthly plan subscriber sees annual billing option | Scenario was not executed in this run. |
-| Traceability | SC-166 - Current monthly plan is clearly identified before annual switch | Scenario was not executed in this run. |
-| Traceability | SC-167 - Annual price is displayed for the same subscription tier | Scenario was not executed in this run. |
-| Traceability | SC-168 - Annual switch action is available only for active monthly subscriptions | Scenario was not executed in this run. |
-| Future | SC-169 - Annual switch is not shown for already annual subscription | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-170 - Annual switch confirmation displays current monthly plan and target annual plan | Scenario was not executed in this run. |
-| Traceability | SC-171 - Annual switch confirmation displays yearly amount | Scenario was not executed in this run. |
-| Traceability | SC-172 - Annual switch confirmation displays prorated credit or charge | Scenario was not executed in this run. |
-| Traceability | SC-173 - Annual switch confirmation displays next renewal date | Scenario was not executed in this run. |
-| Traceability | SC-174 - User can cancel monthly-to-annual change before confirmation | Scenario was not executed in this run. |
-| Blocked | SC-175 - Successful monthly-to-annual change updates billing interval | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-176 - Successful monthly-to-annual change preserves same plan tier | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-177 - Successful monthly-to-annual change preserves entitlements | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-178 - Successful monthly-to-annual change records subscription history | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-179 - Successful monthly-to-annual change records transaction history when charge exists | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-180 - Invoice or receipt shows correct annual amount after interval change | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-181 - Invoice PDF opens after monthly-to-annual change | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-182 - Confirmation email is sent after monthly-to-annual change | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-183 - Failed payment during monthly-to-annual change keeps monthly billing active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-184 - Declined card during interval change shows payment failure | Future coverage item documented for roadmap tracking. |
-| Future | SC-185 - Incomplete payment details during interval change are blocked | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-186 - Double-clicking annual switch confirmation is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-187 - Browser refresh during interval change does not lose target annual plan | Future coverage item documented for roadmap tracking. |
-| Future | SC-188 - Browser back from interval-change checkout returns without changing billing interval | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-189 - Monthly-to-annual change is blocked for cancelled subscription after end date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-190 - Monthly-to-annual change follows rule for subscription scheduled to cancel | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-191 - Monthly-to-annual change preserves Stripe customer and payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-192 - Monthly-to-annual change does not create duplicate active subscriptions | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-193 - Monthly-to-annual change audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-194 - Monthly-to-annual webhook updates billing interval correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-195 - Monthly-to-annual failure webhook leaves monthly billing unchanged | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-196 - Annual savings messaging is displayed accurately | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-197 - Monthly-to-annual change respects tax and currency configuration | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-198 - Monthly-to-annual change keeps billing portal return link working | Scenario was not executed in this run. |
-| Future | SC-199 - Monthly-to-annual change can be represented in AIR history | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-200 - Monthly-to-annual matrix coverage is visible in AIR blocked/skipped coverage | Scenario was not executed in this run. |
-| Traceability | SC-201 - Annual plan subscriber sees monthly billing option | Scenario was not executed in this run. |
-| Traceability | SC-202 - Current annual plan is clearly identified before monthly switch | Scenario was not executed in this run. |
-| Traceability | SC-203 - Monthly price is displayed for the same subscription tier | Scenario was not executed in this run. |
-| Traceability | SC-204 - Monthly switch action is available only for active annual subscriptions | Scenario was not executed in this run. |
-| Future | SC-205 - Monthly switch is not shown for already monthly subscription | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-206 - Annual-to-monthly confirmation displays current annual plan and target monthly plan | Scenario was not executed in this run. |
-| Traceability | SC-207 - Annual-to-monthly confirmation displays monthly amount | Scenario was not executed in this run. |
-| Blocked | SC-208 - Annual-to-monthly confirmation displays whether change is immediate or scheduled | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-209 - Annual-to-monthly confirmation displays next renewal date | Scenario was not executed in this run. |
-| Traceability | SC-210 - User can cancel annual-to-monthly change before confirmation | Scenario was not executed in this run. |
-| Blocked | SC-211 - Successful annual-to-monthly change updates billing interval when effective | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-212 - Successful annual-to-monthly change preserves same plan tier | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-213 - Successful annual-to-monthly change preserves entitlements until effective date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-214 - Annual-to-monthly change records subscription history | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-215 - Annual-to-monthly change records transaction history when charge or credit exists | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-216 - Invoice or credit note shows correct annual-to-monthly amount | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-217 - Invoice or credit note PDF opens after annual-to-monthly change | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-218 - Confirmation email is sent after annual-to-monthly change | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-219 - Failed payment during annual-to-monthly change keeps annual billing active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-220 - Declined card during annual-to-monthly change shows payment failure | Future coverage item documented for roadmap tracking. |
-| Future | SC-221 - Incomplete payment details during annual-to-monthly change are blocked | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-222 - Double-clicking monthly switch confirmation is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-223 - Browser refresh during annual-to-monthly flow does not lose selected target monthly plan | Future coverage item documented for roadmap tracking. |
-| Future | SC-224 - Browser back from annual-to-monthly checkout returns without changing billing interval | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-225 - Annual-to-monthly change is blocked for cancelled subscription after end date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-226 - Annual-to-monthly change follows rule for subscription scheduled to cancel | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-227 - Annual-to-monthly change preserves Stripe customer and payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-228 - Annual-to-monthly change does not create duplicate active subscriptions | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-229 - Annual-to-monthly change audit log is created | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-230 - Annual-to-monthly webhook updates billing interval correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-231 - Annual-to-monthly failure webhook leaves annual billing unchanged | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-232 - Loss of annual savings message is displayed accurately | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-233 - Annual-to-monthly change respects tax and currency configuration | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-234 - Annual-to-monthly change keeps billing portal return link working | Scenario was not executed in this run. |
-| Future | SC-235 - Annual-to-monthly change is represented correctly in billing overview | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-236 - Annual-to-monthly scheduled change can be cancelled before effective date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-237 - Cancelling annual-to-monthly scheduled change keeps annual billing active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-238 - Annual-to-monthly change can be reported correctly in AIR history | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-239 - Annual-to-monthly matrix coverage is visible in AIR blocked/skipped coverage | Scenario was not executed in this run. |
-| Blocked | SC-240 - Annual-to-monthly API rejects unauthorized or cross-account interval changes | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-241 - Current subscription details are shown before cancellation | Scenario was not executed in this run. |
-| Traceability | SC-242 - Manage subscription portal opens from billing overview | Scenario was not executed in this run. |
-| Traceability | SC-243 - Cancel subscription action is available for active paid subscription | Scenario was not executed in this run. |
-| Traceability | SC-244 - Cancellation form opens without immediately cancelling subscription | Scenario was not executed in this run. |
-| Traceability | SC-245 - Cancellation form displays selected subscription name and price | Scenario was not executed in this run. |
-| Traceability | SC-246 - Cancellation reason dropdown is visible | Scenario was not executed in this run. |
-| Future | SC-247 - Cancellation reason is required before final cancellation | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-248 - Cancellation feedback accepts user text | Scenario was not executed in this run. |
-| Traceability | SC-249 - Go back from cancellation form leaves subscription unchanged | Scenario was not executed in this run. |
-| Future | SC-250 - Continue to cancellation shows final confirmation before destructive action | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-251 - Final cancellation requires explicit confirmation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-252 - Dedicated fixture can be cancelled successfully | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-253 - Cancellation confirmation message is displayed | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-254 - Subscription becomes scheduled to cancel at period end | Scenario was not executed in this run. |
-| Blocked | SC-255 - Paid access remains available until current billing period ends | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-256 - Billing overview displays scheduled cancellation state | Scenario was not executed in this run. |
-| Future | SC-257 - Scheduled cancellation state persists after refresh | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-258 - Already scheduled cancellation state is detected safely | Scenario was not executed in this run. |
-| Future | SC-259 - Resume or reactivate action is visible when subscription is scheduled to cancel | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-260 - Resume cancellation keeps paid subscription active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-261 - Cancellation reason is captured for audit or analytics | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-262 - Cancellation confirmation email is sent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-263 - Cancellation does not issue immediate refund unless policy allows it | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-264 - Refund action is restricted to authorized admin workflow | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-265 - Invoice history remains visible after cancellation is scheduled | Scenario was not executed in this run. |
-| Traceability | SC-266 - Payment method remains visible while subscription remains active | Scenario was not executed in this run. |
-| Future | SC-267 - Danger-zone cancellation entry opens expected cancellation flow | Future coverage item documented for roadmap tracking. |
-| Future | SC-268 - Destructive cancellation controls are guarded against accidental clicks | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-269 - Paid feature entitlement remains during cancellation grace period | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-270 - Paid feature entitlement is removed after billing period ends | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-271 - Browser back from cancellation page does not change subscription | Future coverage item documented for roadmap tracking. |
-| Future | SC-272 - Refresh during cancellation form preserves safe state | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-273 - Double-clicking final cancellation is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-274 - No-card trial can be cancelled without payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-275 - Card-backed trial can be cancelled before auto-renewal | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-276 - Subscription with unpaid invoice follows configured cancellation rule | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-277 - Pending upgrade is handled before cancellation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-278 - Pending downgrade is handled before cancellation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-279 - Annual subscription cancellation keeps annual end date clear | Future coverage item documented for roadmap tracking. |
-| Future | SC-280 - Monthly subscription cancellation keeps monthly end date clear | Future coverage item documented for roadmap tracking. |
-| Future | SC-281 - Upgrade is blocked or clearly handled after subscription is scheduled to cancel | Future coverage item documented for roadmap tracking. |
-| Future | SC-282 - Payment method update behavior is clear after cancellation is scheduled | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-283 - Return link works after visiting cancellation portal | Scenario was not executed in this run. |
-| Blocked | SC-284 - Cancellation portal deep link requires authenticated customer session | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-285 - Unauthorized cross-account cancellation is blocked by backend | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-286 - Stripe cancellation webhook updates cancel-at-period-end state | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-287 - Webhook retry does not duplicate cancellation records | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-288 - Subscription cancellation history entry is displayed | Future coverage item documented for roadmap tracking. |
-| Future | SC-289 - Transaction history does not create an unexpected extra charge on cancellation | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-290 - Invoice PDF remains accessible after cancellation is scheduled | Scenario was not executed in this run. |
-| Blocked | SC-291 - Cancellation reason analytics can be reviewed by admin | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-292 - Missing cancellation reason blocks final cancellation when required | Future coverage item documented for roadmap tracking. |
-| Future | SC-293 - Cancellation feedback max length is handled safely | Future coverage item documented for roadmap tracking. |
-| Future | SC-294 - Cancellation terms or policy link opens correctly | Future coverage item documented for roadmap tracking. |
-| Future | SC-295 - Support contact is available during cancellation flow | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-296 - Duplicate cancellation request does not duplicate subscription state | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-297 - Cancellation state is represented in AIR historical intelligence | Future coverage item documented for roadmap tracking. |
-| Future | SC-298 - Cancellation state is searchable in AIR | Future coverage item documented for roadmap tracking. |
-| Traceability | SC-299 - Cancellation matrix coverage appears in AIR blocked and skipped coverage | Scenario was not executed in this run. |
-| Blocked | SC-300 - Final cancellation scenario uses disposable fixture only | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-301 - Declined card at checkout does not activate subscription | Scenario was not executed in this run. |
-| Traceability | SC-302 - Invalid CVC is blocked during Stripe checkout | Scenario was not executed in this run. |
-| Traceability | SC-303 - Expired card date is blocked during Stripe checkout | Scenario was not executed in this run. |
-| Traceability | SC-304 - Incomplete card number is blocked during Stripe checkout | Scenario was not executed in this run. |
-| Blocked | SC-305 - Renewal payment failure changes subscription to past-due state | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-306 - Failed renewal creates an unpaid invoice | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-307 - First dunning email is sent after failed renewal | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-308 - Retry schedule follows configured dunning cadence | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-309 - Grace period starts after failed renewal | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-310 - Paid access is retained during configured grace period | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-311 - Paid access is restricted after grace period expires | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-312 - Updating payment method recovers past-due subscription | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-313 - Add payment method screen opens from Stripe portal | Scenario was not executed in this run. |
-| Traceability | SC-314 - Billing information update screen opens from Stripe portal | Scenario was not executed in this run. |
-| Blocked | SC-315 - Successful retry marks failed invoice as paid | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-316 - Repeated failed retries do not duplicate invoice records | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-317 - Final failed renewal cancels or downgrades subscription according to policy | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-318 - No-card trial expiry downgrades user to free plan | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-319 - In-app failed payment notification is displayed | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-320 - invoice.payment_failed webhook is processed correctly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-321 - customer.subscription.updated webhook updates billing status | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-322 - invoice.payment_succeeded webhook recovers subscription | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-323 - Duplicate webhook delivery is idempotent | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-324 - Failed payment creates audit log entry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-325 - Payment recovery creates audit log entry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-326 - Dunning email includes plan name and failed amount | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-327 - Dunning email includes update payment link | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-328 - Update payment link opens Stripe portal | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-329 - Expired payment update link is handled clearly | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-330 - Unauthorized payment update attempt is blocked | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-331 - Failed payment after upgrade keeps previous plan active | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-332 - Failed payment after interval change keeps previous billing interval | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-333 - Admin can retry failed payment when supported | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-334 - Removed payment method before renewal triggers failed payment flow | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-335 - Insufficient funds card is handled during checkout | Scenario was not executed in this run. |
-| Traceability | SC-336 - Authentication-required payment is handled gracefully | Scenario was not executed in this run. |
-| Future | SC-337 - Issuer unavailable payment failure is handled gracefully | Future coverage item documented for roadmap tracking. |
-| Future | SC-338 - Fraud-blocked payment does not activate subscription | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-339 - Expired saved card renewal follows dunning flow | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-340 - Invalid country or currency setup is handled safely | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-341 - Tax calculation failure prevents incorrect subscription activation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-342 - Unpaid invoice PDF or invoice view is available when configured | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-343 - Paid-after-retry invoice PDF opens successfully | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-344 - Transaction history shows failed payment status | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-345 - Billing overview shows past-due or payment issue state | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-346 - Dashboard banner warns user about payment issue | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-347 - Feature access remains correct during payment grace period | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | SC-348 - Feature access is restricted after payment suspension | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | SC-349 - AIR records failed payment evidence when available | Future coverage item documented for roadmap tracking. |
-| Future | SC-350 - AIR history highlights failed payment trend | Future coverage item documented for roadmap tracking. |
-| Blocked | SC-351 - Dunning retry configuration is validated against admin settings | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | SC-352 - Failed payment and dunning matrix coverage is visible in AIR blocked coverage | Scenario was not executed in this run. |
-| Traceability | LC-001 - New user can complete signup prerequisites and reach plan selection | Scenario was not executed in this run. |
-| Traceability | LC-002 - Overlay Strategists trial is displayed as available for eligible new user | Scenario was not executed in this run. |
-| Traceability | LC-003 - User can start Overlay Strategists trial without payment details | Scenario was not executed in this run. |
-| Traceability | LC-004 - Without-card trial requires terms acceptance before activation | Scenario was not executed in this run. |
-| Blocked | LC-005 - Without-card trial moves user to Free plan when trial expires | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout | Scenario was not executed in this run. |
-| Traceability | LC-007 - With-card trial displays active trial and saved payment method in Billing | Scenario was not executed in this run. |
-| Blocked | LC-008 - With-card trial auto-renews to paid Overlay Strategists monthly subscription at expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial | Scenario was not executed in this run. |
-| Blocked | LC-010 - Trial is allowed only once per verified email, verified mobile, or reused payment method | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-011 - No-card trial enforces broker integration limit without counting manual entry | Scenario was not executed in this run. |
-| Blocked | LC-012 - No-card trial enforces linked account and portfolio position limits | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-013 - Overlay Strategists features remain visible while trial is active | Scenario was not executed in this run. |
-| Traceability | LC-014 - User can start paid subscription from onboarding plan selection | Scenario was not executed in this run. |
-| Traceability | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Scenario was not executed in this run. |
-| Traceability | LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout | Scenario was not executed in this run. |
-| Traceability | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Scenario was not executed in this run. |
-| Traceability | LC-018 - Successful paid checkout activates subscription and redirects back to dashboard | Scenario was not executed in this run. |
-| Traceability | LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details | Scenario was not executed in this run. |
-| Traceability | LC-020 - Checkout rejects invalid, declined, insufficient-funds, stolen, and processing-error cards | Scenario was not executed in this run. |
-| Traceability | LC-021 - Authentication-required card keeps user in Stripe checkout context | Scenario was not executed in this run. |
-| Traceability | LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription | Scenario was not executed in this run. |
-| Traceability | LC-023 - Subscribed user can see upgrade action or current plan status controls | Scenario was not executed in this run. |
-| Blocked | LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-025 - Upgrade payment starts a new billing cycle immediately | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-026 - Subscribed user can see downgrade action or current plan status controls | Scenario was not executed in this run. |
-| Blocked | LC-027 - Downgrade schedules lower plan for next renewal instead of immediate entitlement loss | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-028 - Downgrade warns about feature and data-limit impact before confirmation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-030 - Annual-to-monthly billing change is scheduled for next renewal date | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-031 - Billing interval toggles and interval-specific prices remain visible before change | Scenario was not executed in this run. |
-| Traceability | LC-032 - Subscription management portal opens with current subscription details | Scenario was not executed in this run. |
-| Traceability | LC-033 - Cancel-at-period-end form accepts reason and feedback without immediate cancellation | Scenario was not executed in this run. |
-| Blocked | LC-034 - Cancel-at-period-end schedules cancellation and keeps access until expiry | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-035 - Cancelled subscription shows scheduled cancellation state and renewal/end date | Scenario was not executed in this run. |
-| Blocked | LC-036 - Immediate cancellation is restricted to controlled admin or explicit destructive flow | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-037 - User loses paid access after cancellation expiry and can select a new plan | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-038 - Eligible immediate cancellation displays refund amount before refund confirmation | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-039 - Refund processing updates Stripe ledger, billing status, and transaction history | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Future | LC-040 - Refund failure or partial refund shows clear user/admin state | Future coverage item documented for roadmap tracking. |
-| Blocked | LC-041 - Paid subscription renewal, reminders, and invoice history are validated across billing cycles | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Blocked | LC-042 - Failed renewal payment enters dunning/grace state and prompts payment recovery | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-043 - Payment recovery portal allows updating payment method without losing subscription context | Scenario was not executed in this run. |
-| Blocked | LC-044 - Trial, conversion, purchase, upgrade, downgrade, cancellation, and refund events are auditable | Requires dev, admin, backend, scheduler, third-party, or fixture support before UI automation can execute it safely. |
-| Traceability | LC-045 - AIR shows subscription lifecycle coverage, blocked gaps, known bugs, and executable coverage status | Scenario was not executed in this run. |
+| Traceability | UJ-001 - New user registers with email, password, US mobile, and static OTP | Covered by onboarding.spec.ts > Step 1 - Registration. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts > Step 1 - Registration. Run the link... |
+| Traceability | UJ-002 - Duplicate registered email is rejected during signup | Covered by SignupNegative.spec.ts > duplicate email validation. Run the linked executable spec for full UI validation. Covered by SignupNegative.spec.ts > duplicate email valida... |
+| Traceability | UJ-003 - Registration OTP input does not accept more than six digits | Covered by SignupNegative.spec.ts > OTP length validation. Run the linked executable spec for full UI validation. Covered by SignupNegative.spec.ts > OTP length validation. Run... |
+| Traceability | UJ-004 - Invalid email, weak password, missing fields, and password mismatch are blocked | Covered by SignupNegative.spec.ts and PasswordPolicy.spec.ts. Run the linked executable spec for full UI validation. Covered by SignupNegative.spec.ts and PasswordPolicy.spec.ts... |
+| Controlled | UJ-005 - User completes email verification handoff before first login | Requires email inbox access or backend verification-link test hook. Requires email inbox access or backend verification-link test hook. |
+| Traceability | UJ-006 - Verified user logs in and reaches dashboard or onboarding continuation | Covered by onboarding.spec.ts and Subscriber.spec.ts. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts and Subscriber.spec.ts. Run the linked... |
+| Traceability | UJ-007 - Login validates wrong password, unregistered email, empty fields, injection, and XSS input | Covered by AuthNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by AuthNegative.spec.ts. Run the linked executable spec for full UI validation. |
+| Controlled | UJ-008 - Temporarily locked account can request email unlock link | Requires a locked-account fixture and email-link handoff. Requires a locked-account fixture and email-link handoff. |
+| Traceability | UJ-009 - Protected dashboard routes redirect unauthenticated users to login | Covered by SessionSecurity.spec.ts and AuthNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by SessionSecurity.spec.ts and AuthNegative.spec.ts.... |
+| Traceability | UJ-010 - Logout prevents browser-back and direct protected URL access | Covered by SessionSecurity.spec.ts and Subscriber.spec.ts. Run the linked executable spec for full UI validation. Covered by SessionSecurity.spec.ts and Subscriber.spec.ts. Run... |
+| Traceability | UJ-011 - Forgot password request validates empty, invalid, unregistered, and security input | Covered by ResetPasswordNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by ResetPasswordNegative.spec.ts. Run the linked executable spec for ful... |
+| Controlled | UJ-012 - Forgot password sends reset link and reset page accepts valid password update | Requires email reset-link handoff or reset URL fixture. Requires email reset-link handoff or reset URL fixture. |
+| Traceability | UJ-013 - Reset password validates mismatch, weak password, and back-to-login behavior | Covered by ResetPasswordNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by ResetPasswordNegative.spec.ts. Run the linked executable spec for ful... |
+| Traceability | UJ-014 - Risk profile field validation blocks incomplete or invalid profile submission | Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec... |
+| Traceability | UJ-015 - Risk profile saved progress persists after refresh and can be updated from dashboard | Covered by OnboardingFieldValidation.spec.ts and RiskComplianceUpdate.spec.ts. Run the linked executable spec for full UI validation. Covered by OnboardingFieldValidation.spec.t... |
+| Traceability | UJ-016 - Compliance required fields, state, broker approval, and accreditation are validated | Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec... |
+| Traceability | UJ-017 - Compliance values persist and can be edited from the dashboard | Covered by RiskComplianceUpdate.spec.ts. Run the linked executable spec for full UI validation. Covered by RiskComplianceUpdate.spec.ts. Run the linked executable spec for full... |
+| Traceability | UJ-018 - Plan page displays Monthly and Annual pricing and toggles correctly | Covered by PlanSelectionValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts. Run the linked executable spec for... |
+| Traceability | UJ-019 - Curious Explorer free plan completes onboarding without Stripe checkout | Covered by PlanSelectionValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts. Run the linked executable spec for... |
+| Traceability | UJ-020 - Overlay Strategists trial can start without card and route to dashboard | Covered by OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts. Run the linked executable spec for... |
+| Traceability | UJ-021 - Overlay Strategists trial can start with card and auto-renew terms are shown | Covered by OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts. Run the linked executable spec for... |
+| Traceability | UJ-022 - Paid plan selection redirects to Stripe checkout and accepts sandbox card details | Covered by onboarding.spec.ts and DirectSubscriptionPurchase.spec.ts. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts and DirectSubscription... |
+| Traceability | UJ-023 - Stripe checkout validates incomplete, expired, invalid CVC, and declined-card scenarios | Covered by PaymentNegative.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts and OverlayStra... |
+| Traceability | UJ-024 - New dashboard loads after onboarding and primary dashboard health is verified | Covered by DashboardNavigation.spec.ts and Subscriber.spec.ts. Run the linked executable spec for full UI validation. Covered by DashboardNavigation.spec.ts and Subscriber.spec.... |
+| Traceability | UJ-025 - Top navigation routes open without load errors | Covered by DashboardNavigation.spec.ts. Run the linked executable spec for full UI validation. Covered by DashboardNavigation.spec.ts. Run the linked executable spec for full UI... |
+| Traceability | UJ-026 - Dashboard header notification, theme, and fullscreen controls remain healthy | Covered by DashboardNavigation.spec.ts. Run the linked executable spec for full UI validation. Covered by DashboardNavigation.spec.ts. Run the linked executable spec for full UI... |
+| Traceability | UJ-027 - Profile page loads saved user details and keeps email read-only | Covered by ProfileNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by ProfileNegative.spec.ts. Run the linked executable spec for full UI validat... |
+| Traceability | UJ-028 - Profile change-password form validates mismatch and wrong current password | Covered by ProfilePasswordMismatch.spec.ts. Run the linked executable spec for full UI validation. Covered by ProfilePasswordMismatch.spec.ts. Run the linked executable spec for... |
+| Traceability | UJ-029 - Profile mobile number change validation is enforced | Covered by ProfileMobileValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by ProfileMobileValidation.spec.ts. Run the linked executable spec for... |
+| Controlled | UJ-030 - User enables authenticator app MFA and saves generated backup codes | Requires TOTP secret or manual authenticator OTP handoff during enablement. Requires TOTP secret or manual authenticator OTP handoff during enablement. |
+| Controlled | UJ-031 - MFA login accepts valid OTP and rejects invalid OTP | Requires MFA_LOCAL_TOTP_SECRET or manual OTP fallback. Requires MFA_LOCAL_TOTP_SECRET or manual OTP fallback. |
+| Controlled | UJ-032 - Backup code login succeeds once and used backup code cannot be reused | Requires fresh one-time backup code fixture; backup codes are single-use. Requires fresh one-time backup code fixture; backup codes are single-use. |
+| Controlled | UJ-033 - Trusted-device checkbox allows remembered device to skip MFA on next login | Requires stable browser profile plus MFA_LOCAL_TOTP_SECRET or manual OTP. Requires stable browser profile plus MFA_LOCAL_TOTP_SECRET or manual OTP. |
+| Controlled | UJ-034 - Removing trusted device requires MFA again on next login | Requires trusted-device fixture and MFA_LOCAL_TOTP_SECRET or manual OTP. Requires trusted-device fixture and MFA_LOCAL_TOTP_SECRET or manual OTP. |
+| Controlled | UJ-035 - Disabling 2FA removes MFA challenge for future login | Requires account with enabled MFA and password/OTP confirmation. Requires account with enabled MFA and password/OTP confirmation. |
+| Traceability | UJ-036 - Billing overview displays current plan, active status, billing interval, and next renewal | Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for ful... |
+| Traceability | UJ-037 - Billing plans show upgrade, downgrade, or current-plan status controls | Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for ful... |
+| Traceability | UJ-038 - Subscription history, transaction history, invoice page, and PDF link are available | Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingEdgeValidation.spec.ts. Run the linked executable spec for ful... |
+| Traceability | UJ-039 - Manage subscription opens Stripe portal with subscription and payment details | Covered by BillingSubscriptionManagement.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.spec.ts. Run the linked executa... |
+| Traceability | UJ-040 - Stripe portal cancel-subscription form accepts reason and feedback without accidental cancellation | Covered by BillingSubscriptionManagement.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.spec.ts. Run the linked executa... |
+| Blocked | UJ-041 - Cancelled subscription retains access until end of billing cycle | Requires subscription lifecycle fixture, billing-cycle date control, or Stripe/API state validation. Requires subscription lifecycle fixture, billing-cycle date control, or Stri... |
+| Blocked | UJ-042 - Upgrade and downgrade proration behavior is validated across monthly and annual plans | Requires Stripe subscription update API visibility and deterministic customer fixtures. Requires Stripe subscription update API visibility and deterministic customer fixtures. |
+| Future | UJ-043 - Role-based permissions hide or block unauthorized functionality | Requires role/permission matrix, admin fixture, and expected access rules. Requires role/permission matrix, admin fixture, and expected access rules. |
+| Future | UJ-044 - Role change from member to admin applies correct MFA policy on next login | Requires confirmed MFA role-policy behavior and admin API/UI fixture. Requires confirmed MFA role-policy behavior and admin API/UI fixture. |
+| Blocked | UJ-045 - Notification and email events are captured for signup, trial, billing, unlock, and password reset | Requires email inbox/API access, notification test hooks, or message capture service. Requires email inbox/API access, notification test hooks, or message capture service. |
+| Blocked | UJ-046 - Audit trail records security, billing, trial, and profile changes | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Traceability | UJ-047 - User can sign out successfully from the application | Covered by Subscriber.spec.ts and DashboardNavigation.spec.ts. Run the linked executable spec for full UI validation. Covered by Subscriber.spec.ts and DashboardNavigation.spec.... |
+| Traceability | UJ-048 - Accessibility and keyboard navigation checks cover core auth and dashboard surfaces | Covered by AccessibilityBrowser.spec.ts. Run the linked executable spec for full UI validation. Covered by AccessibilityBrowser.spec.ts. Run the linked executable spec for full... |
+| Traceability | UJ-049 - Password visibility toggle shows and hides entered password without changing value | Covered by AuthUiValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by AuthUiValidation.spec.ts. Run the linked executable spec for full UI valid... |
+| Future | UJ-050 - Deep link to protected page redirects to login and returns to intended page after authentication | Requires confirmed return-url behavior and stable protected route fixture. Requires confirmed return-url behavior and stable protected route fixture. |
+| Future | UJ-051 - Expired session redirects to login without exposing protected dashboard data | Requires token/session expiry control or backend test hook. Requires token/session expiry control or backend test hook. |
+| Future | UJ-052 - Multiple browser tabs keep session state consistent after logout | Requires multi-tab session fixture and deterministic logout propagation behavior. Requires multi-tab session fixture and deterministic logout propagation behavior. |
+| Future | UJ-053 - Login lockout and unlock-link rate limits follow admin configuration | Requires rate-limit configuration API/admin access and safe lockout fixture. Requires rate-limit configuration API/admin access and safe lockout fixture. |
+| Future | UJ-054 - Signup, login, forgot-password, and plan terms links open valid policy pages | Requires final list of legal routes and expected link destinations. Requires final list of legal routes and expected link destinations. |
+| Traceability | UJ-055 - Email input trims leading and trailing spaces before validation | Covered by AuthNegative.spec.ts and SignupNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by AuthNegative.spec.ts and SignupNegative.spec.ts. Ru... |
+| Future | UJ-056 - Same mobile number is allowed across multiple accounts when business rule permits it | Requires explicit business-rule confirmation and two-account fixture using same mobile number. Requires explicit business-rule confirmation and two-account fixture using same mo... |
+| Traceability | UJ-057 - Onboarding step refresh keeps saved progress and does not duplicate submissions | Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by OnboardingFieldValidation.spec.ts. Run the linked executable spec... |
+| Traceability | UJ-058 - Profile menu displays correct user name and email after login | Covered by ProfileNegative.spec.ts and DashboardNavigation.spec.ts. Run the linked executable spec for full UI validation. Covered by ProfileNegative.spec.ts and DashboardNaviga... |
+| Traceability | UJ-059 - Authenticated dashboard footer exposes legal and support destinations | Covered by DashboardNavigation.spec.ts > Dashboard footer legal and support links expose usable targets. Run the linked executable spec for full UI validation. Covered by Dashbo... |
+| Traceability | UJ-060 - Authenticated dashboard routes tolerate trailing slash and unknown query parameters | Covered by DashboardNavigation.spec.ts > Authenticated direct routes tolerate trailing slash and unknown query parameters. Run the linked executable spec for full UI validation.... |
+| Traceability | UJ-061 - Public login, forgot-password, and registration routes tolerate trailing slash and unknown query parameters | Covered by AuthUiValidation.spec.ts > Public auth routes tolerate trailing slash and unknown query parameters. Run the linked executable spec for full UI validation. Covered by... |
+| Traceability | UJ-062 - Dashboard notification panel can be opened, dismissed, reopened, and used after refresh | Covered by DashboardNavigation.spec.ts > Notification panel opens and closes without disrupting dashboard; Notification panel remains usable after dashboard refresh. Run the lin... |
+| Blocked | UJ-063 - Overlay Strategists free trial is limited to one verified email and mobile identity | Business rule confirmed: a new user must have verified email/mobile identity, and the free trial is allowed only once per unique user identity. Requires safe repeat-trial fixtur... |
+| Traceability | SC-01 - Start trial without payment details | Covered by OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card. Run the linked executable spec for full UI validation. Covered by Overlay... |
+| Traceability | SC-02 - Trial is displayed as available | Covered by OverlayStrategistsTrial.spec.ts > New user can reach Overlay Strategists trial option after email/mobile onboarding prerequisites; PlanSelectionValidation.spec.ts val... |
+| Skipped | SC-03 - Broker account limit is one | Confirmed product bug: manual entry is currently counted as broker integration. Expected behavior is that manual entry must not consume broker-integration limit. Confirmed produ... |
+| Blocked | SC-04 - No-card trial linked-account limit requires confirmation | FRD says no-card trial has 5 linked accounts, but paid Overlay Strategists UI displays Account Linked (10). Confirm whether no-card trial should remain reduced at 5 or match pai... |
+| Blocked | SC-05 - No-card trial portfolio position limit is 100 | FRD expected limit is 100 positions for no-card trial. Enforcement requires safely creating/importing portfolio positions through a seed fixture or backend/API support. FRD expe... |
+| Traceability | SC-06 - Premium Overlay Strategists features are presented | Covered by PlanSelectionValidation.spec.ts > Overlay Strategists feature limits and premium benefits are displayed. Run the linked executable spec for full UI validation. Covere... |
+| Skipped | SC-07 - Start trial with valid card | Confirmed product bug: after activating the free trial with a valid payment card, Billing still displays Free Plan and does not show the saved payment method. Expected Billing s... |
+| Blocked | SC-08 - No subscription charge during trial | Requires Stripe test account/API access to verify ledger/payment intent amount. Requires Stripe test account/API access to verify ledger/payment intent amount. |
+| Skipped | SC-09 - Card information is securely saved | Confirmed product bug: saved card details are not displayed on Billing after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-m... |
+| Traceability | SC-10 - Existing paid subscriber cannot start trial | Covered by BillingSubscriptionManagement.spec.ts > Paid subscriber is not offered Overlay Strategists trial CTA. Run the linked executable spec for full UI validation. Covered b... |
+| Blocked | SC-11 - Same email cannot receive another trial | FRD rule: trial is available once per user lifetime and eligibility should use identifiers such as email address, payment method fingerprint, and other platform-specific identif... |
+| Blocked | SC-12 - Same verified mobile number cannot receive another trial | Platform rule aligned to FRD identity controls: verified mobile is treated as a platform-specific identifier for one-time trial eligibility. Requires a safe repeat-phone fixture... |
+| Blocked | SC-13 - Same payment method cannot receive another trial | Requires Stripe payment-method fingerprint visibility through API/admin. Requires Stripe payment-method fingerprint visibility through API/admin. |
+| Blocked | SC-14 - Trial lasts exactly 30 days | Requires admin/API time travel or scheduler controls to set trial start/end dates. Requires admin/API time travel or scheduler controls to set trial start/end dates. |
+| Blocked | SC-15 - Day 25 no-card reminder is sent once | Requires scheduler trigger and email/in-app notification capture. Requires scheduler trigger and email/in-app notification capture. |
+| Blocked | SC-16 - Day 28 no-card reminder is sent once | Requires scheduler trigger and email/in-app notification capture. Requires scheduler trigger and email/in-app notification capture. |
+| Blocked | SC-17 - Day 29 no-card final reminder is sent once | Requires scheduler trigger and email/in-app notification capture. Requires scheduler trigger and email/in-app notification capture. |
+| Blocked | SC-18 - Day 29 with-card final reminder is sent once | Requires scheduler trigger and email/in-app notification capture. Requires scheduler trigger and email/in-app notification capture. |
+| Blocked | SC-19 - No-card trial downgrades to Free after expiry | Requires admin/API expiry control or scheduler trigger for trial expiry. Requires admin/API expiry control or scheduler trigger for trial expiry. |
+| Blocked | SC-20 - Broker integrations disconnect after no-card expiry | Requires expired trial fixture plus broker connection data. Requires expired trial fixture plus broker connection data. |
+| Blocked | SC-21 - Imported portfolio positions are deleted after no-card expiry | Requires portfolio seed data and DB/admin validation of deletion. Requires portfolio seed data and DB/admin validation of deletion. |
+| Blocked | SC-22 - Premium features are unavailable after expiry | Requires expired trial fixture and feature entitlement selectors. Requires expired trial fixture and feature entitlement selectors. |
+| Blocked | SC-23 - Subscribe prompt appears after trial expiry | Requires expired trial fixture. Requires expired trial fixture. |
+| Blocked | SC-24 - With-card trial converts to paid after expiry | Requires trial expiry scheduler plus Stripe subscription/invoice validation. Requires trial expiry scheduler plus Stripe subscription/invoice validation. |
+| Blocked | SC-25 - Billing starts automatically after with-card trial expiry | Requires Stripe invoice/payment validation after trial conversion. Requires Stripe invoice/payment validation after trial conversion. |
+| Future | SC-26 - Trial user can subscribe before trial ends | Requires active trial fixture and controlled upgrade/plan-change checkout path. Requires active trial fixture and controlled upgrade/plan-change checkout path. |
+| Blocked | SC-27 - Billing cycle resets after trial-to-paid subscription | Requires Stripe/API visibility for billing cycle anchor and renewal date. Requires Stripe/API visibility for billing cycle anchor and renewal date. |
+| Blocked | SC-28 - Failed payment after trial expiry enters grace period | Requires trial expiry, failed renewal card fixture, scheduler/webhook control, and grace-period config. Requires trial expiry, failed renewal card fixture, scheduler/webhook con... |
+| Blocked | SC-29 - Failed billing reminder is sent | Requires failed-payment fixture plus notification capture. Requires failed-payment fixture plus notification capture. |
+| Future | SC-30 - Removing only payment method during trial keeps trial active until expiry | Requires active with-card trial account and payment-method management UI/API. Business rule: user can cancel any time but keeps plan access until trial expiry. Requires active w... |
+| Traceability | SC-31 - Terms must be accepted before activating trial | Covered by OverlayStrategistsTrial.spec.ts / PlanSelectionValidation.spec.ts > trial terms required. Run the linked executable spec for full UI validation. Covered by OverlayStr... |
+| Future | SC-32 - Communication preference selection is supported | Requires confirmation of communication preference UI location and expected options. Requires confirmation of communication preference UI location and expected options. |
+| Blocked | SC-33 - Trial activation audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-34 - Trial conversion audit log is created | Requires admin/API/DB access to audit log records after trial conversion. Requires admin/API/DB access to audit log records after trial conversion. |
+| Blocked | SC-35 - Reminder analytics are tracked | Requires analytics/admin event visibility. Requires analytics/admin event visibility. |
+| Traceability | SC-36 - With-card authorization failure does not start trial | Covered by OverlayStrategistsTrial.spec.ts > Overlay Strategists with-card trial rejects declined Stripe card. Run the linked executable spec for full UI validation. Covered by... |
+| Traceability | SC-36 - New user can purchase Income Builder monthly subscription during onboarding | Covered by onboarding.spec.ts > Income Builder Stripe checkout payment completion. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts > Income... |
+| Traceability | SC-37 - Income Builder monthly checkout shows selected plan before payment | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder monthly checkout shows subscription summary before payment. Run the linked executable spec for full UI validation.... |
+| Traceability | SC-38 - Portfolio Hedger annual checkout shows selected plan before payment | Covered by DirectSubscriptionPurchase.spec.ts > Portfolio Hedger annual checkout shows subscription summary before payment. Run the linked executable spec for full UI validation... |
+| Traceability | SC-39 - Marketplace monthly checkout shows selected plan before payment | Covered by DirectSubscriptionPurchase.spec.ts > Marketplace monthly checkout shows subscription summary before payment. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-40 - Annual paid checkout displays selected plan and billing interval before payment | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder annual and Portfolio Hedger annual checkout summaries before payment. Run the linked executable spec for full UI v... |
+| Traceability | SC-41 - Paid subscription can be started from onboarding plan selection | Covered by PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts, DirectSubscriptionPurchase.spec.ts, and Subsc... |
+| Future | SC-42 - Paid subscription can be started from pricing entry point | Requires confirmed pricing page route/selectors and reusable logged-in fixture. Requires confirmed pricing page route/selectors and reusable logged-in fixture. |
+| Blocked | SC-43 - Paid subscription can be started from expired trial upgrade prompt | Requires expired-trial fixture or scheduler/API time control. Requires expired-trial fixture or scheduler/API time control. |
+| Traceability | SC-44 - Paid subscription can be started from billing/settings plan action | Covered by BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls. Run the linked executable spec for full UI validation. Covered by BillingSu... |
+| Traceability | SC-45 - Stripe checkout displays subscriber email | Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase... |
+| Traceability | SC-46 - Stripe checkout displays selected plan name | Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase... |
+| Traceability | SC-47 - Stripe checkout displays correct billing interval | Covered by DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase... |
+| Controlled | SC-48 - Stripe checkout displays renewal or auto-renewal copy before payment | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; copy expectation now asserted flexibly. Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHE... |
+| Traceability | SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields | Covered by DirectSubscriptionPurchase.spec.ts and PaymentNegative.spec.ts. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase.spec.ts a... |
+| Traceability | SC-50 - Successful sandbox card payment activates subscription | Covered by onboarding.spec.ts > Stripe checkout payment completion. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts > Stripe checkout paymen... |
+| Traceability | SC-51 - Successful payment redirects user back to OOLTool dashboard | Covered by onboarding.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts and OverlayStrategistsTri... |
+| Traceability | SC-52 - Dashboard shows active subscription after successful purchase | Covered by Subscriber.spec.ts. Run the linked executable spec for full UI validation. Covered by Subscriber.spec.ts. Run the linked executable spec for full UI validation. |
+| Traceability | SC-53 - Billing overview shows current paid plan and active status | Covered by BillingSubscriptionManagement.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.spec.ts. Run the linked executa... |
+| Traceability | SC-54 - Transaction history records successful paid invoice | Covered by Subscriber.spec.ts > Transactions tab paid status. Run the linked executable spec for full UI validation. Covered by Subscriber.spec.ts > Transactions tab paid status... |
+| Traceability | SC-55 - Invoice details page opens after successful purchase | Covered by Subscriber.spec.ts > Invoice page opens successfully. Run the linked executable spec for full UI validation. Covered by Subscriber.spec.ts > Invoice page opens succes... |
+| Traceability | SC-56 - Invoice PDF link is available after successful purchase | Covered by Subscriber.spec.ts > Invoice PDF link is available and opens. Run the linked executable spec for full UI validation. Covered by Subscriber.spec.ts > Invoice PDF link... |
+| Traceability | SC-57 - Incomplete card number is blocked in Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks incomplete card number. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > S... |
+| Traceability | SC-58 - Expired card date is blocked in Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks expired card date. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > Stripe... |
+| Traceability | SC-59 - Invalid CVC is blocked in Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks invalid CVC. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > Stripe Check... |
+| Traceability | SC-60 - Declined card does not activate subscription | Covered by PaymentNegative.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts and OverlayStra... |
+| Controlled | SC-61 - Missing cardholder name is blocked before subscription activation | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; validation asserted flexibly (blocked-state OR error copy). Requires BLOCKED_SCENARIO_EXECUTION_ENABLED... |
+| Controlled | SC-62 - Failed checkout keeps user without active paid subscription | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; UI-level validation (no success/activation copy after decline). Requires BLOCKED_SCENARIO_EXECUTION_ENA... |
+| Controlled | SC-63 - Closing Stripe checkout returns user safely without activating subscription | Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true, STRIPE_CHECKOUT_URL, and a checkout link exposing a cancel/return control. Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true, ST... |
+| Traceability | SC-64 - Payment currency and conversion details are displayed correctly | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder checkout shows currency and conversion details before payment. Run the linked executable spec for full UI validati... |
+| Blocked | SC-65 - Successful subscription confirmation email is sent | Requires email inbox/API access or notification capture. Requires email inbox/API access or notification capture. |
+| Blocked | SC-66 - Successful purchase creates Stripe customer and subscription records | Requires Stripe sandbox API/admin access to validate customer/subscription objects. Requires Stripe sandbox API/admin access to validate customer/subscription objects. |
+| Traceability | SC-67 - Manage subscription portal opens for newly purchased subscription | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-68 - Stripe portal shows current subscription and payment method | Covered by BillingSubscriptionManagement.spec.ts > validateStripePortalSession. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.s... |
+| Traceability | SC-69 - Stripe portal invoice history is available | Covered by BillingSubscriptionManagement.spec.ts > validateStripePortalSession. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.s... |
+| Traceability | SC-70 - Stripe portal return link navigates back to OOLTool | Covered by BillingSubscriptionManagement.spec.ts > validateStripePortalSession. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.s... |
+| Traceability | SC-71 - Cancel subscription form accepts reason and feedback without final cancellation | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Blocked | SC-72 - Subscription purchase audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-73 - Duplicate checkout session cannot create duplicate paid subscriptions | Requires backend/API visibility into checkout session idempotency and subscription count. Requires backend/API visibility into checkout session idempotency and subscription count. |
+| Blocked | SC-74 - Expired checkout session cannot activate subscription | Requires expired checkout-session fixture or Stripe/API session control. Requires expired checkout-session fixture or Stripe/API session control. |
+| Future | SC-75 - Retry after failed payment starts a clean checkout session | Requires failed-payment fixture plus clean retry/session validation. Requires failed-payment fixture plus clean retry/session validation. |
+| Traceability | SC-75A - Terms and subscription terms must be accepted before paid checkout starts | Covered by PlanSelectionValidation.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts... |
+| Blocked | SC-75B - Double-clicking purchase does not create duplicate checkout sessions | Requires backend/API visibility into checkout session creation and idempotency keys. Requires backend/API visibility into checkout session creation and idempotency keys. |
+| Traceability | SC-75C - Browser back from Stripe checkout returns without activating subscription | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder checkout preserves context on refresh and returns safely before payment. Run the linked executable spec for full U... |
+| Traceability | SC-75D - Refreshing Stripe checkout keeps selected plan and customer context | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder checkout preserves context on refresh and returns safely before payment. Run the linked executable spec for full U... |
+| Blocked | SC-75E - 3DS or authentication-required card flow is handled without losing subscription context | Requires Stripe sandbox 3DS card fixture and confirmation handling rules. Requires Stripe sandbox 3DS card fixture and confirmation handling rules. |
+| Blocked | SC-75F - Delayed Stripe webhook keeps subscription pending until payment confirmation is received | Requires webhook delay/retry control or backend subscription state API. Requires webhook delay/retry control or backend subscription state API. |
+| Future | SC-75G - User cannot access paid entitlements before successful payment confirmation | Requires entitlement selectors and safe failed/pending checkout fixture. Requires entitlement selectors and safe failed/pending checkout fixture. |
+| Blocked | SC-75H - Payment receipt or subscription confirmation email is received after purchase | Requires email inbox/API access or notification capture service. Requires email inbox/API access or notification capture service. |
+| Future | SC-75I - Invoice PDF amount, currency, and plan match the purchased subscription | Requires deterministic plan amount fixture and PDF content parsing/validation. Requires deterministic plan amount fixture and PDF content parsing/validation. |
+| Traceability | SC-75J - Saved payment method last four digits are shown correctly after purchase | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal shows current subscription and payment method. Run the linked executable spec for full UI validation. Covered by... |
+| Future | SC-75K - Checkout network interruption shows recoverable error and allows retry | Requires controlled network failure injection and retry expectation. Requires controlled network failure injection and retry expectation. |
+| Traceability | SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout | Covered by DirectSubscriptionPurchase.spec.ts > Income Builder checkout shows currency and conversion details before payment. Run the linked executable spec for full UI validati... |
+| Traceability | SC-76 - Current lower-tier paid subscription is displayed before upgrade | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-77 - Eligible higher-tier plans show upgrade action | Covered by BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-78 - Current plan does not show upgrade action for itself | Covered by BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Future | SC-79 - Upgrade from Income Builder to Overlay Strategists is available | Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated lower-tier paid account fixture with active Income Builder subscription. Business r... |
+| Future | SC-80 - Upgrade from Overlay Strategists to Portfolio Hedger is available | Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Overlay Strategists paid account fixture. Business rule confirmed: active users can... |
+| Future | SC-81 - Upgrade from Portfolio Hedger to Marketplace is available | Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Portfolio Hedger paid account fixture. Business rule confirmed: active users can up... |
+| Traceability | SC-82 - Upgrade CTA opens Stripe checkout or customer portal update screen | Covered by SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview monthly and annual upgrade calculations. Run the linked executable spec for full UI validation... |
+| Traceability | SC-83 - Upgrade screen displays current plan and target plan | Covered by SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview shows target plan. Run the linked executable spec for full UI validation. Covered by Subscription... |
+| Traceability | SC-84 - Upgrade screen displays new price and billing interval | Covered by SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview validates plan charge and interval copy. Run the linked executable spec for full UI validation. C... |
+| Traceability | SC-85 - Upgrade screen displays prorated amount before confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > upgrade preview validates unused-time credit and amount due today. Stripe invoice-ID reconciliation remains blocked.. Run the... |
+| Blocked | SC-86 - Upgrade starts a new billing cycle and displays next renewal date | Business rule confirmed: upgrade starts a new billing cycle. Requires stable billing-cycle fixture or Stripe subscription API access. Business rule confirmed: upgrade starts a n... |
+| Traceability | SC-87 - User can cancel upgrade before payment confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > upgrade calculation preview is closed without submitting. Run the linked executable spec for full UI validation. Covered by S... |
+| Blocked | SC-88 - Successful upgrade immediately updates active plan | Requires dedicated upgrade account and approval to submit upgrade payment/update. Requires dedicated upgrade account and approval to submit upgrade payment/update. |
+| Blocked | SC-89 - Successful upgrade unlocks target-plan entitlements | Requires entitlement selectors and post-upgrade account fixture. Requires entitlement selectors and post-upgrade account fixture. |
+| Blocked | SC-90 - Successful upgrade keeps existing user data and portfolio data | Requires portfolio/broker seed data and post-upgrade data integrity validation. Requires portfolio/broker seed data and post-upgrade data integrity validation. |
+| Future | SC-91 - Successful upgrade records subscription history entry | Requires post-upgrade subscription history fixture. Requires post-upgrade subscription history fixture. |
+| Blocked | SC-92 - Successful upgrade records transaction history entry | Requires Stripe invoice/payment record visibility after upgrade. Requires Stripe invoice/payment record visibility after upgrade. |
+| Blocked | SC-93 - Successful upgrade creates invoice with correct prorated amount | Business rule confirmed: prorated charge is required on upgrade. Requires Stripe invoice API/admin access and deterministic proration. Business rule confirmed: prorated charge i... |
+| Future | SC-94 - Upgrade invoice PDF opens and matches plan change details | Requires post-upgrade invoice PDF fixture and PDF content validation. Requires post-upgrade invoice PDF fixture and PDF content validation. |
+| Blocked | SC-95 - Upgrade confirmation email is sent | Requires email inbox/API access or notification capture service. Requires email inbox/API access or notification capture service. |
+| Blocked | SC-96 - Failed upgrade payment does not change current plan | Requires failed-payment upgrade fixture and post-failure billing state validation. Requires failed-payment upgrade fixture and post-failure billing state validation. |
+| Future | SC-97 - Declined card during upgrade shows payment failure message | Requires upgrade checkout fixture with Stripe declined-card path. Requires upgrade checkout fixture with Stripe declined-card path. |
+| Future | SC-98 - Incomplete payment details during upgrade are blocked | Requires upgrade checkout fixture and Stripe validation selectors. Requires upgrade checkout fixture and Stripe validation selectors. |
+| Future | SC-99 - Upgrade retry after failed payment starts clean retry flow | Requires failed upgrade payment fixture and retry behavior confirmation. Requires failed upgrade payment fixture and retry behavior confirmation. |
+| Blocked | SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly | Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires lower monthly plan account and Stripe proration validation. Business ru... |
+| Blocked | SC-101 - Upgrade from annual lower plan to annual higher plan is handled correctly | Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires annual lower-plan account and Stripe proration validation. Business rul... |
+| Blocked | SC-102 - Upgrade from monthly lower plan to annual higher plan is handled correctly | Business rule confirmed: upgrade across billing interval is allowed and starts a new billing cycle with prorated charge. Requires Stripe proration visibility. Business rule conf... |
+| Blocked | SC-103 - Upgrade preserves billing customer and payment method | Requires Stripe customer/payment-method API or admin visibility. Requires Stripe customer/payment-method API or admin visibility. |
+| Blocked | SC-104 - Upgrade does not create duplicate active subscriptions | Requires backend/Stripe subscription count visibility. Requires backend/Stripe subscription count visibility. |
+| Blocked | SC-105 - Double-clicking upgrade action is idempotent | Requires backend/API visibility into idempotency or duplicate checkout prevention. Requires backend/API visibility into idempotency or duplicate checkout prevention. |
+| Future | SC-106 - Browser refresh during upgrade flow does not lose selected target plan | Requires stable upgrade flow session and refresh behavior. Requires stable upgrade flow session and refresh behavior. |
+| Future | SC-107 - Browser back from upgrade checkout returns without changing plan | Requires safe upgrade checkout cancel/return validation. Requires safe upgrade checkout cancel/return validation. |
+| Blocked | SC-108 - Upgrade is blocked for cancelled subscription after access end date | Requires cancelled/expired subscription fixture. Requires cancelled/expired subscription fixture. |
+| Blocked | SC-109 - Upgrade is available for subscription scheduled to cancel before end date when allowed | Business rule confirmed: users can upgrade any time while access is active. Requires scheduled-cancellation fixture to verify behavior before access end date. Business rule conf... |
+| Blocked | SC-110 - Upgrade audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-111 - Upgrade webhook processing updates subscription status correctly | Requires webhook event visibility or backend state API. Requires webhook event visibility or backend state API. |
+| Blocked | SC-112 - Upgrade failure webhook does not unlock higher-tier entitlement | Requires failed upgrade webhook fixture and entitlement validation. Requires failed upgrade webhook fixture and entitlement validation. |
+| Traceability | SC-113 - Current higher-tier subscription is displayed before downgrade | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-114 - Eligible lower-tier plans show downgrade action | Covered by BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-115 - Current plan does not show downgrade action for itself | Covered by BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Future | SC-116 - Downgrade from Marketplace to Portfolio Hedger is available | Requires Marketplace paid account fixture. Requires Marketplace paid account fixture. |
+| Future | SC-117 - Downgrade from Portfolio Hedger to Overlay Strategists is available | Requires Portfolio Hedger paid account fixture. Requires Portfolio Hedger paid account fixture. |
+| Future | SC-118 - Downgrade from Overlay Strategists to Income Builder is available | Requires Overlay Strategists paid account fixture. Requires Overlay Strategists paid account fixture. |
+| Blocked | SC-119 - Downgrade from paid plan to Free is only available when business rules allow it | Requires confirmed business rule for paid-to-free downgrade and fixture account. Requires confirmed business rule for paid-to-free downgrade and fixture account. |
+| Traceability | SC-120 - Downgrade confirmation displays current plan and target plan | Covered by SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview downgrade calculations without submitting. Run the linked executable spec for full UI validati... |
+| Blocked | SC-121 - Downgrade confirmation displays lost feature warning | SubscriptionLifecycleExecution.spec.ts looks for lost-feature/limit copy when present. Dedicated comparison warning copy is still not a guaranteed selector, so this FRD row stay... |
+| Blocked | SC-122 - Downgrade confirmation displays account limits after downgrade | Requires plan limit metadata and downgrade confirmation screen. Requires plan limit metadata and downgrade confirmation screen. |
+| Traceability | SC-123 - Downgrade requires user acknowledgement before confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > downgrade preview terms checkbox is required before Confirm & pay. Run the linked executable spec for full UI validation. Cov... |
+| Traceability | SC-124 - User can cancel downgrade before confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > downgrade preview is closed without submitting. Run the linked executable spec for full UI validation. Covered by Subscriptio... |
+| Blocked | SC-125 - Downgrade is scheduled for end of current billing cycle when applicable | Requires Stripe subscription schedule/API visibility and deterministic cycle date. Requires Stripe subscription schedule/API visibility and deterministic cycle date. |
+| Blocked | SC-126 - Immediate downgrade is blocked or allowed according to business rules | Requires confirmed downgrade timing rule and Stripe/API validation. Requires confirmed downgrade timing rule and Stripe/API validation. |
+| Blocked | SC-127 - Downgrade keeps current higher-tier access until effective date | Requires scheduled downgrade fixture and entitlement validation before effective date. Requires scheduled downgrade fixture and entitlement validation before effective date. |
+| Blocked | SC-128 - Downgrade applies lower-tier entitlements after effective date | Requires scheduler/time control and entitlement validation after effective date. Requires scheduler/time control and entitlement validation after effective date. |
+| Blocked | SC-129 - Downgrade does not delete user account data immediately | Requires seeded portfolio/broker/account data and post-downgrade data integrity validation. Requires seeded portfolio/broker/account data and post-downgrade data integrity valid... |
+| Blocked | SC-130 - Downgrade handles existing broker connections above new plan limit | Requires broker connection seed data above target plan limit. Requires broker connection seed data above target plan limit. |
+| Blocked | SC-131 - Downgrade handles portfolio positions above new plan limit | Requires portfolio position seed data above target plan limit. Requires portfolio position seed data above target plan limit. |
+| Blocked | SC-132 - Downgrade handles linked accounts above new plan limit | Requires linked-account seed data above target plan limit. Requires linked-account seed data above target plan limit. |
+| Blocked | SC-133 - Downgrade warning clearly explains restricted features | Requires downgrade warning UI/copy fixture. Requires downgrade warning UI/copy fixture. |
+| Blocked | SC-134 - Downgrade from annual higher plan to annual lower plan is handled correctly | Requires annual higher-plan fixture and Stripe subscription schedule validation. Requires annual higher-plan fixture and Stripe subscription schedule validation. |
+| Blocked | SC-135 - Downgrade from monthly higher plan to monthly lower plan is handled correctly | Requires monthly higher-plan fixture and Stripe subscription update validation. Requires monthly higher-plan fixture and Stripe subscription update validation. |
+| Blocked | SC-136 - Downgrade from annual higher plan to monthly lower plan follows business rule | Requires confirmed interval-change rule and Stripe schedule validation. Requires confirmed interval-change rule and Stripe schedule validation. |
+| Blocked | SC-137 - Downgrade from monthly higher plan to annual lower plan follows business rule | Requires confirmed interval-change rule and Stripe proration/schedule validation. Requires confirmed interval-change rule and Stripe proration/schedule validation. |
+| Blocked | SC-138 - Downgrade with pending cancellation follows correct precedence | Requires account fixture with scheduled cancellation plus downgrade eligibility rule. Requires account fixture with scheduled cancellation plus downgrade eligibility rule. |
+| Blocked | SC-139 - Downgrade with unpaid invoice is blocked or handled correctly | Requires unpaid invoice fixture and expected business rule. Requires unpaid invoice fixture and expected business rule. |
+| Blocked | SC-140 - Downgrade with failed payment state is blocked or handled correctly | Requires failed-payment subscription fixture. Requires failed-payment subscription fixture. |
+| Blocked | SC-141 - Scheduled downgrade appears in billing overview | Requires scheduled downgrade fixture. Requires scheduled downgrade fixture. |
+| Blocked | SC-142 - Scheduled downgrade appears in subscription history | Requires scheduled downgrade fixture and history UI state. Requires scheduled downgrade fixture and history UI state. |
+| Blocked | SC-143 - Downgrade confirmation email is sent | Requires email inbox/API access or notification capture service. Requires email inbox/API access or notification capture service. |
+| Blocked | SC-144 - Downgrade audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-145 - User can resume or cancel scheduled downgrade before effective date when allowed | Requires scheduled downgrade fixture and confirmed resume/cancel rule. Requires scheduled downgrade fixture and confirmed resume/cancel rule. |
+| Blocked | SC-146 - Cancelling scheduled downgrade keeps current plan active | Requires scheduled downgrade fixture and Stripe schedule cancellation validation. Requires scheduled downgrade fixture and Stripe schedule cancellation validation. |
+| Blocked | SC-147 - Double-clicking downgrade confirmation is idempotent | Requires backend/API visibility into duplicate downgrade prevention. Requires backend/API visibility into duplicate downgrade prevention. |
+| Future | SC-148 - Browser refresh during downgrade confirmation does not lose selected target plan | Requires stable downgrade flow and refresh behavior. Requires stable downgrade flow and refresh behavior. |
+| Future | SC-149 - Browser back from downgrade flow does not change plan | Requires safe downgrade cancel/back behavior fixture. Requires safe downgrade cancel/back behavior fixture. |
+| Future | SC-150 - Downgrade is not available to users without active paid subscription | Requires free/trial/cancelled account fixtures and expected UI state. Requires free/trial/cancelled account fixtures and expected UI state. |
+| Future | SC-151 - Downgrade target excludes plans that are not lower tier | Requires plan ranking rules and multi-plan account fixture. Requires plan ranking rules and multi-plan account fixture. |
+| Blocked | SC-152 - Downgrade preserves billing customer and saved payment method | Requires Stripe customer/payment-method API visibility. Requires Stripe customer/payment-method API visibility. |
+| Blocked | SC-153 - Downgrade does not create duplicate subscription records | Requires backend/Stripe subscription count visibility. Requires backend/Stripe subscription count visibility. |
+| Blocked | SC-154 - Downgrade webhook updates subscription status correctly | Requires webhook event visibility or backend state API. Requires webhook event visibility or backend state API. |
+| Blocked | SC-155 - Downgrade failure webhook keeps current plan unchanged | Requires failed downgrade webhook fixture and entitlement validation. Requires failed downgrade webhook fixture and entitlement validation. |
+| Blocked | SC-156 - Downgrade effective-date reminder notification is sent when configured | Requires scheduler control and notification capture. Requires scheduler control and notification capture. |
+| Blocked | SC-157 - Downgrade applies feature limits consistently across dashboard modules | Requires entitlement selectors across dashboard modules. Requires entitlement selectors across dashboard modules. |
+| Blocked | SC-158 - Downgrade handles broker integration removal or restriction according to rule | Requires broker integration data and confirmed retention/removal rule. Requires broker integration data and confirmed retention/removal rule. |
+| Blocked | SC-159 - Downgrade handles bulk portfolio import availability according to target plan | Requires feature entitlement selectors for bulk portfolio load. Requires feature entitlement selectors for bulk portfolio load. |
+| Blocked | SC-160 - Downgrade handles analytics availability according to target plan | Requires analytics entitlement selectors and target-plan fixture. Requires analytics entitlement selectors and target-plan fixture. |
+| Blocked | SC-161 - Downgrade invoice or credit note is generated when applicable | Requires Stripe invoice/credit-note API visibility and confirmed billing rule. Requires Stripe invoice/credit-note API visibility and confirmed billing rule. |
+| Future | SC-162 - Downgrade with currency conversion displays correct amount and currency | Requires deterministic currency fixture and Stripe copy expectations. Requires deterministic currency fixture and Stripe copy expectations. |
+| Blocked | SC-163 - Downgrade API rejects unauthorized or cross-account downgrade attempts | Requires backend/API support for authorization validation. Requires backend/API support for authorization validation. |
+| Future | SC-164 - Downgrade can be reported correctly in AIR evidence and history | Requires completed downgrade execution fixture and AIR historical comparison run. Requires completed downgrade execution fixture and AIR historical comparison run. |
+| Traceability | SC-165 - Monthly plan subscriber sees annual billing option | Covered by PlanSelectionValidation.spec.ts > Monthly and Annual pricing toggle. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts... |
+| Traceability | SC-166 - Current monthly plan is clearly identified before annual switch | Covered by BillingEdgeValidation.spec.ts > Billing plans expose billing interval summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-167 - Annual price is displayed for the same subscription tier | Covered by PlanSelectionValidation.spec.ts > Monthly and Annual pricing toggle. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts... |
+| Traceability | SC-168 - Annual switch action is available only for active monthly subscriptions | Covered by SubscriptionLifecycleExecution.spec.ts > Prepared paid user can preview billing interval change without submitting. Enable SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED with... |
+| Future | SC-169 - Annual switch is not shown for already annual subscription | Requires dedicated annual paid-account fixture. Requires dedicated annual paid-account fixture. |
+| Traceability | SC-170 - Annual switch confirmation displays current monthly plan and target annual plan | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview shows target plan and annual billing copy. Run the linked executable spec for full UI validation. Covered by... |
+| Traceability | SC-171 - Annual switch confirmation displays yearly amount | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview validates annual plan charge and recurring amount. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-172 - Annual switch confirmation displays prorated credit or charge | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview validates unused-time credit and amount due today. Stripe invoice-ID reconciliation remains blocked.. Run th... |
+| Traceability | SC-173 - Annual switch confirmation displays next renewal date | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview asserts next billing date copy. Run the linked executable spec for full UI validation. Covered by Subscripti... |
+| Traceability | SC-174 - User can cancel monthly-to-annual change before confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview is closed without submitting. Run the linked executable spec for full UI validation. Covered by Subscription... |
+| Blocked | SC-175 - Successful monthly-to-annual change updates billing interval | Requires dedicated monthly account and approval to submit interval change. Requires dedicated monthly account and approval to submit interval change. |
+| Blocked | SC-176 - Successful monthly-to-annual change preserves same plan tier | Requires post-change billing state validation through UI/API. Requires post-change billing state validation through UI/API. |
+| Blocked | SC-177 - Successful monthly-to-annual change preserves entitlements | Requires entitlement selectors and post-change account fixture. Requires entitlement selectors and post-change account fixture. |
+| Future | SC-178 - Successful monthly-to-annual change records subscription history | Requires completed interval-change fixture. Requires completed interval-change fixture. |
+| Blocked | SC-179 - Successful monthly-to-annual change records transaction history when charge exists | Requires Stripe invoice/payment visibility for interval change. Requires Stripe invoice/payment visibility for interval change. |
+| Blocked | SC-180 - Invoice or receipt shows correct annual amount after interval change | Requires Stripe invoice/API and deterministic amount validation. Requires Stripe invoice/API and deterministic amount validation. |
+| Future | SC-181 - Invoice PDF opens after monthly-to-annual change | Requires completed interval-change invoice fixture. Requires completed interval-change invoice fixture. |
+| Blocked | SC-182 - Confirmation email is sent after monthly-to-annual change | Requires email inbox/API access or notification capture. Requires email inbox/API access or notification capture. |
+| Blocked | SC-183 - Failed payment during monthly-to-annual change keeps monthly billing active | Requires failed-payment fixture and post-failure billing state validation. Requires failed-payment fixture and post-failure billing state validation. |
+| Future | SC-184 - Declined card during interval change shows payment failure | Requires billing-change checkout with declined-card fixture. Requires billing-change checkout with declined-card fixture. |
+| Future | SC-185 - Incomplete payment details during interval change are blocked | Requires billing-change checkout fixture and Stripe validation selectors. Requires billing-change checkout fixture and Stripe validation selectors. |
+| Blocked | SC-186 - Double-clicking annual switch confirmation is idempotent | Requires backend/API visibility into duplicate interval-change prevention. Requires backend/API visibility into duplicate interval-change prevention. |
+| Future | SC-187 - Browser refresh during interval change does not lose target annual plan | Requires stable interval-change flow and refresh behavior. Requires stable interval-change flow and refresh behavior. |
+| Future | SC-188 - Browser back from interval-change checkout returns without changing billing interval | Requires safe checkout cancel/return validation. Requires safe checkout cancel/return validation. |
+| Blocked | SC-189 - Monthly-to-annual change is blocked for cancelled subscription after end date | Requires cancelled/expired subscription fixture. Requires cancelled/expired subscription fixture. |
+| Blocked | SC-190 - Monthly-to-annual change follows rule for subscription scheduled to cancel | Requires scheduled-cancellation fixture and confirmed business rule. Requires scheduled-cancellation fixture and confirmed business rule. |
+| Blocked | SC-191 - Monthly-to-annual change preserves Stripe customer and payment method | Requires Stripe customer/payment-method API visibility. Requires Stripe customer/payment-method API visibility. |
+| Blocked | SC-192 - Monthly-to-annual change does not create duplicate active subscriptions | Requires backend/Stripe subscription count visibility. Requires backend/Stripe subscription count visibility. |
+| Blocked | SC-193 - Monthly-to-annual change audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-194 - Monthly-to-annual webhook updates billing interval correctly | Requires webhook event visibility or backend state API. Requires webhook event visibility or backend state API. |
+| Blocked | SC-195 - Monthly-to-annual failure webhook leaves monthly billing unchanged | Requires failed webhook fixture and billing state validation. Requires failed webhook fixture and billing state validation. |
+| Future | SC-196 - Annual savings messaging is displayed accurately | Requires final pricing/savings copy expectations. Requires final pricing/savings copy expectations. |
+| Blocked | SC-197 - Monthly-to-annual change respects tax and currency configuration | Requires Stripe tax/currency API visibility. Requires Stripe tax/currency API visibility. |
+| Traceability | SC-198 - Monthly-to-annual change keeps billing portal return link working | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal return link opens application content. Run the linked executable spec for full UI validation. Covered by Billing... |
+| Future | SC-199 - Monthly-to-annual change can be represented in AIR history | Requires completed interval-change execution and AIR historical comparison run. Requires completed interval-change execution and AIR historical comparison run. |
+| Traceability | SC-200 - Monthly-to-annual matrix coverage is visible in AIR blocked/skipped coverage | Covered by MonthlyAnnualBillingChangeMatrix.spec.ts. Run the linked executable spec for full UI validation. Covered by MonthlyAnnualBillingChangeMatrix.spec.ts. Run the linked e... |
+| Traceability | SC-201 - Annual plan subscriber sees monthly billing option | Covered by PlanSelectionValidation.spec.ts > Monthly and Annual pricing toggle. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts... |
+| Traceability | SC-202 - Current annual plan is clearly identified before monthly switch | Covered by BillingEdgeValidation.spec.ts > Billing plans expose billing interval summary without changing subscription. Run the linked executable spec for full UI validation. Co... |
+| Traceability | SC-203 - Monthly price is displayed for the same subscription tier | Covered by PlanSelectionValidation.spec.ts > Monthly and Annual pricing toggle. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.ts... |
+| Traceability | SC-204 - Monthly switch action is available only for active annual subscriptions | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview with SUB_LIFECYCLE_INTERVAL_TO=monthly and an annual paid fixture. Run the linked executable spec for full U... |
+| Future | SC-205 - Monthly switch is not shown for already monthly subscription | Requires dedicated monthly paid-account fixture. Requires dedicated monthly paid-account fixture. |
+| Traceability | SC-206 - Annual-to-monthly confirmation displays current annual plan and target monthly plan | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview shows target plan and monthly billing copy when SUB_LIFECYCLE_INTERVAL_TO=monthly. Run the linked executable... |
+| Traceability | SC-207 - Annual-to-monthly confirmation displays monthly amount | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview validates monthly plan charge and recurring amount. Run the linked executable spec for full UI validation. C... |
+| Blocked | SC-208 - Annual-to-monthly confirmation displays whether change is immediate or scheduled | Requires confirmed business rule and Stripe subscription schedule visibility. Requires confirmed business rule and Stripe subscription schedule visibility. |
+| Traceability | SC-209 - Annual-to-monthly confirmation displays next renewal date | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview asserts next billing date copy. Run the linked executable spec for full UI validation. Covered by Subscripti... |
+| Traceability | SC-210 - User can cancel annual-to-monthly change before confirmation | Covered by SubscriptionLifecycleExecution.spec.ts > interval preview is closed without submitting. Run the linked executable spec for full UI validation. Covered by Subscription... |
+| Blocked | SC-211 - Successful annual-to-monthly change updates billing interval when effective | Requires dedicated annual account and approval to submit interval change. Requires dedicated annual account and approval to submit interval change. |
+| Blocked | SC-212 - Successful annual-to-monthly change preserves same plan tier | Requires post-change billing state validation through UI/API. Requires post-change billing state validation through UI/API. |
+| Blocked | SC-213 - Successful annual-to-monthly change preserves entitlements until effective date | Requires entitlement selectors and scheduled interval-change fixture. Requires entitlement selectors and scheduled interval-change fixture. |
+| Future | SC-214 - Annual-to-monthly change records subscription history | Requires completed interval-change fixture. Requires completed interval-change fixture. |
+| Blocked | SC-215 - Annual-to-monthly change records transaction history when charge or credit exists | Requires Stripe invoice/payment/credit visibility for interval change. Requires Stripe invoice/payment/credit visibility for interval change. |
+| Blocked | SC-216 - Invoice or credit note shows correct annual-to-monthly amount | Requires Stripe invoice/credit-note API and deterministic amount validation. Requires Stripe invoice/credit-note API and deterministic amount validation. |
+| Future | SC-217 - Invoice or credit note PDF opens after annual-to-monthly change | Requires completed interval-change invoice or credit-note fixture. Requires completed interval-change invoice or credit-note fixture. |
+| Blocked | SC-218 - Confirmation email is sent after annual-to-monthly change | Requires email inbox/API access or notification capture. Requires email inbox/API access or notification capture. |
+| Blocked | SC-219 - Failed payment during annual-to-monthly change keeps annual billing active | Requires failed-payment fixture and post-failure billing state validation. Requires failed-payment fixture and post-failure billing state validation. |
+| Future | SC-220 - Declined card during annual-to-monthly change shows payment failure | Requires billing-change checkout with declined-card fixture. Requires billing-change checkout with declined-card fixture. |
+| Future | SC-221 - Incomplete payment details during annual-to-monthly change are blocked | Requires billing-change checkout fixture and Stripe validation selectors. Requires billing-change checkout fixture and Stripe validation selectors. |
+| Blocked | SC-222 - Double-clicking monthly switch confirmation is idempotent | Requires backend/API visibility into duplicate interval-change prevention. Requires backend/API visibility into duplicate interval-change prevention. |
+| Future | SC-223 - Browser refresh during annual-to-monthly flow does not lose selected target monthly plan | Requires stable interval-change flow and refresh behavior. Requires stable interval-change flow and refresh behavior. |
+| Future | SC-224 - Browser back from annual-to-monthly checkout returns without changing billing interval | Requires safe checkout cancel/return validation. Requires safe checkout cancel/return validation. |
+| Blocked | SC-225 - Annual-to-monthly change is blocked for cancelled subscription after end date | Requires cancelled/expired subscription fixture. Requires cancelled/expired subscription fixture. |
+| Blocked | SC-226 - Annual-to-monthly change follows rule for subscription scheduled to cancel | Requires scheduled-cancellation fixture and confirmed business rule. Requires scheduled-cancellation fixture and confirmed business rule. |
+| Blocked | SC-227 - Annual-to-monthly change preserves Stripe customer and payment method | Requires Stripe customer/payment-method API visibility. Requires Stripe customer/payment-method API visibility. |
+| Blocked | SC-228 - Annual-to-monthly change does not create duplicate active subscriptions | Requires backend/Stripe subscription count visibility. Requires backend/Stripe subscription count visibility. |
+| Blocked | SC-229 - Annual-to-monthly change audit log is created | Requires admin/API/DB access to audit log records. Requires admin/API/DB access to audit log records. |
+| Blocked | SC-230 - Annual-to-monthly webhook updates billing interval correctly | Requires webhook event visibility or backend state API. Requires webhook event visibility or backend state API. |
+| Blocked | SC-231 - Annual-to-monthly failure webhook leaves annual billing unchanged | Requires failed webhook fixture and billing state validation. Requires failed webhook fixture and billing state validation. |
+| Future | SC-232 - Loss of annual savings message is displayed accurately | Requires final pricing/savings copy expectations. Requires final pricing/savings copy expectations. |
+| Blocked | SC-233 - Annual-to-monthly change respects tax and currency configuration | Requires Stripe tax/currency API visibility. Requires Stripe tax/currency API visibility. |
+| Traceability | SC-234 - Annual-to-monthly change keeps billing portal return link working | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal return link opens application content. Run the linked executable spec for full UI validation. Covered by Billing... |
+| Future | SC-235 - Annual-to-monthly change is represented correctly in billing overview | Requires completed interval-change fixture. Requires completed interval-change fixture. |
+| Blocked | SC-236 - Annual-to-monthly scheduled change can be cancelled before effective date | Requires scheduled interval-change fixture and confirmed cancellation rule. Requires scheduled interval-change fixture and confirmed cancellation rule. |
+| Blocked | SC-237 - Cancelling annual-to-monthly scheduled change keeps annual billing active | Requires Stripe schedule cancellation validation. Requires Stripe schedule cancellation validation. |
+| Future | SC-238 - Annual-to-monthly change can be reported correctly in AIR history | Requires completed interval-change execution and AIR historical comparison run. Requires completed interval-change execution and AIR historical comparison run. |
+| Traceability | SC-239 - Annual-to-monthly matrix coverage is visible in AIR blocked/skipped coverage | Covered by AnnualMonthlyBillingChangeMatrix.spec.ts. Run the linked executable spec for full UI validation. Covered by AnnualMonthlyBillingChangeMatrix.spec.ts. Run the linked e... |
+| Blocked | SC-240 - Annual-to-monthly API rejects unauthorized or cross-account interval changes | Requires backend/API support for authorization validation. Requires backend/API support for authorization validation. |
+| Traceability | SC-241 - Current subscription details are shown before cancellation | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-242 - Manage subscription portal opens from billing overview | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-243 - Cancel subscription action is available for active paid subscription | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Traceability | SC-244 - Cancellation form opens without immediately cancelling subscription | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Traceability | SC-245 - Cancellation form displays selected subscription name and price | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Traceability | SC-246 - Cancellation reason dropdown is visible | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Future | SC-247 - Cancellation reason is required before final cancellation | Requires a dedicated safe cancellation fixture to validate final-submit guardrails. Requires a dedicated safe cancellation fixture to validate final-submit guardrails. |
+| Traceability | SC-248 - Cancellation feedback accepts user text | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Traceability | SC-249 - Go back from cancellation form leaves subscription unchanged | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Future | SC-250 - Continue to cancellation shows final confirmation before destructive action | Requires fixture where final confirmation can be opened without impacting shared accounts. Requires fixture where final confirmation can be opened without impacting shared accou... |
+| Blocked | SC-251 - Final cancellation requires explicit confirmation | Requires backend/admin reset support for disposable paid subscription fixture. Requires backend/admin reset support for disposable paid subscription fixture. |
+| Blocked | SC-252 - Dedicated fixture can be cancelled successfully | Requires disposable paid subscription that may be safely cancelled. Requires disposable paid subscription that may be safely cancelled. |
+| Blocked | SC-253 - Cancellation confirmation message is displayed | Requires safe final cancellation execution. Requires safe final cancellation execution. |
+| Traceability | SC-254 - Subscription becomes scheduled to cancel at period end | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Blocked | SC-255 - Paid access remains available until current billing period ends | Requires time-controlled or backend subscription period fixture. Requires time-controlled or backend subscription period fixture. |
+| Traceability | SC-256 - Billing overview displays scheduled cancellation state | Covered by BillingSubscriptionManagement.spec.ts > Cancel subscription form accepts reason and feedback without cancelling. Run the linked executable spec for full UI validation... |
+| Future | SC-257 - Scheduled cancellation state persists after refresh | Requires stable scheduled-cancel fixture that can be reused without mutation. Requires stable scheduled-cancel fixture that can be reused without mutation. |
+| Traceability | SC-258 - Already scheduled cancellation state is detected safely | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal cancellation lifecycle state is readable without cancelling. Run the linked executable spec for full UI validati... |
+| Future | SC-259 - Resume or reactivate action is visible when subscription is scheduled to cancel | Requires product-supported resume cancellation control or Stripe portal fixture. Requires product-supported resume cancellation control or Stripe portal fixture. |
+| Blocked | SC-260 - Resume cancellation keeps paid subscription active | Requires safe scheduled-cancel fixture and backend reset support. Requires safe scheduled-cancel fixture and backend reset support. |
+| Blocked | SC-261 - Cancellation reason is captured for audit or analytics | Requires admin/API access to cancellation metadata. Requires admin/API access to cancellation metadata. |
+| Blocked | SC-262 - Cancellation confirmation email is sent | Requires mailbox access and safe final cancellation fixture. Requires mailbox access and safe final cancellation fixture. |
+| Blocked | SC-263 - Cancellation does not issue immediate refund unless policy allows it | Requires Stripe/backend verification of refund behavior. Requires Stripe/backend verification of refund behavior. |
+| Blocked | SC-264 - Refund action is restricted to authorized admin workflow | Requires admin permissions and refund test fixture. Requires admin permissions and refund test fixture. |
+| Traceability | SC-265 - Invoice history remains visible after cancellation is scheduled | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal shows paid invoice history. Run the linked executable spec for full UI validation. Covered by BillingSubscriptio... |
+| Traceability | SC-266 - Payment method remains visible while subscription remains active | Covered by BillingSubscriptionManagement.spec.ts > Manage subscription opens Stripe portal with subscription details. Run the linked executable spec for full UI validation. Cove... |
+| Future | SC-267 - Danger-zone cancellation entry opens expected cancellation flow | Requires product-side danger-zone control to be stable and non-destructive in tests. Requires product-side danger-zone control to be stable and non-destructive in tests. |
+| Future | SC-268 - Destructive cancellation controls are guarded against accidental clicks | Requires final confirmation flow fixture. Requires final confirmation flow fixture. |
+| Blocked | SC-269 - Paid feature entitlement remains during cancellation grace period | Requires entitlement API or seeded billing period fixture. Requires entitlement API or seeded billing period fixture. |
+| Blocked | SC-270 - Paid feature entitlement is removed after billing period ends | Requires time-travel, webhook simulation, or backend fixture. Requires time-travel, webhook simulation, or backend fixture. |
+| Future | SC-271 - Browser back from cancellation page does not change subscription | Requires safe portal navigation fixture. Requires safe portal navigation fixture. |
+| Future | SC-272 - Refresh during cancellation form preserves safe state | Requires safe portal form-state fixture. Requires safe portal form-state fixture. |
+| Blocked | SC-273 - Double-clicking final cancellation is idempotent | Requires backend idempotency verification for final cancellation. Requires backend idempotency verification for final cancellation. |
+| Blocked | SC-274 - No-card trial can be cancelled without payment method | Requires active no-card trial fixture. Requires active no-card trial fixture. |
+| Blocked | SC-275 - Card-backed trial can be cancelled before auto-renewal | Requires active card-backed trial fixture. Requires active card-backed trial fixture. |
+| Blocked | SC-276 - Subscription with unpaid invoice follows configured cancellation rule | Requires unpaid invoice fixture. Requires unpaid invoice fixture. |
+| Blocked | SC-277 - Pending upgrade is handled before cancellation | Requires pending upgrade fixture. Requires pending upgrade fixture. |
+| Blocked | SC-278 - Pending downgrade is handled before cancellation | Requires pending downgrade fixture. Requires pending downgrade fixture. |
+| Future | SC-279 - Annual subscription cancellation keeps annual end date clear | Requires active annual paid fixture. Requires active annual paid fixture. |
+| Future | SC-280 - Monthly subscription cancellation keeps monthly end date clear | Requires active monthly paid fixture. Requires active monthly paid fixture. |
+| Future | SC-281 - Upgrade is blocked or clearly handled after subscription is scheduled to cancel | Safe cancellation lifecycle state is readable in the Stripe portal; exact upgrade behavior after scheduled cancellation still requires a scheduled-cancel fixture. Safe cancellat... |
+| Future | SC-282 - Payment method update behavior is clear after cancellation is scheduled | Requires scheduled-cancel fixture. Requires scheduled-cancel fixture. |
+| Traceability | SC-283 - Return link works after visiting cancellation portal | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal return link opens application content. Run the linked executable spec for full UI validation. Covered by Billing... |
+| Blocked | SC-284 - Cancellation portal deep link requires authenticated customer session | Requires secure portal deep-link fixture. Requires secure portal deep-link fixture. |
+| Blocked | SC-285 - Unauthorized cross-account cancellation is blocked by backend | Requires backend/API authorization test support. Requires backend/API authorization test support. |
+| Blocked | SC-286 - Stripe cancellation webhook updates cancel-at-period-end state | Requires webhook simulation or Stripe event fixture. Requires webhook simulation or Stripe event fixture. |
+| Blocked | SC-287 - Webhook retry does not duplicate cancellation records | Requires webhook idempotency test support. Requires webhook idempotency test support. |
+| Future | SC-288 - Subscription cancellation history entry is displayed | Requires historical cancelled subscription fixture. Requires historical cancelled subscription fixture. |
+| Future | SC-289 - Transaction history does not create an unexpected extra charge on cancellation | Requires final cancellation fixture with billing history verification. Requires final cancellation fixture with billing history verification. |
+| Traceability | SC-290 - Invoice PDF remains accessible after cancellation is scheduled | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal shows paid invoice history. Run the linked executable spec for full UI validation. Covered by BillingSubscriptio... |
+| Blocked | SC-291 - Cancellation reason analytics can be reviewed by admin | Requires admin analytics access. Requires admin analytics access. |
+| Future | SC-292 - Missing cancellation reason blocks final cancellation when required | Requires final cancellation form validation fixture. Requires final cancellation form validation fixture. |
+| Future | SC-293 - Cancellation feedback max length is handled safely | Requires final cancellation form validation fixture. Requires final cancellation form validation fixture. |
+| Future | SC-294 - Cancellation terms or policy link opens correctly | Requires stable Stripe portal policy link selector. Requires stable Stripe portal policy link selector. |
+| Future | SC-295 - Support contact is available during cancellation flow | Requires support link/copy confirmation in portal. Requires support link/copy confirmation in portal. |
+| Blocked | SC-296 - Duplicate cancellation request does not duplicate subscription state | Requires backend idempotency validation. Requires backend idempotency validation. |
+| Future | SC-297 - Cancellation state is represented in AIR historical intelligence | Requires multiple historical AIR executions with cancellation state. Requires multiple historical AIR executions with cancellation state. |
+| Future | SC-298 - Cancellation state is searchable in AIR | Requires cancellation state in normalized AIR data. Requires cancellation state in normalized AIR data. |
+| Traceability | SC-299 - Cancellation matrix coverage appears in AIR blocked and skipped coverage | Covered by CoverageGapEngine > skipped matrix ingestion. Run the linked executable spec for full UI validation. Covered by CoverageGapEngine > skipped matrix ingestion. Run the... |
+| Blocked | SC-300 - Final cancellation scenario uses disposable fixture only | Requires dedicated disposable paid account and reset process. Requires dedicated disposable paid account and reset process. |
+| Traceability | SC-301 - Declined card at checkout does not activate subscription | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks declined or incomplete payment. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spe... |
+| Traceability | SC-302 - Invalid CVC is blocked during Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks invalid CVC. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > Stripe Check... |
+| Traceability | SC-303 - Expired card date is blocked during Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks expired card date. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > Stripe... |
+| Traceability | SC-304 - Incomplete card number is blocked during Stripe checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout blocks incomplete card number. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > S... |
+| Blocked | SC-305 - Renewal payment failure changes subscription to past-due state | Requires Stripe renewal failure webhook fixture. Requires Stripe renewal failure webhook fixture. |
+| Blocked | SC-306 - Failed renewal creates an unpaid invoice | Requires failed renewal invoice fixture. Requires failed renewal invoice fixture. |
+| Blocked | SC-307 - First dunning email is sent after failed renewal | Requires mailbox access and failed renewal fixture. Requires mailbox access and failed renewal fixture. |
+| Blocked | SC-308 - Retry schedule follows configured dunning cadence | Requires time-controlled retry scheduler or backend API. Requires time-controlled retry scheduler or backend API. |
+| Blocked | SC-309 - Grace period starts after failed renewal | Requires billing status fixture and entitlement API. Requires billing status fixture and entitlement API. |
+| Blocked | SC-310 - Paid access is retained during configured grace period | Requires grace-period entitlement fixture. Requires grace-period entitlement fixture. |
+| Blocked | SC-311 - Paid access is restricted after grace period expires | Requires time-travel or backend state fixture. Requires time-travel or backend state fixture. |
+| Blocked | SC-312 - Updating payment method recovers past-due subscription | Requires past-due fixture and Stripe portal recovery flow. Requires past-due fixture and Stripe portal recovery flow. |
+| Traceability | SC-313 - Add payment method screen opens from Stripe portal | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal exposes payment recovery entry points without saving. Run the linked executable spec for full UI validation. Cov... |
+| Traceability | SC-314 - Billing information update screen opens from Stripe portal | Covered by BillingSubscriptionManagement.spec.ts > Stripe portal exposes payment recovery entry points without saving. Run the linked executable spec for full UI validation. Cov... |
+| Blocked | SC-315 - Successful retry marks failed invoice as paid | Requires retry payment success webhook fixture. Requires retry payment success webhook fixture. |
+| Blocked | SC-316 - Repeated failed retries do not duplicate invoice records | Requires webhook idempotency validation. Requires webhook idempotency validation. |
+| Blocked | SC-317 - Final failed renewal cancels or downgrades subscription according to policy | Requires dunning policy decision and backend fixture. Requires dunning policy decision and backend fixture. |
+| Future | SC-318 - No-card trial expiry downgrades user to free plan | Covered conceptually in trial matrix; requires time-controlled trial expiry. Covered conceptually in trial matrix; requires time-controlled trial expiry. |
+| Blocked | SC-319 - In-app failed payment notification is displayed | Requires past-due account fixture. Requires past-due account fixture. |
+| Blocked | SC-320 - invoice.payment_failed webhook is processed correctly | Requires webhook simulation or backend integration test. Requires webhook simulation or backend integration test. |
+| Blocked | SC-321 - customer.subscription.updated webhook updates billing status | Requires webhook simulation or backend integration test. Requires webhook simulation or backend integration test. |
+| Blocked | SC-322 - invoice.payment_succeeded webhook recovers subscription | Requires webhook simulation or backend integration test. Requires webhook simulation or backend integration test. |
+| Blocked | SC-323 - Duplicate webhook delivery is idempotent | Requires webhook replay support. Requires webhook replay support. |
+| Blocked | SC-324 - Failed payment creates audit log entry | Requires admin/API audit log access. Requires admin/API audit log access. |
+| Blocked | SC-325 - Payment recovery creates audit log entry | Requires admin/API audit log access. Requires admin/API audit log access. |
+| Blocked | SC-326 - Dunning email includes plan name and failed amount | Requires mailbox access and failed payment fixture. Requires mailbox access and failed payment fixture. |
+| Blocked | SC-327 - Dunning email includes update payment link | Requires mailbox access and failed payment fixture. Requires mailbox access and failed payment fixture. |
+| Blocked | SC-328 - Update payment link opens Stripe portal | Requires dunning email link fixture. Requires dunning email link fixture. |
+| Blocked | SC-329 - Expired payment update link is handled clearly | Requires expired portal session fixture. Requires expired portal session fixture. |
+| Blocked | SC-330 - Unauthorized payment update attempt is blocked | Requires backend/API authorization validation. Requires backend/API authorization validation. |
+| Blocked | SC-331 - Failed payment after upgrade keeps previous plan active | Requires upgrade payment failure fixture. Requires upgrade payment failure fixture. |
+| Blocked | SC-332 - Failed payment after interval change keeps previous billing interval | Requires billing interval payment failure fixture. Requires billing interval payment failure fixture. |
+| Blocked | SC-333 - Admin can retry failed payment when supported | Requires admin billing management support. Requires admin billing management support. |
+| Blocked | SC-334 - Removed payment method before renewal triggers failed payment flow | Requires saved payment method removal fixture. Requires saved payment method removal fixture. |
+| Traceability | SC-335 - Insufficient funds card is handled during checkout | Covered by PaymentNegative.spec.ts > Stripe Checkout rejects insufficient funds card without activating subscription. Run the linked executable spec for full UI validation. Cove... |
+| Traceability | SC-336 - Authentication-required payment is handled gracefully | Covered by PaymentNegative.spec.ts > Stripe Checkout opens authentication-required flow without losing checkout context. Run the linked executable spec for full UI validation. C... |
+| Future | SC-337 - Issuer unavailable payment failure is handled gracefully | Processing-error checkout is covered in PaymentNegative.spec.ts; a dedicated issuer-unavailable fixture still requires Stripe/API support. Processing-error checkout is covered i... |
+| Future | SC-338 - Fraud-blocked payment does not activate subscription | Stolen-card checkout decline is covered in PaymentNegative.spec.ts; a true fraud/Radar blocked-payment fixture still requires Stripe/API support. Stolen-card checkout decline is... |
+| Blocked | SC-339 - Expired saved card renewal follows dunning flow | Requires saved expired-card renewal fixture. Requires saved expired-card renewal fixture. |
+| Blocked | SC-340 - Invalid country or currency setup is handled safely | Requires Stripe/customer currency fixture. Requires Stripe/customer currency fixture. |
+| Blocked | SC-341 - Tax calculation failure prevents incorrect subscription activation | Requires backend/Stripe tax failure simulation. Requires backend/Stripe tax failure simulation. |
+| Blocked | SC-342 - Unpaid invoice PDF or invoice view is available when configured | Requires unpaid invoice fixture. Requires unpaid invoice fixture. |
+| Blocked | SC-343 - Paid-after-retry invoice PDF opens successfully | Requires recovered invoice fixture. Requires recovered invoice fixture. |
+| Blocked | SC-344 - Transaction history shows failed payment status | Requires failed payment fixture visible in app history. Requires failed payment fixture visible in app history. |
+| Blocked | SC-345 - Billing overview shows past-due or payment issue state | Requires past-due account fixture. Requires past-due account fixture. |
+| Blocked | SC-346 - Dashboard banner warns user about payment issue | Requires past-due account fixture. Requires past-due account fixture. |
+| Blocked | SC-347 - Feature access remains correct during payment grace period | Requires grace-period entitlement fixture. Requires grace-period entitlement fixture. |
+| Blocked | SC-348 - Feature access is restricted after payment suspension | Requires suspended account fixture. Requires suspended account fixture. |
+| Future | SC-349 - AIR records failed payment evidence when available | Requires failed payment execution artifacts in AIR. Requires failed payment execution artifacts in AIR. |
+| Future | SC-350 - AIR history highlights failed payment trend | Requires historical failed payment executions. Requires historical failed payment executions. |
+| Blocked | SC-351 - Dunning retry configuration is validated against admin settings | Requires admin dunning configuration API or UI fixture. Requires admin dunning configuration API or UI fixture. |
+| Traceability | SC-352 - Failed payment and dunning matrix coverage is visible in AIR blocked coverage | Covered by CoverageGapEngine > skipped matrix ingestion. Run the linked executable spec for full UI validation. Covered by CoverageGapEngine > skipped matrix ingestion. Run the... |
+| Traceability | LC-001 - New user can complete signup prerequisites and reach plan selection | Covered by onboarding.spec.ts and PlanSelectionValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts and PlanSelectionValidati... |
+| Traceability | LC-002 - Overlay Strategists trial is displayed as available for eligible new user | Covered by OverlayStrategistsTrial.spec.ts and PlanSelectionValidation.spec.ts. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts... |
+| Traceability | LC-003 - User can start Overlay Strategists trial without payment details | Covered by OverlayStrategistsTrial.spec.ts > without card. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts > without card. Run... |
+| Traceability | LC-004 - Without-card trial requires terms acceptance before activation | Covered by OverlayStrategistsTrial.spec.ts > terms validation. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts > terms validati... |
+| Blocked | LC-005 - Without-card trial moves user to Free plan when trial expires | Requires trial-expiry fixture, scheduler/time travel, or backend time-control API. Requires trial-expiry fixture, scheduler/time travel, or backend time-control API. |
+| Traceability | LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout | Covered by OverlayStrategistsTrial.spec.ts > with card checkout details. Run the linked executable spec for full UI validation. Covered by OverlayStrategistsTrial.spec.ts > with... |
+| Skipped | LC-007 - With-card trial displays active trial and saved payment method in Billing | Confirmed product issue: Billing shows Free Plan and does not show saved card after with-card trial activation. Confirmed product issue: Billing shows Free Plan and does not sho... |
+| Blocked | LC-008 - With-card trial auto-renews to paid Overlay Strategists monthly subscription at expiry | Requires trial-expiry fixture, Stripe webhook/scheduler control, and Stripe ledger/API visibility. Requires trial-expiry fixture, Stripe webhook/scheduler control, and Stripe le... |
+| Traceability | LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial | Covered by BillingSubscriptionManagement.spec.ts and OverlayStrategistsTrialMatrix.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscription... |
+| Blocked | LC-010 - Trial is allowed only once per verified email, verified mobile, or reused payment method | Requires deterministic repeat-trial user, repeat-phone fixture, and Stripe payment-method reuse observability. Requires deterministic repeat-trial user, repeat-phone fixture, an... |
+| Skipped | LC-011 - No-card trial enforces broker integration limit without counting manual entry | Confirmed product issue: manual entry is currently counted as broker integration. Confirmed product issue: manual entry is currently counted as broker integration. |
+| Blocked | LC-012 - No-card trial enforces linked account and portfolio position limits | Requires broker linked-account fixture and portfolio position seed/API support. Requires broker linked-account fixture and portfolio position seed/API support. |
+| Traceability | LC-013 - Overlay Strategists features remain visible while trial is active | Covered by PlanSelectionValidation.spec.ts > Overlay Strategists feature summary. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec.... |
+| Traceability | LC-014 - User can start paid subscription from onboarding plan selection | Covered by onboarding.spec.ts and DirectSubscriptionPurchase.spec.ts. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts and DirectSubscription... |
+| Traceability | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Covered by DirectSubscriptionPurchase.spec.ts. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase.spec.ts. Run the linked executable sp... |
+| Traceability | LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout | Covered by PlanSelectionValidation.spec.ts and DirectSubscriptionPurchase.spec.ts. Run the linked executable spec for full UI validation. Covered by PlanSelectionValidation.spec... |
+| Traceability | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Covered by DirectSubscriptionPurchase.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase.s... |
+| Traceability | LC-018 - Successful paid checkout activates subscription and redirects back to dashboard | Covered by onboarding.spec.ts > Income Builder Stripe checkout payment completion. Run the linked executable spec for full UI validation. Covered by onboarding.spec.ts > Income... |
+| Traceability | LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details | Covered by BillingSubscriptionManagement.spec.ts, Subscriber.spec.ts, and DirectSubscriptionPurchase.spec.ts. Run the linked executable spec for full UI validation. Covered by B... |
+| Traceability | LC-020 - Checkout rejects invalid, declined, insufficient-funds, stolen, and processing-error cards | Covered by PaymentNegative.spec.ts and OverlayStrategistsTrial.spec.ts. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts and OverlayStra... |
+| Traceability | LC-021 - Authentication-required card keeps user in Stripe checkout context | Covered by PaymentNegative.spec.ts > authentication-required card. Run the linked executable spec for full UI validation. Covered by PaymentNegative.spec.ts > authentication-req... |
+| Traceability | LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription | Covered by DirectSubscriptionPurchase.spec.ts > checkout refresh/back safety. Run the linked executable spec for full UI validation. Covered by DirectSubscriptionPurchase.spec.t... |
+| Traceability | LC-023 - Subscribed user can see upgrade action or current plan status controls | Covered by BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls. Run the linked executable spec for full UI validation. Covered by BillingSu... |
+| Blocked | LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout | Requires dedicated lower-tier active subscription, Stripe proration visibility, and safe payment fixture. Requires dedicated lower-tier active subscription, Stripe proration vis... |
+| Blocked | LC-025 - Upgrade payment starts a new billing cycle immediately | Requires Stripe/API validation for invoice, billing-cycle anchor, and entitlement change. Requires Stripe/API validation for invoice, billing-cycle anchor, and entitlement change. |
+| Traceability | LC-026 - Subscribed user can see downgrade action or current plan status controls | Covered by BillingSubscriptionManagement.spec.ts > Billing plans show plan action or status controls. Run the linked executable spec for full UI validation. Covered by BillingSu... |
+| Blocked | LC-027 - Downgrade schedules lower plan for next renewal instead of immediate entitlement loss | Requires dedicated higher-tier account, downgrade confirmation UI, and renewal-date fixture. Requires dedicated higher-tier account, downgrade confirmation UI, and renewal-date... |
+| Blocked | LC-028 - Downgrade warns about feature and data-limit impact before confirmation | Requires higher-tier data fixtures for broker integrations, linked accounts, and positions. Requires higher-tier data fixtures for broker integrations, linked accounts, and posi... |
+| Blocked | LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount | Requires dedicated monthly paid account and Stripe proration/billing-cycle visibility. Requires dedicated monthly paid account and Stripe proration/billing-cycle visibility. |
+| Blocked | LC-030 - Annual-to-monthly billing change is scheduled for next renewal date | Requires dedicated annual paid account and pending-change/renewal-date fixture. Requires dedicated annual paid account and pending-change/renewal-date fixture. |
+| Traceability | LC-031 - Billing interval toggles and interval-specific prices remain visible before change | Covered by PlanSelectionValidation.spec.ts, BillingSubscriptionManagement.spec.ts, DirectSubscriptionPurchase.spec.ts, and SubscriptionLifecycleExecution.spec.ts interval previe... |
+| Traceability | LC-032 - Subscription management portal opens with current subscription details | Covered by BillingSubscriptionManagement.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagement.spec.ts. Run the linked executa... |
+| Traceability | LC-033 - Cancel-at-period-end form accepts reason and feedback without immediate cancellation | Covered by BillingSubscriptionManagement.spec.ts > cancel form without cancelling. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionManagemen... |
+| Blocked | LC-034 - Cancel-at-period-end schedules cancellation and keeps access until expiry | Requires dedicated destructive cancellation account and permission to submit final cancellation. Requires dedicated destructive cancellation account and permission to submit fin... |
+| Traceability | LC-035 - Cancelled subscription shows scheduled cancellation state and renewal/end date | Covered by BillingSubscriptionManagement.spec.ts > already scheduled cancellation state. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionMan... |
+| Blocked | LC-036 - Immediate cancellation is restricted to controlled admin or explicit destructive flow | Requires admin/business approval, dedicated throwaway subscription, and rollback/refund policy. Requires admin/business approval, dedicated throwaway subscription, and rollback/... |
+| Blocked | LC-037 - User loses paid access after cancellation expiry and can select a new plan | Requires cancellation-expiry fixture or scheduler/time-control API. Requires cancellation-expiry fixture or scheduler/time-control API. |
+| Blocked | LC-038 - Eligible immediate cancellation displays refund amount before refund confirmation | Requires refund policy confirmation, Stripe/admin refund fixture, and safe destructive test account. Requires refund policy confirmation, Stripe/admin refund fixture, and safe d... |
+| Blocked | LC-039 - Refund processing updates Stripe ledger, billing status, and transaction history | Requires Stripe API/admin access, refund webhook observability, and transaction-history fixture. Requires Stripe API/admin access, refund webhook observability, and transaction-... |
+| Future | LC-040 - Refund failure or partial refund shows clear user/admin state | Requires business-approved refund edge-case matrix and Stripe refund failure fixture. Requires business-approved refund edge-case matrix and Stripe refund failure fixture. |
+| Blocked | LC-041 - Paid subscription renewal, reminders, and invoice history are validated across billing cycles | Requires renewal scheduler/time travel, email/notification access, and Stripe ledger visibility. Requires renewal scheduler/time travel, email/notification access, and Stripe le... |
+| Blocked | LC-042 - Failed renewal payment enters dunning/grace state and prompts payment recovery | Requires Stripe dunning configuration, failed-renewal fixture, webhook controls, and scheduler access. Requires Stripe dunning configuration, failed-renewal fixture, webhook con... |
+| Traceability | LC-043 - Payment recovery portal allows updating payment method without losing subscription context | Covered by BillingSubscriptionManagement.spec.ts and FailedPaymentDunningMatrix.spec.ts. Run the linked executable spec for full UI validation. Covered by BillingSubscriptionMan... |
+| Blocked | LC-044 - Trial, conversion, purchase, upgrade, downgrade, cancellation, and refund events are auditable | Requires admin audit-log, API, or database event validation source. Requires admin audit-log, API, or database event validation source. |
+| Traceability | LC-045 - AIR shows subscription lifecycle coverage, blocked gaps, known bugs, and executable coverage status | Covered by CoverageGapEngine > skipped matrix ingestion and AIR blocked/skipped coverage. Run the linked executable spec for full UI validation. Covered by CoverageGapEngine > s... |
 
 ## Notes
 

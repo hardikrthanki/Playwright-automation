@@ -1785,16 +1785,23 @@ function moduleSlug(name) {
 }
 
 function getModuleRecommendedAction(module) {
+  const executed = Number(module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0) + (module.interrupted ?? 0)));
+  const status = String(module.status || '').toLowerCase();
+
   if (module.failed > 0) {
-    return 'Review failed tests and attach evidence';
+    return 'Review the failed checks before approval.';
+  }
+
+  if (executed === 0 || status.includes('not executed') || status.includes('no data')) {
+    return 'None of these checks ran. They are listed under Not run.';
   }
 
   if ((module.unexpectedSkipped ?? 0) > 0) {
-    return 'Review unexpected skipped coverage and rerun impacted checks';
+    return 'Some checks were skipped unexpectedly. Review those before approval.';
   }
 
   if ((module.documentedSkipped ?? 0) > 0) {
-    return 'Executed coverage passed; remaining rows are documented coverage gaps';
+    return 'Checks that ran passed. The rest of this list did not run.';
   }
 
   const actionMap = {
@@ -1813,14 +1820,18 @@ function getModuleRecommendedAction(module) {
 
 function getModuleIcon(moduleName) {
   const iconMap = {
-    Accessibility: 'A',
-    Authentication: 'Lock',
-    Billing: '$',
-    Onboarding: 'Start',
-    Password: 'Key',
-    Profile: 'User',
-    'Session Security': 'Time',
-    Signup: 'New',
+    Accessibility: 'Ax',
+    Authentication: 'Au',
+    Billing: 'Bi',
+    Onboarding: 'On',
+    Password: 'Pw',
+    Profile: 'Pr',
+    'Session Security': 'Ss',
+    Signup: 'Su',
+    'Access Control': 'Ac',
+    Dashboard: 'Da',
+    General: 'Ge',
+    MFA: 'Mf',
   };
 
   return iconMap[moduleName] ?? 'View';
@@ -1841,12 +1852,15 @@ function getModuleBusinessScenarios(moduleName) {
   return scenarioMap[moduleName] ?? ['Primary flow', 'Negative validation', 'Evidence review'];
 }
 
-function getModuleEvidenceStatus(module) {
+function getModuleEvidenceStatus() {
+  const evidence = airResults?.evidence ?? {};
+  const count = key => Array.isArray(evidence[key]) ? evidence[key].length : 0;
+  const label = value => value > 0 ? `${value} saved` : 'None in this run';
   return {
-    screenshots: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
-    videos: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
-    traces: hasPlaywrightReport ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
-    logs: hasResults ? 'Available' : demoMode ? 'Demo placeholder' : 'Pending',
+    screenshots: label(count('screenshots')),
+    videos: label(count('videos')),
+    traces: label(count('traces')),
+    logs: label(count('logs')),
   };
 }
 
@@ -1868,6 +1882,10 @@ function getModuleFocus(moduleName) {
     Signup: 'Registration validation, mobile number handling, OTP flow, and password policy.',
     Onboarding: 'Subscriber registration, verification, risk profile, compliance, and payment handoff.',
     'Session Security': 'Protected-route access, logout behavior, browser back navigation, and session expiry.',
+    'Access Control': 'Who can open protected pages, and what a restricted user is blocked from seeing.',
+    MFA: 'Authenticator, backup codes, and trusted-device checks that were actually run.',
+    Dashboard: 'Dashboard load, refresh, and navigation into profile, billing, and risk pages.',
+    General: 'Checks that did not match a product module. Treat these as unmapped coverage.',
   };
 
   return focusByModule[moduleName] ?? 'Module-specific UI validation, evidence review, and release readiness.';
@@ -2055,20 +2073,20 @@ function renderModuleHealthCard(module) {
       </div>
       <div class="module-health-score">
         <strong>${health}%</strong>
-        <span>Executed health</span>
+        <span>of checks that ran</span>
       </div>
       <div class="module-card-stats">
-        <span><b>${module.passed}/${executed || 0}</b><small>Passed / ran</small></span>
-        <span><b>${ranShare}%</b><small>Ran this run</small></span>
-        <span><b>${escapeHtml(module.risk)}</b><small>Risk</small></span>
+        <span><b>${module.passed}</b><small>Passed</small></span>
+        <span><b>${executed || 0}</b><small>Ran</small></span>
+        <span><b>${ranShare}%</b><small>Planned</small></span>
       </div>
       <div class="module-progress" aria-hidden="true"><span style="width:${health}%"></span></div>
       <p>${failedCount > 0
         ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review`
         : documentedSkipped > 0 && getModuleStatusGroup(module) === 'healthy'
-          ? `${documentedSkipped} documented gap${documentedSkipped === 1 ? '' : 's'} remain in Coverage Gaps.`
+          ? `${documentedSkipped} planned check${documentedSkipped === 1 ? '' : 's'} did not run.`
           : escapeHtml(getModuleRecommendedAction(module))}</p>
-      <span class="module-button">Open Module Detail</span>
+      <span class="module-button">Open detail</span>
     </a>`;
 }
 
@@ -2077,6 +2095,13 @@ const moduleHealthCards =
     .map(renderModuleHealthCard)
     .join('');
 
+const moduleEvidenceLabel = (() => {
+  const status = getModuleEvidenceStatus();
+  const parts = ['screenshots', 'videos', 'traces', 'logs']
+    .filter(key => status[key] !== 'None in this run')
+    .map(key => status[key].replace(' saved', ' ' + key));
+  return parts.length ? parts.join(', ') : 'None in this run';
+})();
 const moduleDashboardCards =
   displayModules
     .map(module => {
@@ -2101,14 +2126,14 @@ const moduleDashboardCards =
           </div>
           <div class="module-dashboard-score-row">
             <strong>${module.score}%</strong>
-            <span>${ranShare}% ran this run</span>
+            <span>${ranShare}% of planned checks ran</span>
           </div>
           <div class="module-selector-summary">
-            <span>Health <b>${module.score}%</b></span>
-            <span>Tests <b>${module.passed}/${executed || 0} ran</b></span>
+            <span>Of checks that ran <b>${module.score}%</b></span>
+            <span>Passed <b>${module.passed} of ${executed || 0}</b></span>
             <span>Risk <b>${escapeHtml(module.risk)}</b></span>
-            <span>Critical Scenarios <b>${scenarioCount}/${scenarioCount}</b></span>
-            <span>Evidence <b>${hasPlaywrightReport ? 'Available' : 'Pending'}</b></span>
+            <span>Scenarios <b>${scenarioCount}</b></span>
+            <span>Evidence <b>${escapeHtml(moduleEvidenceLabel)}</b></span>
             <span>Execution <b>${moduleExecutionMs ? formatDuration(moduleExecutionMs) : 'No Data'}</b></span>
           </div>
           <div class="module-progress"><span style="width:${module.score}%"></span></div>
@@ -2277,7 +2302,7 @@ const journeyCoverageChartHtml =
       const height = Math.max(8, value);
       const tone = statusTone(status);
       const barClass = tone === 'red' ? 'red' : tone === 'amber' ? 'amber' : '';
-      return `<div class="bar ${barClass}" style="height:${height}%" title="${escapeHtml(`${name}: ${value}% ${status}`)}"><strong>${value}%</strong><label>${escapeHtml(name)}</label></div>`;
+      return `<div class="coverage-col ${barClass}" title="${escapeHtml(`${name}: ${value}% ${status}`)}"><strong>${value}%</strong><div class="bar-track"><div class="bar ${barClass}" style="height:${height}%"></div></div><label>${escapeHtml(name)}</label></div>`;
     })
     .join('') || '<div class="empty-note">No journey coverage was recorded for this execution.</div>';
 
@@ -2288,14 +2313,14 @@ const journeyAnswerHtml = (() => {
   const healthy = liveBusinessJourneys.filter(journey => journey.status === 'Healthy');
 
   if (executiveData.failed > 0) {
-    return `Core flows are mostly healthy, with focused review required for failed areas.`;
+    return `Most paths passed. Start with the failed checks before approving the release.`;
   }
 
   if (attention.length === 0) {
-    return `Executed journeys are healthy. Remaining CONDITIONAL GO risk is blocked or documented coverage, not a failed user flow.`;
+    return `Every path that ran passed. The remaining risk is checks that did not run, not a broken user path.`;
   }
 
-  return `${healthy.length} journey${healthy.length === 1 ? '' : 's'} executed cleanly. Review ${attention.map(journey => journey.name).join(', ')} before GO.`;
+  return `${healthy.length} path${healthy.length === 1 ? '' : 's'} passed. Look at ${attention.map(journey => journey.name).join(', ')} before approving the release.`;
 })();
 
 const failedSourceItems = demoMode
@@ -3552,23 +3577,6 @@ const coverageGapDetailDataJson =
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
 
-const evidenceCards = [
-  ['Screenshots', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'IMG', '#evidence'],
-  ['Videos', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'VID', '../playwright-report/index.html'],
-  ['Traces', demoMode ? 'Sample' : hasPlaywrightReport ? 'Available' : 'No Data', 'TRC', '../playwright-report/index.html'],
-  ['Raw Results', hasResults ? 'AIR Model' : demoMode ? 'Demo Data' : 'No Data', 'JSON', 'air-results.json'],
-]
-  .map(([label, value, icon, href]) => `
-    <a class="evidence-card" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="${escapeHtml(value)}" data-evidence-href="${escapeHtml(href)}">
-      <div class="evidence-icon">${escapeHtml(icon)}</div>
-      <div class="evidence-card-body">
-        <strong>${escapeHtml(label)}</strong>
-        <span>${escapeHtml(value)}</span>
-        <em>Open Evidence</em>
-      </div>
-    </a>`)
-  .join('');
-
 const evidenceData = airResults?.evidence ?? {};
 const discoveredScreenshotCount =
   fs.existsSync(path.join(projectRoot, 'playwright-report', 'data'))
@@ -3614,33 +3622,59 @@ const attemptsWithEvidenceCount =
     }, new Set())
     .size;
 
+const evidenceStatusLabel = count => count > 0 ? `${count} saved` : 'None in this run';
+const evidenceCards = [
+  ['Screenshots', evidenceCounts.screenshots, 'IMG'],
+  ['Videos', evidenceCounts.videos, 'VID'],
+  ['Traces', evidenceCounts.traces, 'TRC'],
+  ['Logs', evidenceCounts.logs, 'LOG'],
+]
+  .map(([label, count, icon]) => `
+    <div class="evidence-card ${count > 0 ? 'good' : 'none'}">
+      <div class="evidence-icon">${escapeHtml(icon)}</div>
+      <div class="evidence-card-body">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(evidenceStatusLabel(count))}</span>
+      </div>
+    </div>`)
+  .join('');
+const visualProofCount = evidenceCounts.screenshots + evidenceCounts.videos + evidenceCounts.traces;
+const evidenceProofStripHtml = visualProofCount > 0
+  ? `<div class="evidence-proof-strip">
+      ${[
+        ['Screenshots', evidenceCounts.screenshots],
+        ['Videos', evidenceCounts.videos],
+        ['Traces', evidenceCounts.traces],
+        ['Logs', evidenceCounts.logs],
+      ].filter(([, count]) => count > 0).map(([label, count]) => `<span><b>${count}</b><small>${escapeHtml(label)}</small></span>`).join('')}
+    </div>`
+  : '';
+const evidenceSummaryText = visualProofCount > 0
+  ? [
+      evidenceCounts.screenshots ? `${evidenceCounts.screenshots} screenshot${evidenceCounts.screenshots === 1 ? '' : 's'}` : '',
+      evidenceCounts.videos ? `${evidenceCounts.videos} video${evidenceCounts.videos === 1 ? '' : 's'}` : '',
+      evidenceCounts.traces ? `${evidenceCounts.traces} trace${evidenceCounts.traces === 1 ? '' : 's'}` : '',
+      evidenceCounts.logs ? `${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'}` : '',
+    ].filter(Boolean).join(', ') + ' saved.'
+  : evidenceCounts.logs > 0
+    ? `No screenshots, videos, or traces. ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'} are in the test log.`
+    : hasPlaywrightReport
+      ? 'No screenshots, videos, or traces. The test log still has the run record.'
+      : 'No proof was saved for this run.';
 const evidenceHeroHtml = `
   <div class="evidence-hero">
     <div>
-      <span class="mission-label">Evidence Readiness</span>
-      <strong>${totalEvidenceArtifacts > 0 ? 'Proof Available' : 'No Evidence Captured'}</strong>
-      <p>${totalEvidenceArtifacts > 0
-        ? (totalRichEvidenceArtifacts > 0
-            ? 'AIR found rich evidence artifacts that can support investigation and release review.'
-            : 'AIR found raw Playwright report evidence. Enable full artifacts to include screenshots, videos, and traces for every run.')
-        : 'This execution does not include raw reports, screenshots, videos, traces, or logs. Run tests before approval.'}</p>
+      <span class="mission-label">Evidence</span>
+      <strong>${visualProofCount > 0 ? 'Proof available' : hasPlaywrightReport || evidenceCounts.logs > 0 ? 'No images saved' : 'No proof saved'}</strong>
+      <p>${escapeHtml(evidenceSummaryText)}</p>
     </div>
-    <div class="evidence-score-card">
-      <span>Evidence Items</span>
-      <strong>${totalRichEvidenceArtifacts}</strong>
-      <small>${hasPlaywrightReport ? 'Playwright report available' : 'Playwright report not linked'}</small>
+    <div class="evidence-score-card ${visualProofCount > 0 ? '' : 'muted'}">
+      <span>Screenshots</span>
+      <strong>${evidenceCounts.screenshots}</strong>
+      <small>${hasPlaywrightReport ? 'Test log is linked' : 'Test log is not linked'}</small>
     </div>
   </div>
-  <div class="evidence-proof-strip">
-    <span><b>${totalRichEvidenceArtifacts}</b><small>Evidence Items</small></span>
-    <span><b>${testsWithEvidenceCount}</b><small>Tests With Evidence</small></span>
-    <span><b>${attemptsWithEvidenceCount}</b><small>Attempts With Evidence</small></span>
-    <span><b>${evidenceCounts.screenshots}</b><small>Screenshots</small></span>
-    <span><b>${evidenceCounts.videos}</b><small>Videos</small></span>
-    <span><b>${evidenceCounts.traces}</b><small>Traces</small></span>
-    <span><b>${evidenceCounts.logs}</b><small>Logs</small></span>
-    <span><b>${evidenceCounts.rawReports}</b><small>Raw Reports</small></span>
-  </div>`;
+  ${evidenceProofStripHtml}`;
 
 const businessHealthCards =
   displayModules
@@ -3715,16 +3749,7 @@ const evidenceThumbnails =
 
 const failureEvidenceMapHtml =
   failedSourceItems.length === 0
-    ? `
-      <div class="panel evidence-failure-map">
-        <h2 class="icon-title"><span class="section-icon">OK</span>Failure Evidence Map</h2>
-        ${renderEmptyState({
-          icon: 'OK',
-          title: 'No failed-test evidence required.',
-          reason: 'The current execution does not contain failed tests that need investigation.',
-          action: 'Continue monitoring evidence capture for future runs.',
-        })}
-      </div>`
+    ? ''
     : `
       <div class="panel evidence-failure-map">
         <div class="evidence-map-head">
@@ -3748,7 +3773,39 @@ const historySnapshots =
       ? airResults.history.executions.slice(-8)
     : [];
 
+function parseHistoryDate(item = {}) {
+  const raw = item.generatedAt ?? item.endedAt ?? item.execution?.endedAt ?? '';
+  const parsed = raw ? new Date(raw) : new Date(NaN);
+
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 function getHistoryBuildLabel(item = {}, index = 0, options = {}) {
+  const parsed = parseHistoryDate(item);
+
+  if (parsed) {
+    const shortDate = `${parsed.getMonth() + 1}/${parsed.getDate()}`;
+    let hours = parsed.getHours();
+    const minutes = String(parsed.getMinutes()).padStart(2, '0');
+    const suffix = hours >= 12 ? 'p' : 'a';
+    hours = hours % 12 || 12;
+    const clock = `${hours}:${minutes}${suffix}`;
+    const peers = options.peers ?? [];
+    const sameDay = peers.filter(peer => {
+      const peerDate = parseHistoryDate(peer);
+      return peerDate
+        && peerDate.getFullYear() === parsed.getFullYear()
+        && peerDate.getMonth() === parsed.getMonth()
+        && peerDate.getDate() === parsed.getDate();
+    }).length > 1;
+
+    if (options.compact) {
+      return sameDay ? clock : shortDate;
+    }
+
+    return `${shortDate} ${clock}`;
+  }
+
   const build =
     item.build ??
     item.project?.build ??
@@ -3808,7 +3865,7 @@ const historicalTrendBars =
         const label =
           index === historySnapshots.length - 1
             ? 'Current'
-            : getHistoryBuildLabel(snapshot, index, { compact: true });
+            : getHistoryBuildLabel(snapshot, index, { compact: true, peers: historySnapshots });
         const rate =
           snapshot.summary?.passRate ?? 0;
 
@@ -4760,10 +4817,28 @@ const warningModuleCount =
   displayModules.filter(module => getModuleFilterTone(module) === 'amber').length;
 const criticalModuleCount =
   displayModules.filter(module => getModuleFilterTone(module) === 'red').length;
+const healthSummaryLead = (() => {
+  const joinNames = modules => {
+    const names = modules.map(module => module.name);
+    if (names.length <= 1) return names.join('');
+    if (names.length === 2) return names.join(' and ');
+    return `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+  };
+  const warning = displayModules.filter(module => getModuleStatusGroup(module) === 'warning');
+  const notRun = displayModules.filter(module => getModuleStatusGroup(module) === 'not-executed');
+  const critical = displayModules.filter(module => getModuleStatusGroup(module) === 'critical');
+  const parts = [`${healthyModuleCount} of ${displayModules.length} areas are healthy.`];
+  if (critical.length) parts.push(`${joinNames(critical)} failed.`);
+  if (warning.length) parts.push(`${joinNames(warning)} ${warning.length === 1 ? 'needs' : 'need'} a look.`);
+  if (notRun.length) parts.push(`${joinNames(notRun)} did not run.`);
+  return parts.join(' ');
+})();
 const nextFocusText =
-  executiveData.failed === 0
-    ? 'Evidence Linking'
-    : 'Failed Module Review';
+  executiveData.failed > 0
+    ? 'Review the failures'
+    : warningModuleCount > 0
+      ? 'Review the warnings'
+      : 'Ready for review';
 const executiveDecisionBullets = [
   `${executiveData.executed ?? executiveData.passed} tests executed; ${executiveData.total} in the inventory.`,
   `${executiveData.passed} passed and ${executiveData.failed} failed (executed pass rate ${executiveData.executedPassRate ?? executiveData.passRate}%).`,
@@ -5116,7 +5191,7 @@ function renderExecutiveTrendSvg() {
   const labels = snapshots
     .map((item, index) => {
       const x = 24 + (index * (452 / Math.max(1, snapshots.length - 1)));
-      return `<text x="${x.toFixed(1)}" y="150">${escapeHtml(getHistoryBuildLabel(item, index, { compact: true }))}</text>`;
+      return `<text x="${x.toFixed(1)}" y="150">${escapeHtml(getHistoryBuildLabel(item, index, { compact: true, peers: snapshots }))}</text>`;
     })
     .join('');
 
@@ -5154,15 +5229,30 @@ const executiveKnownIssuesText =
   executiveData.failed > 0
     ? `${executiveData.failed} known issue${executiveData.failed === 1 ? '' : 's'}`
     : 'no known blocker issues';
+const journeysNeedingReview = liveBusinessJourneys.filter(journey =>
+  ['Warning', 'Partial', 'Not Executed', 'Critical', 'Failed'].includes(journey.status)
+);
+const screenshotsCaptured =
+  airEvidenceThumbnails.length > 0 || evidenceThumbnailFiles.length > 0;
+const businessImpactLabel =
+  businessJourneyStatus === 'Partial'
+    ? 'Incomplete'
+    : businessJourneyStatus === 'Needs Review'
+      ? 'Blocked'
+      : businessJourneyStatus;
 const businessImpactBullets = [
-  executiveData.failed === 0
-    ? 'Core user flows are healthy'
-    : `${executiveData.failed} issue${executiveData.failed === 1 ? '' : 's'} require release review`,
-  `${businessJourneyStatus} business journey status`,
-  `${displayModules.length} module${displayModules.length === 1 ? '' : 's'} evaluated`,
-  evidenceReadiness === 'Ready'
-    ? 'Evidence is ready for review'
-    : 'Evidence was not captured for this execution',
+  executiveData.failed > 0
+    ? `${executiveData.failed} issue${executiveData.failed === 1 ? '' : 's'} require release review`
+    : journeysNeedingReview.length === 0
+      ? 'Core user flows are healthy'
+      : `${liveBusinessJourneys.length - journeysNeedingReview.length} journeys passed; ${journeysNeedingReview.length} still need review`,
+  journeysNeedingReview.length
+    ? `Review ${journeysNeedingReview.map(journey => journey.name).join(', ')}`
+    : 'Every configured journey that ran is healthy',
+  `${healthyModuleCount} of ${displayModules.length} modules are healthy`,
+  screenshotsCaptured
+    ? 'Screenshots are ready to open'
+    : 'No screenshots were saved. Use the Playwright report for logs.',
 ]
   .map(item => `<li>${escapeHtml(item)}</li>`)
   .join('');
@@ -5178,16 +5268,20 @@ const executiveChangeCards = [
       <span>${escapeHtml(label)}</span>
     </div>`)
   .join('');
+const executiveChangeBody =
+  addedTests.length + removedTests.length + modifiedTests.length + resolvedFailures.length === 0
+    ? `<p class="executive-change-note">No tests were added, removed, changed, or fixed since the previous snapshot.</p>`
+    : `<div class="executive-change-grid">${executiveChangeCards}</div>`;
 const executiveProductHealthStrip = displayModules
-  .slice(0, 6)
   .map(module => {
     const tone = statusTone(module.status);
+    const executed = Number(module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0)));
     return `
-      <button class="executive-module-pill ${tone}" type="button" data-module-name="${escapeHtml(module.name)}" aria-label="Open ${escapeHtml(module.name)} module details">
+      <a class="executive-module-pill ${tone}" href="#module-dashboard-${moduleSlug(module.name)}" data-module-name="${escapeHtml(module.name)}" aria-label="Open ${escapeHtml(module.name)} module details">
         <span>${escapeHtml(module.name)}</span>
         <strong>${module.score}%</strong>
-        <small>${module.passed}/${module.executed ?? module.total} ran</small>
-      </button>`;
+        <small>${escapeHtml(module.status)}${executed ? ` · ${module.passed}/${executed} ran` : ''}</small>
+      </a>`;
   })
   .join('');
 const executiveEvidenceHighlights =
@@ -5216,103 +5310,101 @@ const executiveEvidenceHighlights =
       .join('')
       : `
       <div class="executive-evidence-empty">
-        <strong>Evidence not available.</strong>
-        <span>Enable screenshots, videos, or traces in automation configuration.</span>
+        <strong>No screenshots in this run.</strong>
+        <span>Passed checks do not keep images unless recording is turned on. The run record stays in the test log.</span>
       </div>`;
+const readerAttentionNames = journeysNeedingReview.map(journey => journey.name);
+const readerGuideSteps = [
+  {
+    question: 'Can we release?',
+    answer: `${executiveData.releaseDecision}. ${executiveHeroSubtitle} Confidence is ${executiveConfidence}%. Risk is ${estimatedReleaseRisk}.`,
+    href: '#executive',
+    open: 'Why',
+    tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
+  },
+  {
+    question: 'Did anything fail?',
+    answer: executiveData.failed > 0
+      ? `${executiveData.failed} check${executiveData.failed === 1 ? '' : 's'} failed. Start there before anything else.`
+      : `No. ${executiveData.executed ?? executiveData.passed} of ${executiveData.total} checks ran, and every one that ran passed.`,
+    href: '#failures',
+    open: 'Failures',
+    tone: executiveData.failed > 0 ? 'bad' : 'good',
+  },
+  {
+    question: 'What needs a look?',
+    answer: readerAttentionNames.length
+      ? `${readerAttentionNames.join(', ')}. ${healthyModuleCount} of ${displayModules.length} product areas are healthy.`
+      : `Every path that ran is healthy. ${healthyModuleCount} of ${displayModules.length} product areas are healthy.`,
+    href: '#journey',
+    open: 'Paths',
+    tone: readerAttentionNames.length ? 'warn' : 'good',
+  },
+  {
+    question: 'What proof is there?',
+    answer: evidenceSummaryText,
+    href: '#evidence',
+    open: 'Evidence',
+    tone: visualProofCount > 0 ? 'good' : 'warn',
+  },
+  {
+    question: 'What should we do?',
+    answer: releaseRecommendedAction,
+    href: '#executive',
+    open: 'Next step',
+    tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
+  },
+];
+const readerGuideHtml = `
+  <section class="reader-guide" aria-label="How to read this report">
+    <h2>Read this first</h2>
+    <div class="reader-guide-list">
+      ${readerGuideSteps.map((step, index) => `
+        <a class="reader-step ${step.tone}" href="${step.href}">
+          <i>${String(index + 1).padStart(2, '0')}</i>
+          <span>${escapeHtml(step.question)}</span>
+          <strong>${escapeHtml(step.answer)}</strong>
+          <em>${escapeHtml(step.open)}</em>
+        </a>`).join('')}
+    </div>
+  </section>`;
 const executiveModeShellHtml = `
   <div class="executive-mode-header">
     <div>
-      <div class="eyebrow">Executive Mode</div>
-      <h1>Executive Release Summary</h1>
-      <p>One intelligent view to decide with confidence.</p>
+      <div class="eyebrow">${escapeHtml(projectName)} · ${escapeHtml(environment)}</div>
+      <h1>Release Brief</h1>
+      <p>Five answers for this release. Open a row for the detail behind it.</p>
     </div>
     <div class="executive-toolbar">
-      <div class="mode-toggle" aria-label="AIR view mode">
-        <span class="active">Executive Mode</span>
-        <span>Engineering Mode</span>
-      </div>
       <span>${escapeHtml(generatedAt)}</span>
-      <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Download</a>
-      <a class="btn ghost" href="#executive">Details</a>
+      <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf" title="This downloads the last saved PDF. Re-export from the browser if it still shows the old layout.">Download PDF</a>
+      <a class="btn ghost" href="#executive">Why this decision</a>
     </div>
   </div>
+  ${readerGuideHtml}
   <div class="executive-mode-grid">
-    <div class="release-cockpit interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
+    <div class="release-cockpit ${releaseClass} interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
       <div class="release-orb">
         <span>${executiveData.releaseDecision === 'NO GO' ? '!' : 'OK'}</span>
       </div>
       <div class="release-cockpit-content">
         <span class="cockpit-label">Release Decision</span>
         ${releaseStatusBadge}
-        <p>${escapeHtml(executiveHeroSubtitle)} Current execution has ${escapeHtml(executiveKnownIssuesText)}.</p>
+        <p>${executiveData.executed ?? executiveData.passed} of ${executiveData.total} planned checks ran. ${executiveData.failed === 0 ? 'Every one passed.' : `${executiveData.failed} failed.`}</p>
         <div class="cockpit-mini-grid">
-          <div><span>Release Confidence</span><strong>${executiveConfidence}%</strong></div>
-          <div><span>Risk Level</span><strong class="${estimatedReleaseRiskTone}">${escapeHtml(estimatedReleaseRisk)}</strong></div>
-          <div><span>Business Impact</span><strong>${escapeHtml(businessJourneyStatus)}</strong></div>
+          <div><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
+          <div><span>Risk</span><strong class="${estimatedReleaseRiskTone}">${escapeHtml(estimatedReleaseRisk)}</strong></div>
+          <div><span>Paths</span><strong class="${journeysNeedingReview.length ? 'amber' : ''}">${liveBusinessJourneys.length - journeysNeedingReview.length}/${liveBusinessJourneys.length}</strong></div>
         </div>
         <div class="release-meter" style="--score:${Math.max(0, Math.min(100, executiveConfidence))}%"><span></span></div>
       </div>
     </div>
     <div class="executive-kpi-stack">
-      <button class="executive-kpi interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Score</small></button>
-      <div class="executive-kpi"><span>Tests Executed</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.total} in inventory</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'danger' : 'success'}"><span>Tests Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? `${executiveData.executedPassRate ?? executiveData.passRate}% executed pass rate` : `${executiveData.passRate}% pass rate`}</small></div>
-      <div class="executive-kpi"><span>Modules</span><strong>${displayModules.length}</strong><small>Covered</small></div>
-      <div class="executive-kpi"><span>Journeys</span><strong>${(airResults?.businessJourneys ?? []).length}</strong><small>Covered</small></div>
-    </div>
-    <div class="executive-panel business-impact-card">
-      <div class="executive-panel-head">
-        <h2>Business Impact</h2>
-        <a href="#journey">View Details</a>
-      </div>
-      <div class="business-impact-layout">
-        <div class="business-impact-orb">
-          <strong>${businessJourneyStatus === 'Healthy' ? 'OK' : 'REVIEW'}</strong>
-          <span>Impact</span>
-        </div>
-        <ul>${businessImpactBullets}</ul>
-        <div class="business-impact-spark">
-          <p class="chart-explainer">Quality movement across recent executions.</p>
-          ${renderExecutiveTrendSvg()}
-        </div>
-      </div>
-    </div>
-    <div class="executive-panel what-changed-panel">
-      <div class="executive-panel-head">
-        <h2>What Changed in This Build</h2>
-        <a href="#comparison">${hasPreviousComparison ? 'View History' : 'First Run'}</a>
-      </div>
-      <div class="executive-change-grid">${executiveChangeCards}</div>
-    </div>
-    <div class="executive-panel trend-panel">
-      <div class="executive-panel-head">
-        <h2>Quality Trend</h2>
-        <a href="#comparison">View Timeline</a>
-      </div>
-      <p class="chart-explainer">Recent AIR quality score by execution. Hover each point to see build, execution time, quality score, and release decision.</p>
-      ${renderExecutiveTrendSvg()}
-    </div>
-    <div class="executive-panel product-strip-panel">
-      <div class="executive-panel-head">
-        <h2>Product Health</h2>
-        <a href="#health">View All Modules</a>
-      </div>
-      <div class="executive-product-strip">${executiveProductHealthStrip}</div>
-    </div>
-    <div class="executive-panel evidence-highlight-panel">
-      <div class="executive-panel-head">
-        <h2>Latest Evidence Highlights</h2>
-        <a href="#evidence">Open Gallery</a>
-      </div>
-      <div class="executive-evidence-strip">${executiveEvidenceHighlights}</div>
-    </div>
-    <div class="executive-recommendation-band">
-      <div>
-        <span>AIR Recommendation</span>
-        <strong>${escapeHtml(releaseRecommendedAction)}</strong>
-        <p>${escapeHtml(executiveNarrative)}</p>
-      </div>
-      <a class="btn" href="#insight">View Details</a>
+      <button class="executive-kpi mark-good interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Of checks that ran</small></button>
+      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.inventoryPassRate ?? executiveData.passRate}% of the plan</small></div>
+      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'All that ran passed' : `${executiveData.passRate}% pass rate`}</small></div>
+      <div class="executive-kpi ${healthyModuleCount < displayModules.length ? 'mark-warn' : 'mark-good'}"><span>Areas</span><strong>${healthyModuleCount}</strong><small>healthy of ${displayModules.length}</small></div>
+      <div class="executive-kpi ${journeysNeedingReview.length ? 'mark-warn' : 'mark-good'}"><span>Paths</span><strong>${liveBusinessJourneys.length - journeysNeedingReview.length}</strong><small>healthy of ${liveBusinessJourneys.length}</small></div>
     </div>
   </div>`;
 
@@ -5687,15 +5779,13 @@ const roadmapDetailDataJson =
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
 
-function renderPageFooter(pageNumber) {
+function renderPageFooter() {
   return `
       <div class="page-footer">
-        <span>Generated by AIR Platform</span>
-        <span>Automation Intelligence Report</span>
-        <span>${escapeHtml(airPlatformVersion)}</span>
-        <span>${escapeHtml(airCoreVersion)}</span>
+        <span>${escapeHtml(projectName)}</span>
+        <span>${escapeHtml(environment)}</span>
         <span>${escapeHtml(generatedAt)}</span>
-        <strong>Page ${pageNumber} of ${totalAirPages}</strong>
+        <span>Prepared by AIR</span>
       </div>`;
 }
 
@@ -5735,7 +5825,7 @@ const airGoldenDashboardHtml = `<!doctype html>
 <title>AIR Execution Report - ${escapeHtml(projectName)}</title>
 <style>
 :root{--bg:#0b0f17;--nav:#07101f;--panel:#111827;--panel2:#0e1a2d;--card:#111827;--line:#1f2937;--line2:#1f4630;--text:#f8fafc;--muted:#94a3b8;--green:#39e75f;--green2:#22c55e;--green3:#14532d;--red:#ff3b3b;--amber:#f5c542;--info:#8bd7a4}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 18% 0%,rgba(57,231,95,.12),transparent 30%),linear-gradient(135deg,#06101b,#0b0f17 48%,#061525);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;min-height:0;background:linear-gradient(180deg,#061227,#07101f);border-right:1px solid var(--line2);padding:24px 18px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(57,231,95,.45) rgba(8,16,30,.6)}.sidebar::-webkit-scrollbar{width:8px}.sidebar::-webkit-scrollbar-track{background:rgba(8,16,30,.6);border-radius:999px}.sidebar::-webkit-scrollbar-thumb{background:rgba(57,231,95,.45);border-radius:999px}.brand{font-size:54px;font-weight:900;letter-spacing:-4px;background:linear-gradient(90deg,#39e75f,#23c55e);-webkit-background-clip:text;color:transparent;line-height:.9}.brand-sub{font-size:12px;line-height:1.4;margin:8px 0 24px;color:white;text-align:center}.nav a{display:flex;gap:10px;align-items:center;color:white;text-decoration:none;padding:12px 13px;border-radius:8px;margin-bottom:8px;font-size:14px}.nav-icon{width:22px;height:22px;min-width:22px;border:1px solid rgba(57,231,95,.26);border-radius:7px;background:rgba(57,231,95,.08);display:grid;place-items:center;color:var(--green)}.nav-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.nav a.active .nav-icon,.nav a:hover .nav-icon{background:rgba(57,231,95,.18);border-color:rgba(57,231,95,.55);color:white}.nav a.active,.nav a:hover{background:linear-gradient(90deg,#14532d,#166534);box-shadow:inset 3px 0 0 var(--green)}.report-meta{margin-top:auto;border:1px solid var(--line2);border-radius:10px;padding:14px;background:rgba(17,24,39,.55);font-size:12px;color:var(--muted)}.release-mini{margin-top:12px;border:1px solid rgba(57,231,95,.35);background:rgba(57,231,95,.08);border-radius:10px;padding:14px}.release-mini strong{display:block;font-size:34px;color:var(--green)}main{padding:26px 32px 52px}.page{border:1px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.94),rgba(8,16,30,.94));padding:26px;margin-bottom:26px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.hero{min-height:560px}.cover-page{min-height:720px;display:grid;gap:24px}.cover-hero{min-height:430px;border:1px solid rgba(57,231,95,.28);border-radius:18px;background:radial-gradient(circle at 70% 30%,rgba(57,231,95,.16),transparent 35%),linear-gradient(135deg,#07101f,#0b1728);padding:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}.cover-logo{font-size:92px;font-weight:900;letter-spacing:-7px;background:linear-gradient(90deg,#39e75f,#9af7ad);-webkit-background-clip:text;color:transparent}.cover-title{font-size:44px;line-height:1.02;margin:10px 0}.cover-sub{color:var(--muted);font-size:18px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cover-stat{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.76);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:23px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.3);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.82));padding:22px;margin-bottom:22px}.wow h2{font-size:28px;margin:0 0 14px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wow-card{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:16px}.wow-card span{display:block;color:var(--muted)}.wow-card strong{display:block;color:var(--green);font-size:34px;margin-top:5px}.wow-card small{display:block;color:#d7fbe0;line-height:1.7}.topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--green);font-weight:900}.topbar h1{font-size:32px;margin:4px 0 3px;letter-spacing:-.03em}.topbar p{margin:0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill,.btn{border:1px solid var(--line2);border-radius:9px;padding:9px 12px;background:#07101f;color:white;font-weight:800;font-size:12px}.pill.demo{background:rgba(57,231,95,.11);border-color:rgba(57,231,95,.4);color:var(--green)}.btn{text-decoration:none}.btn:hover{border-color:rgba(57,231,95,.6);color:var(--green)}.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}.kpi{background:linear-gradient(145deg,#111827,#0b1728);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:116px;position:relative;overflow:hidden}.kpi:after{content:attr(data-icon);position:absolute;right:14px;top:20px;font-size:34px;color:var(--green);opacity:.82}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi strong{display:block;font-size:30px;margin:10px 0 4px}.kpi.good strong,.good{color:var(--green)}.kpi.bad strong,.bad{color:var(--red)}.kpi.warn strong,.warn{color:var(--amber)}.grid{display:grid;gap:18px}.grid.two{grid-template-columns:1.1fr .9fr}.grid.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:20px}.panel h2{font-size:18px;margin:0 0 14px}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border:1px solid rgba(57,231,95,.35);border-radius:10px;display:inline-grid;place-items:center;background:rgba(57,231,95,.12);color:var(--green);font-size:12px;font-weight:900}.release-card{display:grid;place-items:center;text-align:center;min-height:290px;background:radial-gradient(circle at center,rgba(57,231,95,.15),transparent 58%),#08101e}.release-card .decision{font-size:70px;font-weight:900;margin:8px 0}.release-card .score{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) ${executiveData.qualityScore}%,#26354e 0);position:relative}.release-card .score:before{content:"";position:absolute;width:112px;height:112px;border-radius:50%;background:#0b1628}.release-card .score b{z-index:1;font-size:36px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#16a34a);border-radius:999px}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.health-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:16px;background:#0b1728}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:28px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green);font-size:11px;font-weight:900}.health-card.amber .health-icon,.health-card.amber span{color:var(--amber)}.health-card.red .health-icon,.health-card.red span{color:var(--red)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.badge.good{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35)}.badge.warn{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35)}.badge.bad{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35)}.journey{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.journey-node{min-width:145px;background:#0b1728;border:1px solid var(--line2);border-radius:13px;padding:15px;text-align:center}.journey-node .node-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:0 auto 9px;background:rgba(57,231,95,.16);border:1px solid rgba(57,231,95,.35);font-size:20px}.journey-node strong{display:block}.journey-node span{display:block;color:var(--muted);margin-top:5px}.journey-arrow{color:var(--green);font-size:22px}.chart{height:250px;border:1px solid var(--line2);background:linear-gradient(180deg,#091426,#07101f);border-radius:12px;padding:22px 18px 42px;display:flex;gap:16px;align-items:flex-end}.bar{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);min-height:18px;position:relative;box-shadow:0 10px 22px rgba(57,231,95,.12)}.bar:hover{filter:brightness(1.16)}.bar.red{background:linear-gradient(180deg,#ff3b3b,#991b1b)}.bar.blue{background:linear-gradient(180deg,#39e75f,#14532d)}.bar label{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}.risk-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.risk-cell{min-height:72px;border:1px solid var(--line2);border-radius:8px;display:grid;place-items:center;text-align:center}.risk-cell.low{background:rgba(57,231,95,.14)}.risk-cell.med{background:rgba(245,197,66,.17)}.risk-cell.high{background:rgba(255,59,59,.20)}.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.evidence-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:18px;background:#0b1728}.evidence-icon{width:48px;height:48px;border-radius:12px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-weight:900}.evidence-card strong,.evidence-card span{display:block}.evidence-card span{color:var(--muted);margin-top:4px}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:white;min-height:132px}.thumb img{width:100%;height:92px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{display:grid;place-items:center;text-align:center}.thumb.placeholder div{width:100%;height:92px;border-radius:8px;border:1px dashed rgba(57,231,95,.35);display:grid;place-items:center;color:var(--green);background:rgba(57,231,95,.08)}.insight{border-color:rgba(57,231,95,.35);background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(20,83,45,.12))}.ai-reasons{margin:12px 0 0;padding-left:20px;color:#d7fbe0;line-height:1.8}.empty-note{border:1px dashed var(--line2);border-radius:12px;padding:18px;color:var(--muted);background:rgba(8,16,30,.5)}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line2);padding-top:18px}.footer strong{color:white}@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.kpis,.grid.two,.grid.three,.evidence-grid,.cover-hero,.cover-stats,.wow-grid,.health-grid,.thumb-grid{grid-template-columns:1fr}.hero{min-height:auto}}@page{size:A3 landscape;margin:8mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:#0b0f17!important;color:var(--text)!important}.app{display:block}.sidebar{display:none!important}main{padding:0!important}.page{break-inside:avoid;page-break-inside:avoid;margin:0 0 10mm!important;box-shadow:none!important}.btn,.actions{display:none!important}.footer{break-inside:avoid}}
+*{box-sizing:border-box}html{scroll-behavior:auto}body{margin:0;background:radial-gradient(circle at 18% 0%,rgba(57,231,95,.12),transparent 30%),linear-gradient(135deg,#06101b,#0b0f17 48%,#061525);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;min-height:0;background:linear-gradient(180deg,#061227,#07101f);border-right:1px solid var(--line2);padding:24px 18px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(57,231,95,.45) rgba(8,16,30,.6)}.sidebar::-webkit-scrollbar{width:8px}.sidebar::-webkit-scrollbar-track{background:rgba(8,16,30,.6);border-radius:999px}.sidebar::-webkit-scrollbar-thumb{background:rgba(57,231,95,.45);border-radius:999px}.brand{font-size:54px;font-weight:900;letter-spacing:-4px;background:linear-gradient(90deg,#39e75f,#23c55e);-webkit-background-clip:text;color:transparent;line-height:.9}.brand-sub{font-size:12px;line-height:1.4;margin:8px 0 24px;color:white;text-align:center}.nav a{display:flex;gap:10px;align-items:center;color:white;text-decoration:none;padding:12px 13px;border-radius:8px;margin-bottom:8px;font-size:14px}.nav-icon{width:22px;height:22px;min-width:22px;border:1px solid rgba(57,231,95,.26);border-radius:7px;background:rgba(57,231,95,.08);display:grid;place-items:center;color:var(--green)}.nav-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.nav a.active .nav-icon,.nav a:hover .nav-icon{background:rgba(57,231,95,.18);border-color:rgba(57,231,95,.55);color:white}.nav a.active,.nav a:hover{background:linear-gradient(90deg,#14532d,#166534);box-shadow:inset 3px 0 0 var(--green)}.report-meta{margin-top:auto;border:1px solid var(--line2);border-radius:10px;padding:14px;background:rgba(17,24,39,.55);font-size:12px;color:var(--muted)}.release-mini{margin-top:12px;border:1px solid rgba(57,231,95,.35);background:rgba(57,231,95,.08);border-radius:10px;padding:14px}.release-mini strong{display:block;font-size:34px;color:var(--green)}main{padding:26px 32px 52px}.page{border:1px solid var(--line2);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.94),rgba(8,16,30,.94));padding:26px;margin-bottom:26px;box-shadow:0 18px 50px rgba(0,0,0,.22)}.hero{min-height:560px}.cover-page{min-height:720px;display:grid;gap:24px}.cover-hero{min-height:430px;border:1px solid rgba(57,231,95,.28);border-radius:18px;background:radial-gradient(circle at 70% 30%,rgba(57,231,95,.16),transparent 35%),linear-gradient(135deg,#07101f,#0b1728);padding:42px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px;align-items:center}.cover-logo{font-size:92px;font-weight:900;letter-spacing:-7px;background:linear-gradient(90deg,#39e75f,#9af7ad);-webkit-background-clip:text;color:transparent}.cover-title{font-size:44px;line-height:1.02;margin:10px 0}.cover-sub{color:var(--muted);font-size:18px}.cover-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cover-stat{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.76);padding:18px}.cover-stat span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.cover-stat strong{display:block;font-size:23px;margin-top:8px}.wow{border:1px solid rgba(57,231,95,.3);border-radius:16px;background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(8,16,30,.82));padding:22px;margin-bottom:22px}.wow h2{font-size:28px;margin:0 0 14px}.wow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wow-card{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.72);padding:16px}.wow-card span{display:block;color:var(--muted)}.wow-card strong{display:block;color:var(--green);font-size:34px;margin-top:5px}.wow-card small{display:block;color:#d7fbe0;line-height:1.7}.topbar{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.18em;color:var(--green);font-weight:900}.topbar h1{font-size:32px;margin:4px 0 3px;letter-spacing:-.03em}.topbar p{margin:0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill,.btn{border:1px solid var(--line2);border-radius:9px;padding:9px 12px;background:#07101f;color:white;font-weight:800;font-size:12px}.pill.demo{background:rgba(57,231,95,.11);border-color:rgba(57,231,95,.4);color:var(--green)}.btn{text-decoration:none}.btn:hover{border-color:rgba(57,231,95,.6);color:var(--green)}.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px}.kpi{background:linear-gradient(145deg,#111827,#0b1728);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:116px;position:relative;overflow:hidden}.kpi:after{content:attr(data-icon);position:absolute;right:14px;top:20px;font-size:34px;color:var(--green);opacity:.82}.kpi span{display:block;color:var(--muted);font-size:13px}.kpi strong{display:block;font-size:30px;margin:10px 0 4px}.kpi.good strong,.good{color:var(--green)}.kpi.bad strong,.bad{color:var(--red)}.kpi.warn strong,.warn{color:var(--amber)}.grid{display:grid;gap:18px}.grid.two{grid-template-columns:1.1fr .9fr}.grid.three{grid-template-columns:repeat(3,1fr)}.panel{border:1px solid var(--line2);border-radius:12px;background:rgba(8,16,30,.74);padding:20px}.panel h2{font-size:18px;margin:0 0 14px}.icon-title{display:flex;align-items:center;gap:10px}.section-icon{width:34px;height:34px;border:1px solid rgba(57,231,95,.35);border-radius:10px;display:inline-grid;place-items:center;background:rgba(57,231,95,.12);color:var(--green);font-size:12px;font-weight:900}.release-card{display:grid;place-items:center;text-align:center;min-height:290px;background:radial-gradient(circle at center,rgba(57,231,95,.15),transparent 58%),#08101e}.release-card .decision{font-size:70px;font-weight:900;margin:8px 0}.release-card .score{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) ${executiveData.qualityScore}%,#26354e 0);position:relative}.release-card .score:before{content:"";position:absolute;width:112px;height:112px;border-radius:50%;background:#0b1628}.release-card .score b{z-index:1;font-size:36px}table{width:100%;border-collapse:collapse}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.progress{height:9px;background:#1d2b44;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--green),#16a34a);border-radius:999px}.health-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.health-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:16px;background:#0b1728}.health-card strong,.health-card span,.health-card small{display:block}.health-card span{font-size:28px;color:var(--green);font-weight:900;margin:4px 0}.health-card small{color:var(--muted)}.health-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:var(--green);font-size:11px;font-weight:900}.health-card.amber .health-icon,.health-card.amber span{color:var(--amber)}.health-card.red .health-icon,.health-card.red span{color:var(--red)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}.badge.good{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35)}.badge.warn{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35)}.badge.bad{background:rgba(255,59,59,.14);border:1px solid rgba(255,59,59,.35)}.journey{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.journey-node{min-width:145px;background:#0b1728;border:1px solid var(--line2);border-radius:13px;padding:15px;text-align:center}.journey-node .node-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;margin:0 auto 9px;background:rgba(57,231,95,.16);border:1px solid rgba(57,231,95,.35);font-size:20px}.journey-node strong{display:block}.journey-node span{display:block;color:var(--muted);margin-top:5px}.journey-arrow{color:var(--green);font-size:22px}.chart{height:250px;border:1px solid var(--line2);background:linear-gradient(180deg,#091426,#07101f);border-radius:12px;padding:22px 18px 42px;display:flex;gap:16px;align-items:flex-end}.bar{flex:1;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#63ef7e,#178f38);min-height:18px;position:relative;box-shadow:0 10px 22px rgba(57,231,95,.12)}.bar:hover{filter:brightness(1.16)}.bar.red{background:linear-gradient(180deg,#ff3b3b,#991b1b)}.bar.blue{background:linear-gradient(180deg,#39e75f,#14532d)}.bar label{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}.risk-matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.risk-cell{min-height:72px;border:1px solid var(--line2);border-radius:8px;display:grid;place-items:center;text-align:center}.risk-cell.low{background:rgba(57,231,95,.14)}.risk-cell.med{background:rgba(245,197,66,.17)}.risk-cell.high{background:rgba(255,59,59,.20)}.evidence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.evidence-card{display:flex;gap:13px;align-items:center;border:1px solid var(--line2);border-radius:12px;padding:18px;background:#0b1728}.evidence-icon{width:48px;height:48px;border-radius:12px;background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28);display:grid;place-items:center;color:var(--green);font-weight:900}.evidence-card strong,.evidence-card span{display:block}.evidence-card span{color:var(--muted);margin-top:4px}.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.thumb{border:1px solid var(--line2);border-radius:12px;background:#07101f;padding:10px;text-decoration:none;color:white;min-height:132px}.thumb img{width:100%;height:92px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.thumb span{display:block;color:var(--muted);font-size:12px;margin-top:8px}.thumb.placeholder{display:grid;place-items:center;text-align:center}.thumb.placeholder div{width:100%;height:92px;border-radius:8px;border:1px dashed rgba(57,231,95,.35);display:grid;place-items:center;color:var(--green);background:rgba(57,231,95,.08)}.insight{border-color:rgba(57,231,95,.35);background:linear-gradient(135deg,rgba(57,231,95,.12),rgba(20,83,45,.12))}.ai-reasons{margin:12px 0 0;padding-left:20px;color:#d7fbe0;line-height:1.8}.empty-note{border:1px dashed var(--line2);border-radius:12px;padding:18px;color:var(--muted);background:rgba(8,16,30,.5)}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line2);padding-top:18px}.footer strong{color:white}@media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.kpis,.grid.two,.grid.three,.evidence-grid,.cover-hero,.cover-stats,.wow-grid,.health-grid,.thumb-grid{grid-template-columns:1fr}.hero{min-height:auto}}@page{size:A3 landscape;margin:8mm}@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:#0b0f17!important;color:var(--text)!important}.app{display:block}.sidebar{display:none!important}main{padding:0!important}.page{break-inside:avoid;page-break-inside:avoid;margin:0 0 10mm!important;box-shadow:none!important}.btn,.actions{display:none!important}.footer{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -6087,7 +6177,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-kpi{border:1px solid rgba(148,163,184,.14);border-radius:18px;background:linear-gradient(180deg,#101a27,#0c131e);padding:20px;text-align:left;min-height:148px;color:#f8fafc;font:inherit;display:flex;flex-direction:column;justify-content:center}
     .executive-kpi span{color:#9aa7b7;font-size:12px;text-transform:uppercase;letter-spacing:.08em}
     .executive-kpi strong{font-size:clamp(34px,3.5vw,52px);line-height:1;margin:12px 0 8px;letter-spacing:-.04em}
-    .executive-kpi small{color:#dbe5ef;font-size:14px}
+    .executive-kpi small{color:#dbe5ef;font-size:14px;line-height:1.35;display:block}
+    .executive-change-note{margin:0;color:#dbe5ef;font-size:16px;line-height:1.5}
     .executive-kpi.success strong{color:#39e75f}
     .executive-kpi.danger{border-color:rgba(255,123,114,.28);background:linear-gradient(180deg,rgba(127,29,29,.24),#0c131e)}
     .executive-kpi.danger strong{color:#ff7b72}
@@ -6125,12 +6216,12 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-empty-trend{min-height:166px;display:grid;place-items:center;text-align:center;border:1px dashed rgba(148,163,184,.18);border-radius:14px;color:#9aa7b7}
     .executive-empty-trend strong{display:block;color:#f8fafc;margin-bottom:6px}
     .product-strip-panel{grid-column:1}
-    .executive-product-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+    .executive-product-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
     .executive-module-pill{min-width:0;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:#0a121c;color:#f8fafc;padding:12px;text-align:left;font:inherit;cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease}
     .executive-module-pill:hover,.executive-module-pill:focus-visible{transform:translateY(-2px);border-color:rgba(57,231,95,.36);outline:none}
-    .executive-module-pill span{display:block;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .executive-module-pill span{display:block;font-size:13px;font-weight:800;line-height:1.25;white-space:normal}
     .executive-module-pill strong{display:block;color:#39e75f;font-size:24px;line-height:1;margin:10px 0 5px}
-    .executive-module-pill small{display:block;color:#9aa7b7;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .executive-module-pill small{display:block;color:#9aa7b7;font-size:12px;line-height:1.3;white-space:normal}
     .executive-module-pill.amber strong{color:#f5c542}
     .executive-module-pill.red strong{color:#ff7b72}
     .evidence-highlight-panel{grid-column:2}
@@ -6140,7 +6231,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-evidence-card img{width:100%;height:74px;object-fit:cover;border-radius:10px;background:#fff}
     .executive-evidence-card span{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .executive-evidence-card strong{font-size:11px;color:#7ee787}
-    .executive-evidence-empty{grid-column:1/-1;min-height:112px;display:grid;place-items:center;text-align:center;border:1px dashed rgba(148,163,184,.18);border-radius:14px;color:#9aa7b7}
+    .executive-evidence-empty{grid-column:1/-1;min-height:112px;display:grid;place-items:center;align-content:center;gap:6px;text-align:center;padding:16px;border:1px dashed rgba(148,163,184,.18);border-radius:14px;color:#9aa7b7;line-height:1.4}
     .executive-evidence-empty strong{color:#f8fafc}
     .executive-recommendation-band{grid-column:1/-1;border:1px solid rgba(57,231,95,.24);border-radius:18px;background:linear-gradient(90deg,rgba(57,231,95,.14),rgba(14,22,34,.92));padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
     .executive-recommendation-band span{display:block;color:#7ee787;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
@@ -6657,6 +6748,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     #health .module-health-score strong{font-size:clamp(38px,3.4vw,56px)!important;letter-spacing:-.055em!important}
     #health .module-health-score span{justify-self:start!important;writing-mode:initial!important;transform:none!important;border:1px solid rgba(57,231,95,.18);border-radius:999px;background:rgba(57,231,95,.08);padding:6px 9px;color:#9fb0c5!important}
     #health .module-card-stats span{min-height:64px!important}
+    #health .module-card-stats small{white-space:normal!important;letter-spacing:.04em!important;line-height:1.25}
     #health .module-card-stats b{font-size:clamp(15px,1.05vw,20px)!important;white-space:normal!important;overflow-wrap:break-word!important}
     #health .module-status-card p{margin-top:auto!important;min-height:36px!important}
     #health .module-button{margin-top:0!important}
@@ -6785,13 +6877,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     .mode-toggle span.active{background:rgba(57,231,95,.16);border:1px solid rgba(57,231,95,.70);color:#a6ff7a;box-shadow:0 0 28px rgba(57,231,95,.18)}
     .executive-toolbar>span:not(.active){background:rgba(11,19,34,.88)!important;border:1px solid rgba(148,163,184,.26)!important;border-radius:14px!important;padding:12px 16px!important;color:#f8fafc!important}
     .executive-toolbar .btn{background:rgba(11,19,34,.88)!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:14px!important;padding:12px 16px!important;color:#f8fafc!important}
-    .executive-mode-grid{display:grid!important;grid-template-columns:minmax(520px,1.08fr) minmax(600px,1.22fr)!important;grid-template-areas:"cockpit kpis" "cockpit impact" "changes trend" "product evidence" "recommend recommend"!important;gap:18px!important}
+    .executive-mode-grid{display:grid!important;grid-template-columns:minmax(520px,1.08fr) minmax(420px,.9fr)!important;grid-template-areas:"cockpit kpis"!important;gap:18px!important}
     .release-cockpit{grid-area:cockpit!important;grid-column:auto!important;min-height:405px!important;grid-template-columns:minmax(190px,245px) minmax(0,1fr)!important;padding:28px 30px!important;border-radius:26px!important;background:radial-gradient(circle at 20% 50%,rgba(57,231,95,.40),rgba(57,231,95,.13) 34%,rgba(3,15,22,.98) 70%)!important;border:1px solid rgba(57,231,95,.80)!important;box-shadow:0 34px 110px rgba(57,231,95,.18),inset 0 1px 0 rgba(185,251,196,.16)!important}
     .release-cockpit:before{width:430px!important;height:430px!important;background:repeating-conic-gradient(from 0deg,rgba(57,231,95,.25) 0 4deg,transparent 4deg 13deg),radial-gradient(circle,rgba(57,231,95,.24),transparent 68%)!important;opacity:.75}
     .release-orb{width:clamp(180px,15vw,230px)!important;height:clamp(180px,15vw,230px)!important;background:radial-gradient(circle,#1e8f3f 0%,#0b3b1d 46%,rgba(57,231,95,.28) 58%,transparent 66%)!important;border:1px solid rgba(57,231,95,.78)!important;box-shadow:0 0 130px rgba(57,231,95,.44),inset 0 0 68px rgba(57,231,95,.28)!important}
     .release-orb span{font-size:0!important;width:106px!important;height:106px!important;border-radius:28px!important}
     .release-orb span:before{content:"✓";font-size:52px;color:#d7fbe0}
-    .release-cockpit .release-status-badge{display:block!important;max-width:100%!important;font-size:clamp(34px,3.35vw,56px)!important;line-height:.98!important;letter-spacing:-.06em!important;white-space:normal!important;overflow-wrap:break-word!important;text-align:left!important;color:#fff!important}
+    .release-cockpit .release-status-badge{display:block!important;max-width:100%!important;font-size:clamp(34px,3.35vw,56px)!important;line-height:1.05!important;letter-spacing:-.04em!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;text-align:left!important;color:#f4fff6!important}
+    .release-cockpit.warn{border-color:rgba(245,197,66,.75)!important;background:radial-gradient(circle at 20% 50%,rgba(245,197,66,.30),rgba(245,197,66,.08) 34%,rgba(3,15,22,.98) 70%)!important;box-shadow:0 34px 110px rgba(245,197,66,.14)!important}
+    .release-cockpit.warn:before{background:repeating-conic-gradient(from 0deg,rgba(245,197,66,.22) 0 4deg,transparent 4deg 13deg),radial-gradient(circle,rgba(245,197,66,.22),transparent 68%)!important}
+    .release-cockpit.warn .release-status-badge,.cockpit-mini-grid strong.amber{color:#f5c542!important}
+    .release-cockpit.warn .release-orb{background:radial-gradient(circle,#8a6412 0%,#3a2a08 46%,rgba(245,197,66,.28) 58%,transparent 66%)!important;border-color:rgba(245,197,66,.78)!important;box-shadow:0 0 90px rgba(245,197,66,.28)!important}
+    .release-cockpit.warn .release-orb span:before{content:"!";color:#f5c542}
+    .release-cockpit.bad{border-color:rgba(255,107,107,.75)!important;background:radial-gradient(circle at 20% 50%,rgba(255,107,107,.28),rgba(255,107,107,.08) 34%,rgba(3,15,22,.98) 70%)!important}
+    .release-cockpit.bad .release-status-badge{color:#ff7b72!important}
+    .release-cockpit.bad .release-orb span:before{content:"!";color:#ff7b72}
+    #health .module-icon{font-size:13px!important;font-weight:800!important;letter-spacing:0!important;white-space:nowrap!important;overflow:hidden!important}
     .release-cockpit p{font-size:19px!important;color:#f0f7ff!important;line-height:1.36!important;margin:14px 0 20px!important}
     .cockpit-label{padding:8px 15px!important;color:#b9fbc4!important;border-color:rgba(57,231,95,.54)!important;background:rgba(57,231,95,.16)!important}
     .cockpit-mini-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important;padding-top:14px!important;border-top:1px solid rgba(148,163,184,.12)!important}
@@ -6800,9 +6901,10 @@ const airGoldenDashboardHtml = `<!doctype html>
     .executive-kpi-stack{grid-area:kpis!important;grid-column:auto!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:14px!important}
     .executive-kpi{position:relative;min-height:168px!important;text-align:center!important;align-items:center!important;justify-content:center!important;padding:18px 12px!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(18,29,45,.92),rgba(7,16,29,.92))!important}
     .executive-kpi:before{content:"✓";display:grid;place-items:center;width:54px;height:54px;border-radius:50%;margin:0 auto 12px;background:rgba(57,231,95,.14);border:3px solid #39e75f;color:#d7fbe0;font-size:28px;box-shadow:0 0 32px rgba(57,231,95,.24)}
-    .executive-kpi.danger:before{content:"!";border-color:#f59e0b;background:rgba(245,158,11,.13);color:#fbbf24}
-    .executive-kpi:nth-child(4):before{content:"";border-color:#38bdf8;background:radial-gradient(circle,#38bdf8 0 28%,rgba(59,130,246,.18) 30%);box-shadow:0 0 32px rgba(59,130,246,.24)}
-    .executive-kpi:nth-child(5):before{content:"";border-color:#8b5cf6;background:radial-gradient(circle,#8b5cf6 0 28%,rgba(139,92,246,.18) 30%);box-shadow:0 0 32px rgba(139,92,246,.24)}
+    .executive-kpi.mark-warn:before{content:"!";border-color:#f5c542;background:rgba(245,197,66,.14);color:#f5c542;box-shadow:0 0 32px rgba(245,197,66,.24)}
+    .executive-kpi.mark-warn strong{color:#f5c542!important}
+    .executive-kpi.mark-bad:before,.executive-kpi.danger:before{content:"!";border-color:#ff7b72;background:rgba(255,123,114,.14);color:#ff7b72;box-shadow:0 0 32px rgba(255,123,114,.24)}
+    .executive-kpi.mark-bad strong{color:#ff7b72!important}
     .executive-kpi span{font-size:14px!important;letter-spacing:0!important;text-transform:none!important;color:#fff!important;order:2}
     .executive-kpi strong{font-size:clamp(34px,3vw,50px)!important;line-height:1!important;color:#fff!important;margin:0 0 8px!important;order:1}
     .executive-kpi small{font-size:14px!important;color:#dbe5ef!important;order:3}
@@ -6855,7 +6957,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     #executive .executive-decision-main{grid-area:decision;position:relative;min-width:0!important;max-width:100%!important;min-height:390px!important;overflow:hidden!important;justify-content:flex-start!important;padding:30px!important;border-radius:28px!important;border:1px solid rgba(57,231,95,.58)!important;background:radial-gradient(circle at 18% 22%,rgba(57,231,95,.30),transparent 34%),linear-gradient(145deg,rgba(13,39,30,.92),rgba(5,13,23,.92))!important;box-shadow:0 30px 90px rgba(57,231,95,.12),inset 0 1px 0 rgba(255,255,255,.08)!important}
     #executive .executive-decision-main:before{content:"";position:absolute;right:-90px;top:-120px;width:290px;height:290px;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(57,231,95,.17) 0 5deg,transparent 5deg 15deg);opacity:.58;pointer-events:none}
     #executive .mission-label{position:relative;z-index:1;width:max-content;max-width:100%;border:1px solid rgba(57,231,95,.42);border-radius:999px;background:rgba(57,231,95,.14);padding:8px 13px;color:#a9ffb7;font-size:11px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
-    #executive .executive-decision-main .release-status-badge{position:relative;z-index:1;margin:24px 0 18px!important;align-self:flex-start!important;font-size:clamp(40px,4.6vw,76px)!important;line-height:.92!important;letter-spacing:-.07em!important;background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important;text-align:left!important;white-space:normal!important;color:#fff!important}
+    #executive .executive-decision-main .release-status-badge{position:relative;z-index:1;margin:24px 0 18px!important;align-self:flex-start!important;font-size:clamp(40px,4.6vw,76px)!important;line-height:1.02!important;letter-spacing:-.04em!important;background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important;text-align:left!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;color:#f4fff6!important}
+    #executive .executive-decision-main .release-status-badge.warn{color:#f5c542!important}
+    #executive .executive-decision-main .release-status-badge.bad{color:#ff7b72!important}
     #executive .executive-decision-main *{max-width:100%!important}
     #executive .executive-decision-bullets{position:relative;z-index:1;list-style:none;margin:0!important;padding:0!important;display:grid!important;gap:14px!important}
     #executive .executive-decision-bullets li{display:grid!important;grid-template-columns:28px minmax(0,1fr)!important;gap:12px!important;align-items:start!important;color:#e6edf6!important;font-size:18px!important;line-height:1.45!important}
@@ -6996,41 +7100,47 @@ const airGoldenDashboardHtml = `<!doctype html>
     #journey .topbar{align-items:center!important;margin-bottom:24px!important}
     #journey .topbar h1{font-size:clamp(34px,3vw,52px)!important;letter-spacing:-.06em!important}
     #journey .journey-flow-panel{position:relative;border-radius:30px!important;background:radial-gradient(circle at 18% 10%,rgba(57,231,95,.14),transparent 34%),linear-gradient(180deg,rgba(12,25,41,.86),rgba(5,14,25,.78))!important;border:1px solid rgba(57,231,95,.20)!important;padding:26px!important;overflow:hidden!important}
-    #journey .journey-flow-panel:before{content:"";position:absolute;left:70px;right:70px;top:50%;height:2px;background:linear-gradient(90deg,transparent,rgba(57,231,95,.42),rgba(56,189,248,.22),transparent);transform:translateY(-50%);pointer-events:none}
+    #journey .journey-flow-panel:before{display:none}
     #journey .journey-flow-panel h2{position:relative;z-index:1;font-size:clamp(22px,1.8vw,30px)!important;margin-bottom:26px!important}
-    #journey .journey{position:relative;z-index:1;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important;gap:18px!important;align-items:stretch!important}
+    #journey .journey{position:relative;z-index:1;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(188px,1fr))!important;gap:18px!important;align-items:stretch!important}
     #journey .journey-arrow{display:none!important}
-    #journey .journey-node{position:relative;display:flex!important;flex-direction:column!important;gap:10px!important;align-items:flex-start!important;text-align:left!important;min-height:210px!important;padding:20px!important;border-radius:24px!important;border:1px solid rgba(57,231,95,.24)!important;background:linear-gradient(180deg,rgba(14,29,46,.92),rgba(6,15,27,.92))!important;box-shadow:0 22px 68px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.05)!important}
+    #journey .journey-node{position:relative;display:flex!important;flex-direction:column!important;gap:8px!important;align-items:center!important;text-align:center!important;min-height:210px!important;padding:16px 14px!important;border-radius:24px!important;border:1px solid rgba(57,231,95,.24)!important;background:linear-gradient(180deg,rgba(14,29,46,.92),rgba(6,15,27,.92))!important;box-shadow:0 22px 68px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.05)!important}
     #journey .journey-node:hover{transform:translateY(-4px)!important;border-color:rgba(57,231,95,.60)!important;box-shadow:0 28px 80px rgba(57,231,95,.10)!important}
     #journey .journey-node.amber{border-color:rgba(245,197,66,.40)!important;background:linear-gradient(180deg,rgba(48,35,15,.62),rgba(6,15,27,.92))!important}
     #journey .journey-node.red{border-color:rgba(255,107,107,.42)!important;background:linear-gradient(180deg,rgba(45,18,22,.70),rgba(6,15,27,.92))!important}
     #journey .journey-node .node-icon{width:56px!important;height:56px!important;margin:0!important;border-radius:50%!important;background:rgba(57,231,95,.16)!important;border:2px solid rgba(57,231,95,.50)!important;color:#b9fbc4!important;font-size:13px!important;font-weight:950!important;box-shadow:0 0 30px rgba(57,231,95,.18)!important}
     #journey .journey-node.amber .node-icon{background:rgba(245,197,66,.14)!important;border-color:rgba(245,197,66,.52)!important;color:#f5c542!important}
     #journey .journey-node.red .node-icon{background:rgba(255,107,107,.14)!important;border-color:rgba(255,107,107,.52)!important;color:#ff7b72!important}
-    #journey .journey-node strong{font-size:clamp(17px,1.2vw,22px)!important;line-height:1.18!important;color:#f8fafc!important;min-height:42px!important}
-    #journey .journey-node span{font-size:clamp(34px,3vw,52px)!important;line-height:.92!important;letter-spacing:-.06em!important;color:#39e75f!important;font-weight:950!important;margin:4px 0 0!important}
+    #journey .journey-node strong{display:flex!important;align-items:flex-end!important;justify-content:center!important;width:100%!important;min-height:2.5em!important;font-size:16px!important;line-height:1.2!important;color:#f8fafc!important;overflow-wrap:normal!important;word-break:normal!important;text-align:center!important}
+    #journey .journey-node span{display:block!important;width:100%!important;font-size:clamp(30px,2.4vw,42px)!important;line-height:.92!important;letter-spacing:-.06em!important;color:#39e75f!important;font-weight:950!important;margin:0!important;text-align:center!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important}
     #journey .journey-node.amber span{color:#f5c542!important}
     #journey .journey-node.red span{color:#ff7b72!important}
-    #journey .journey-node small{color:#9fb0c5!important;font-size:11px!important;text-transform:uppercase!important;letter-spacing:.1em!important;font-weight:900!important}
+    #journey .journey-node small{display:flex!important;align-items:flex-start!important;justify-content:center!important;width:100%!important;min-height:2.4em!important;color:#9fb0c5!important;font-size:11px!important;line-height:1.2!important;text-transform:uppercase!important;letter-spacing:.08em!important;font-weight:900!important;text-align:center!important;white-space:normal!important}
     #journey .journey-score-line{width:100%;height:9px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden;margin-top:auto}
     #journey .journey-score-line i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22c55e,#8dff9e);box-shadow:0 0 20px rgba(57,231,95,.22)}
     #journey .journey-node.amber .journey-score-line i{background:linear-gradient(90deg,#f59e0b,#f5c542)}
     #journey .journey-node.red .journey-score-line i{background:linear-gradient(90deg,#ef4444,#ff7b72)}
-    #journey .journey-support-grid{grid-template-columns:minmax(0,1.25fr) minmax(330px,.75fr)!important;gap:22px!important;align-items:stretch!important}
+    #journey .journey-support-grid{grid-template-columns:minmax(0,1.35fr) minmax(0,.8fr)!important;gap:22px!important;align-items:stretch!important}
     #journey .journey-support-grid>.panel{border-radius:26px!important;background:linear-gradient(180deg,rgba(13,25,41,.82),rgba(6,15,27,.78))!important;border:1px solid rgba(57,231,95,.16)!important;padding:24px!important}
-    #journey .chart{height:300px!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(4,13,23,.90),rgba(4,18,20,.76))!important;border:1px solid rgba(57,231,95,.12)!important;padding:28px 24px 50px!important}
-    #journey .chart .bar{border-radius:12px 12px 4px 4px!important;background:linear-gradient(180deg,#8dff9e,#39e75f 45%,#169b3c)!important;box-shadow:0 14px 34px rgba(57,231,95,.16)!important}
-    #journey .chart .bar.amber{background:linear-gradient(180deg,#f5c542,#b7791f)!important}
-    #journey .chart .bar.red{background:linear-gradient(180deg,#ff8a8a,#ef4444)!important}
-    #journey .journey-coverage-chart{gap:8px!important;padding-top:36px!important}
-    #journey .journey-coverage-chart .bar label{font-size:10px;white-space:normal;line-height:1.15;max-width:72px;text-align:center}
-    #journey .journey-coverage-chart .bar strong{top:-20px;font-size:10px;color:#e8fff0}
+    #journey .chart{height:auto!important;min-height:340px!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(4,13,23,.90),rgba(4,18,20,.76))!important;border:1px solid rgba(57,231,95,.12)!important;padding:16px 12px 12px!important}
+    #journey .journey-coverage-chart{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(128px,1fr))!important;align-items:stretch!important;gap:28px 18px!important;height:auto!important;min-height:0!important;padding:8px 6px 4px!important;overflow:visible!important}
+    #journey .coverage-col{display:grid!important;grid-template-rows:24px 140px 2.8em!important;align-items:end!important;justify-items:center!important;min-width:0!important;height:auto!important;text-align:center!important;background:transparent!important}
+    #journey .coverage-col strong{position:static!important;transform:none!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;width:100%!important;margin:0!important;font-size:13px!important;line-height:1!important;font-weight:800!important;color:#f4fff6!important;white-space:nowrap!important;text-align:center!important}
+    #journey .coverage-col .bar-track{display:flex!important;align-items:flex-end!important;justify-content:center!important;width:100%!important;height:140px!important;min-height:140px!important;background:transparent!important}
+    #journey .coverage-col .bar{position:relative!important;top:auto!important;left:auto!important;transform:none!important;width:28px!important;max-width:40%!important;min-height:8px!important;flex:none!important;border-radius:10px 10px 4px 4px!important;background:linear-gradient(180deg,#8dff9e,#39e75f 45%,#169b3c)!important;box-shadow:none!important}
+    #journey .coverage-col .bar.amber{background:linear-gradient(180deg,#f5c542,#b7791f)!important}
+    #journey .coverage-col .bar.red{background:linear-gradient(180deg,#ff8a8a,#ef4444)!important}
+    #journey .coverage-col label{position:static!important;left:auto!important;bottom:auto!important;transform:none!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;width:100%!important;max-width:none!important;height:2.8em!important;margin:8px 0 0!important;padding:0 4px!important;font-size:12px!important;line-height:1.25!important;font-weight:700!important;color:#dbe5ef!important;text-align:center!important;white-space:normal!important;overflow:hidden!important;overflow-wrap:normal!important;word-break:normal!important}
+    .page,[id]{scroll-margin-top:18px}
+    .executive-module-pill{text-decoration:none}
+    .executive-module-pill span,.executive-module-pill small{text-align:left}
+    .executive-module-pill strong{text-align:left}
     #journey .chart .bar.blue{background:linear-gradient(180deg,#7ee787,#22c55e)!important}
-    #journey .journey-answer-panel{display:flex!important;flex-direction:column!important;justify-content:space-between!important}
-    #journey .journey-answer-panel p{font-size:20px!important;line-height:1.55!important;color:#f0f7ff!important}
+    #journey .journey-answer-panel{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:14px!important;min-width:0!important;overflow:visible!important}
+    #journey .journey-answer-panel p{font-size:16px!important;line-height:1.55!important;color:#dbe5ef!important;overflow-wrap:break-word!important;word-break:normal!important;max-width:100%!important;text-align:left!important}
     #journey .journey-answer-panel .empty-note{border-radius:20px!important;border-color:rgba(57,231,95,.24)!important;background:rgba(57,231,95,.08)!important;color:#cbd5e1!important;line-height:1.55!important}
     @media(max-width:1200px){#journey .journey-support-grid{grid-template-columns:1fr!important}}
-    @media(max-width:760px){#journey .journey{grid-template-columns:1fr!important}#journey .journey-flow-panel:before{display:none}#journey .chart{height:260px!important}}
+    @media(max-width:760px){#journey .journey{grid-template-columns:1fr!important}#journey .journey-coverage-chart{height:auto!important}}
     /* Screen 05: Module Details, focused mini dashboards with drill-down affordance. */
     #module-dashboard{background:radial-gradient(circle at 12% 10%,rgba(57,231,95,.14),transparent 28%),radial-gradient(circle at 88% 6%,rgba(56,189,248,.12),transparent 30%),linear-gradient(180deg,rgba(8,18,31,.94),rgba(4,11,20,.90))!important}
     #module-dashboard .topbar{margin-bottom:24px!important}
@@ -7191,18 +7301,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     #evidence .topbar{align-items:center!important;margin-bottom:24px!important}
     #evidence .topbar h1{font-size:clamp(34px,3vw,52px)!important;letter-spacing:-.06em!important}
     #evidence .evidence-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.28fr);gap:22px;align-items:stretch;border:1px solid rgba(57,231,95,.20);border-radius:30px;background:radial-gradient(circle at 18% 4%,rgba(57,231,95,.14),transparent 35%),linear-gradient(135deg,rgba(13,28,44,.88),rgba(5,14,25,.76));padding:28px;margin-bottom:18px;box-shadow:0 24px 80px rgba(0,0,0,.20)}
-    #evidence .evidence-hero strong{display:block;color:#f8fafc;font-size:clamp(32px,3.4vw,58px);line-height:.95;letter-spacing:-.07em;margin:10px 0}
+    #evidence .evidence-hero strong{display:block;color:#f8fafc;font-size:clamp(28px,2.4vw,40px);line-height:1.05;letter-spacing:-.04em;margin:10px 0}
     #evidence .evidence-hero p{max-width:880px;color:#d8e6f3;font-size:16px;line-height:1.65;margin:0}
     #evidence .evidence-score-card{display:flex;flex-direction:column;justify-content:center;border:1px solid rgba(57,231,95,.20);border-radius:24px;background:rgba(4,13,23,.62);padding:22px}
     #evidence .evidence-score-card span{color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
     #evidence .evidence-score-card strong{color:#39e75f;font-size:clamp(42px,4vw,70px);margin:8px 0 4px}
     #evidence .evidence-score-card small{color:#9fb0c5;font-size:13px}
+    #evidence .evidence-score-card.muted strong{color:#dbe5ef}
+    #evidence .evidence-card.none{border-color:rgba(148,163,184,.16)!important}
+    #evidence .evidence-card.none .evidence-icon{background:rgba(148,163,184,.08)!important;border-color:rgba(148,163,184,.22)!important;color:#9fb0c5!important}
+    #evidence .evidence-card.none span{color:#9fb0c5!important}
     #evidence .evidence-proof-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:22px}
     #evidence .evidence-proof-strip span{border:1px solid rgba(57,231,95,.14);border-radius:20px;background:linear-gradient(180deg,rgba(13,25,41,.78),rgba(6,15,27,.72));padding:16px}
     #evidence .evidence-proof-strip b{display:block;color:#39e75f;font-size:clamp(24px,2.3vw,38px);line-height:1}
     #evidence .evidence-proof-strip small{display:block;margin-top:7px;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
     #evidence .evidence-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important;margin-bottom:22px}
-    #evidence .evidence-card{position:relative;min-width:0;min-height:178px!important;display:flex!important;align-items:flex-start!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:20px 20px 76px!important;box-shadow:0 18px 56px rgba(0,0,0,.16)}
+    #evidence .evidence-card{position:relative;min-width:0;min-height:0!important;display:flex!important;align-items:center!important;gap:14px!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(14,29,46,.88),rgba(6,15,27,.88))!important;border:1px solid rgba(57,231,95,.18)!important;padding:18px!important;box-shadow:0 18px 56px rgba(0,0,0,.16);text-decoration:none}
     #evidence .evidence-card-body{min-width:0;display:flex;flex:1;flex-direction:column;align-items:flex-start}
     #evidence .evidence-card:hover{transform:translateY(-4px)!important;border-color:rgba(57,231,95,.58)!important;box-shadow:0 28px 80px rgba(57,231,95,.10)!important}
     #evidence .evidence-icon{width:58px!important;height:58px!important;min-width:58px!important;border-radius:18px!important;background:rgba(57,231,95,.12)!important;border-color:rgba(57,231,95,.32)!important;color:#39e75f!important}
@@ -7302,7 +7416,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     #module-dashboard .module-dashboard-score-row strong{font-size:clamp(38px,3.2vw,58px)!important}
     #journey .journey-node span{font-size:clamp(30px,2.4vw,42px)!important}
     @media(min-width:1501px){.executive-mode-grid{grid-template-columns:minmax(560px,.95fr) minmax(0,1.05fr)!important}.release-cockpit{grid-template-columns:minmax(165px,200px) minmax(0,1fr)!important}.cockpit-mini-grid{gap:10px!important}.cockpit-mini-grid div{padding-left:10px!important}.cockpit-mini-grid span{font-size:9px!important;line-height:1.15!important;letter-spacing:.06em!important;word-break:normal!important;overflow-wrap:normal!important}.cockpit-mini-grid strong{font-size:clamp(16px,1.65vw,28px)!important;line-height:1.02!important;word-break:normal!important;overflow-wrap:normal!important}.executive-kpi strong{font-size:clamp(30px,2.45vw,44px)!important;white-space:nowrap!important}.executive-kpi{min-height:158px!important}.executive-kpi:before{width:48px!important;height:48px!important;font-size:24px!important}}
-    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis" "impact" "changes" "trend" "product" "evidence" "recommend"!important}.business-impact-layout{grid-template-columns:82px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+    @media(max-width:1500px){.executive-mode-grid{grid-template-columns:1fr!important;grid-template-areas:"cockpit" "kpis"!important}.business-impact-layout{grid-template-columns:82px minmax(0,1fr)!important}.business-impact-spark{grid-column:1/-1!important}.executive-kpi-stack{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
     @media(max-width:1100px){.executive-mode-header{grid-template-columns:1fr!important}.executive-toolbar{grid-template-columns:1fr!important;justify-items:start!important}.mode-toggle{justify-self:start!important}.executive-kpi-stack{grid-template-columns:repeat(2,minmax(0,1fr))!important}.executive-evidence-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}.cover-page{min-height:auto!important}}
     @media(max-width:700px){.brand{font-size:56px!important;letter-spacing:-5px!important}.mode-toggle{width:100%;display:grid;grid-template-columns:1fr}.mode-toggle span{min-width:0}.release-cockpit{grid-template-columns:1fr!important}.executive-kpi-stack,.executive-change-grid,.executive-product-strip,.executive-evidence-strip,.cockpit-mini-grid{grid-template-columns:1fr!important}.executive-recommendation-band{align-items:flex-start!important}.business-impact-layout{grid-template-columns:1fr!important}.page-title-row{align-items:flex-start}.page-heading-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:12px!important}.page-heading-icon svg{width:19px!important;height:19px!important}}
     @media(max-width:1100px){.app{grid-template-columns:1fr!important}.app:before{display:none}.sidebar{position:relative!important;width:100%!important;max-width:none;min-width:0;height:auto;min-height:0;overflow:visible}main{grid-column:auto}}
@@ -8177,6 +8291,45 @@ const airGoldenDashboardHtml = `<!doctype html>
     #comparison .release-timeline small{max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
     @media(max-width:1350px){#health .module-filter{grid-template-columns:repeat(3,max-content) minmax(260px,1fr)!important}#health .module-filter-search{grid-column:1/-1!important;justify-self:stretch!important;width:100%!important}#validation-summary .validation-command-panel,#insight .ai-command-hero{grid-template-columns:1fr!important}}
     @media(max-width:760px){#health .module-filter{grid-template-columns:1fr!important}#health .module-status-card .module-card-head,#health .module-title,#insight .ai-signal-grid{grid-template-columns:1fr!important}#health .module-status-card .badge{justify-self:start!important}}
+    .report-extra{display:none}
+    .report-extra.is-open{display:block}
+    .nav a.nav-extra{opacity:.78}
+    .report-more{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 18px;margin:0 0 28px;padding:16px 18px;border:1px solid rgba(57,231,95,.18);border-radius:18px;background:rgba(8,16,30,.72)}
+    .report-more strong{display:block;color:#f8fafc;font-size:14px}
+    .report-more p{margin:4px 0 0;color:#9fb0c5;font-size:12px;line-height:1.4}
+    .report-more-links{display:flex;flex-wrap:wrap;gap:8px}
+    .report-more-links a{display:inline-flex;align-items:center;border:1px solid rgba(148,163,184,.22);border-radius:999px;padding:7px 12px;color:#dbe5ef;text-decoration:none;font-size:12px;font-weight:700}
+    .report-more-links a:hover{border-color:rgba(57,231,95,.45);color:#f4fff6}
+    .reader-guide{display:grid;gap:12px;margin:0 0 22px}
+    .reader-guide h2{margin:0;color:#9fb0c5;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    .reader-guide-list{display:grid;gap:10px}
+    .reader-step{display:grid;grid-template-columns:minmax(148px,190px) minmax(0,1fr) auto;gap:16px;align-items:center;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:rgba(8,16,30,.72);padding:16px 18px;color:#dbe5ef;text-decoration:none}
+    .reader-step span{color:#9fb0c5;font-size:13px;font-weight:800;letter-spacing:.02em;line-height:1.35}
+    .reader-step strong{color:#f8fafc;font-size:16px;font-weight:600;line-height:1.45;text-align:left}
+    .reader-step em{font-style:normal;color:#dbe5ef;font-size:12px;font-weight:800;white-space:nowrap}
+    .reader-step.good{border-color:rgba(57,231,95,.28)}
+    .reader-step.good em{color:#39e75f}
+    .reader-step.warn{border-color:rgba(245,197,66,.35)}
+    .reader-step.warn em{color:#f5c542}
+    .reader-step.bad{border-color:rgba(255,107,107,.4)}
+    .reader-step.bad em{color:#ff7b72}
+    .reader-step:hover{border-color:rgba(57,231,95,.55)}
+    .reader-guide:not(.report-more){gap:14px;margin-bottom:26px}
+    .reader-guide:not(.report-more) .reader-guide-list{gap:12px}
+    .reader-guide:not(.report-more) .reader-step{grid-template-columns:52px minmax(168px,210px) minmax(0,1fr) auto;gap:18px;padding:18px 20px;border-radius:20px;background:linear-gradient(100deg,rgba(57,231,95,.1),rgba(8,16,30,.88) 34%);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:transform .18s ease,border-color .18s ease}
+    .reader-guide:not(.report-more) .reader-step i{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;border:1px solid rgba(57,231,95,.45);background:rgba(57,231,95,.14);color:#39e75f;font-style:normal;font-size:16px;font-weight:800;letter-spacing:.04em}
+    .reader-guide:not(.report-more) .reader-step span{color:#f8fafc;font-size:15px;font-weight:700;letter-spacing:0}
+    .reader-guide:not(.report-more) .reader-step strong{font-size:16px;font-weight:500;color:#dbe5ef}
+    .reader-guide:not(.report-more) .reader-step em{border:1px solid rgba(57,231,95,.35);border-radius:999px;padding:8px 14px;background:rgba(57,231,95,.1);color:#d7fbe0}
+    .reader-guide:not(.report-more) .reader-step.good{border-color:rgba(57,231,95,.38);box-shadow:inset 4px 0 0 #39e75f,0 10px 28px rgba(0,0,0,.18)}
+    .reader-guide:not(.report-more) .reader-step.warn{border-color:rgba(245,197,66,.42);background:linear-gradient(100deg,rgba(245,197,66,.12),rgba(8,16,30,.88) 34%);box-shadow:inset 4px 0 0 #f5c542,0 10px 28px rgba(0,0,0,.18)}
+    .reader-guide:not(.report-more) .reader-step.warn i{border-color:rgba(245,197,66,.5);background:rgba(245,197,66,.14);color:#f5c542}
+    .reader-guide:not(.report-more) .reader-step.warn em{border-color:rgba(245,197,66,.4);background:rgba(245,197,66,.1);color:#f5c542}
+    .reader-guide:not(.report-more) .reader-step.bad{border-color:rgba(255,123,114,.45);background:linear-gradient(100deg,rgba(255,123,114,.12),rgba(8,16,30,.88) 34%);box-shadow:inset 4px 0 0 #ff7b72,0 10px 28px rgba(0,0,0,.18)}
+    .reader-guide:not(.report-more) .reader-step.bad i{border-color:rgba(255,123,114,.5);background:rgba(255,123,114,.14);color:#ff7b72}
+    .reader-guide:not(.report-more) .reader-step.bad em{border-color:rgba(255,123,114,.4);background:rgba(255,123,114,.1);color:#ff7b72}
+    .reader-guide:not(.report-more) .reader-step:hover{transform:translateY(-2px);border-color:rgba(244,255,246,.35)}
+    @media(max-width:900px){.reader-step{grid-template-columns:1fr;gap:4px}.reader-guide:not(.report-more) .reader-step{grid-template-columns:52px minmax(0,1fr);align-items:start}.reader-guide:not(.report-more) .reader-step strong,.reader-guide:not(.report-more) .reader-step em{grid-column:2}}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -8190,31 +8343,29 @@ const airGoldenDashboardHtml = `<!doctype html>
     </div>
     <div class="brand-sub">Automation Intelligence<br><span>Report</span></div>
     <nav class="nav">
-      <div class="nav-section">Overview</div>
-      <a class="active" href="#cover">${navIcon('home')}<span>Overview</span></a>
+      <div class="nav-section">This release</div>
+      <a class="active" href="#cover">${navIcon('home')}<span>Brief</span></a>
       <a href="#executive">${navIcon('release')}<span>Release</span></a>
       <div class="nav-section">Health</div>
       <a href="#health">${navIcon('product')}<span>Product Health</span></a>
-      <a href="#journey">${navIcon('journey')}<span>Business Journeys</span></a>
-      <a href="#module-dashboard">${navIcon('modules')}<span>Modules</span></a>
+      <a href="#journey">${navIcon('journey')}<span>User paths</span></a>
+      <a class="nav-extra" href="#module-dashboard">${navIcon('modules')}<span>Each area</span></a>
       <div class="nav-section">Issues</div>
-      <a href="#failures">${navIcon('failures')}<span>Failed Tests</span></a>
-      <a href="#coverage-gaps">${navIcon('analytics')}<span>Blocked / Skipped</span></a>
-      <a href="#validation-summary">${navIcon('analytics')}<span>Validation Summary</span></a>
+      <a class="nav-extra" href="#failures">${navIcon('failures')}<span>Failures</span></a>
+      <a class="nav-extra" href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
+      <a class="nav-extra" href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
       <div class="nav-section">Evidence</div>
       <a href="#evidence">${navIcon('evidence')}<span>Evidence</span></a>
       <div class="nav-section">Insights</div>
-      <a href="#insight">${navIcon('insight')}<span>AI Insights</span></a>
-      <a href="#comparison">${navIcon('analytics')}<span>Historical Intelligence</span></a>
-      <a href="#air-core">${navIcon('settings')}<span>AIR Core</span></a>
-      <a href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span></a>
-      <div class="nav-section">Administration</div>
-      <a class="disabled" href="#insight" aria-disabled="true">${navIcon('settings')}<span>Settings</span><em>Coming Soon</em></a>
-      <a class="disabled" href="#insight" aria-disabled="true">${navIcon('integrations')}<span>Integrations</span><em>Coming Soon</em></a>
+      <a class="nav-extra" href="#insight">${navIcon('insight')}<span>Next step</span></a>
+      <a class="nav-extra" href="#comparison">${navIcon('analytics')}<span>History</span></a>
+      <div class="nav-section">About</div>
+      <a class="nav-extra" href="#air-core">${navIcon('roadmap')}<span>About AIR</span></a>
+      <a class="nav-extra" href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span></a>
     </nav>
     <div class="report-search">
       <label for="airSearch">Search Report</label>
-      <input id="airSearch" type="search" placeholder="Search modules, tests, evidence..." autocomplete="off">
+      <input id="airSearch" type="search" placeholder="Search areas, checks, proof..." autocomplete="off">
       <div id="airSearchResults" class="search-results"></div>
     </div>
     <div class="report-meta">
@@ -8238,7 +8389,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <div class="global-search">
       <div>
         <label for="airGlobalSearch">Search AIR Platform</label>
-        <input id="airGlobalSearch" type="search" placeholder="Search modules, tests, evidence, recommendations..." autocomplete="off">
+        <input id="airGlobalSearch" type="search" placeholder="Search areas, checks, proof..." autocomplete="off">
       </div>
       <div id="airGlobalSearchResults" class="search-results"></div>
     </div>
@@ -8248,12 +8399,12 @@ const airGoldenDashboardHtml = `<!doctype html>
     <section class="page hero" id="executive">
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 02</div>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('release', 'Release Decision')}
-          <p>Why is this the release decision?</p>
+          <p>Why this decision, and what to do next.</p>
         </div>
         <div class="actions">
-          <span class="pill demo">${demoMode ? 'Demo Mode / Sample Data' : `Live Data / ${escapeHtml(loadedResults.source)}`}</span>
+          <span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span>
           <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
           <a class="btn" href="#evidence">Evidence</a>
           <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
@@ -8264,15 +8415,6 @@ const airGoldenDashboardHtml = `<!doctype html>
           <span class="mission-label">Release Decision</span>
           ${releaseStatusBadge}
           <ul class="executive-decision-bullets">${executiveDecisionBullets}</ul>
-        </div>
-        <div class="executive-decision-metrics">
-          <div><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
-          <div class="interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong></div>
-          <div><span>Risk</span><strong class="nowrap">${escapeHtml(estimatedReleaseRisk)}</strong></div>
-          <div><span>Business Journey</span><strong>${escapeHtml(businessJourneyStatus)}</strong></div>
-          <div><span>Evidence</span><strong>${escapeHtml(evidenceReadiness)}</strong></div>
-          <div><span>Critical Issues</span><strong>${executiveData.failed}</strong></div>
-          <div><span>Warnings</span><strong>${releaseWarningCount}</strong></div>
         </div>
         <div class="executive-action">
           <span>${helpLabel('Recommended Action', 'recommendation')}</span>
@@ -8288,19 +8430,13 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
         </div>
         <div class="panel">
-          <h2 class="icon-title"><span class="section-icon">RD</span>Decision Summary</h2>
-          <div class="ai-metric-grid decision-metrics">
-            <div class="ai-metric interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation"><span>${helpLabel('Release', 'releaseDecision')}</span><strong>${releaseStatusCompact}</strong></div>
-            <div class="ai-metric interactive-card" data-open-confidence role="button" tabindex="0" aria-label="Open confidence explanation"><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
-            <div class="ai-metric interactive-card" data-open-risk role="button" tabindex="0" aria-label="Open risk explanation"><span>${helpLabel('Risk', 'risk')}</span><strong class="nowrap">${escapeHtml(estimatedReleaseRisk)}</strong></div>
-            <div class="ai-metric interactive-card" data-open-quality role="button" tabindex="0" aria-label="Open quality score calculation"><span>${helpLabel('Quality', 'qualityScore')}</span><strong>${executiveData.qualityScore}%</strong></div>
-          </div>
+          <h2 class="icon-title"><span class="section-icon">RD</span>Why this decision, and what to do next</h2>
           <div class="decision-intelligence">
             <section class="decision-intel-block decision-drivers-block">
               <div class="decision-intel-head">
                 <div>
                   <span>Decision Drivers</span>
-                  <h3>Why AIR made this call</h3>
+                  <h3>Why this is the decision</h3>
                 </div>
                 <strong>${escapeHtml(executiveData.releaseDecision)}</strong>
               </div>
@@ -8345,43 +8481,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="health">
-      <div class="topbar"><div><div class="eyebrow">PAGE 03</div>${pageHeading('product', 'Product Health')}<p>Which modules need attention?</p></div><a class="btn" href="#module-dashboard">Open Module Details</a></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('product', 'Product Health')}<p>Which product areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
       <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">MH</span>Module Status</h2>
-        <div class="module-filter" aria-label="Filter modules by health">
+        <h2 class="icon-title"><span class="section-icon">MH</span>Area status</h2>
+        <div class="module-filter" aria-label="Filter areas by health">
           <button class="active" type="button" data-module-filter="all">All (${moduleStatusGroupCounts.all})</button>
           <button type="button" data-module-filter="healthy">Healthy (${moduleStatusGroupCounts.healthy})</button>
           <button type="button" data-module-filter="warning">Warning (${moduleStatusGroupCounts.warning})</button>
           <button type="button" data-module-filter="critical">Critical (${moduleStatusGroupCounts.critical})</button>
           <button type="button" data-module-filter="not-executed">Not Executed (${moduleStatusGroupCounts['not-executed']})</button>
           <label class="module-filter-search">
-            <span>Search modules</span>
-            <input id="moduleStatusSearch" type="search" placeholder="Search module, status, risk" aria-label="Search module health cards">
+            <span>Search areas</span>
+            <input id="moduleStatusSearch" type="search" placeholder="Search an area" aria-label="Search product areas">
           </label>
         </div>
-        <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} modules</div>
+        <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} areas</div>
         <div class="module-card-grid">${moduleHealthCards}</div>
-        <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching modules found in this execution.</div>
+        <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching areas found in this run.</div>
       </div>
       <br>
       <div class="grid two">
         <div class="panel"><h2>Risk Snapshot</h2>
           <div class="risk-snapshot">
-            <div class="risk-snap high"><span>High</span><strong>${criticalModuleCount}</strong><small>Failed or critical modules</small></div>
-            <div class="risk-snap med"><span>Medium</span><strong>${warningModuleCount}</strong><small>Unexpected skips or incomplete journeys</small></div>
-            <div class="risk-snap low"><span>Low</span><strong>${healthyModuleCount}</strong><small>Clean executed coverage</small></div>
+            <div class="risk-snap high"><span>High</span><strong>${criticalModuleCount}</strong><small>Failed areas</small></div>
+            <div class="risk-snap med"><span>Medium</span><strong>${warningModuleCount}</strong><small>Not fully run</small></div>
+            <div class="risk-snap low"><span>Low</span><strong>${healthyModuleCount}</strong><small>Passed</small></div>
           </div>
-          <p class="chart-explainer">Amber is reserved for unexpected skips and not-executed critical journeys. Documented matrix gaps stay on Coverage Gaps.</p>
+          <p class="chart-explainer">Amber means a check was skipped unexpectedly, or an important path did not run.</p>
         </div>
         <div class="panel health-summary-panel">
           <h2>${helpLabel('Health Summary', 'businessHealth')}</h2>
-          <p class="summary-lead">${
-            criticalModuleCount > 0
-              ? `${criticalModuleCount} module${criticalModuleCount === 1 ? ' has' : 's have'} release-impacting failures.`
-              : warningModuleCount > 0
-                ? `${healthyModuleCount} module${healthyModuleCount === 1 ? '' : 's'} have clean executed coverage. ${warningModuleCount} still need review for unexpected skips or incomplete journeys.`
-                : `Executed modules are healthy. Remaining catalog rows belong in Coverage Gaps, not product-health warnings.`
-          }</p>
+          <p class="summary-lead">${escapeHtml(healthSummaryLead)}</p>
           <div class="health-stat-grid">
             <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong><small>Modules stable</small></div>
             <div class="health-stat warn"><span>Warning</span><strong>${warningModuleCount}</strong><small>Need review</small></div>
@@ -8390,11 +8520,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <div class="next-focus-card">
             <span>${helpLabel('Next Focus', 'nextStep')}</span>
             <strong>${escapeHtml(nextFocusText)}</strong>
-            <p>${executiveData.failed === 0 && warningModuleCount === 0
-              ? 'Keep blocked Stripe/auth fixtures on the Coverage Gaps page; they are not product failures.'
-              : executiveData.failed === 0
-                ? 'Triage unexpected skips first, then blocked Billing coverage, before treating this as a full GO.'
-                : 'Start with failed modules, attach available evidence, and rerun impacted checks before approval.'}</p>
+            <p>${escapeHtml(releaseRecommendedAction)}</p>
           </div>
         </div>
       </div>
@@ -8402,33 +8528,33 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="journey">
-      <div class="topbar"><div><div class="eyebrow">PAGE 04</div>${pageHeading('journey', 'Business Journeys')}<p>Can users complete critical business flows?</p></div><span class="pill demo">${demoMode ? 'Demo Data' : 'Live Data'}</span></div>
-      <div class="panel journey-flow-panel"><h2>Core Flow Health</h2><div class="journey">${journeyHealthRows}</div></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('journey', 'User paths')}<p>Can a user complete the important paths?</p></div><span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span></div>
+      <div class="panel journey-flow-panel"><div class="journey">${journeyHealthRows}</div></div>
       <br>
       <div class="grid two journey-support-grid">
-        <div class="panel"><h2>Journey Coverage Snapshot</h2><p class="chart-explainer">Bar height is live journey coverage from this execution, not a placeholder chart.</p><div class="chart journey-coverage-chart">${journeyCoverageChartHtml}</div><p class="chart-axis-note">X-axis: journey. Y-axis: coverage % for modules that ran.</p></div>
-        <div class="panel journey-answer-panel"><h2>Answer</h2><p>${escapeHtml(journeyAnswerHtml)}</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and are listed under Coverage Gaps when skipped.</div></div>
+        <div class="panel"><h2>How much of each path ran</h2><p class="chart-explainer">Bar height is the share of that path that ran in this execution.</p><div class="chart journey-coverage-chart">${journeyCoverageChartHtml}</div></div>
+        <div class="panel journey-answer-panel"><h2>Answer</h2><p>${escapeHtml(journeyAnswerHtml)}</p><br><div class="empty-note">Email and payment steps that need an outside service are listed under Not run when they were skipped.</div></div>
       </div>
       ${renderPageFooter(4)}
     </section>
 
-    <section class="page" id="module-dashboard">
-      <div class="topbar"><div><div class="eyebrow">PAGE 05</div>${pageHeading('modules', 'Module Details')}<p>What is happening inside this module?</p></div><a class="btn" href="#health">Back to Product Health</a></div>
+    <section class="page report-extra" id="module-dashboard">
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('modules', 'Each area')}<p>What was checked in this area?</p></div><a class="btn" href="#health">Back to product health</a></div>
       <div class="module-dashboard-intro">
-        <h2>Choose a module</h2>
-        <p>AIR keeps module detail one click away. Product Health shows status; this page opens the drill-down for scenarios, evidence, validation gaps, and recommendations.</p>
+        <h2>Choose an area</h2>
+        <p>Product Health is the status. Open an area here for the scenarios, proof, and gaps.</p>
       </div>
       <div class="module-dashboard-grid">${moduleDashboardCards}</div>
       ${renderPageFooter(5)}
     </section>
 
-    <section class="page" id="failures">
+    <section class="page${executiveData.failed > 0 ? '' : ' report-extra'}" id="failures">
       <div class="topbar"><div><div class="eyebrow">PAGE 06</div>${pageHeading('failures', 'Failed Tests')}<p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
       <div class="panel">${failedTestsContent}${warningTestsContent}</div>
       ${renderPageFooter(6)}
     </section>
 
-    <section class="page" id="coverage-gaps">
+    <section class="page report-extra" id="coverage-gaps">
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 07</div>
@@ -8441,7 +8567,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(7)}
     </section>
 
-    <section class="page" id="validation-summary">
+    <section class="page report-extra" id="validation-summary">
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 08</div>
@@ -8493,22 +8619,32 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">PAGE 09</div>${pageHeading('evidence', 'Evidence')}<p>What proof do we have?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Evidence')}<p>What proof was saved with this run?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open test log</a></div>
       ${evidenceHeroHtml}
       <div class="evidence-grid">${evidenceCards}</div>
-      <br>
       ${failureEvidenceMapHtml}
-      <br>
+      ${airEvidenceThumbnails.length > 0 || evidenceThumbnailFiles.length > 0 ? `
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
         <div class="thumb-grid">${evidenceThumbnails}</div>
-      </div>
-      <br>
-      <div class="panel"><h2>Evidence Rule</h2><p>Every release-impacting failure should link to screenshots, videos, traces, or raw execution evidence. Placeholder cards remain visible in demo mode so the dashboard layout stays client-ready.</p></div>
+      </div>` : ''}
+      ${executiveData.failed > 0 ? '<div class="panel"><h2>Evidence Rule</h2><p>Every failed check should link to a screenshot, video, trace, or the Playwright report.</p></div>' : ''}
       ${renderPageFooter(9)}
     </section>
 
-    <section class="page" id="insight">
+    <nav class="report-more reader-guide" aria-label="Full detail">
+      <h2>Full detail</h2>
+      <div class="reader-guide-list">
+        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>What was checked inside every product area.</strong><em>Open</em></a>
+        <a class="reader-step" href="#failures"><span>Failures</span><strong>${executiveData.failed > 0 ? `${executiveData.failed} failed check${executiveData.failed === 1 ? '' : 's'} to review.` : 'No failed checks in this run.'}</strong><em>Open</em></a>
+        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why they were skipped.</strong><em>Open</em></a>
+        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>The scenarios this run actually validated.</strong><em>Open</em></a>
+        <a class="reader-step" href="#insight"><span>Next step</span><strong>The recommendation, written out in full.</strong><em>Open</em></a>
+        <a class="reader-step" href="#comparison"><span>History</span><strong>How this run compares with earlier ones.</strong><em>Open</em></a>
+      </div>
+    </nav>
+
+    <section class="page report-extra" id="insight">
       <div class="topbar"><div><div class="eyebrow">PAGE 10</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
       <div class="ai-command-hero">
         <div>
@@ -8554,7 +8690,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(10)}
     </section>
 
-    <section class="page" id="comparison">
+    <section class="page report-extra" id="comparison">
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 11</div>
@@ -8733,14 +8869,14 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(11)}
     </section>
 
-    <section class="page" id="air-core">
+    <section class="page report-extra" id="air-core">
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 12</div>
-          ${pageHeading('settings', 'AIR Core')}
-          <p>Which intelligence engines produced this report?</p>
+          ${pageHeading('settings', 'About AIR')}
+          <p>How this report is produced.</p>
         </div>
-        <span class="pill demo">Platform Core</span>
+        <a class="btn" href="#roadmap">Product roadmap</a>
       </div>
       <div class="air-core-hero panel">
         <div class="air-core-hero-copy">
@@ -8789,7 +8925,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       ${renderPageFooter(12)}
     </section>
 
-    <section class="page" id="roadmap">
+    <section class="page report-extra" id="roadmap">
       <div class="topbar">
         <div>
           <div class="eyebrow">PAGE 13</div>
@@ -9231,7 +9367,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     modalBackdrop.classList.remove('open');
   }
 
-  document.querySelectorAll('.module-health-card[data-module], .module-dashboard-card[data-module]').forEach(card => {
+  document.querySelectorAll('.module-dashboard-card[data-module]').forEach(card => {
     card.addEventListener('click', event => {
       if (event.target.closest('details, summary, .mini-evidence-button')) {
         return;
@@ -9597,14 +9733,14 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     if (moduleFilterCount) {
       const label = activeFilter === 'all'
-        ? 'modules'
-        : activeFilter.replace('-', ' ') + ' modules';
+        ? 'areas'
+        : activeFilter.replace('-', ' ') + ' areas';
       moduleFilterCount.textContent = 'Showing ' + visible + ' of ' + cards.length + ' ' + label;
     }
 
     if (moduleFilterEmpty) {
       moduleFilterEmpty.hidden = visible !== 0;
-      moduleFilterEmpty.textContent = 'No ' + (activeFilter === 'all' ? '' : activeFilter.replace('-', ' ') + ' ') + 'modules found in this execution.';
+      moduleFilterEmpty.textContent = 'No ' + (activeFilter === 'all' ? '' : activeFilter.replace('-', ' ') + ' ') + 'areas found in this run.';
     }
   }
 
@@ -9847,11 +9983,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         return;
       }
 
-      const target = document.getElementById(link.getAttribute('data-search-target'));
+      const targetId = link.getAttribute('data-search-target');
+      const target = document.getElementById(targetId);
       if (target) {
         clearSearchHighlight();
         target.classList.add('search-hit');
         setTimeout(() => target.classList.remove('search-hit'), 2500);
+        scrollToReportTarget(targetId);
       }
 
       closeSearchResults(input, resultsContainer);
@@ -9894,6 +10032,10 @@ const airGoldenDashboardHtml = `<!doctype html>
     let activeItem = sidebarSections[0];
 
     for (const item of sidebarSections) {
+      if (item.section.classList.contains('report-extra') && !item.section.classList.contains('is-open')) {
+        continue;
+      }
+
       const top = item.section.getBoundingClientRect().top;
 
       if (top <= anchorOffset) {
@@ -9906,12 +10048,59 @@ const airGoldenDashboardHtml = `<!doctype html>
     setActiveSidebarLink(activeItem.id);
   }
 
-  sidebarLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      const id = decodeURIComponent(link.getAttribute('href').slice(1));
-      setActiveSidebarLink(id);
+  function revealReportTarget(id) {
+    const target = document.getElementById(id);
+    if (!target) {
+      return null;
+    }
+
+    const page = target.classList.contains('report-extra') ? target : target.closest('.report-extra');
+    document.querySelectorAll('.report-extra').forEach(section => {
+      section.classList.toggle('is-open', section === page);
+    });
+    return target;
+  }
+
+  function scrollToReportTarget(id) {
+    const target = revealReportTarget(id);
+    if (!target) {
+      return false;
+    }
+
+    const root = document.documentElement;
+    const previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    const top = Math.max(0, target.getBoundingClientRect().top + root.scrollTop - 18);
+    root.scrollTop = top;
+    root.style.scrollBehavior = previous;
+    const section = target.classList.contains('page') ? target : target.closest('.page');
+    const sectionId = section ? section.id : id;
+    if (sidebarSections.some(item => item.id === sectionId)) {
+      setActiveSidebarLink(sectionId);
+    }
+    return true;
+  }
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', event => {
+      if (link.classList.contains('disabled') || link.hasAttribute('data-evidence-preview')) {
+        return;
+      }
+
+      const href = link.getAttribute('href') || '';
+      const id = decodeURIComponent(href.slice(1));
+      if (!id || !scrollToReportTarget(id)) {
+        return;
+      }
+
+      event.preventDefault();
+      history.pushState(null, '', '#' + id);
     });
   });
+
+  if (location.hash.length > 1) {
+    scrollToReportTarget(decodeURIComponent(location.hash.slice(1)));
+  }
 
   updateActiveSidebarFromScroll();
   window.addEventListener('scroll', updateActiveSidebarFromScroll, { passive: true });
