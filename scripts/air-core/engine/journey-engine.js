@@ -46,7 +46,7 @@ function getNotExecutedModules(journeyModules, modules) {
   return journeyModules.filter(moduleName => {
     const module = modules.find(item => item.name === moduleName);
 
-    return !module || module.total === 0;
+    return !module || (module.executed ?? 0) === 0;
   });
 }
 
@@ -66,7 +66,7 @@ function calculateCoverage(journeyModules, notExecutedSteps) {
 }
 
 function getJourneyStatus(journey, thresholds = {}) {
-  if (journey.testCount === 0) {
+  if ((journey.executed ?? 0) === 0) {
     return 'Not Executed';
   }
 
@@ -82,7 +82,7 @@ function getJourneyStatus(journey, thresholds = {}) {
     return 'Partial';
   }
 
-  if (journey.failedCount > 0 || journey.skipped > 0 || journey.interrupted > 0) {
+  if (journey.failedCount > 0 || (journey.unexpectedSkipped ?? 0) > 0 || journey.interrupted > 0) {
     return 'Warning';
   }
 
@@ -99,7 +99,7 @@ function getAffectedModules(journeyModuleRecords, failedDependencies) {
       ...journeyModuleRecords
         .filter(module =>
           (module.productFailedCount ?? module.productFailed ?? module.failed ?? 0) > 0 ||
-          module.skipped > 0 ||
+          (module.unexpectedSkipped ?? 0) > 0 ||
           module.interrupted > 0
         )
         .map(module => module.name),
@@ -151,7 +151,13 @@ function buildBusinessJourneys(input, legacyConfig) {
     );
     const skipped = journeyModuleRecords.reduce((sum, module) => sum + (module.skipped ?? 0), 0);
     const interrupted = journeyModuleRecords.reduce((sum, module) => sum + (module.interrupted ?? 0), 0);
-    const health = total === 0 ? 0 : Math.round((passed / total) * 100);
+    const executed = journeyModuleRecords.reduce(
+      (sum, module) => sum + (module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0) + (module.interrupted ?? 0))),
+      0
+    );
+    const documentedSkipped = journeyModuleRecords.reduce((sum, module) => sum + (module.documentedSkipped ?? 0), 0);
+    const unexpectedSkipped = journeyModuleRecords.reduce((sum, module) => sum + (module.unexpectedSkipped ?? 0), 0);
+    const health = executed === 0 ? 0 : Math.round((passed / executed) * 100);
     const coverage = calculateCoverage(journeyModules, notExecutedSteps);
     const enrichedJourney = {
       id: String(journey.name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
@@ -163,6 +169,9 @@ function buildBusinessJourneys(input, legacyConfig) {
       failed,
       skipped,
       interrupted,
+      executed,
+      documentedSkipped,
+      unexpectedSkipped,
       score: health,
       health,
       healthPercentage: health,
@@ -231,14 +240,27 @@ function buildBusinessJourneys(input, legacyConfig) {
 }
 
 function calculateBusinessHealth(journeys, passRate, failed) {
-  const executedJourneys = journeys.filter(journey => journey.total > 0);
+  const executedJourneys = journeys.filter(journey => (journey.executed ?? 0) > 0);
 
   if (executedJourneys.length === 0) {
     return failed === 0 && passRate > 0 ? 96 : passRate;
   }
 
+  const uniqueModuleScores = [];
+  const seenModules = new Set();
+
+  for (const journey of executedJourneys) {
+    const moduleKey = (journey.modules ?? []).join('|') || journey.name;
+    if (seenModules.has(moduleKey)) {
+      continue;
+    }
+
+    seenModules.add(moduleKey);
+    uniqueModuleScores.push(journey.score);
+  }
+
   const averageJourneyScore = Math.round(
-    executedJourneys.reduce((sum, journey) => sum + journey.score, 0) / executedJourneys.length
+    uniqueModuleScores.reduce((sum, score) => sum + score, 0) / uniqueModuleScores.length
   );
 
   return Math.max(0, Math.round((averageJourneyScore * 0.7) + (passRate * 0.3)) - (failed * 5));

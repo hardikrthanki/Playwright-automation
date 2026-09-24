@@ -30,7 +30,11 @@ function getGrade(score, config = {}) {
 }
 
 function getModuleHealthScore(modules = []) {
-  return average(modules.map(module => module.coverage ?? module.score));
+  return average(
+    modules
+      .filter(module => (module.executed ?? module.passed ?? 0) > 0)
+      .map(module => module.score ?? module.coverage)
+  );
 }
 
 function getJourneyCoverageScore(businessJourneys = []) {
@@ -65,7 +69,8 @@ function getFailureSeverityScore(failedTests = [], config = {}) {
 
 function buildQualityFactors({ summary = {}, modules = [], businessJourneys = [], evidence = {}, failedTests = [] }, config = {}) {
   return {
-    passRate: summary.passRate ?? 0,
+    passRate: summary.executedPassRate ?? summary.passRate ?? 0,
+    inventoryPassRate: summary.inventoryPassRate ?? 0,
     businessHealth: summary.businessHealth ?? 0,
     moduleHealth: getModuleHealthScore(modules),
     journeyCoverage: getJourneyCoverageScore(businessJourneys),
@@ -130,7 +135,7 @@ function calculateQuality({ summary = {}, modules = [], businessJourneys = [], e
 
   return {
     score,
-    confidence: Math.max(config.qualityThresholds?.minimumConfidence ?? 50, score),
+    confidence: score,
     grade,
     factors,
     weights,

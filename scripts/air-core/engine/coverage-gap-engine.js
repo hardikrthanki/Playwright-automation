@@ -344,22 +344,62 @@ function appendMatrixCoverageGaps(tests = [], items = [], options = {}) {
   return [...items, ...matrixItems];
 }
 
+const DOCUMENTED_GAP_CATEGORIES = ['Traceability', 'Blocked', 'Future', 'Controlled'];
+
+function isDocumentedGapCategory(category) {
+  return DOCUMENTED_GAP_CATEGORIES.includes(category);
+}
+
+function getSkipReasonText(test = {}) {
+  return [
+    test.error,
+    test.reason,
+    getAnnotation(test, 'skip'),
+    getAnnotation(test, 'fixme'),
+    getAnnotation(test, 'dependency'),
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
 function classifyGap(test = {}) {
-  const automationStatus = getAnnotation(test, 'automation-status');
+  const automationStatus = String(getAnnotation(test, 'automation-status') ?? '').toLowerCase();
   const title = String(test.title ?? '').toLowerCase();
-  const reason = String(test.error ?? '').toLowerCase();
+  const reason = getSkipReasonText(test).toLowerCase();
 
   if (automationStatus === 'blocked') return 'Blocked';
   if (automationStatus === 'future') return 'Future';
+  if (automationStatus === 'controlled') return 'Controlled';
   if (automationStatus === 'automated') {
-    if (reason.includes('air coverage-ingestion') || reason.includes('covered by')) {
+    if (
+      reason.includes('air coverage-ingestion') ||
+      /cover(?:ed|s) by/.test(reason) ||
+      reason.includes('already covers')
+    ) {
       return 'Traceability';
     }
 
     return 'Controlled';
   }
-  if (title.includes('matrix') && reason.includes('covered by')) return 'Traceability';
-  if (reason.includes('covered by')) return 'Traceability';
+  if (
+    /cover(?:ed|s) by/.test(reason) ||
+    reason.includes('already covers') ||
+    (title.includes('matrix') && /cover(?:ed|s) by/.test(reason))
+  ) {
+    return 'Traceability';
+  }
+  if (/known (?:defect|bug|issue)/.test(reason)) {
+    return 'Blocked';
+  }
+  if (
+    /enable [a-z0-9_]+=/.test(reason) ||
+    /_enabled/.test(reason) ||
+    reason.includes('controlled execution') ||
+    reason.includes('env flag') ||
+    reason.includes('gated')
+  ) {
+    return 'Controlled';
+  }
   if (title.includes('mfa') || title.includes('forgot') || title.includes('stripe') || title.includes('email')) {
     return 'Controlled';
   }
@@ -369,9 +409,9 @@ function classifyGap(test = {}) {
 
 function getGapReason(test = {}) {
   const automationStatus = getAnnotation(test, 'automation-status');
-  const error = normalizeReason(test.error);
+  const error = normalizeReason(getSkipReasonText(test));
 
-  if (automationStatus === 'automated' && /^covered by/i.test(error)) {
+  if (automationStatus === 'automated' && /cover(?:ed|s) by/i.test(error)) {
     return error;
   }
 
@@ -421,6 +461,7 @@ function buildCoverageGaps(tests = [], options = {}) {
     .filter(test => ['skipped', 'interrupted', 'unknown'].includes(test.status))
     .map((test, index) => {
       const category = classifyGap(test);
+      test.gapCategory = category;
       const matrix = getMatrixSpecForFile(test.file);
 
       return {
@@ -465,12 +506,15 @@ function buildCoverageGaps(tests = [], options = {}) {
 }
 
 module.exports = {
+  DOCUMENTED_GAP_CATEGORIES,
   buildCoverageGaps,
   classifyGap,
   findScenarioArrayLiteral,
   getGapReason,
   getNextAction,
+  getSkipReasonText,
   inferModule,
+  isDocumentedGapCategory,
   readMatrixScenarios,
   slug,
 };

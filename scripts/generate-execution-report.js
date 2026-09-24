@@ -392,19 +392,24 @@ const passed = airResults?.summary?.passed ?? tests.filter(test => test.status =
 const failed = airResults?.summary?.failed ?? tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length;
 const skipped = airResults?.summary?.skipped ?? tests.filter(test => test.status === 'skipped').length;
 const interrupted = airResults?.summary?.interrupted ?? tests.filter(test => test.status === 'interrupted').length;
+const executed = airResults?.summary?.executed ?? (passed + failed + interrupted);
+const unexpectedSkipped = airResults?.summary?.unexpectedSkipped ?? 0;
+const documentedSkipped = airResults?.summary?.documentedSkipped ?? Math.max(0, skipped - unexpectedSkipped);
 const totalDuration = airResults?.summary?.durationMs ?? tests.reduce((sum, test) => sum + test.duration, 0);
 const generatedAt = airResults?.generatedAtDisplay ?? new Date().toLocaleString();
 const projectName = airResults?.project?.name ?? airConfig.projectName ?? 'OOLTool';
 const environment = airResults?.project?.environment ?? airConfig.environment ?? 'UAT';
 const buildVersion = airResults?.project?.buildVersion ?? airConfig.buildVersion ?? 'Playwright JSON';
 const productName = airConfig.productName || 'AIR';
+const executedPassRate =
+  airResults?.summary?.executedPassRate ??
+  (executed === 0 ? 0 : Math.round((passed / executed) * 100));
+const inventoryPassRate =
+  airResults?.summary?.inventoryPassRate ??
+  (total === 0 ? 0 : Math.round((passed / total) * 100));
 const passRate =
   airResults?.summary?.passRate ??
-  (
-    total === 0
-      ? 0
-      : Math.round((passed / total) * 100)
-  );
+  executedPassRate;
 const businessHealth =
   airResults?.summary?.businessHealth ??
   (
@@ -1704,8 +1709,13 @@ const executiveData = demoMode
     passed: 452,
     failed: 12,
     skipped: 0,
+    executed: 466,
+    unexpectedSkipped: 0,
+    documentedSkipped: 0,
     duration: '42m 18s',
     passRate: 97,
+    executedPassRate: 97,
+    inventoryPassRate: 97,
     qualityScore: 96,
     businessHealth: 94,
     releaseDecision: 'GO',
@@ -1716,8 +1726,13 @@ const executiveData = demoMode
     passed,
     failed,
     skipped,
+    executed,
+    unexpectedSkipped,
+    documentedSkipped,
     duration: formatDuration(totalDuration),
     passRate,
+    executedPassRate,
+    inventoryPassRate,
     qualityScore,
     businessHealth,
     releaseDecision,
@@ -1750,6 +1765,9 @@ const warningModules =
   displayModules.filter(module => getModuleFilterTone(module) === 'amber').length;
 const criticalModules =
   displayModules.filter(module => getModuleFilterTone(module) === 'red').length;
+const releaseWarningCount =
+  (airResults?.release?.warnings ?? airResults?.releaseDecision?.warnings ?? []).length
+  || (warningModules + unexpectedSkipped);
 
 function moduleSlug(name) {
   return String(name)
@@ -1763,8 +1781,12 @@ function getModuleRecommendedAction(module) {
     return 'Review failed tests and attach evidence';
   }
 
-  if (module.skipped > 0 || module.risk === 'Medium') {
-    return 'Review skipped coverage and rerun impacted checks';
+  if ((module.unexpectedSkipped ?? 0) > 0) {
+    return 'Review unexpected skipped coverage and rerun impacted checks';
+  }
+
+  if ((module.documentedSkipped ?? 0) > 0) {
+    return 'Executed coverage passed; remaining rows are documented coverage gaps';
   }
 
   const actionMap = {
@@ -3366,7 +3388,8 @@ const coverageGapsContent = coverageGapItems.length === 0
       <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Needs dev/admin/API support</small></div>
       <div><span>Controlled</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Needs manual link, OTP, or fixture</small></div>
       <div><span>Traceability</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Covered by linked executable specs</small></div>
-      <div><span>Documented Matrix</span><strong>${coverageGapSummary.documented ?? 0}</strong><small>User journey and Stripe use cases</small></div>
+      <div><span>Future</span><strong>${coverageGapSummary.future ?? 0}</strong><small>Roadmap coverage, not this run</small></div>
+      <div><span>Unexpected Skips</span><strong>${coverageGapSummary.skipped ?? 0}</strong><small>Not classified; triage these first</small></div>
     </div>
     <div class="coverage-gap-explainer">
       <strong>Why this section exists</strong>
@@ -4503,14 +4526,15 @@ const releaseReasonText =
       ? 'Critical journeys healthy | Evidence complete | Warnings require review'
       : 'Critical issues require resolution before approval');
 const defaultTooltipMetadata = {
-  qualityScore: 'Quality score combines execution stability, business flow health, coverage, and risk signals.',
+  qualityScore: 'Quality score uses executed pass rate and business-flow health. Documented skip-only matrix rows are coverage gaps, not failed product checks.',
   releaseDecision: 'Release decision generated from configured release rules.',
-  risk: 'Release risk from failures, warnings, skipped checks, and configured thresholds.',
-  coverage: 'Coverage reflects executed checks mapped to the selected area.',
+  risk: 'Release risk from failures, unexpected skips, blocked coverage, and configured thresholds.',
+  coverage: 'Coverage reflects executed checks mapped to the selected area. Inventory coverage includes documented skips.',
   recommendation: 'Action generated from release decision, warnings, failures, and evidence readiness.',
-  businessHealth: 'Business health summarizes configured journey and module stability.',
+  businessHealth: 'Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips.',
   evidenceReadiness: 'Evidence readiness shows whether execution artifacts are available for review.',
   nextStep: 'Recommended next improvement based on current module and evidence readiness.',
+  passRate: 'Executed pass rate is passed divided by tests that actually ran. Inventory pass rate is passed divided by the full catalog including documented skips.',
 };
 const tooltipMetadata = {
   ...defaultTooltipMetadata,
@@ -4570,7 +4594,7 @@ function renderEmptyState({ title, reason, action, icon = 'AIR', metrics = [] })
 
 const releaseDetailCards = [
   ['Critical Issues', String(executiveData.failed), 'Current failed tests treated as release-impacting issues.'],
-  ['Warnings', String(warningModules + skipped), 'Warning modules plus skipped checks requiring review.'],
+  ['Warnings', String(releaseWarningCount), 'Release warnings from unexpected skips, blocked coverage, and module risk.'],
   ['Business Journey Status', businessJourneyStatus, 'businessHealth'],
   ['Evidence Readiness', evidenceReadiness, 'evidenceReadiness'],
 ].map(([label, value, help]) => `
@@ -4648,11 +4672,11 @@ const decisionSignalCards = [
   },
   {
     label: 'Warnings',
-    value: String(warningModules + skipped),
-    detail: warningModules + skipped > 0
-      ? 'Review warning modules and skipped checks.'
+    value: String(releaseWarningCount),
+    detail: releaseWarningCount > 0
+      ? 'Review release warnings, blocked coverage, and unexpected skips.'
       : 'No warning signals detected.',
-    tone: warningModules + skipped > 0 ? 'amber' : 'green',
+    tone: releaseWarningCount > 0 ? 'amber' : 'green',
   },
 ].map(item => `
   <article class="decision-signal-card ${item.tone}">
@@ -4686,8 +4710,9 @@ const nextFocusText =
     ? 'Evidence Linking'
     : 'Failed Module Review';
 const executiveDecisionBullets = [
-  `${executiveData.total} tests executed in the current run.`,
-  `${executiveData.passed} passed and ${executiveData.failed} failed.`,
+  `${executiveData.executed ?? executiveData.passed} tests executed; ${executiveData.total} in the inventory.`,
+  `${executiveData.passed} passed and ${executiveData.failed} failed (executed pass rate ${executiveData.executedPassRate ?? executiveData.passRate}%).`,
+  `${executiveData.documentedSkipped ?? 0} documented coverage gaps and ${executiveData.unexpectedSkipped ?? 0} unexpected skip(s).`,
   `${businessJourneyStatus} business journey status.`,
   evidenceReadiness === 'Ready'
     ? 'Evidence is ready for review.'
@@ -5174,8 +5199,8 @@ const executiveModeShellHtml = `
     </div>
     <div class="executive-kpi-stack">
       <button class="executive-kpi interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Score</small></button>
-      <div class="executive-kpi"><span>Tests Executed</span><strong>${executiveData.total}</strong><small>${executiveData.passed} passed</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'danger' : 'success'}"><span>Tests Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'No failures' : `${executiveData.passRate}% pass rate`}</small></div>
+      <div class="executive-kpi"><span>Tests Executed</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.total} in inventory</small></div>
+      <div class="executive-kpi ${executiveData.failed > 0 ? 'danger' : 'success'}"><span>Tests Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? `${executiveData.executedPassRate ?? executiveData.passRate}% executed pass rate` : `${executiveData.passRate}% pass rate`}</small></div>
       <div class="executive-kpi"><span>Modules</span><strong>${displayModules.length}</strong><small>Covered</small></div>
       <div class="executive-kpi"><span>Journeys</span><strong>${(airResults?.businessJourneys ?? []).length}</strong><small>Covered</small></div>
     </div>
@@ -8168,7 +8193,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <div><span>Business Journey</span><strong>${escapeHtml(businessJourneyStatus)}</strong></div>
           <div><span>Evidence</span><strong>${escapeHtml(evidenceReadiness)}</strong></div>
           <div><span>Critical Issues</span><strong>${executiveData.failed}</strong></div>
-          <div><span>Warnings</span><strong>${warningModules + skipped}</strong></div>
+          <div><span>Warnings</span><strong>${releaseWarningCount}</strong></div>
         </div>
         <div class="executive-action">
           <span>${helpLabel('Recommended Action', 'recommendation')}</span>
@@ -8829,7 +8854,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div>
         <div class="eyebrow">QUALITY SCORE EXPLAINER</div>
         <h2>How AIR Calculated ${executiveData.qualityScore}%</h2>
-        <p class="ai-decision-summary">AIR combines execution stability, business flow health, release risk, and current coverage signals. Future AIR Core engines will make this formula fully configurable.</p>
+        <p class="ai-decision-summary">Quality uses executed pass rate (tests that actually ran) and business-flow health. Documented skip-only matrix rows stay in Coverage Gaps and do not pull the score down to inventory 21%.</p>
       </div>
       <button class="modal-close" type="button" data-close-panels aria-label="Close quality score explainer">&times;</button>
     </div>

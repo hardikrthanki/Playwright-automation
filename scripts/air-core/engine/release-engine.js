@@ -109,12 +109,16 @@ function getWarningModules(modules = [], rules = {}) {
   );
 }
 
-function hasPartialExecution(summary = {}, businessJourneys = [], rules = {}) {
+function hasPartialExecution(summary = {}, businessJourneys = [], rules = {}, coverageGaps = {}) {
   if (summary.total === 0 || summary.executionStatus === 'No Data Available') {
     return true;
   }
 
-  if (summary.skipped > 0 || summary.interrupted > 0) {
+  if (summary.interrupted > 0 || (summary.unexpectedSkipped ?? 0) > 0) {
+    return true;
+  }
+
+  if ((coverageGaps.summary?.blocked ?? 0) > 0) {
     return true;
   }
 
@@ -163,7 +167,7 @@ function buildBlockers({ criticalFailures, blockerFailures, failedCriticalJourne
   ];
 }
 
-function buildWarnings({ warningFailures, warningJourneys, warningModules, partialExecution }) {
+function buildWarnings({ warningFailures, warningJourneys, warningModules, partialExecution, coverageGaps = {}, summary = {} }) {
   const warnings = [
     ...warningFailures.map(failure => ({
       type: 'Failure',
@@ -182,11 +186,30 @@ function buildWarnings({ warningFailures, warningJourneys, warningModules, parti
     })),
   ];
 
+  const blocked = coverageGaps.summary?.blocked ?? 0;
+  const unexpectedSkipped = summary.unexpectedSkipped ?? 0;
+
+  if (blocked > 0) {
+    warnings.push({
+      type: 'Coverage',
+      name: 'Blocked scenarios',
+      reason: `${blocked} blocked scenario(s) still need fixtures, admin, API, or third-party support before GO.`,
+    });
+  }
+
+  if (unexpectedSkipped > 0) {
+    warnings.push({
+      type: 'Coverage',
+      name: 'Unexpected skips',
+      reason: `${unexpectedSkipped} skipped check(s) were not documented as blocked, controlled, future, or traceability.`,
+    });
+  }
+
   if (partialExecution) {
     warnings.push({
       type: 'Execution',
       name: 'Partial execution',
-      reason: 'Execution contains skipped, interrupted, not-executed, or no-data release areas.',
+      reason: 'Execution contains unexpected skips, blocked coverage, interrupted tests, or not-executed critical journeys.',
     });
   }
 
@@ -223,11 +246,11 @@ function getConfiguredAction(decision, rules = {}) {
 
 function buildExplanation(decision, { summary = {}, quality = {}, businessHealth = 0, blockers = [], warnings = [] }) {
   if (decision === 'GO') {
-    return `AIR recommends GO because pass rate is ${summary.passRate ?? 0}%, business health is ${businessHealth}%, quality score is ${quality.score ?? 0}, and no configured release blockers were detected.`;
+    return `AIR recommends GO because executed pass rate is ${summary.executedPassRate ?? summary.passRate ?? 0}%, business health is ${businessHealth}%, quality score is ${quality.score ?? 0}, and no configured release blockers were detected.`;
   }
 
   if (decision === 'CONDITIONAL_GO') {
-    return `AIR recommends CONDITIONAL GO because release blockers were not detected, but ${warnings.length} warning signal(s) or partial execution areas require review before approval.`;
+    return `AIR recommends CONDITIONAL GO because executed tests did not produce release blockers, but ${warnings.length} warning signal(s) or incomplete coverage require review before approval. Executed pass rate is ${summary.executedPassRate ?? summary.passRate ?? 0}%; inventory coverage is ${summary.inventoryPassRate ?? 0}%.`;
   }
 
   return `AIR recommends NO GO because ${blockers.length} blocker signal(s) or configured release threshold gaps require resolution before approval.`;
@@ -303,6 +326,7 @@ function buildReleaseDecision({
   evidence = {},
   quality = {},
   config = {},
+  coverageGaps = {},
   releaseRules,
   thresholds,
 } = {}) {
@@ -333,7 +357,7 @@ function buildReleaseDecision({
   const warningFailures = getWarningFailures(failedTests, rules);
   const riskyModules = getRiskyModules(modules, rules);
   const warningModules = getWarningModules(modules, rules);
-  const partialExecution = hasPartialExecution(summary, businessJourneys, rules);
+  const partialExecution = hasPartialExecution(summary, businessJourneys, rules, coverageGaps);
   const blockers = buildBlockers({
     criticalFailures,
     blockerFailures,
@@ -345,6 +369,8 @@ function buildReleaseDecision({
     warningJourneys,
     warningModules,
     partialExecution,
+    coverageGaps,
+    summary,
   });
   const goPassed = meetsRuleSet({ summary, quality, failedTests, businessHealth }, goRules, rules);
   const conditionalPassed = meetsRuleSet({ summary, quality, failedTests, businessHealth }, conditionalRules, rules);
@@ -367,7 +393,8 @@ function buildReleaseDecision({
   }
 
   const generatedReasons = [
-    `Pass rate: ${summary.passRate ?? 0}%`,
+    `Executed pass rate: ${summary.executedPassRate ?? summary.passRate ?? 0}%`,
+    `Inventory coverage: ${summary.inventoryPassRate ?? 0}% (${summary.executed ?? 0} of ${summary.total ?? 0} tests ran)`,
     `Business health: ${businessHealth}%`,
     `Quality score: ${quality.score ?? 0}`,
     `Evidence items: ${evidence.summary?.total ?? 0}`,
