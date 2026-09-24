@@ -9,7 +9,7 @@
     {
       "name": "Authentication",
       "patterns": ["login", "auth", "forgot password", "unlock account"],
-      "modules": ["Authentication"],
+      "modules": ["Authentication", "Password", "MFA"],
       "critical": true
     },
     {
@@ -73,8 +73,20 @@
     {
       "name": "Dashboard",
       "patterns": ["dashboard"],
-      "modules": ["Authentication"],
+      "modules": ["Dashboard"],
       "critical": true
+    },
+    {
+      "name": "Session Security",
+      "patterns": ["session", "logout", "protected route"],
+      "modules": ["Session Security"],
+      "critical": true
+    },
+    {
+      "name": "Accessibility",
+      "patterns": ["accessibility", "keyboard", "tab order"],
+      "modules": ["Accessibility"],
+      "critical": false
     }
   ]
 }

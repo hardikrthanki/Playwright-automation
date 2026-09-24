@@ -618,6 +618,7 @@ function restoreFromBestHistory(projectRoot, outputPath, historyPath, existingHi
     businessJourneys: restoredBusinessJourneys,
     evidence: restoredEvidence,
     quality: restoredQuality,
+    coverageGaps: sanitizedSnapshot.coverageGaps ?? {},
     config,
   });
 

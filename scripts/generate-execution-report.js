@@ -392,19 +392,24 @@ const passed = airResults?.summary?.passed ?? tests.filter(test => test.status =
 const failed = airResults?.summary?.failed ?? tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length;
 const skipped = airResults?.summary?.skipped ?? tests.filter(test => test.status === 'skipped').length;
 const interrupted = airResults?.summary?.interrupted ?? tests.filter(test => test.status === 'interrupted').length;
+const executed = airResults?.summary?.executed ?? (passed + failed + interrupted);
+const unexpectedSkipped = airResults?.summary?.unexpectedSkipped ?? 0;
+const documentedSkipped = airResults?.summary?.documentedSkipped ?? Math.max(0, skipped - unexpectedSkipped);
 const totalDuration = airResults?.summary?.durationMs ?? tests.reduce((sum, test) => sum + test.duration, 0);
 const generatedAt = airResults?.generatedAtDisplay ?? new Date().toLocaleString();
 const projectName = airResults?.project?.name ?? airConfig.projectName ?? 'OOLTool';
 const environment = airResults?.project?.environment ?? airConfig.environment ?? 'UAT';
 const buildVersion = airResults?.project?.buildVersion ?? airConfig.buildVersion ?? 'Playwright JSON';
 const productName = airConfig.productName || 'AIR';
+const executedPassRate =
+  airResults?.summary?.executedPassRate ??
+  (executed === 0 ? 0 : Math.round((passed / executed) * 100));
+const inventoryPassRate =
+  airResults?.summary?.inventoryPassRate ??
+  (total === 0 ? 0 : Math.round((passed / total) * 100));
 const passRate =
   airResults?.summary?.passRate ??
-  (
-    total === 0
-      ? 0
-      : Math.round((passed / total) * 100)
-  );
+  executedPassRate;
 const businessHealth =
   airResults?.summary?.businessHealth ??
   (
@@ -548,12 +553,18 @@ const moduleMap =
 const moduleHealth =
   airResults?.modules?.length
     ? airResults.modules.map(module => ({
+      ...module,
       name: module.name,
       total: module.total,
       passed: module.passed,
       failed: module.failed,
       skipped: module.skipped,
+      interrupted: module.interrupted ?? 0,
+      executed: module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0) + (module.interrupted ?? 0)),
+      documentedSkipped: module.documentedSkipped ?? 0,
+      unexpectedSkipped: module.unexpectedSkipped ?? 0,
       score: module.score,
+      coverage: module.coverage ?? module.score,
       status: module.status,
       risk: module.risk,
     }))
@@ -1299,11 +1310,13 @@ const html = `<!doctype html>
 `;
 
 function statusTone(status) {
-  if (status === 'Healthy' || status === 'Low' || status === 'Available') {
+  const normalized = String(status ?? '').toLowerCase();
+
+  if (['healthy', 'low', 'available', 'pass', 'passed', 'go'].includes(normalized)) {
     return 'green';
   }
 
-  if (status === 'At Risk' || status === 'High' || status === 'Critical' || status === 'Failed' || status === 'Missing') {
+  if (['at risk', 'high', 'critical', 'failed', 'missing', 'timedout', 'no go'].includes(normalized)) {
     return 'red';
   }
 
@@ -1704,8 +1717,13 @@ const executiveData = demoMode
     passed: 452,
     failed: 12,
     skipped: 0,
+    executed: 466,
+    unexpectedSkipped: 0,
+    documentedSkipped: 0,
     duration: '42m 18s',
     passRate: 97,
+    executedPassRate: 97,
+    inventoryPassRate: 97,
     qualityScore: 96,
     businessHealth: 94,
     releaseDecision: 'GO',
@@ -1716,8 +1734,13 @@ const executiveData = demoMode
     passed,
     failed,
     skipped,
+    executed,
+    unexpectedSkipped,
+    documentedSkipped,
     duration: formatDuration(totalDuration),
     passRate,
+    executedPassRate,
+    inventoryPassRate,
     qualityScore,
     businessHealth,
     releaseDecision,
@@ -1750,6 +1773,9 @@ const warningModules =
   displayModules.filter(module => getModuleFilterTone(module) === 'amber').length;
 const criticalModules =
   displayModules.filter(module => getModuleFilterTone(module) === 'red').length;
+const releaseWarningCount =
+  (airResults?.release?.warnings ?? airResults?.releaseDecision?.warnings ?? []).length
+  || (warningModules + unexpectedSkipped);
 
 function moduleSlug(name) {
   return String(name)
@@ -1763,8 +1789,12 @@ function getModuleRecommendedAction(module) {
     return 'Review failed tests and attach evidence';
   }
 
-  if (module.skipped > 0 || module.risk === 'Medium') {
-    return 'Review skipped coverage and rerun impacted checks';
+  if ((module.unexpectedSkipped ?? 0) > 0) {
+    return 'Review unexpected skipped coverage and rerun impacted checks';
+  }
+
+  if ((module.documentedSkipped ?? 0) > 0) {
+    return 'Executed coverage passed; remaining rows are documented coverage gaps';
   }
 
   const actionMap = {
@@ -1873,11 +1903,17 @@ function getModuleBusinessImpact(module) {
 }
 
 function getModuleTone(module) {
-  return module.risk === 'High'
-    ? 'red'
-    : module.risk === 'Medium' || module.status === 'Partial'
-      ? 'amber'
-      : 'green';
+  const filterTone = getModuleFilterTone(module);
+
+  if (filterTone === 'red' || module.risk === 'High') {
+    return 'red';
+  }
+
+  if (filterTone === 'amber' || module.risk === 'Medium' || module.status === 'Partial') {
+    return 'amber';
+  }
+
+  return 'green';
 }
 
 function getModuleFilterTone(module) {
@@ -1910,12 +1946,12 @@ function getModuleFilterTone(module) {
 
 function getModuleStatusGroup(module) {
   const status = String(module.status || '').toLowerCase();
-  const total = Number(module.total ?? 0);
-  const failedCount =
-    Number(module.failed ?? Math.max(0, (module.total || 0) - (module.passed || 0) - (module.skipped || 0))) || 0;
+  const executed = Number(module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0) + (module.interrupted ?? 0)));
+  const failedCount = Number(module.failed ?? 0) || 0;
+  const unexpectedSkipped = Number(module.unexpectedSkipped ?? 0) || 0;
 
   if (
-    total === 0 ||
+    executed === 0 ||
     status.includes('not executed') ||
     status.includes('no data')
   ) {
@@ -1925,7 +1961,8 @@ function getModuleStatusGroup(module) {
   if (
     status.includes('at risk') ||
     status.includes('critical') ||
-    status.includes('failed')
+    status.includes('failed') ||
+    failedCount > 0
   ) {
     return 'critical';
   }
@@ -1933,10 +1970,8 @@ function getModuleStatusGroup(module) {
   if (
     status.includes('warning') ||
     status.includes('partial') ||
-    status.includes('skipped') ||
     status.includes('needs review') ||
-    failedCount > 0 ||
-    Number(module.skipped ?? 0) > 0
+    unexpectedSkipped > 0
   ) {
     return 'warning';
   }
@@ -1946,12 +1981,12 @@ function getModuleStatusGroup(module) {
 
 function getModuleStatusTooltip(module) {
   const group = getModuleStatusGroup(module);
-  const failedCount =
-    Number(module.failed ?? Math.max(0, (module.total || 0) - (module.passed || 0) - (module.skipped || 0))) || 0;
-  const skippedCount = Number(module.skipped ?? 0) || 0;
+  const failedCount = Number(module.failed ?? 0) || 0;
+  const unexpectedSkipped = Number(module.unexpectedSkipped ?? 0) || 0;
+  const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
 
   if (group === 'critical') {
-    return `${failedCount} failed test${failedCount === 1 ? '' : 's'} are affecting ${module.name} in the current execution.`;
+    return `${failedCount} failed test${failedCount === 1 ? '' : 's'} ${failedCount === 1 ? 'is' : 'are'} affecting ${module.name} in the current execution.`;
   }
 
   if (group === 'warning') {
@@ -1959,14 +1994,18 @@ function getModuleStatusTooltip(module) {
       return `${module.name} has ${failedCount} failed test${failedCount === 1 ? '' : 's'} and needs review.`;
     }
 
-    return `${module.name} has ${skippedCount} skipped or controlled check${skippedCount === 1 ? '' : 's'} and needs review.`;
+    if (unexpectedSkipped > 0) {
+      return `${module.name} has ${unexpectedSkipped} unexpected skipped check${unexpectedSkipped === 1 ? '' : 's'} that still need triage.`;
+    }
+
+    return `${module.name} needs review before it can be treated as healthy.`;
   }
 
   if (group === 'not-executed') {
     return `${module.name} has no executed tests in the current AIR model.`;
   }
 
-  return `${module.name} is healthy: ${module.passed}/${module.total} checks passed with low risk.`;
+  return `${module.name} executed coverage passed: ${module.passed}/${executed || module.passed} ran in this execution.`;
 }
 
 const moduleStatusGroupCounts =
@@ -1999,12 +2038,11 @@ function getModuleExecutionMs(moduleName) {
 function renderModuleHealthCard(module) {
   const tone = getModuleTone(module);
   const filterTone = getModuleFilterTone(module);
-  const failedCount =
-    module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
-  const coverage =
-    module.total === 0
-      ? 0
-      : Math.round((module.passed / module.total) * 100);
+  const failedCount = Number(module.failed ?? 0) || 0;
+  const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
+  const health = Number(module.score ?? 0);
+  const ranShare = module.total === 0 ? 0 : Math.round((executed / module.total) * 100);
+  const documentedSkipped = Number(module.documentedSkipped ?? Math.max(0, (module.skipped ?? 0) - (module.unexpectedSkipped ?? 0)));
 
   return `
     <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
@@ -2016,16 +2054,20 @@ function renderModuleHealthCard(module) {
         <span class="badge ${tone}"${tooltipAttr(getModuleStatusTooltip(module))}>${escapeHtml(module.status)}</span>
       </div>
       <div class="module-health-score">
-        <strong>${module.score}%</strong>
-        <span>Health Score</span>
+        <strong>${health}%</strong>
+        <span>Executed health</span>
       </div>
       <div class="module-card-stats">
-        <span><b>${module.passed}/${module.total}</b><small>Passed</small></span>
-        <span><b>${coverage}%</b><small>Coverage</small></span>
+        <span><b>${module.passed}/${executed || 0}</b><small>Passed / ran</small></span>
+        <span><b>${ranShare}%</b><small>Ran this run</small></span>
         <span><b>${escapeHtml(module.risk)}</b><small>Risk</small></span>
       </div>
-      <div class="module-progress" aria-hidden="true"><span style="width:${coverage}%"></span></div>
-      <p>${failedCount > 0 ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review` : escapeHtml(getModuleRecommendedAction(module))}</p>
+      <div class="module-progress" aria-hidden="true"><span style="width:${health}%"></span></div>
+      <p>${failedCount > 0
+        ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review`
+        : documentedSkipped > 0 && getModuleStatusGroup(module) === 'healthy'
+          ? `${documentedSkipped} documented gap${documentedSkipped === 1 ? '' : 's'} remain in Coverage Gaps.`
+          : escapeHtml(getModuleRecommendedAction(module))}</p>
       <span class="module-button">Open Module Detail</span>
     </a>`;
 }
@@ -2040,12 +2082,9 @@ const moduleDashboardCards =
     .map(module => {
       const tone = getModuleTone(module);
       const filterTone = getModuleFilterTone(module);
-      const failedCount =
-        module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
-      const coverage =
-        module.total === 0
-          ? 0
-          : Math.round((module.passed / module.total) * 100);
+      const failedCount = Number(module.failed ?? 0) || 0;
+      const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
+      const ranShare = module.total === 0 ? 0 : Math.round((executed / module.total) * 100);
       const moduleExecutionMs =
         getModuleExecutionMs(module.name);
       const scenarioCount =
@@ -2062,17 +2101,17 @@ const moduleDashboardCards =
           </div>
           <div class="module-dashboard-score-row">
             <strong>${module.score}%</strong>
-            <span>${coverage}% coverage</span>
+            <span>${ranShare}% ran this run</span>
           </div>
           <div class="module-selector-summary">
             <span>Health <b>${module.score}%</b></span>
-            <span>Tests <b>${module.passed}/${module.total}</b></span>
+            <span>Tests <b>${module.passed}/${executed || 0} ran</b></span>
             <span>Risk <b>${escapeHtml(module.risk)}</b></span>
             <span>Critical Scenarios <b>${scenarioCount}/${scenarioCount}</b></span>
             <span>Evidence <b>${hasPlaywrightReport ? 'Available' : 'Pending'}</b></span>
             <span>Execution <b>${moduleExecutionMs ? formatDuration(moduleExecutionMs) : 'No Data'}</b></span>
           </div>
-          <div class="module-progress"><span style="width:${coverage}%"></span></div>
+          <div class="module-progress"><span style="width:${module.score}%"></span></div>
           <p>${escapeHtml(getModuleFocus(module.name))}</p>
           <div class="module-dashboard-footer">
             <span>${failedCount > 0 ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review` : 'No recent failures'}</span>
@@ -2084,12 +2123,9 @@ const moduleDashboardCards =
 
 const moduleDrawerData =
   displayModules.map(module => {
-    const failedCount =
-      module.failed ?? Math.max(0, module.total - module.passed - module.skipped);
-    const coverage =
-      module.total === 0
-        ? 0
-        : Math.round((module.passed / module.total) * 100);
+    const failedCount = Number(module.failed ?? 0) || 0;
+    const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
+    const coverage = module.total === 0 ? 0 : Math.round((executed / module.total) * 100);
 
     return {
       name: module.name,
@@ -2100,6 +2136,7 @@ const moduleDrawerData =
       total: module.total,
       passed: module.passed,
       failed: failedCount,
+      executed,
       coverage,
       scenarios: getModuleBusinessScenarios(module.name),
       focus: getModuleFocus(module.name),
@@ -2211,7 +2248,7 @@ const journeyHealthRows = (demoMode ? [
 
     return `
     <div class="journey-node ${statusTone(state)} interactive-card" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
-      <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' ? '!' : 'NA'}</div>
+      <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' || state === 'Warning' ? '!' : 'NA'}</div>
       <strong>${escapeHtml(name)}</strong>
       <span>${score}%</span>
       <small>${escapeHtml(state)}</small>
@@ -2220,6 +2257,46 @@ const journeyHealthRows = (demoMode ? [
     ${index < items.length - 1 ? '<div class="journey-arrow">-&gt;</div>' : ''}`;
   })
   .join('');
+
+const liveBusinessJourneys = airResults?.businessJourneys ?? [];
+const journeyCoverageChartHtml =
+  (demoMode ? [
+    ['Registration', 98, 'Healthy'],
+    ['Authentication', 96, 'Healthy'],
+    ['Profile Setup', 100, 'Healthy'],
+    ['Subscription', 88, 'Partial'],
+    ['Payment', 94, 'Healthy'],
+    ['Dashboard', 100, 'Healthy'],
+  ] : liveBusinessJourneys.map(journey => [
+    journey.name,
+    Number(journey.coverage ?? journey.health ?? journey.score ?? 0),
+    journey.status ?? 'No Data',
+  ]))
+    .map(([name, score, status]) => {
+      const value = Math.max(0, Math.min(100, Number(score) || 0));
+      const height = Math.max(8, value);
+      const tone = statusTone(status);
+      const barClass = tone === 'red' ? 'red' : tone === 'amber' ? 'amber' : '';
+      return `<div class="bar ${barClass}" style="height:${height}%" title="${escapeHtml(`${name}: ${value}% ${status}`)}"><strong>${value}%</strong><label>${escapeHtml(name)}</label></div>`;
+    })
+    .join('') || '<div class="empty-note">No journey coverage was recorded for this execution.</div>';
+
+const journeyAnswerHtml = (() => {
+  const attention = liveBusinessJourneys.filter(journey =>
+    ['Warning', 'Partial', 'Not Executed', 'Critical', 'Failed'].includes(journey.status)
+  );
+  const healthy = liveBusinessJourneys.filter(journey => journey.status === 'Healthy');
+
+  if (executiveData.failed > 0) {
+    return `Core flows are mostly healthy, with focused review required for failed areas.`;
+  }
+
+  if (attention.length === 0) {
+    return `Executed journeys are healthy. Remaining CONDITIONAL GO risk is blocked or documented coverage, not a failed user flow.`;
+  }
+
+  return `${healthy.length} journey${healthy.length === 1 ? '' : 's'} executed cleanly. Review ${attention.map(journey => journey.name).join(', ')} before GO.`;
+})();
 
 const failedSourceItems = demoMode
   ? [
@@ -3366,7 +3443,8 @@ const coverageGapsContent = coverageGapItems.length === 0
       <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Needs dev/admin/API support</small></div>
       <div><span>Controlled</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Needs manual link, OTP, or fixture</small></div>
       <div><span>Traceability</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Covered by linked executable specs</small></div>
-      <div><span>Documented Matrix</span><strong>${coverageGapSummary.documented ?? 0}</strong><small>User journey and Stripe use cases</small></div>
+      <div><span>Future</span><strong>${coverageGapSummary.future ?? 0}</strong><small>Roadmap coverage, not this run</small></div>
+      <div><span>Unexpected Skips</span><strong>${coverageGapSummary.skipped ?? 0}</strong><small>Not classified; triage these first</small></div>
     </div>
     <div class="coverage-gap-explainer">
       <strong>Why this section exists</strong>
@@ -4429,9 +4507,9 @@ const provenanceWarningHtml =
 
 const executiveNarrative =
   executiveData.releaseDecision === 'GO'
-    ? `Build health is excellent. ${executiveData.total} tests executed with ${executiveData.passed} passing and no blocker defects found. Critical business journeys are healthy, business risk is low, and AIR recommends GO with ${executiveConfidence}% confidence.`
+    ? `Build health is excellent. ${executiveData.executed ?? executiveData.passed} tests ran with ${executiveData.passed} passing and no blocker defects found. Critical business journeys are healthy, business risk is low, and AIR recommends GO with ${executiveConfidence}% confidence.`
     : executiveData.releaseDecision === 'CONDITIONAL GO'
-      ? `Build health is stable with warnings. ${executiveData.total} tests executed and the main journeys are mostly healthy, but AIR recommends focused review before final release approval.`
+      ? `Executed coverage is clean, but the catalog is incomplete. ${executiveData.executed ?? executiveData.passed} of ${executiveData.total} tests ran (${executiveData.executedPassRate ?? executiveData.passRate}% executed pass rate). AIR recommends CONDITIONAL GO until blocked and not-executed coverage is reviewed.`
       : `Build health needs attention. ${executiveData.failed} failures were detected in the current execution, so AIR recommends resolving blockers and rerunning impacted coverage before release.`;
 
 const whyReleaseItems =
@@ -4503,14 +4581,15 @@ const releaseReasonText =
       ? 'Critical journeys healthy | Evidence complete | Warnings require review'
       : 'Critical issues require resolution before approval');
 const defaultTooltipMetadata = {
-  qualityScore: 'Quality score combines execution stability, business flow health, coverage, and risk signals.',
+  qualityScore: 'Quality score uses executed pass rate and business-flow health. Documented skip-only matrix rows are coverage gaps, not failed product checks.',
   releaseDecision: 'Release decision generated from configured release rules.',
-  risk: 'Release risk from failures, warnings, skipped checks, and configured thresholds.',
-  coverage: 'Coverage reflects executed checks mapped to the selected area.',
+  risk: 'Release risk from failures, unexpected skips, blocked coverage, and configured thresholds.',
+  coverage: 'Coverage reflects executed checks mapped to the selected area. Inventory coverage includes documented skips.',
   recommendation: 'Action generated from release decision, warnings, failures, and evidence readiness.',
-  businessHealth: 'Business health summarizes configured journey and module stability.',
+  businessHealth: 'Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips.',
   evidenceReadiness: 'Evidence readiness shows whether execution artifacts are available for review.',
   nextStep: 'Recommended next improvement based on current module and evidence readiness.',
+  passRate: 'Executed pass rate is passed divided by tests that actually ran. Inventory pass rate is passed divided by the full catalog including documented skips.',
 };
 const tooltipMetadata = {
   ...defaultTooltipMetadata,
@@ -4527,7 +4606,7 @@ function helpLabel(label, keyOrText, fallback = '') {
   return `${escapeHtml(label)} <i class="metric-help"${tooltipAttr(helpText)}>?</i>`;
 }
 
-function statusTone(status) {
+function resultTone(status) {
   const normalized = String(status ?? '').toLowerCase();
 
   if (normalized === 'passed') return 'good';
@@ -4570,7 +4649,7 @@ function renderEmptyState({ title, reason, action, icon = 'AIR', metrics = [] })
 
 const releaseDetailCards = [
   ['Critical Issues', String(executiveData.failed), 'Current failed tests treated as release-impacting issues.'],
-  ['Warnings', String(warningModules + skipped), 'Warning modules plus skipped checks requiring review.'],
+  ['Warnings', String(releaseWarningCount), 'Release warnings from unexpected skips, blocked coverage, and module risk.'],
   ['Business Journey Status', businessJourneyStatus, 'businessHealth'],
   ['Evidence Readiness', evidenceReadiness, 'evidenceReadiness'],
 ].map(([label, value, help]) => `
@@ -4648,11 +4727,11 @@ const decisionSignalCards = [
   },
   {
     label: 'Warnings',
-    value: String(warningModules + skipped),
-    detail: warningModules + skipped > 0
-      ? 'Review warning modules and skipped checks.'
+    value: String(releaseWarningCount),
+    detail: releaseWarningCount > 0
+      ? 'Review release warnings, blocked coverage, and unexpected skips.'
       : 'No warning signals detected.',
-    tone: warningModules + skipped > 0 ? 'amber' : 'green',
+    tone: releaseWarningCount > 0 ? 'amber' : 'green',
   },
 ].map(item => `
   <article class="decision-signal-card ${item.tone}">
@@ -4686,8 +4765,9 @@ const nextFocusText =
     ? 'Evidence Linking'
     : 'Failed Module Review';
 const executiveDecisionBullets = [
-  `${executiveData.total} tests executed in the current run.`,
-  `${executiveData.passed} passed and ${executiveData.failed} failed.`,
+  `${executiveData.executed ?? executiveData.passed} tests executed; ${executiveData.total} in the inventory.`,
+  `${executiveData.passed} passed and ${executiveData.failed} failed (executed pass rate ${executiveData.executedPassRate ?? executiveData.passRate}%).`,
+  `${executiveData.documentedSkipped ?? 0} documented coverage gaps and ${executiveData.unexpectedSkipped ?? 0} unexpected skip(s).`,
   `${businessJourneyStatus} business journey status.`,
   evidenceReadiness === 'Ready'
     ? 'Evidence is ready for review.'
@@ -4731,7 +4811,7 @@ const engineStatusItems = [
   {
     name: 'Execution',
     purpose: 'Summarize executed tests.',
-    metrics: [['Tests', executiveData.total], ['Pass Rate', `${executiveData.passRate}%`]],
+    metrics: [['Ran', executiveData.executed ?? executiveData.passed], ['Pass Rate', `${executiveData.executedPassRate ?? executiveData.passRate}%`]],
   },
   {
     name: 'Failure',
@@ -4800,7 +4880,7 @@ const validationTopAreas = Object.entries(validationAreaCounts)
 const validationStatusCards = Object.entries(validationStatusCounts)
   .sort(([left], [right]) => left.localeCompare(right))
   .map(([status, count]) => `
-    <div class="validation-stat ${statusTone(status)}">
+    <div class="validation-stat ${resultTone(status)}">
       <span>${escapeHtml(statusLabel(status))}</span>
       <strong>${escapeHtml(count)}</strong>
       <small>Validation result</small>
@@ -4865,7 +4945,7 @@ const validationDetailRows = validationTests
     const validation = test.validation ?? {};
     return `
       <tr>
-        <td><span class="badge ${statusTone(test.status)}">${escapeHtml(statusLabel(test.status))}</span></td>
+        <td><span class="badge ${resultTone(test.status)}">${escapeHtml(statusLabel(test.status))}</span></td>
         <td>${escapeHtml(validation.area ?? test.module ?? 'General')}</td>
         <td>${escapeHtml(validation.scenario ?? test.title ?? 'Validation scenario')}</td>
         <td>${escapeHtml(validation.expectedOutcome ?? 'Expected outcome was not provided.')}</td>
@@ -4895,6 +4975,7 @@ function getAirCoreEngineGroup(index) {
 
 function renderAirCoreEngineCard(item, index, group = getAirCoreEngineGroup(index)) {
   const groupClass = group.toLowerCase();
+  const headline = item.metrics?.[0]?.[1] ?? 'Ready';
 
   return `
     <div class="core-status-item engine-card engine-${groupClass}">
@@ -4903,7 +4984,7 @@ function renderAirCoreEngineCard(item, index, group = getAirCoreEngineGroup(inde
           <span>${escapeHtml(group)}</span>
           <h3>${escapeHtml(item.name)}</h3>
         </div>
-        <strong>Operational</strong>
+        <strong title="${escapeHtml(String(item.metrics?.[0]?.[0] ?? 'Status'))}">${escapeHtml(String(headline))}</strong>
       </div>
       <p>${escapeHtml(item.purpose)}</p>
       <div class="engine-metrics">
@@ -5105,7 +5186,7 @@ const executiveProductHealthStrip = displayModules
       <button class="executive-module-pill ${tone}" type="button" data-module-name="${escapeHtml(module.name)}" aria-label="Open ${escapeHtml(module.name)} module details">
         <span>${escapeHtml(module.name)}</span>
         <strong>${module.score}%</strong>
-        <small>${module.passed}/${module.total} passed</small>
+        <small>${module.passed}/${module.executed ?? module.total} ran</small>
       </button>`;
   })
   .join('');
@@ -5174,8 +5255,8 @@ const executiveModeShellHtml = `
     </div>
     <div class="executive-kpi-stack">
       <button class="executive-kpi interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Score</small></button>
-      <div class="executive-kpi"><span>Tests Executed</span><strong>${executiveData.total}</strong><small>${executiveData.passed} passed</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'danger' : 'success'}"><span>Tests Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'No failures' : `${executiveData.passRate}% pass rate`}</small></div>
+      <div class="executive-kpi"><span>Tests Executed</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.total} in inventory</small></div>
+      <div class="executive-kpi ${executiveData.failed > 0 ? 'danger' : 'success'}"><span>Tests Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? `${executiveData.executedPassRate ?? executiveData.passRate}% executed pass rate` : `${executiveData.passRate}% pass rate`}</small></div>
       <div class="executive-kpi"><span>Modules</span><strong>${displayModules.length}</strong><small>Covered</small></div>
       <div class="executive-kpi"><span>Journeys</span><strong>${(airResults?.businessJourneys ?? []).length}</strong><small>Covered</small></div>
     </div>
@@ -5611,8 +5692,8 @@ function renderPageFooter(pageNumber) {
       <div class="page-footer">
         <span>Generated by AIR Platform</span>
         <span>Automation Intelligence Report</span>
-        <span>AIR Platform v1.1</span>
-        <span>AIR Core Complete</span>
+        <span>${escapeHtml(airPlatformVersion)}</span>
+        <span>${escapeHtml(airCoreVersion)}</span>
         <span>${escapeHtml(generatedAt)}</span>
         <strong>Page ${pageNumber} of ${totalAirPages}</strong>
       </div>`;
@@ -6595,8 +6676,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     .air-core-layer-engines{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
     .air-core-layer-engines span{border:1px solid rgba(148,163,184,.14);border-radius:999px;background:rgba(3,12,22,.62);color:#cbd5e1;font-size:11px;font-weight:800;padding:6px 8px}
     .core-status-grid{grid-template-columns:repeat(auto-fit,minmax(235px,1fr))!important}
-    .engine-card{min-height:176px!important}
-    .engine-head strong{white-space:nowrap;color:#39e75f}
+    .engine-card{min-height:132px!important}
+    .engine-head strong{white-space:normal;color:#39e75f;text-align:right;max-width:46%;line-height:1.15}
     .engine-metrics{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))!important}
     .engine-metrics b{font-size:clamp(13px,1.1vw,18px)!important;overflow-wrap:break-word!important}
     .air-core-pipeline{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(138px,1fr))!important;gap:8px!important}
@@ -6639,7 +6720,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     #air-core .engine-output-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}
     #air-core .engine-output-group .engine-card{min-height:176px!important;border:1px solid rgba(57,231,95,.15)!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(12,24,39,.82),rgba(5,13,22,.82))!important;box-shadow:none!important}
     #air-core .engine-output-group .engine-card:hover{border-color:rgba(57,231,95,.34)!important;background:linear-gradient(180deg,rgba(14,31,45,.90),rgba(6,16,28,.86))!important;transform:translateY(-1px)}
-    #air-core .engine-card{min-height:198px!important;padding:16px!important;border-color:rgba(57,231,95,.12)!important;background:linear-gradient(180deg,rgba(11,25,38,.70),rgba(5,14,24,.76))!important}
+    #air-core .engine-card{min-height:148px!important;padding:16px!important;border-color:rgba(57,231,95,.12)!important;background:linear-gradient(180deg,rgba(11,25,38,.70),rgba(5,14,24,.76))!important}
     #air-core .engine-head{align-items:flex-start!important}
     #air-core .engine-head div{min-width:0}
     #air-core .engine-head span{display:block;color:#8fa2b6!important;font-size:10px!important;letter-spacing:.12em!important;text-transform:uppercase;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
@@ -6794,7 +6875,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     #executive .why-release{max-width:none!important;margin:0!important;border-radius:22px!important;border:1px solid rgba(57,231,95,.28)!important;background:linear-gradient(145deg,rgba(57,231,95,.12),rgba(5,14,24,.74))!important;padding:22px!important}
     #executive .why-release h3{text-align:left!important;font-size:clamp(22px,1.8vw,30px)!important;margin:0 0 18px!important}
     #executive .why-release ul{gap:12px!important}
-    #executive .why-release li{font-size:17px!important}
+    #executive .why-release.warn li:before{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.4);color:var(--amber)}
+    #executive .why-release.warn .decision-reasons li:before{background:#fbbf24;box-shadow:0 0 14px rgba(245,197,66,.55)}
     #executive .decision-metrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
     #executive .decision-metrics .ai-metric{min-height:120px!important;border-radius:18px!important;background:rgba(5,14,24,.64)!important;border-color:rgba(148,163,184,.12)!important}
     #executive .decision-metrics .ai-metric strong{font-size:clamp(20px,1.6vw,28px)!important}
@@ -6883,7 +6965,24 @@ const airGoldenDashboardHtml = `<!doctype html>
     #health .module-button{margin-top:auto!important;width:100%!important;border-radius:999px!important;border:1px solid rgba(57,231,95,.36)!important;background:rgba(57,231,95,.10)!important;color:#9affac!important;padding:10px 12px!important;text-align:center!important;font-size:12px!important;font-weight:950!important;letter-spacing:.02em!important}
     #health>.grid.two{grid-template-columns:minmax(360px,.92fr) minmax(0,1.08fr)!important;gap:22px!important;align-items:stretch!important}
     #health>.grid.two>.panel{border-radius:26px!important;background:linear-gradient(180deg,rgba(13,25,41,.82),rgba(6,15,27,.78))!important;border:1px solid rgba(57,231,95,.16)!important;padding:24px!important}
-    #health .risk-matrix{height:100%;min-height:260px;border-radius:22px!important;background:rgba(5,14,24,.72)!important;border:1px solid rgba(148,163,184,.12)!important;gap:6px!important;padding:8px!important}
+    #health .risk-snapshot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-height:220px}
+    #health .risk-snap{display:flex;flex-direction:column;justify-content:center;border-radius:18px;padding:18px;min-width:0}
+    #health .risk-snap span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#91a6bd;font-weight:800}
+    #health .risk-snap strong{display:block;font-size:42px;line-height:1;margin:10px 0 8px}
+    #health .risk-snap small{color:#9fb1c4;line-height:1.35}
+    #health .risk-snap.high{background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.28)}
+    #health .risk-snap.high strong{color:#ff7d7d}
+    #health .risk-snap.med{background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.32)}
+    #health .risk-snap.med strong{color:#fbbf24}
+    #health .risk-snap.low{background:rgba(57,231,95,.12);border:1px solid rgba(57,231,95,.28)}
+    #health .risk-snap.low strong{color:#39e75f}
+    .journey-coverage-chart{align-items:flex-end}
+    .journey-coverage-chart .bar{position:relative;min-width:0}
+    .journey-coverage-chart .bar strong{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:11px;color:#d7fbe0;white-space:nowrap}
+    .journey-coverage-chart .bar.amber{background:linear-gradient(180deg,#f5c542,#b7791f)}
+    #roadmap table td,#roadmap table th{white-space:normal;overflow:visible;text-overflow:unset;word-break:normal;vertical-align:top}
+    .page-footer{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+    .page-footer span,.page-footer strong{white-space:normal}
     #health .risk-cell{border:0!important;border-radius:14px!important;color:#f8fafc!important;min-width:0!important;padding:8px 4px!important;font-size:10.5px!important;font-weight:850!important;letter-spacing:0!important;line-height:1.15!important;overflow-wrap:normal!important;word-break:normal!important}
     #health .health-summary-panel .summary-lead{font-size:16px!important;line-height:1.65!important;color:#dbe5ef!important;margin-bottom:18px!important}
     #health .health-stat-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
@@ -6921,6 +7020,11 @@ const airGoldenDashboardHtml = `<!doctype html>
     #journey .journey-support-grid>.panel{border-radius:26px!important;background:linear-gradient(180deg,rgba(13,25,41,.82),rgba(6,15,27,.78))!important;border:1px solid rgba(57,231,95,.16)!important;padding:24px!important}
     #journey .chart{height:300px!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(4,13,23,.90),rgba(4,18,20,.76))!important;border:1px solid rgba(57,231,95,.12)!important;padding:28px 24px 50px!important}
     #journey .chart .bar{border-radius:12px 12px 4px 4px!important;background:linear-gradient(180deg,#8dff9e,#39e75f 45%,#169b3c)!important;box-shadow:0 14px 34px rgba(57,231,95,.16)!important}
+    #journey .chart .bar.amber{background:linear-gradient(180deg,#f5c542,#b7791f)!important}
+    #journey .chart .bar.red{background:linear-gradient(180deg,#ff8a8a,#ef4444)!important}
+    #journey .journey-coverage-chart{gap:8px!important;padding-top:36px!important}
+    #journey .journey-coverage-chart .bar label{font-size:10px;white-space:normal;line-height:1.15;max-width:72px;text-align:center}
+    #journey .journey-coverage-chart .bar strong{top:-20px;font-size:10px;color:#e8fff0}
     #journey .chart .bar.blue{background:linear-gradient(180deg,#7ee787,#22c55e)!important}
     #journey .journey-answer-panel{display:flex!important;flex-direction:column!important;justify-content:space-between!important}
     #journey .journey-answer-panel p{font-size:20px!important;line-height:1.55!important;color:#f0f7ff!important}
@@ -8168,7 +8272,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <div><span>Business Journey</span><strong>${escapeHtml(businessJourneyStatus)}</strong></div>
           <div><span>Evidence</span><strong>${escapeHtml(evidenceReadiness)}</strong></div>
           <div><span>Critical Issues</span><strong>${executiveData.failed}</strong></div>
-          <div><span>Warnings</span><strong>${warningModules + skipped}</strong></div>
+          <div><span>Warnings</span><strong>${releaseWarningCount}</strong></div>
         </div>
         <div class="executive-action">
           <span>${helpLabel('Recommended Action', 'recommendation')}</span>
@@ -8178,8 +8282,8 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="grid two">
         <div class="panel insight">
           <h2 class="icon-title"><span class="section-icon">WHY</span>Why This Decision?</h2>
-          <div class="why-release">
-            <h3>Why Release?</h3>
+          <div class="why-release ${executiveData.releaseDecision === 'GO' ? '' : 'warn'}">
+          <h3>${executiveData.releaseDecision === 'GO' ? 'Why Release?' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Why Conditional GO?' : 'Why No GO?'}</h3>
             <ul>${whyReleaseItems}</ul>
           </div>
         </div>
@@ -8261,10 +8365,23 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       <br>
       <div class="grid two">
-        <div class="panel"><h2>Risk Matrix</h2><div class="risk-matrix"><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High<br>${executiveData.failed}</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div><div class="risk-cell high">High</div><div class="risk-cell low">Low</div><div class="risk-cell low">Low</div><div class="risk-cell med">Medium</div></div></div>
+        <div class="panel"><h2>Risk Snapshot</h2>
+          <div class="risk-snapshot">
+            <div class="risk-snap high"><span>High</span><strong>${criticalModuleCount}</strong><small>Failed or critical modules</small></div>
+            <div class="risk-snap med"><span>Medium</span><strong>${warningModuleCount}</strong><small>Unexpected skips or incomplete journeys</small></div>
+            <div class="risk-snap low"><span>Low</span><strong>${healthyModuleCount}</strong><small>Clean executed coverage</small></div>
+          </div>
+          <p class="chart-explainer">Amber is reserved for unexpected skips and not-executed critical journeys. Documented matrix gaps stay on Coverage Gaps.</p>
+        </div>
         <div class="panel health-summary-panel">
           <h2>${helpLabel('Health Summary', 'businessHealth')}</h2>
-          <p class="summary-lead">${executiveData.failed === 0 ? 'All current modules are release-safe in this execution. QA should continue monitoring stable UI coverage and expand API, DB, and evidence mapping next.' : 'One or more modules need attention. QA should review failed modules, attach evidence, and rerun impacted checks.'}</p>
+          <p class="summary-lead">${
+            criticalModuleCount > 0
+              ? `${criticalModuleCount} module${criticalModuleCount === 1 ? ' has' : 's have'} release-impacting failures.`
+              : warningModuleCount > 0
+                ? `${healthyModuleCount} module${healthyModuleCount === 1 ? '' : 's'} have clean executed coverage. ${warningModuleCount} still need review for unexpected skips or incomplete journeys.`
+                : `Executed modules are healthy. Remaining catalog rows belong in Coverage Gaps, not product-health warnings.`
+          }</p>
           <div class="health-stat-grid">
             <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong><small>Modules stable</small></div>
             <div class="health-stat warn"><span>Warning</span><strong>${warningModuleCount}</strong><small>Need review</small></div>
@@ -8273,7 +8390,11 @@ const airGoldenDashboardHtml = `<!doctype html>
           <div class="next-focus-card">
             <span>${helpLabel('Next Focus', 'nextStep')}</span>
             <strong>${escapeHtml(nextFocusText)}</strong>
-            <p>${executiveData.failed === 0 ? 'Continue strengthening evidence links and future API/DB validation without changing the release decision.' : 'Start with failed modules, attach available evidence, and rerun impacted checks before approval.'}</p>
+            <p>${executiveData.failed === 0 && warningModuleCount === 0
+              ? 'Keep blocked Stripe/auth fixtures on the Coverage Gaps page; they are not product failures.'
+              : executiveData.failed === 0
+                ? 'Triage unexpected skips first, then blocked Billing coverage, before treating this as a full GO.'
+                : 'Start with failed modules, attach available evidence, and rerun impacted checks before approval.'}</p>
           </div>
         </div>
       </div>
@@ -8285,8 +8406,8 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="panel journey-flow-panel"><h2>Core Flow Health</h2><div class="journey">${journeyHealthRows}</div></div>
       <br>
       <div class="grid two journey-support-grid">
-        <div class="panel"><h2>Journey Coverage Snapshot</h2><p class="chart-explainer">Current business-flow coverage by journey area. Taller bars indicate stronger execution coverage in this run.</p><div class="chart"><div class="bar" style="height:88%"><label>Registration</label></div><div class="bar" style="height:82%"><label>Auth</label></div><div class="bar" style="height:94%"><label>Profile</label></div><div class="bar" style="height:78%"><label>Billing</label></div><div class="bar blue" style="height:96%"><label>Dashboard</label></div></div><p class="chart-axis-note">X-axis: journey area. Y-axis: relative execution coverage.</p></div>
-        <div class="panel journey-answer-panel"><h2>Answer</h2><p>Core flows are ${executiveData.failed === 0 ? 'healthy in the current execution.' : 'mostly healthy, with focused review required for failed areas.'}</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and should be reported separately when run.</div></div>
+        <div class="panel"><h2>Journey Coverage Snapshot</h2><p class="chart-explainer">Bar height is live journey coverage from this execution, not a placeholder chart.</p><div class="chart journey-coverage-chart">${journeyCoverageChartHtml}</div><p class="chart-axis-note">X-axis: journey. Y-axis: coverage % for modules that ran.</p></div>
+        <div class="panel journey-answer-panel"><h2>Answer</h2><p>${escapeHtml(journeyAnswerHtml)}</p><br><div class="empty-note">Email-link and payment-provider dependent scenarios remain controlled flows and are listed under Coverage Gaps when skipped.</div></div>
       </div>
       ${renderPageFooter(4)}
     </section>
@@ -8829,7 +8950,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div>
         <div class="eyebrow">QUALITY SCORE EXPLAINER</div>
         <h2>How AIR Calculated ${executiveData.qualityScore}%</h2>
-        <p class="ai-decision-summary">AIR combines execution stability, business flow health, release risk, and current coverage signals. Future AIR Core engines will make this formula fully configurable.</p>
+        <p class="ai-decision-summary">Quality uses executed pass rate (tests that actually ran) and business-flow health. Documented skip-only matrix rows stay in Coverage Gaps and do not pull the score down to inventory 21%.</p>
       </div>
       <button class="modal-close" type="button" data-close-panels aria-label="Close quality score explainer">&times;</button>
     </div>

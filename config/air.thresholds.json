@@ -10,6 +10,7 @@
   "qualityScoreWeights": {
     "passRate": 0.65,
     "businessHealth": 0.35,
+    "inventoryPassRate": 0,
     "moduleHealth": 0,
     "journeyCoverage": 0,
     "evidenceReadiness": 0,
