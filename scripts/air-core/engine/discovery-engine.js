@@ -139,7 +139,7 @@ function suggestCriticality(test = {}, suggestedModule = {}, config = {}) {
 
 function buildDiscoveryEntry(test = {}, config = {}, previousTestIds = new Set()) {
   const matchingModules = getMatchingModules(test, config);
-  const mapped = Boolean(test.module && test.module !== 'General' && matchingModules.some(module => module.name === test.module));
+  const mapped = Boolean(test.module && test.module !== 'General');
   const suggestedModule = suggestModule(test, matchingModules);
   const suggestedJourney = suggestJourney(test, suggestedModule, config);
   const criticality = suggestCriticality(test, suggestedModule, config);
@@ -159,13 +159,30 @@ function buildDiscoveryEntry(test = {}, config = {}, previousTestIds = new Set()
 }
 
 function findDuplicateMappings(tests = [], config = {}) {
-  return tests
-    .map(test => ({
-      testId: test.id,
-      title: test.title,
-      matchingModules: getMatchingModules(test, config).map(module => module.name),
-    }))
-    .filter(item => item.matchingModules.length > 1);
+  const grouped = new Map();
+
+  for (const test of tests) {
+    const matchingModules = getMatchingModules(test, config).map(module => module.name);
+    if (matchingModules.length < 2) {
+      continue;
+    }
+
+    const key = matchingModules.slice().sort().join(' + ');
+    const current = grouped.get(key) ?? {
+      type: 'Duplicate mapping',
+      modules: matchingModules,
+      count: 0,
+      message: '',
+    };
+    current.count += 1;
+    grouped.set(key, current);
+  }
+
+  return [...grouped.values()].map(entry => ({
+    ...entry,
+    title: `${entry.count} test${entry.count === 1 ? '' : 's'} match${entry.count === 1 ? 'es' : ''} ${entry.modules.join(' and ')}`,
+    message: `${entry.count} test${entry.count === 1 ? '' : 's'} match${entry.count === 1 ? 'es' : ''} more than one configured module: ${entry.modules.join(', ')}.`,
+  }));
 }
 
 function findOrphanedMappings(discoveryEntries = [], config = {}) {
@@ -195,23 +212,7 @@ function findMissingJourneyConfiguration(config = {}) {
 }
 
 function findConfigurationIssues(discoveryEntries = [], tests = [], config = {}) {
-  const unmappedTests = discoveryEntries.filter(entry => entry.status === 'Unmapped');
-  const duplicateMappings = findDuplicateMappings(tests, config);
-
   return [
-    ...unmappedTests.map(entry => ({
-      type: 'Missing module configuration',
-      testId: entry.testId,
-      title: entry.title,
-      message: 'Executed test did not match a configured AIR module.',
-    })),
-    ...duplicateMappings.map(entry => ({
-      type: 'Duplicate mapping',
-      testId: entry.testId,
-      title: entry.title,
-      modules: entry.matchingModules,
-      message: 'Executed test matches more than one configured module.',
-    })),
     ...findOrphanedMappings(discoveryEntries, config),
     ...findMissingJourneyConfiguration(config),
   ];
