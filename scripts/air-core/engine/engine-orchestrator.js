@@ -257,6 +257,7 @@ function getDefaultEnginePipeline() {
         businessJourneys: model.businessJourneys,
         evidence: model.evidence,
         quality: model.quality,
+        coverageGaps: model.coverageGaps,
         config: context.config,
       });
 
@@ -273,7 +274,12 @@ function getDefaultEnginePipeline() {
     }),
     createEngine('Recommendation Engine', model => ({
       ...model,
-      recommendations: buildRecommendations(model.release, model.modules, model.futureValidation),
+      recommendations: buildRecommendations(
+        model.release,
+        model.modules,
+        model.futureValidation,
+        model.coverageGaps
+      ),
     })),
     createEngine('History Engine', (model, context) => ({
       ...model,

@@ -8,7 +8,7 @@ function getConfiguredModules(config = {}) {
 
 function getExecutedModules(modules = []) {
   return modules
-    .filter(module => (module.total ?? 0) > 0)
+    .filter(module => (module.executed ?? module.passed ?? 0) > 0)
     .map(module => module.name)
     .filter(Boolean);
 }

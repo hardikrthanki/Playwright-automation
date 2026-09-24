@@ -162,9 +162,12 @@ function controlledLifecycleTest(
     return;
   }
 
-  test.skip(
+  test(
     title,
-    async () => {
+    async ({ page }) => {
+      const skipReason =
+        `${reason} Enable SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED=true and ${flagName}=true.`;
+
       test.info().annotations.push({
         type: 'automation-status',
         description: 'controlled'
@@ -172,9 +175,11 @@ function controlledLifecycleTest(
 
       test.info().annotations.push({
         type: 'dependency',
-        description:
-          `${reason} Enable SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED=true and ${flagName}=true.`
+        description: skipReason
       });
+
+      test.skip(true, skipReason);
+      await body({ page });
     }
   );
 }

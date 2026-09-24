@@ -1,5 +1,6 @@
 const { formatDuration } = require('../services/duration');
 const { getFailureType } = require('./failure-engine');
+const { classifyGap, isDocumentedGapCategory } = require('./coverage-gap-engine');
 
 function matchByPatterns(title, items, fallback) {
   const normalizedTitle = String(title ?? '').toLowerCase();
@@ -23,8 +24,18 @@ function getModuleForTest(test, config) {
   return matchByPatterns(test.title, config.modules, fallback);
 }
 
+function getSkipCategory(test = {}) {
+  if (test.gapCategory) {
+    return test.gapCategory;
+  }
+
+  const category = classifyGap(test);
+  test.gapCategory = category;
+  return category;
+}
+
 function getModuleStatus(module) {
-  if (module.total === 0) {
+  if (module.executed === 0) {
     return 'Not Executed';
   }
 
@@ -32,7 +43,7 @@ function getModuleStatus(module) {
     return 'Critical';
   }
 
-  if (module.failed > 0 || module.skipped > 0 || module.interrupted > 0) {
+  if (module.failed > 0 || module.unexpectedSkipped > 0 || module.interrupted > 0) {
     return 'Warning';
   }
 
@@ -48,7 +59,7 @@ function getModuleRisk(module) {
     return 'High';
   }
 
-  if (module.failed > 0 || module.skipped > 0 || module.interrupted > 0) {
+  if (module.failed > 0 || module.unexpectedSkipped > 0 || module.interrupted > 0) {
     return 'Medium';
   }
 
@@ -64,8 +75,16 @@ function getModuleRecommendation(module) {
     return `Review ${module.name} automation or environment evidence before marking as product risk.`;
   }
 
-  if (module.skipped > 0 || module.interrupted > 0) {
-    return `Review skipped or interrupted ${module.name} coverage.`;
+  if (module.unexpectedSkipped > 0) {
+    return `Review ${module.unexpectedSkipped} unexpected skipped ${module.name} check(s).`;
+  }
+
+  if (module.documentedSkipped > 0) {
+    return `${module.name} executed coverage passed. ${module.documentedSkipped} documented gap(s) remain in Coverage Gaps.`;
+  }
+
+  if (module.interrupted > 0) {
+    return `Review interrupted ${module.name} coverage.`;
   }
 
   if (module.name === 'Billing') {
@@ -99,6 +118,9 @@ function buildModules(tests, config) {
         reviewFailed: 0,
         skipped: 0,
         interrupted: 0,
+        executed: 0,
+        documentedSkipped: 0,
+        unexpectedSkipped: 0,
         durationMs: 0,
         tests: [],
       });
@@ -109,11 +131,23 @@ function buildModules(tests, config) {
     module.durationMs += test.durationMs ?? 0;
     module.tests.push(test.id);
 
-    if (test.status === 'passed') module.passed += 1;
-    else if (test.status === 'skipped') module.skipped += 1;
-    else if (test.status === 'interrupted') module.interrupted += 1;
-    else {
+    if (test.status === 'passed') {
+      module.passed += 1;
+      module.executed += 1;
+    } else if (test.status === 'skipped') {
+      module.skipped += 1;
+      const category = getSkipCategory(test);
+      if (isDocumentedGapCategory(category)) {
+        module.documentedSkipped += 1;
+      } else {
+        module.unexpectedSkipped += 1;
+      }
+    } else if (test.status === 'interrupted') {
+      module.interrupted += 1;
+      module.executed += 1;
+    } else {
       module.failed += 1;
+      module.executed += 1;
 
       if (getFailureType(test) === 'Product') {
         module.productFailed += 1;
@@ -131,13 +165,17 @@ function buildModules(tests, config) {
   return [...moduleMap.values()]
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(module => {
-      const score = module.total === 0
+      const score = module.executed === 0
         ? 0
-        : Math.round((module.passed / module.total) * 100);
+        : Math.round((module.passed / module.executed) * 100);
+      const coverage = module.total === 0
+        ? 0
+        : Math.round((module.executed / module.total) * 100);
       const enrichedModule = {
         ...module,
         score,
-        coverage: score,
+        coverage,
+        inventoryScore: module.total === 0 ? 0 : Math.round((module.passed / module.total) * 100),
         testCount: module.total,
         failedCount: module.failed,
         productFailedCount: module.productFailed,

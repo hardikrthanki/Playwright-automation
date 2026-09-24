@@ -86,6 +86,31 @@ function normalizeSuiteTitleForFile(suiteTitle = [], file = '') {
   return suiteTitle;
 }
 
+function firstMessage(value) {
+  if (!value) {
+    return '';
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return value.message ?? value.value ?? '';
+}
+
+function getAttemptErrorMessage(result = {}, test = {}) {
+  const skipAnnotation = (result.annotations ?? test.annotations ?? [])
+    .find(annotation => ['skip', 'fixme'].includes(String(annotation?.type ?? '').toLowerCase()))
+    ?.description;
+
+  return firstMessage(result.error)
+    || firstMessage((result.errors ?? [])[0])
+    || firstMessage(result.skipReason)
+    || firstMessage(test.skipReason)
+    || skipAnnotation
+    || '';
+}
+
 function normalizeAttempt(result = {}, test = {}) {
   const retry = result.retry ?? 0;
 
@@ -95,7 +120,7 @@ function normalizeAttempt(result = {}, test = {}) {
     retry,
     status: normalizeStatus(result.status ?? test.status ?? test.outcome),
     durationMs: result.duration ?? 0,
-    error: result.error?.message ?? '',
+    error: getAttemptErrorMessage(result, test),
     annotations: [
       ...(test.annotations ?? []),
       ...(result.annotations ?? []),
@@ -161,7 +186,7 @@ function buildCanonicalTestRecord({
     project,
     status: finalStatus,
     durationMs: attempts.reduce((sum, attempt) => sum + (attempt.durationMs ?? 0), 0),
-    error: finalAttempt?.error?.message ?? attempts.find(attempt => attempt.error)?.error ?? '',
+    error: getAttemptErrorMessage(finalAttempt ?? {}, test) || attempts.find(attempt => attempt.error)?.error || '',
     retry: finalAttempt?.retry ?? 0,
     attempts,
     attemptCount: attempts.length,
