@@ -469,6 +469,22 @@ extends BasePage {
 
 
 
+  private async waitForPasswordFieldsReady() {
+    await expect(
+      this.passwordInput
+    ).toBeEditable({
+      timeout: 5000
+    });
+
+    await expect(
+      this.confirmPasswordInput
+    ).toBeEditable({
+      timeout: 5000
+    });
+  }
+
+
+
   private async waitForSendCodeEnabled() {
     const enabled =
       await this.sendCodeButton
@@ -644,23 +660,7 @@ extends BasePage {
         'OTP Verify Clicked'
       );
 
-      await expect(
-        this.page.getByText(
-          /^verified$/i
-        ).first()
-      ).toBeVisible({
-        timeout: 15000
-      }).catch(
-        () => undefined
-      );
-
-      await expect(
-        this.passwordInput
-      ).toBeVisible({
-        timeout: 15000
-      }).catch(
-        () => undefined
-      );
+      await this.waitForPasswordFieldsReady();
     } else {
       Logger.info(
         'Registration mobile OTP is disabled in auth settings'
