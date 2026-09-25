@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "future-pios/schemas/validation-readiness.schema.json",
+  "title": "AIR Validation Readiness (Future)",
+  "type": "object",
+  "required": [
+    "validationReadiness",
+    "confidence",
+    "reasons",
+    "blockers",
+    "warnings",
+    "requiredActions"
+  ],
+  "properties": {
+    "validationReadiness": {
+      "type": "string",
+      "enum": ["SUFFICIENT", "CONDITIONAL", "INSUFFICIENT"]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 100 },
+    "reasons": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array" },
+    "warnings": { "type": "array" },
+    "requiredActions": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "object" },
+    "affectedModules": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "affectedJourneys": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "failedTests": { "type": "array" },
+    "qualitySignals": { "type": "object" },
+    "ownership": {
+      "type": "object",
+      "properties": {
+        "product": { "const": "AIR" },
+        "signal": { "const": "validationReadiness" },
+        "governedReleaseDecisionOwner": { "const": "RI" }
+      }
+    }
+  },
+  "not": {
+    "properties": {
+      "validationReadiness": {
+        "enum": ["GO", "CONDITIONAL GO", "NO GO", "NO-GO"]
+      }
+    }
+  }
+}

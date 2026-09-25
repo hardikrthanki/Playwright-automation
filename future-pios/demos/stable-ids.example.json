@@ -1,0 +1,38 @@
+{
+  "note": "Example IDs only. Not consumed by current AIR.",
+  "project": {
+    "id": "OOLTOOL-MVP",
+    "name": "OOLTool MVP"
+  },
+  "requirement": {
+    "id": "REQ-ONB-001",
+    "title": "User can successfully complete onboarding",
+    "ownerProduct": "RIE"
+  },
+  "journey": {
+    "id": "JRN-ONBOARDING-001",
+    "name": "Customer Onboarding",
+    "ownerProduct": "PIOS shared reference / AIR mapping"
+  },
+  "test": {
+    "id": "TEST-ONBOARDING-001",
+    "title": "Complete onboarding flow",
+    "ownerProduct": "AIR automation test identity"
+  },
+  "execution": {
+    "id": "EXEC-2026-09-25-001",
+    "ownerProduct": "AIR"
+  },
+  "evidence": {
+    "id": "EVD-2026-09-25-001",
+    "type": "screenshot",
+    "ownerProduct": "AIR validation evidence",
+    "identityOwner": "PIOS"
+  },
+  "relationships": [
+    { "from": "REQ-ONB-001", "to": "JRN-ONBOARDING-001", "type": "VALIDATED_BY_JOURNEY" },
+    { "from": "JRN-ONBOARDING-001", "to": "TEST-ONBOARDING-001", "type": "COVERED_BY_TEST" },
+    { "from": "TEST-ONBOARDING-001", "to": "EXEC-2026-09-25-001", "type": "EXECUTED_AS" },
+    { "from": "EXEC-2026-09-25-001", "to": "EVD-2026-09-25-001", "type": "HAS_EVIDENCE" }
+  ]
+}

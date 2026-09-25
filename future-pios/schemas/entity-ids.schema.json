@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "future-pios/schemas/entity-ids.schema.json",
+  "title": "PIOS Stable Entity Identity (Future)",
+  "type": "object",
+  "required": ["id", "source", "projectId"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "externalId": { "type": ["string", "null"] },
+    "source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "air",
+        "rie",
+        "ri",
+        "oi",
+        "pios",
+        "jira",
+        "azure-devops",
+        "github",
+        "playwright",
+        "other"
+      ]
+    },
+    "projectId": { "type": "string" },
+    "productId": { "type": ["string", "null"] },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}
