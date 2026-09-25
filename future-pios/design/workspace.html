@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Workspace — PIOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=contrast" />
+</head>
+<body>
+  <div class="isolated-banner">
+    <div class="shell"><strong>Isolated design</strong> — click any row, card, or ID to open related intelligence.</div>
+  </div>
+
+  <header class="topnav">
+    <div class="shell topnav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">P</div>
+        <div><strong>PIOS</strong><span>Product Intelligence Operating System</span></div>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a class="active" href="workspace.html">Workspace</a>
+        <a href="start.html">Start / Analyze</a>
+        <a href="products/rie.html">RIE</a>
+        <a href="products/air.html">AIR</a>
+        <a href="products/ri.html">RI</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="btn btn-primary btn-sm" href="start.html">Analyze →</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell workspace-layout">
+    <aside class="side">
+      <div class="kicker" id="wsProjectId">OOLTOOL-MVP</div>
+      <strong id="wsProjectName" style="display:block;margin-bottom:4px">Subscription Intelligence</strong>
+      <span style="color:var(--dim);font-size:12px">Project Workspace · aggregation only</span>
+      <div class="group-label">Navigate</div>
+      <nav class="side-nav" id="wsSideNav">
+        <a href="#overview" data-tab="overview" class="active">Overview</a>
+        <a href="#attention" data-tab="attention">Attention</a>
+        <a href="#requirements" data-tab="requirements">Requirements · RIE</a>
+        <a href="#dependencies" data-tab="dependencies">Dependencies</a>
+        <a href="#risks" data-tab="risks">Risks</a>
+        <a href="#questions" data-tab="questions">Questions</a>
+        <a href="#air" data-tab="air">AIR · Validation</a>
+        <a href="#evidence" data-tab="evidence">Evidence</a>
+        <a href="#ri" data-tab="ri">RI · Release</a>
+        <a href="#trace" data-tab="trace">Traceability</a>
+        <a href="#knowledge" data-tab="knowledge">Knowledge</a>
+      </nav>
+    </aside>
+
+    <section class="main">
+      <div class="kicker">Project Overview</div>
+      <h2 id="wsHeading">What is happening in this project?</h2>
+      <p class="subcopy">Click any metric, attention item, or table row to open related entities and evidence.</p>
+
+      <div class="kpi-grid" id="wsKpis"></div>
+      <div class="ws-tabs" id="wsTabs"></div>
+
+      <div class="ws-panel" id="panel-overview"></div>
+      <div class="ws-panel" id="panel-attention" hidden></div>
+      <div class="ws-panel" id="panel-requirements" hidden></div>
+      <div class="ws-panel" id="panel-dependencies" hidden></div>
+      <div class="ws-panel" id="panel-risks" hidden></div>
+      <div class="ws-panel" id="panel-questions" hidden></div>
+      <div class="ws-panel" id="panel-air" hidden></div>
+      <div class="ws-panel" id="panel-evidence" hidden></div>
+      <div class="ws-panel" id="panel-ri" hidden></div>
+      <div class="ws-panel" id="panel-trace" hidden></div>
+      <div class="ws-panel" id="panel-knowledge" hidden></div>
+    </section>
+
+    <aside class="rail">
+      <div class="kicker">Live context</div>
+      <div class="status-card" style="margin-top:12px">
+        <div class="label">Validation readiness</div>
+        <p id="railReadiness" style="margin:8px 0 0;color:var(--amber);font-weight:700">CONDITIONAL</p>
+      </div>
+      <div class="status-card" style="margin-top:10px">
+        <div class="label">Release decision</div>
+        <p id="railRelease" style="margin:8px 0 0;font-weight:700">PENDING · RI</p>
+      </div>
+      <div class="cta-row" style="margin-top:14px;flex-direction:column">
+        <a class="btn btn-ghost btn-sm" href="start.html">Open Analyze / Review</a>
+        <a class="btn btn-ghost btn-sm" href="products/air.html">AIR product</a>
+        <a class="btn btn-ghost btn-sm" href="products/ri.html">RI product</a>
+        <button class="btn btn-primary btn-sm" type="button" id="seedDemoBtn">Load demo data</button>
+      </div>
+      <p style="color:var(--dim);font-size:12px;margin-top:14px">AI assists. Humans govern. Evidence before Intelligence.</p>
+    </aside>
+  </main>
+
+  <script src="data.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+  <script src="workspace.js?v=5"></script>
+</body>
+</html>

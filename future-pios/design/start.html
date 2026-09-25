@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Start Project — PIOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=contrast" />
+  <link rel="stylesheet" href="start.css?v=contrast" />
+</head>
+<body>
+  <div class="isolated-banner">
+    <div class="shell"><strong>Isolated design prototype</strong> — Full start flow mirrors your live design, with RIE → AIR → RI → OI architecture.</div>
+  </div>
+
+  <header class="topnav">
+    <div class="shell topnav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">P</div>
+        <div><strong>PIOS</strong><span>Product Intelligence Operating System</span></div>
+      </a>
+      <div class="nav-actions">
+        <span class="version-pill">Requirement Intelligence · RIE</span>
+        <a class="btn btn-ghost btn-sm" href="index.html">Exit workspace</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell workspace-layout start-layout">
+    <aside class="side">
+      <div class="kicker">Intelligence lifecycle</div>
+      <nav class="side-nav lifecycle-nav" id="lifecycleNav">
+        <button type="button" class="life-link active" data-stage="0"><span class="life-mark">01</span> Requirement Input · RIE</button>
+        <button type="button" class="life-link" data-stage="1" disabled><span class="life-mark">02</span> Understanding · RIE</button>
+        <button type="button" class="life-link" data-stage="2" disabled><span class="life-mark">03</span> Dependencies · RIE</button>
+        <button type="button" class="life-link" data-stage="3" disabled><span class="life-mark">04</span> Risks · RIE</button>
+        <button type="button" class="life-link" data-stage="4" disabled><span class="life-mark">05</span> Validation · AIR</button>
+        <button type="button" class="life-link" data-stage="5" disabled><span class="life-mark">06</span> Evidence · Shared</button>
+        <button type="button" class="life-link" data-stage="6" disabled><span class="life-mark">07</span> Release · RI</button>
+        <button type="button" class="life-link" data-stage="7" disabled><span class="life-mark">08</span> Observe · OI</button>
+        <button type="button" class="life-link" data-stage="8" disabled><span class="life-mark">09</span> Learn / Reuse · PIOS</button>
+      </nav>
+      <div class="notice" id="lifecycleHint">Upload or paste a requirement, then Analyze. Counters unlock as each stage completes.</div>
+    </aside>
+
+    <section class="main">
+      <!-- SCREEN A: INPUT -->
+      <div id="screenInput">
+        <div class="kicker">New project · Requirement Intelligence</div>
+        <h1 class="start-title">Begin with the <em>requirement</em>.</h1>
+        <p class="lede">Upload project documents or paste a requirement. Then watch PIOS turn raw input into structured project intelligence.</p>
+
+        <label class="kicker field-label" for="projectName">Project name</label>
+        <input id="projectName" value="Subscription Intelligence" />
+
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="upload" role="tab">Upload documents</button>
+          <button type="button" class="tab" data-tab="paste" role="tab">Paste requirement</button>
+        </div>
+
+        <div id="uploadPanel" class="tab-panel">
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.md,.png,.jpg,.jpeg" hidden />
+            <div class="drop-icon">↑</div>
+            <strong>Drop project documents here</strong>
+            <p class="subcopy">Upload one file or bring the complete project context together.</p>
+            <div class="cta-row" style="justify-content:center">
+              <button class="btn btn-ghost" type="button" id="browseBtn">Browse files</button>
+            </div>
+            <p class="file-types">Available today · PDF · DOCX · XLSX · TXT · Markdown</p>
+          </div>
+          <div id="fileList" class="file-list" hidden></div>
+        </div>
+
+        <div id="pastePanel" class="tab-panel" hidden>
+          <label class="kicker field-label" for="requirementText">Requirement</label>
+          <textarea id="requirementText" rows="8">When a customer upgrades their subscription, every active session must remain valid and receive the updated entitlements without forcing logout.</textarea>
+        </div>
+
+        <div class="analyze-bar">
+          <div>
+            <div class="status-line" id="statusLine">Waiting for requirement</div>
+            <div class="eta" id="etaLine">Estimated 20–40 seconds after analyze</div>
+          </div>
+          <button class="btn btn-primary" type="button" id="analyzeBtn" disabled>Analyze Project →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN B: ANALYZING -->
+      <div id="screenAnalyze" hidden>
+        <div class="analyze-top">
+          <div>
+            <div class="kicker" id="analyzeStageLabel">Stage 02 of 09 · Understanding</div>
+            <h1 class="start-title">Watch PIOS understand <em>your project</em>.</h1>
+            <p class="lede">Every finding begins with source context. PIOS reads, connects, questions, and plans before asking a human to review.</p>
+          </div>
+          <div class="progress-card">
+            <span>AI WORKING</span>
+            <strong id="analyzePercent">0%</strong>
+            <small id="analyzeEta">+ 20 seconds remaining</small>
+          </div>
+        </div>
+
+        <div class="source-bar" id="sourceBar">Source validated · Waiting</div>
+
+        <div class="analyze-grid">
+          <div class="radar-panel">
+            <div class="radar">
+              <div class="radar-ring"></div>
+              <div class="radar-ring delay"></div>
+              <div class="radar-core">PIOS</div>
+            </div>
+            <p id="radarStatus">Reading document…</p>
+          </div>
+          <div class="pipeline-panel">
+            <div class="kicker">Source → Intelligence</div>
+            <ol class="pipeline" id="pipelineList"></ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN C: REVIEW -->
+      <div id="screenReview" hidden>
+        <div class="review-complete-banner">
+          <div class="check-orb" aria-hidden="true">✓</div>
+          <div class="review-hero">
+            <div>
+              <div class="kicker success-kicker">AI analysis complete · Human review open</div>
+              <h1 class="start-title">Project intelligence is ready to <em>review</em>.</h1>
+              <p class="lede">Six findings generated for human review. AI assists. Humans govern.</p>
+            </div>
+            <div class="cta-row">
+              <button class="btn btn-primary" type="button" id="focusReviewBtn">Review AI Findings →</button>
+              <button class="btn btn-ghost" type="button" id="analyzeAnotherBtn">Analyze another</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-grid review-kpis" id="reviewKpis"></div>
+        <div class="meta-grid" id="reviewMeta"></div>
+
+        <div class="progress-trio">
+          <div class="prog-item"><span>RIE Analysis</span><strong id="progAi">100%</strong><div class="bar"><i style="width:100%"></i></div><small>6 of 6 findings generated</small></div>
+          <div class="prog-item"><span>Human Review</span><strong id="progHuman">0 of 6</strong><div class="bar"><i id="progHumanBar" style="width:0%"></i></div><small id="progHumanDetail">0 accepted · 0 edited · 0 rejected · 6 pending</small></div>
+          <div class="prog-item"><span>Repository</span><strong id="progRepo">0%</strong><div class="bar"><i id="progRepoBar" style="width:0%"></i></div><small id="progRepoDetail">Locked until review gates pass</small></div>
+        </div>
+
+        <div class="milestone-track" id="milestoneTrack"></div>
+
+        <div class="transparency-bar">
+          <div class="kicker">PIOS Transparency Layer</div>
+          <div class="cta-row">
+            <button class="btn btn-ghost btn-sm" type="button" data-open-modal="evidence">Source Evidence</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-open-modal="deps">Dependency Graph</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-open-modal="trace">End-to-End Traceability</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-open-modal="status">Review Status Board</button>
+          </div>
+        </div>
+
+        <div class="finding-filters" id="findingFilters"></div>
+
+        <div class="findings-accordion" id="reviewPanel">
+          <div class="queue-summary" id="queueSummary">6 Findings · 0 Accepted · 1 Current · 5 Pending</div>
+          <div id="findingsAccordion"></div>
+        </div>
+
+        <div class="status-board panel pad" id="statusBoard"></div>
+
+        <div class="ack-stack" id="ackStack"></div>
+
+        <div class="split-2 review-lower">
+          <div class="panel pad">
+            <div class="kicker">Gap analysis · click to open</div>
+            <div id="gapList" class="gap-list"></div>
+          </div>
+          <div class="panel pad">
+            <div class="kicker">Dependency intelligence</div>
+            <div class="dep-path" id="depPath"></div>
+            <p class="subcopy" id="depNote"></p>
+            <button class="btn btn-ghost btn-sm" type="button" data-open-modal="deps">Open full graph →</button>
+          </div>
+        </div>
+
+        <div class="split-2 review-lower">
+          <div class="panel pad" id="gatesPanel"></div>
+          <div class="panel pad" id="pillarPanel"></div>
+        </div>
+
+        <div class="repo-footer" id="repoFooter">
+          <p id="repoSummary">6 pending findings · 2 critical questions · 0 unresolved comments · 2 traceability gaps.</p>
+          <button class="btn btn-primary" type="button" id="repoLockBtn">Repository Locked</button>
+        </div>
+
+        <div class="cta-row review-final">
+          <button class="btn btn-primary" type="button" id="reviewCompleteBtn" disabled>Review Completed</button>
+          <a class="btn btn-ghost" href="workspace.html">Open Project Workspace →</a>
+          <a class="btn btn-ghost" href="products/air.html">AIR readiness →</a>
+          <a class="btn btn-ghost" href="products/ri.html">RI decision boundary →</a>
+        </div>
+
+        <div class="panel pad ownership-note">
+          <div class="kicker">Architecture boundary</div>
+          <p>This review belongs to <strong>RIE</strong>. AIR later supplies validation readiness. <strong>RI</strong> owns GO / CONDITIONAL GO / NO-GO. Repository approval stays locked until humans finish review.</p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="rail" id="contextRail">
+      <div class="project-chip">
+        <span class="project-mark">PS</span>
+        <div>
+          <strong id="railProjectName">Subscription Intelligence</strong>
+          <small id="railLive">Waiting</small>
+        </div>
+      </div>
+
+      <div class="kicker rail-kicker">Live project context</div>
+      <button type="button" class="kpi click-card" data-topic="files" style="width:100%;text-align:left"><span>Files</span><strong id="countFiles">0</strong></button>
+      <button type="button" class="kpi click-card" data-topic="files" style="width:100%;text-align:left"><span>Pages</span><strong id="countPages">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="requirements" style="width:100%;text-align:left"><span>Requirements</span><strong id="countRequirements">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="rules" style="width:100%;text-align:left"><span>Business Rules</span><strong id="countRules">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="dependencies" style="width:100%;text-align:left"><span>Dependencies</span><strong id="countDependencies">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="risks" style="width:100%;text-align:left"><span>Risks</span><strong id="countRisks">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="questions" style="width:100%;text-align:left"><span>Open Questions</span><strong id="countQuestions">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="readiness" style="width:100%;text-align:left"><span>Validation readiness</span><strong id="countReadiness">—</strong></button>
+      <button type="button" class="kpi click-card" data-topic="release" style="width:100%;text-align:left"><span>Release decision</span><strong id="countRelease">—</strong></button>
+
+      <button type="button" class="status-card click-card" data-topic="project" style="width:100%;text-align:left;cursor:pointer">
+        <div class="label">Status</div>
+        <p id="railStatus">Waiting for requirement</p>
+      </button>
+      <p class="rail-note">Values appear as the intelligence pipeline unlocks each stage.</p>
+    </aside>
+  </main>
+
+  <!-- Transparency modals -->
+  <div class="tx-modal" id="modalEvidence" hidden>
+    <div class="tx-backdrop" data-close-modal></div>
+    <div class="tx-panel" role="dialog" aria-modal="true" aria-labelledby="evidenceTitle">
+      <header class="tx-head">
+        <div>
+          <div class="kicker">PIOS Transparency Layer</div>
+          <h2 id="evidenceTitle">Source Evidence · Document Context</h2>
+        </div>
+        <button type="button" class="tx-close" data-close-modal aria-label="Close">×</button>
+      </header>
+      <div id="evidenceBody" class="tx-body"></div>
+    </div>
+  </div>
+
+  <div class="tx-modal" id="modalDeps" hidden>
+    <div class="tx-backdrop" data-close-modal></div>
+    <div class="tx-panel tx-wide" role="dialog" aria-modal="true">
+      <header class="tx-head">
+        <div>
+          <div class="kicker">PIOS Transparency Layer</div>
+          <h2>Dependency Graph</h2>
+          <p class="subcopy">PIOS connects the requirement to every service whose state can change the customer outcome.</p>
+        </div>
+        <div class="tx-head-actions">
+          <div class="seg" id="depViewSeg">
+            <button type="button" class="active" data-dep-view="graph">Graph view</button>
+            <button type="button" data-dep-view="list">List view</button>
+          </div>
+          <button type="button" class="tx-close" data-close-modal aria-label="Close">×</button>
+        </div>
+      </header>
+      <div id="depsBody" class="tx-body"></div>
+    </div>
+  </div>
+
+  <div class="tx-modal" id="modalTrace" hidden>
+    <div class="tx-backdrop" data-close-modal></div>
+    <div class="tx-panel tx-wide" role="dialog" aria-modal="true">
+      <header class="tx-head">
+        <div>
+          <div class="kicker">PIOS Transparency Layer</div>
+          <h2>End-to-End Traceability</h2>
+          <p class="subcopy">Move forward from requirement to business outcome—or reverse from failed evidence to the source requirement.</p>
+        </div>
+        <div class="tx-head-actions">
+          <div class="seg" id="traceFlowSeg">
+            <button type="button" class="active" data-trace-flow="forward">Requirement → Outcome</button>
+            <button type="button" data-trace-flow="reverse">Evidence → Requirement</button>
+          </div>
+          <button type="button" class="tx-close" data-close-modal aria-label="Close">×</button>
+        </div>
+      </header>
+      <div id="traceBody" class="tx-body"></div>
+    </div>
+  </div>
+
+  <div class="tx-modal" id="modalStatus" hidden>
+    <div class="tx-backdrop" data-close-modal></div>
+    <div class="tx-panel tx-wide" role="dialog" aria-modal="true">
+      <header class="tx-head">
+        <div>
+          <div class="kicker">Human governance</div>
+          <h2>Review Status Board</h2>
+        </div>
+        <button type="button" class="tx-close" data-close-modal aria-label="Close">×</button>
+      </header>
+      <div id="statusModalBody" class="tx-body"></div>
+    </div>
+  </div>
+
+  <script src="data.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+  <script src="start.js?v=5"></script>
+</body>
+</html>

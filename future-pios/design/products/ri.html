@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RI — Release Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css?v=contrast" />
+</head>
+<body>
+  <div class="isolated-banner"><div class="shell"><strong>Isolated design prototype</strong> — RI owns governed release decisions</div></div>
+  <header class="topnav">
+    <div class="shell topnav-inner">
+      <a class="brand" href="../index.html"><div class="brand-mark">P</div><div><strong>PIOS</strong><span>Product Intelligence Operating System</span></div></a>
+      <nav class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="../workspace.html">Workspace</a>
+        <a href="rie.html">RIE</a>
+        <a href="air.html">AIR</a>
+        <a class="active" href="ri.html">RI</a>
+        <a href="oi.html">OI</a>
+      </nav>
+      <a class="btn btn-ghost btn-sm" href="../workspace.html">Workspace</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="page-hero">
+      <div>
+        <div class="eyebrow">Product · Release</div>
+        <h1>RI</h1>
+        <p class="question" style="font-family:var(--display);font-style:italic;color:var(--lime);font-size:24px;margin-top:14px">Can we safely release it?</p>
+        <p class="lede">Release Intelligence combines requirement readiness, validation readiness, defects, risks, gates, and approvals into an explainable human-governed decision.</p>
+      </div>
+      <aside class="status-card">
+        <div class="label">Product maturity</div>
+        <span class="badge badge-planned">Planned</span>
+        <p style="color:var(--muted);font-size:13px;margin:14px 0 0">Shown in design now so AIR no longer pretends to own release.</p>
+      </aside>
+    </section>
+
+    <section class="section" style="padding-top:8px">
+      <div class="panel" style="padding:22px" id="productLive" data-product="ri"></div>
+      <div class="notice" style="margin-top:16px">
+        AI and AIR may recommend. They cannot silently issue GO or NO-GO. Every RI decision needs reasons, evidence, blockers, accepted risks, actions, approvers, and history.
+      </div>
+    </section>
+  </main>
+  <script src="../data.js?v=5"></script>
+  <script src="../app.js?v=5"></script>
+  <script src="../products.js?v=5"></script>
+</body>
+</html>

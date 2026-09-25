@@ -31,11 +31,24 @@ It is intentionally **separate** from the current working AIR / Playwright proje
 | RI | Can we safely release it? |
 | OI | What happened after release? |
 
+## Design prototype
+
+A separate static UI redesign lives in:
+
+```text
+future-pios/design/
+```
+
+Open `future-pios/design/index.html` in a browser.
+
+It redesigns the vision site around RIE / AIR / RI / OI and does **not** touch the current AIR project.
+
 ## Folder map
 
 ```text
 future-pios/
 ├── README.md                          ← you are here
+├── design/                            ← isolated UI redesign
 ├── IMPLEMENTATION_SEQUENCE.md         ← ordered future work
 ├── architecture/
 │   ├── OVERVIEW.md
