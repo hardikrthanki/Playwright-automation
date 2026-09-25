@@ -260,6 +260,28 @@ AIR normalized data file:
 execution-report\air-results.json
 ```
 
+### Adding tests (developers)
+
+Short guide for new menu / button / nav coverage:
+
+```text
+docs/HOW_TO_ADD_A_TEST.md
+```
+
+Copyable UI-control template + checklist:
+
+```text
+tests/_templates/UiControlCheck.spec.ts
+```
+
+After adding a case, run it, then regenerate AIR so **Coverage by area** and
+**Product Health** pick it up. Evidence links to the same local package:
+
+```text
+playwright-report\index.html
+test-results\
+```
+
 ## Generate Test Inventory Report Without Running Tests
 
 Use this when you want a full test-case inventory and coverage map without
@@ -900,6 +922,14 @@ $env:SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED="true"
 $env:SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED="true"
 $env:SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED="true"
 $env:SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED="true"
+```
+
+One new user: purchase Income Builder, then upgrade to each next plan and validate the calculation. Email verification is a manual step in the browser:
+
+```powershell
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_FREE_LADDER_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "purchase each paid plan and upgrade" --headed
 ```
 
 Yearly refund is its own disposable user:

@@ -3655,23 +3655,33 @@ const evidenceSummaryText = visualProofCount > 0
       evidenceCounts.videos ? `${evidenceCounts.videos} video${evidenceCounts.videos === 1 ? '' : 's'}` : '',
       evidenceCounts.traces ? `${evidenceCounts.traces} trace${evidenceCounts.traces === 1 ? '' : 's'}` : '',
       evidenceCounts.logs ? `${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'}` : '',
-    ].filter(Boolean).join(', ') + ' saved.'
+    ].filter(Boolean).join(', ') + ' saved with this run.'
   : evidenceCounts.logs > 0
-    ? `No screenshots, videos, or traces. ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'} are in the test log.`
+    ? `No screenshots, videos, or traces. ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'} are under test-results/.`
     : hasPlaywrightReport
-      ? 'No screenshots, videos, or traces. The test log still has the run record.'
+      ? 'No screenshots, videos, or traces for this run. Step detail is still in playwright-report/.'
       : 'No proof was saved for this run.';
+const evidencePackageNote =
+  'Same local package as this AIR report: playwright-report/ (step-by-step HTML) and test-results/ (raw artifacts — screenshots, videos, traces, logs, results.json).';
+const evidencePlaywrightCta = hasPlaywrightReport
+  ? `<a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>`
+  : `<span class="btn ghost" title="Run tests to create playwright-report/index.html">Playwright report not found</span>`;
 const evidenceHeroHtml = `
   <div class="evidence-hero">
     <div>
       <span class="mission-label">Evidence</span>
-      <strong>${visualProofCount > 0 ? 'Proof available' : hasPlaywrightReport || evidenceCounts.logs > 0 ? 'No images saved' : 'No proof saved'}</strong>
+      <strong>${visualProofCount > 0 ? 'Proof available' : hasPlaywrightReport || evidenceCounts.logs > 0 ? 'Run log available' : 'No proof saved'}</strong>
       <p>${escapeHtml(evidenceSummaryText)}</p>
+      <p class="evidence-path-note">${escapeHtml(evidencePackageNote)}</p>
+      <div class="evidence-cta-row">
+        ${evidencePlaywrightCta}
+        <a class="btn" href="../test-results/results.json" target="_blank" rel="noopener">Open results.json</a>
+      </div>
     </div>
     <div class="evidence-score-card ${visualProofCount > 0 ? '' : 'muted'}">
       <span>Screenshots</span>
       <strong>${evidenceCounts.screenshots}</strong>
-      <small>${hasPlaywrightReport ? 'Test log is linked' : 'Test log is not linked'}</small>
+      <small>${hasPlaywrightReport ? 'Playwright report linked' : 'Playwright report missing'}</small>
     </div>
   </div>
   ${evidenceProofStripHtml}`;
@@ -3740,9 +3750,9 @@ const evidenceThumbnails =
           </div>`
         : renderEmptyState({
           icon: 'EV',
-          title: 'Evidence not available.',
-          reason: 'No evidence artifacts were generated for this execution.',
-          action: 'Enable screenshots, videos, or traces in automation configuration.',
+          title: 'No screenshots in this package.',
+          reason: 'Open playwright-report/ for step detail, or test-results/ for raw artifacts when present.',
+          action: 'Set RECORD_ALL_ARTIFACTS=true to keep screenshots, videos, and traces for passed checks.',
         }))
       .slice(0, demoMode ? 4 : 1)
       .join('');
@@ -5317,7 +5327,7 @@ const readerAttentionNames = journeysNeedingReview.map(journey => journey.name);
 const readerGuideSteps = [
   {
     question: 'Can we release?',
-    answer: `${executiveData.releaseDecision}. ${executiveHeroSubtitle} Confidence is ${executiveConfidence}%. Risk is ${estimatedReleaseRisk}.`,
+    answer: `${executiveData.releaseDecision}. Confidence ${executiveConfidence}%. Risk ${estimatedReleaseRisk}.`,
     href: '#executive',
     open: 'Why',
     tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
@@ -5325,8 +5335,8 @@ const readerGuideSteps = [
   {
     question: 'Did anything fail?',
     answer: executiveData.failed > 0
-      ? `${executiveData.failed} check${executiveData.failed === 1 ? '' : 's'} failed. Start there before anything else.`
-      : `No. ${executiveData.executed ?? executiveData.passed} of ${executiveData.total} checks ran, and every one that ran passed.`,
+      ? `${executiveData.failed} check${executiveData.failed === 1 ? '' : 's'} failed.`
+      : `No. ${executiveData.executed ?? executiveData.passed} of ${executiveData.total} ran and passed.`,
     href: '#failures',
     open: 'Failures',
     tone: executiveData.failed > 0 ? 'bad' : 'good',
@@ -5334,30 +5344,34 @@ const readerGuideSteps = [
   {
     question: 'What needs a look?',
     answer: readerAttentionNames.length
-      ? `${readerAttentionNames.join(', ')}. ${healthyModuleCount} of ${displayModules.length} product areas are healthy.`
-      : `Every path that ran is healthy. ${healthyModuleCount} of ${displayModules.length} product areas are healthy.`,
+      ? `${readerAttentionNames.join(', ')}.`
+      : `Nothing. ${healthyModuleCount}/${displayModules.length} areas healthy.`,
     href: '#journey',
     open: 'Paths',
     tone: readerAttentionNames.length ? 'warn' : 'good',
   },
   {
     question: 'What proof is there?',
-    answer: evidenceSummaryText,
+    answer: visualProofCount > 0
+      ? evidenceSummaryText
+      : hasPlaywrightReport
+        ? 'Open Playwright report for step detail.'
+        : evidenceSummaryText,
     href: '#evidence',
     open: 'Evidence',
-    tone: visualProofCount > 0 ? 'good' : 'warn',
+    tone: visualProofCount > 0 || hasPlaywrightReport ? 'good' : 'warn',
   },
   {
     question: 'What should we do?',
     answer: releaseRecommendedAction,
     href: '#executive',
-    open: 'Next step',
+    open: 'Next',
     tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
   },
 ];
 const readerGuideHtml = `
   <section class="reader-guide" aria-label="How to read this report">
-    <h2>Read this first</h2>
+    <h2>Five answers</h2>
     <div class="reader-guide-list">
       ${readerGuideSteps.map((step, index) => `
         <a class="reader-step ${step.tone}" href="${step.href}">
@@ -5373,7 +5387,7 @@ const executiveModeShellHtml = `
     <div>
       <div class="eyebrow">${escapeHtml(projectName)} · ${escapeHtml(environment)}</div>
       <h1>Release Brief</h1>
-      <p>Five answers for this release. Open a row for the detail behind it.</p>
+      <p>Five answers, then the decision. Health, paths, and evidence follow. Everything else is one click.</p>
     </div>
     <div class="executive-toolbar">
       <span>${escapeHtml(generatedAt)}</span>
@@ -5388,7 +5402,7 @@ const executiveModeShellHtml = `
         <span>${executiveData.releaseDecision === 'NO GO' ? '!' : 'OK'}</span>
       </div>
       <div class="release-cockpit-content">
-        <span class="cockpit-label">Release Decision</span>
+        <span class="cockpit-label">Decision</span>
         ${releaseStatusBadge}
         <p>${executiveData.executed ?? executiveData.passed} of ${executiveData.total} planned checks ran. ${executiveData.failed === 0 ? 'Every one passed.' : `${executiveData.failed} failed.`}</p>
         <div class="cockpit-mini-grid">
@@ -5401,8 +5415,8 @@ const executiveModeShellHtml = `
     </div>
     <div class="executive-kpi-stack">
       <button class="executive-kpi mark-good interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Of checks that ran</small></button>
-      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.inventoryPassRate ?? executiveData.passRate}% of the plan</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'All that ran passed' : `${executiveData.passRate}% pass rate`}</small></div>
+      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.inventoryPassRate ?? executiveData.passRate}% of plan</small></div>
+      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'None' : `${executiveData.passRate}% pass`}</small></div>
       <div class="executive-kpi ${healthyModuleCount < displayModules.length ? 'mark-warn' : 'mark-good'}"><span>Areas</span><strong>${healthyModuleCount}</strong><small>healthy of ${displayModules.length}</small></div>
       <div class="executive-kpi ${journeysNeedingReview.length ? 'mark-warn' : 'mark-good'}"><span>Paths</span><strong>${liveBusinessJourneys.length - journeysNeedingReview.length}</strong><small>healthy of ${liveBusinessJourneys.length}</small></div>
     </div>
@@ -8330,6 +8344,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     .reader-guide:not(.report-more) .reader-step.bad em{border-color:rgba(255,123,114,.4);background:rgba(255,123,114,.1);color:#ff7b72}
     .reader-guide:not(.report-more) .reader-step:hover{transform:translateY(-2px);border-color:rgba(244,255,246,.35)}
     @media(max-width:900px){.reader-step{grid-template-columns:1fr;gap:4px}.reader-guide:not(.report-more) .reader-step{grid-template-columns:52px minmax(0,1fr);align-items:start}.reader-guide:not(.report-more) .reader-step strong,.reader-guide:not(.report-more) .reader-step em{grid-column:2}}
+    .evidence-path-note{margin:10px 0 0;color:#9fb0c5;font-size:13px;line-height:1.5;max-width:720px}
+    .evidence-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .evidence-location-list{margin:0;padding-left:18px;color:#dbe5ef;line-height:1.7}
+    .evidence-location-list li{margin:0 0 8px}
+    .evidence-location-list code{color:#9af7ad;font-size:13px}
+    .evidence-location-list a{color:#39e75f;font-weight:700;text-decoration:none}
+    .evidence-location-list a:hover{text-decoration:underline}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -8345,7 +8366,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <nav class="nav">
       <div class="nav-section">This release</div>
       <a class="active" href="#cover">${navIcon('home')}<span>Brief</span></a>
-      <a href="#executive">${navIcon('release')}<span>Release</span></a>
+      <a class="nav-extra" href="#executive">${navIcon('release')}<span>Why</span></a>
       <div class="nav-section">Health</div>
       <a href="#health">${navIcon('product')}<span>Product Health</span></a>
       <a href="#journey">${navIcon('journey')}<span>User paths</span></a>
@@ -8396,47 +8417,47 @@ const airGoldenDashboardHtml = `<!doctype html>
     ${dataFreshnessCards}
     ${provenanceWarningHtml}
 
-    <section class="page hero" id="executive">
+    <section class="page report-extra" id="executive">
       <div class="topbar">
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
-          ${pageHeading('release', 'Release Decision')}
-          <p>Why this decision, and what to do next.</p>
+          ${pageHeading('release', 'Why this decision')}
+          <p>Detail behind the brief. Optional reading.</p>
         </div>
         <div class="actions">
           <span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span>
           <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
           <a class="btn" href="#evidence">Evidence</a>
-          <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+          <a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>
         </div>
       </div>
       <div class="executive-decision-card">
         <div class="executive-decision-main">
-          <span class="mission-label">Release Decision</span>
+          <span class="mission-label">Decision</span>
           ${releaseStatusBadge}
           <ul class="executive-decision-bullets">${executiveDecisionBullets}</ul>
         </div>
         <div class="executive-action">
-          <span>${helpLabel('Recommended Action', 'recommendation')}</span>
+          <span>${helpLabel('Next action', 'recommendation')}</span>
           <strong>${escapeHtml(releaseRecommendedAction)}</strong>
         </div>
       </div>
       <div class="grid two">
         <div class="panel insight">
-          <h2 class="icon-title"><span class="section-icon">WHY</span>Why This Decision?</h2>
+          <h2 class="icon-title"><span class="section-icon">WHY</span>Why this call?</h2>
           <div class="why-release ${executiveData.releaseDecision === 'GO' ? '' : 'warn'}">
-          <h3>${executiveData.releaseDecision === 'GO' ? 'Why Release?' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Why Conditional GO?' : 'Why No GO?'}</h3>
+          <h3>${executiveData.releaseDecision === 'GO' ? 'Why GO?' : executiveData.releaseDecision === 'CONDITIONAL GO' ? 'Why Conditional GO?' : 'Why No GO?'}</h3>
             <ul>${whyReleaseItems}</ul>
           </div>
         </div>
         <div class="panel">
-          <h2 class="icon-title"><span class="section-icon">RD</span>Why this decision, and what to do next</h2>
+          <h2 class="icon-title"><span class="section-icon">RD</span>Drivers and next steps</h2>
           <div class="decision-intelligence">
             <section class="decision-intel-block decision-drivers-block">
               <div class="decision-intel-head">
                 <div>
-                  <span>Decision Drivers</span>
-                  <h3>Why this is the decision</h3>
+                  <span>Drivers</span>
+                  <h3>What shaped the decision</h3>
                 </div>
                 <strong>${escapeHtml(executiveData.releaseDecision)}</strong>
               </div>
@@ -8446,7 +8467,7 @@ const airGoldenDashboardHtml = `<!doctype html>
               <section class="decision-intel-block">
                 <div class="decision-intel-head">
                   <div>
-                    <span>Blocking Issues</span>
+                    <span>Blockers</span>
                     <h3>What needs attention</h3>
                   </div>
                   <strong>${executiveData.failed}</strong>
@@ -8456,8 +8477,8 @@ const airGoldenDashboardHtml = `<!doctype html>
               <section class="decision-intel-block">
                 <div class="decision-intel-head">
                   <div>
-                    <span>Business Impact & Evidence</span>
-                    <h3>Release signals</h3>
+                    <span>Signals</span>
+                    <h3>Impact and proof</h3>
                   </div>
                   <strong>${escapeHtml(estimatedReleaseRisk)}</strong>
                 </div>
@@ -8467,7 +8488,7 @@ const airGoldenDashboardHtml = `<!doctype html>
             <section class="decision-intel-block decision-workflow-block">
               <div class="decision-intel-head">
                 <div>
-                  <span>${helpLabel('Recommended Workflow', 'recommendation')}</span>
+                  <span>${helpLabel('Workflow', 'recommendation')}</span>
                   <h3>What should happen next</h3>
                 </div>
               </div>
@@ -8481,7 +8502,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="health">
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('product', 'Product Health')}<p>Which product areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('product', 'Product Health')}<p>Which areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Area status</h2>
         <div class="module-filter" aria-label="Filter areas by health">
@@ -8489,7 +8510,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <button type="button" data-module-filter="healthy">Healthy (${moduleStatusGroupCounts.healthy})</button>
           <button type="button" data-module-filter="warning">Warning (${moduleStatusGroupCounts.warning})</button>
           <button type="button" data-module-filter="critical">Critical (${moduleStatusGroupCounts.critical})</button>
-          <button type="button" data-module-filter="not-executed">Not Executed (${moduleStatusGroupCounts['not-executed']})</button>
+          <button type="button" data-module-filter="not-executed">Not run (${moduleStatusGroupCounts['not-executed']})</button>
           <label class="module-filter-search">
             <span>Search areas</span>
             <input id="moduleStatusSearch" type="search" placeholder="Search an area" aria-label="Search product areas">
@@ -8501,7 +8522,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       <br>
       <div class="grid two">
-        <div class="panel"><h2>Risk Snapshot</h2>
+        <div class="panel"><h2>Risk count</h2>
           <div class="risk-snapshot">
             <div class="risk-snap high"><span>High</span><strong>${criticalModuleCount}</strong><small>Failed areas</small></div>
             <div class="risk-snap med"><span>Medium</span><strong>${warningModuleCount}</strong><small>Not fully run</small></div>
@@ -8510,15 +8531,15 @@ const airGoldenDashboardHtml = `<!doctype html>
           <p class="chart-explainer">Amber means a check was skipped unexpectedly, or an important path did not run.</p>
         </div>
         <div class="panel health-summary-panel">
-          <h2>${helpLabel('Health Summary', 'businessHealth')}</h2>
+          <h2>${helpLabel('Summary', 'businessHealth')}</h2>
           <p class="summary-lead">${escapeHtml(healthSummaryLead)}</p>
           <div class="health-stat-grid">
-            <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong><small>Modules stable</small></div>
+            <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong><small>Areas OK</small></div>
             <div class="health-stat warn"><span>Warning</span><strong>${warningModuleCount}</strong><small>Need review</small></div>
-            <div class="health-stat bad"><span>Critical</span><strong>${criticalModuleCount}</strong><small>Release risk</small></div>
+            <div class="health-stat bad"><span>Critical</span><strong>${criticalModuleCount}</strong><small>Failed</small></div>
           </div>
           <div class="next-focus-card">
-            <span>${helpLabel('Next Focus', 'nextStep')}</span>
+            <span>${helpLabel('Next focus', 'nextStep')}</span>
             <strong>${escapeHtml(nextFocusText)}</strong>
             <p>${escapeHtml(releaseRecommendedAction)}</p>
           </div>
@@ -8619,28 +8640,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Evidence')}<p>What proof was saved with this run?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open test log</a></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Evidence')}<p>Proof from this run — open Playwright report for step detail.</p></div>${evidencePlaywrightCta}</div>
       ${evidenceHeroHtml}
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">PKG</span>Where to look</h2>
+        <ul class="evidence-location-list">
+          <li><strong>Playwright report</strong> — <code>playwright-report/index.html</code> (steps, failures, attachments). ${hasPlaywrightReport ? '<a href="../playwright-report/index.html" target="_blank" rel="noopener">Open now</a>' : 'Not present for this package.'}</li>
+          <li><strong>Raw artifacts</strong> — <code>test-results/</code> (screenshots, videos, traces, logs, <code>results.json</code>).</li>
+          <li><strong>AIR summary</strong> — this file under <code>execution-report/</code> (decision, health, paths, gaps).</li>
+        </ul>
+      </div>
       <div class="evidence-grid">${evidenceCards}</div>
       ${failureEvidenceMapHtml}
       ${airEvidenceThumbnails.length > 0 || evidenceThumbnailFiles.length > 0 ? `
       <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">EV</span>Latest Evidence</h2>
+        <h2 class="icon-title"><span class="section-icon">EV</span>Latest screenshots</h2>
         <div class="thumb-grid">${evidenceThumbnails}</div>
       </div>` : ''}
-      ${executiveData.failed > 0 ? '<div class="panel"><h2>Evidence Rule</h2><p>Every failed check should link to a screenshot, video, trace, or the Playwright report.</p></div>' : ''}
+      ${executiveData.failed > 0 ? '<div class="panel"><h2>Evidence rule</h2><p>Every failed check should link to a screenshot, video, trace, or the Playwright report.</p></div>' : ''}
       ${renderPageFooter(9)}
     </section>
 
     <nav class="report-more reader-guide" aria-label="Full detail">
-      <h2>Full detail</h2>
+      <h2>More detail (one click)</h2>
       <div class="reader-guide-list">
-        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>What was checked inside every product area.</strong><em>Open</em></a>
+        <a class="reader-step" href="#executive"><span>Why</span><strong>Full decision drivers and workflow.</strong><em>Open</em></a>
+        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>Scenarios checked inside every product area.</strong><em>Open</em></a>
         <a class="reader-step" href="#failures"><span>Failures</span><strong>${executiveData.failed > 0 ? `${executiveData.failed} failed check${executiveData.failed === 1 ? '' : 's'} to review.` : 'No failed checks in this run.'}</strong><em>Open</em></a>
-        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why they were skipped.</strong><em>Open</em></a>
-        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>The scenarios this run actually validated.</strong><em>Open</em></a>
-        <a class="reader-step" href="#insight"><span>Next step</span><strong>The recommendation, written out in full.</strong><em>Open</em></a>
-        <a class="reader-step" href="#comparison"><span>History</span><strong>How this run compares with earlier ones.</strong><em>Open</em></a>
+        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why.</strong><em>Open</em></a>
+        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>Scenarios this run validated.</strong><em>Open</em></a>
+        <a class="reader-step" href="#insight"><span>Next step</span><strong>Full recommendation write-up.</strong><em>Open</em></a>
+        <a class="reader-step" href="#comparison"><span>History</span><strong>Compare with earlier runs.</strong><em>Open</em></a>
       </div>
     </nav>
 

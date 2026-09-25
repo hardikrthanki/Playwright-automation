@@ -852,22 +852,74 @@ private async openPlansView() {
     );
   }
 
-  await expect(
+  const planAction =
     this.page.getByRole(
       'button',
       {
-        name: /upgrade|downgrade|switch to free|change plan/i
+        name: /upgrade|downgrade|switch to free|change plan|subscribe|choose plan|select plan|get started/i
       }
     ).or(
       this.page.getByText(
-        /change plan|switch to free/i
+        /change plan|switch to free|upgrade|subscribe/i
       )
-    ).first()
+    ).first();
+
+  if (
+    !await planAction.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    const viewPlans =
+      this.page
+        .getByRole(
+          'link',
+          {
+            name: /view plans/i
+          }
+        )
+        .or(
+          this.page.getByRole(
+            'button',
+            {
+              name: /view plans/i
+            }
+          )
+        )
+        .first();
+
+    if (
+      await viewPlans.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        viewPlans,
+        'View Plans'
+      );
+    }
+  }
+
+  await expect(
+    planAction.or(
+      this.page.getByText(
+        /income builder|overlay strategists|portfolio hedger|marketplace|curious explorer|choose your plan/i
+      ).first()
+    )
   ).toBeVisible({
     timeout: 15000
   });
 
-  await this.validateBillingUrl();
+  if (
+    /billing/i.test(
+      this.page.url()
+    )
+  ) {
+    await this.validateBillingUrl();
+  }
 }
 
 private billingIntervalButton(
@@ -1055,6 +1107,22 @@ private planNamePattern(
     )
   ) {
     return 'Overlay Strategists|Overlay';
+  }
+
+  if (
+    /marketplace/i.test(
+      planName
+    )
+  ) {
+    return 'Marketplace';
+  }
+
+  if (
+    /curious|free/i.test(
+      planName
+    )
+  ) {
+    return 'Curious Explorer|Curious|Free';
   }
 
   return escapeRegExp(
@@ -1680,7 +1748,7 @@ async validateActivePlan(
     `Billing should show ${expectedPlan} after plan change.`
   ).toMatch(
     new RegExp(
-      escapeRegExp(
+      this.planNamePattern(
         expectedPlan
       ),
       'i'
@@ -3164,26 +3232,92 @@ async validateOverviewContract() {
 
   await expect(
     this.page.getByText(
-      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial/i
+      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial|curious/i
     ).first()
   ).toBeVisible({
     timeout: 15000,
   });
 
-  const manageControl =
-    await this.manageSubscriptionControl();
+  const overviewText =
+    await this.page
+      .locator(
+        'main, body'
+      )
+      .first()
+      .innerText({
+        timeout: 10000
+      });
 
-  await expect(
-    manageControl
-  ).toBeVisible({
-    timeout: 15000,
-  });
+  const onFreePlan =
+    /\bfree\b/i.test(
+      overviewText
+    ) &&
+    /curious|free plan/i.test(
+      overviewText
+    );
+
+  const viewPlans =
+    this.page
+      .getByRole(
+        'link',
+        {
+          name: /view plans/i
+        }
+      )
+      .or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /view plans/i
+          }
+        )
+      )
+      .or(
+        this.page.locator(
+          'a[href*="/pricing"], a[href*="plan"]'
+        ).filter({
+          hasText: /view plans|see plans|choose plan|upgrade/i
+        })
+      )
+      .first();
+
+  const hasViewPlans =
+    await viewPlans.isVisible({
+      timeout: 2500
+    }).catch(
+      () => false
+    );
+
+  if (onFreePlan || hasViewPlans) {
+    await expect(
+      this.plansTab
+    ).toBeVisible({
+      timeout: 5000
+    });
+
+    if (hasViewPlans) {
+      await expect(
+        viewPlans
+      ).toBeVisible({
+        timeout: 5000
+      });
+    }
+  } else {
+    const manageControl =
+      await this.manageSubscriptionControl();
+
+    await expect(
+      manageControl
+    ).toBeVisible({
+      timeout: 15000
+    });
+  }
 
   const planStatusOrAction =
     this.page.locator(
-      'a, button, [role="status"], [data-state]'
+      'a, button, [role="status"], [data-state], p, span'
     ).filter({
-      hasText: /active|current|trial|free|manage|upgrade|downgrade|selected|subscription/i,
+      hasText: /active|current|trial|free|curious|manage|upgrade|downgrade|selected|subscription|view plans/i,
     }).first();
 
   await expect(

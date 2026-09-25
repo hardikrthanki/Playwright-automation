@@ -66,6 +66,12 @@ $env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
 $env:SUB_LIFECYCLE_PLAN_LADDER_ENABLED="true"
 npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "plan ladder|retention offer" --headed
 
+One new user: purchase the first paid plan, then upgrade to each next plan with calculation checks:
+
+$env:SUBSCRIPTION_LIFECYCLE_EXECUTION_ENABLED="true"
+$env:SUB_LIFECYCLE_FREE_LADDER_ENABLED="true"
+npx playwright test tests/SubscriptionLifecycleExecution.spec.ts -g "purchase each paid plan and upgrade" --headed
+
 Destructive submits:
 SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED
 SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED
@@ -813,6 +819,216 @@ async function submitUpgradeWithDueAndRenewal(
   );
 
   return true;
+}
+
+async function validateDowngradeCalculation(
+  page: Page,
+  currentPlan: PlanName,
+  targetPlan: PlanName
+) {
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  try {
+    await billing.openPlanChangeCalculationPreview({
+      targetPlan,
+      action:
+        'downgrade',
+      interval:
+        'monthly'
+    });
+  } catch {
+    await billing.declineRetentionAndPreviewOrScheduleDowngrade({
+      currentPlan,
+      targetPlan,
+      schedule:
+        false
+    });
+
+    return true;
+  }
+
+  await billing.validatePlanChangeDueAmountAndRenewal({
+    targetPlan,
+    action:
+      'downgrade',
+    interval:
+      'monthly',
+    expectedPlanCharge:
+      PLAN_PRICES[targetPlan].monthly,
+    expectedRecurringAmount:
+      PLAN_PRICES[targetPlan].monthly
+  });
+
+  await billing.closePlanChangeCalculationPreview({
+    targetPlan,
+    action:
+      'downgrade'
+  });
+
+  return true;
+}
+
+async function purchaseFirstPaidPlanFromFree(
+  page: Page,
+  plan: PlanName,
+  interval: BillingInterval
+) {
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  await billing.validateOverview();
+
+  if (
+    await billing.plansTab.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await billing.plansTab.click();
+  }
+
+  let upgradedInPlace =
+    false;
+
+  try {
+    upgradedInPlace =
+      await submitUpgradeWithDueAndRenewal(
+        page,
+        plan,
+        interval,
+        'upgrade'
+      );
+  } catch (error) {
+    console.log(
+      `In-billing upgrade from free was not available (${String(error)}). Falling back to pricing Choose buttons.`
+    );
+  }
+
+  if (upgradedInPlace) {
+    return;
+  }
+
+  await billing.validateOverview();
+
+  const viewPlans =
+    page
+      .getByRole(
+        'link',
+        {
+          name: /view plans/i
+        }
+      )
+      .or(
+        page.getByRole(
+          'button',
+          {
+            name: /view plans/i
+          }
+        )
+      )
+      .or(
+        page.locator(
+          'a[href*="/pricing"], a[href*="#pricing"]'
+        ).first()
+      )
+      .first();
+
+  if (
+    await viewPlans.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await viewPlans.click();
+  } else {
+    await page.goto(
+      new URL(
+        '/pricing',
+        page.url()
+      ).toString(),
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      }
+    );
+  }
+
+  await expect(
+    page.getByText(
+      /choose your edge|choose your plan|pricing/i
+    ).first()
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  const chooseLabel =
+    plan === 'Income Builder'
+      ? /choose income( builder)?/i
+      : plan === 'Overlay Strategists'
+        ? /choose overlay strategists/i
+        : plan === 'Portfolio Hedger'
+          ? /choose portfolio hedger/i
+          : /choose marketplace/i;
+
+  const chooseButton =
+    page
+      .getByRole(
+        'button',
+        {
+          name: chooseLabel
+        }
+      )
+      .or(
+        page.getByRole(
+          'link',
+          {
+            name: chooseLabel
+          }
+        )
+      )
+      .first();
+
+  await expect(
+    chooseButton
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  await chooseButton.click();
+
+  await expect(
+    page
+  ).toHaveURL(
+    /checkout\.stripe\.com|billing|subscription|payment/i,
+    {
+      timeout: 45000
+    }
+  );
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    await new StripePaymentPage(
+      page
+    ).completePayment();
+  }
+
+  await validateDashboardAndBilling(
+    page
+  );
+
+  await billing.validateActivePlan(
+    plan
+  );
 }
 
 async function purchasePaidPlanForDisposableUser(
@@ -1636,6 +1852,55 @@ test.describe(
           schedule:
             true
         });
+      }
+    );
+
+    controlledLifecycleTest(
+      'Purchase each paid plan and upgrade to the next',
+      'SUB_LIFECYCLE_FREE_LADDER_ENABLED',
+      'Creates one disposable user, purchases Income Builder, then upgrades to Overlay Strategists, Portfolio Hedger, and Marketplace. Each upgrade validates the due amount and renewal date.',
+      async ({ page }) => {
+        test.setTimeout(
+          60 * 60 * 1000
+        );
+
+        await test.step(
+          'Purchase Income Builder monthly',
+          async () => {
+            await purchasePaidPlanForDisposableUser(
+              page,
+              'sub-lifecycle-purchase-upgrade',
+              'Income Builder',
+              'monthly',
+              'purchase-upgrade-ladder'
+            );
+          }
+        );
+
+        for (let index = 1; index < PAID_PLAN_LADDER.length; index += 1) {
+          const fromPlan =
+            PAID_PLAN_LADDER[index - 1];
+          const toPlan =
+            PAID_PLAN_LADDER[index];
+
+          await test.step(
+            `Upgrade ${fromPlan} to ${toPlan} and validate the calculation`,
+            async () => {
+              const upgraded =
+                await submitUpgradeWithDueAndRenewal(
+                  page,
+                  toPlan,
+                  'monthly',
+                  'upgrade'
+                );
+
+              expect(
+                upgraded,
+                `Expected an upgrade from ${fromPlan} to ${toPlan}.`
+              ).toBeTruthy();
+            }
+          );
+        }
       }
     );
 

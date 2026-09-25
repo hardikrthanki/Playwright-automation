@@ -2511,6 +2511,13 @@
     .reader-guide:not(.report-more) .reader-step.bad em{border-color:rgba(255,123,114,.4);background:rgba(255,123,114,.1);color:#ff7b72}
     .reader-guide:not(.report-more) .reader-step:hover{transform:translateY(-2px);border-color:rgba(244,255,246,.35)}
     @media(max-width:900px){.reader-step{grid-template-columns:1fr;gap:4px}.reader-guide:not(.report-more) .reader-step{grid-template-columns:52px minmax(0,1fr);align-items:start}.reader-guide:not(.report-more) .reader-step strong,.reader-guide:not(.report-more) .reader-step em{grid-column:2}}
+    .evidence-path-note{margin:10px 0 0;color:#9fb0c5;font-size:13px;line-height:1.5;max-width:720px}
+    .evidence-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .evidence-location-list{margin:0;padding-left:18px;color:#dbe5ef;line-height:1.7}
+    .evidence-location-list li{margin:0 0 8px}
+    .evidence-location-list code{color:#9af7ad;font-size:13px}
+    .evidence-location-list a{color:#39e75f;font-weight:700;text-decoration:none}
+    .evidence-location-list a:hover{text-decoration:underline}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -2526,7 +2533,7 @@
     <nav class="nav">
       <div class="nav-section">This release</div>
       <a class="active" href="#cover"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M9 21v-7h6v7"></path></svg></span><span>Brief</span></a>
-      <a href="#executive"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4.2-2.7 7-7 8-4.3-1-7-3.8-7-8V7l7-4z"></path><path d="m9 12 2 2 4-5"></path></svg></span><span>Release</span></a>
+      <a class="nav-extra" href="#executive"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4.2-2.7 7-7 8-4.3-1-7-3.8-7-8V7l7-4z"></path><path d="m9 12 2 2 4-5"></path></svg></span><span>Why</span></a>
       <div class="nav-section">Health</div>
       <a href="#health"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M8 17h7"></path></svg></span><span>Product Health</span></a>
       <a href="#journey"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="5" r="2"></circle><circle cx="19" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle><path d="M6.5 10.5 10.5 6.5"></path><path d="m13.5 6.5 4 4"></path><path d="m17.5 13.5-4 4"></path><path d="m10.5 17.5-4-4"></path></svg></span><span>User paths</span></a>
@@ -2568,7 +2575,7 @@
     <div>
       <div class="eyebrow">OOLTool · UAT</div>
       <h1>Release Brief</h1>
-      <p>Five answers for this release. Open a row for the detail behind it.</p>
+      <p>Five answers, then the decision. Health, paths, and evidence follow. Everything else is one click.</p>
     </div>
     <div class="executive-toolbar">
       <span>9/24/2026, 12:30:06 PM</span>
@@ -2578,38 +2585,38 @@
   </div>
   
   <section class="reader-guide" aria-label="How to read this report">
-    <h2>Read this first</h2>
+    <h2>Five answers</h2>
     <div class="reader-guide-list">
       
         <a class="reader-step warn" href="#executive">
           <i>01</i>
           <span>Can we release?</span>
-          <strong>CONDITIONAL GO. Release is possible after targeted warning review. Confidence is 100%. Risk is MEDIUM.</strong>
+          <strong>CONDITIONAL GO. Confidence 100%. Risk MEDIUM.</strong>
           <em>Why</em>
         </a>
         <a class="reader-step good" href="#failures">
           <i>02</i>
           <span>Did anything fail?</span>
-          <strong>No. 129 of 628 checks ran, and every one that ran passed.</strong>
+          <strong>No. 129 of 628 ran and passed.</strong>
           <em>Failures</em>
         </a>
         <a class="reader-step warn" href="#journey">
           <i>03</i>
           <span>What needs a look?</span>
-          <strong>Access Control, Subscription, Payment, Session Security. 8 of 11 product areas are healthy.</strong>
+          <strong>Access Control, Subscription, Payment, Session Security.</strong>
           <em>Paths</em>
         </a>
-        <a class="reader-step warn" href="#evidence">
+        <a class="reader-step good" href="#evidence">
           <i>04</i>
           <span>What proof is there?</span>
-          <strong>No screenshots, videos, or traces. 2 logs are in the test log.</strong>
+          <strong>Open Playwright report for step detail.</strong>
           <em>Evidence</em>
         </a>
         <a class="reader-step warn" href="#executive">
           <i>05</i>
           <span>What should we do?</span>
           <strong>Review warnings and attached evidence before approval.</strong>
-          <em>Next step</em>
+          <em>Next</em>
         </a>
     </div>
   </section>
@@ -2619,7 +2626,7 @@
         <span>OK</span>
       </div>
       <div class="release-cockpit-content">
-        <span class="cockpit-label">Release Decision</span>
+        <span class="cockpit-label">Decision</span>
         <span class="release-status-badge warn" data-status="CONDITIONAL_GO">CONDITIONAL GO</span>
         <p>129 of 628 planned checks ran. Every one passed.</p>
         <div class="cockpit-mini-grid">
@@ -2632,8 +2639,8 @@
     </div>
     <div class="executive-kpi-stack">
       <button class="executive-kpi mark-good interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>100%</strong><small>Of checks that ran</small></button>
-      <div class="executive-kpi mark-good"><span>Ran</span><strong>129</strong><small>21% of the plan</small></div>
-      <div class="executive-kpi mark-good success"><span>Failed</span><strong>0</strong><small>All that ran passed</small></div>
+      <div class="executive-kpi mark-good"><span>Ran</span><strong>129</strong><small>21% of plan</small></div>
+      <div class="executive-kpi mark-good success"><span>Failed</span><strong>0</strong><small>None</small></div>
       <div class="executive-kpi mark-warn"><span>Areas</span><strong>8</strong><small>healthy of 11</small></div>
       <div class="executive-kpi mark-warn"><span>Paths</span><strong>7</strong><small>healthy of 11</small></div>
     </div>
@@ -2663,47 +2670,47 @@
   </div>
     
 
-    <section class="page hero" id="executive">
+    <section class="page report-extra" id="executive">
       <div class="topbar">
         <div>
           <div class="eyebrow">OOLTool</div>
-          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4.2-2.7 7-7 8-4.3-1-7-3.8-7-8V7l7-4z"></path><path d="m9 12 2 2 4-5"></path></svg></span><h1>Release Decision</h1></div>
-          <p>Why this decision, and what to do next.</p>
+          <div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v6c0 4.2-2.7 7-7 8-4.3-1-7-3.8-7-8V7l7-4z"></path><path d="m9 12 2 2 4-5"></path></svg></span><h1>Why this decision</h1></div>
+          <p>Detail behind the brief. Optional reading.</p>
         </div>
         <div class="actions">
           <span class="pill demo">UAT</span>
           <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
           <a class="btn" href="#evidence">Evidence</a>
-          <a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright Report</a>
+          <a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>
         </div>
       </div>
       <div class="executive-decision-card">
         <div class="executive-decision-main">
-          <span class="mission-label">Release Decision</span>
+          <span class="mission-label">Decision</span>
           <span class="release-status-badge warn" data-status="CONDITIONAL_GO">CONDITIONAL GO</span>
           <ul class="executive-decision-bullets"><li>129 tests executed; 628 in the inventory.</li><li>129 passed and 0 failed (executed pass rate 100%).</li><li>483 documented coverage gaps and 16 unexpected skip(s).</li><li>Partial business journey status.</li><li>Evidence is ready for review.</li></ul>
         </div>
         <div class="executive-action">
-          <span>Recommended Action <i class="metric-help" data-air-tooltip="Action generated from release decision, warnings, failures, and evidence readiness." aria-label="Action generated from release decision, warnings, failures, and evidence readiness." tabindex="0">?</i></span>
+          <span>Next action <i class="metric-help" data-air-tooltip="Action generated from release decision, warnings, failures, and evidence readiness." aria-label="Action generated from release decision, warnings, failures, and evidence readiness." tabindex="0">?</i></span>
           <strong>Review warnings and attached evidence before approval.</strong>
         </div>
       </div>
       <div class="grid two">
         <div class="panel insight">
-          <h2 class="icon-title"><span class="section-icon">WHY</span>Why This Decision?</h2>
+          <h2 class="icon-title"><span class="section-icon">WHY</span>Why this call?</h2>
           <div class="why-release warn">
           <h3>Why Conditional GO?</h3>
             <ul><li>Critical journeys are not blocked</li><li>Warnings require review</li><li>Release can proceed after evidence review</li></ul>
           </div>
         </div>
         <div class="panel">
-          <h2 class="icon-title"><span class="section-icon">RD</span>Why this decision, and what to do next</h2>
+          <h2 class="icon-title"><span class="section-icon">RD</span>Drivers and next steps</h2>
           <div class="decision-intelligence">
             <section class="decision-intel-block decision-drivers-block">
               <div class="decision-intel-head">
                 <div>
-                  <span>Decision Drivers</span>
-                  <h3>Why this is the decision</h3>
+                  <span>Drivers</span>
+                  <h3>What shaped the decision</h3>
                 </div>
                 <strong>CONDITIONAL GO</strong>
               </div>
@@ -2725,7 +2732,7 @@
               <section class="decision-intel-block">
                 <div class="decision-intel-head">
                   <div>
-                    <span>Blocking Issues</span>
+                    <span>Blockers</span>
                     <h3>What needs attention</h3>
                   </div>
                   <strong>0</strong>
@@ -2742,8 +2749,8 @@
               <section class="decision-intel-block">
                 <div class="decision-intel-head">
                   <div>
-                    <span>Business Impact & Evidence</span>
-                    <h3>Release signals</h3>
+                    <span>Signals</span>
+                    <h3>Impact and proof</h3>
                   </div>
                   <strong>MEDIUM</strong>
                 </div>
@@ -2773,7 +2780,7 @@
             <section class="decision-intel-block decision-workflow-block">
               <div class="decision-intel-head">
                 <div>
-                  <span>Recommended Workflow <i class="metric-help" data-air-tooltip="Action generated from release decision, warnings, failures, and evidence readiness." aria-label="Action generated from release decision, warnings, failures, and evidence readiness." tabindex="0">?</i></span>
+                  <span>Workflow <i class="metric-help" data-air-tooltip="Action generated from release decision, warnings, failures, and evidence readiness." aria-label="Action generated from release decision, warnings, failures, and evidence readiness." tabindex="0">?</i></span>
                   <h3>What should happen next</h3>
                 </div>
               </div>
@@ -2821,7 +2828,7 @@
     </section>
 
     <section class="page" id="health">
-      <div class="topbar"><div><div class="eyebrow">OOLTool</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M8 17h7"></path></svg></span><h1>Product Health</h1></div><p>Which product areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
+      <div class="topbar"><div><div class="eyebrow">OOLTool</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M8 9h8"></path><path d="M8 13h5"></path><path d="M8 17h7"></path></svg></span><h1>Product Health</h1></div><p>Which areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Area status</h2>
         <div class="module-filter" aria-label="Filter areas by health">
@@ -2829,7 +2836,7 @@
           <button type="button" data-module-filter="healthy">Healthy (8)</button>
           <button type="button" data-module-filter="warning">Warning (1)</button>
           <button type="button" data-module-filter="critical">Critical (0)</button>
-          <button type="button" data-module-filter="not-executed">Not Executed (2)</button>
+          <button type="button" data-module-filter="not-executed">Not run (2)</button>
           <label class="module-filter-search">
             <span>Search areas</span>
             <input id="moduleStatusSearch" type="search" placeholder="Search an area" aria-label="Search product areas">
@@ -3072,7 +3079,7 @@
       </div>
       <br>
       <div class="grid two">
-        <div class="panel"><h2>Risk Snapshot</h2>
+        <div class="panel"><h2>Risk count</h2>
           <div class="risk-snapshot">
             <div class="risk-snap high"><span>High</span><strong>0</strong><small>Failed areas</small></div>
             <div class="risk-snap med"><span>Medium</span><strong>3</strong><small>Not fully run</small></div>
@@ -3081,15 +3088,15 @@
           <p class="chart-explainer">Amber means a check was skipped unexpectedly, or an important path did not run.</p>
         </div>
         <div class="panel health-summary-panel">
-          <h2>Health Summary <i class="metric-help" data-air-tooltip="Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips." aria-label="Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips." tabindex="0">?</i></h2>
+          <h2>Summary <i class="metric-help" data-air-tooltip="Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips." aria-label="Business health averages executed journey scores. Subscription and Payment no longer double-count the same Billing skips." tabindex="0">?</i></h2>
           <p class="summary-lead">8 of 11 areas are healthy. Billing needs a look. Access Control and General did not run.</p>
           <div class="health-stat-grid">
-            <div class="health-stat good"><span>Healthy</span><strong>8</strong><small>Modules stable</small></div>
+            <div class="health-stat good"><span>Healthy</span><strong>8</strong><small>Areas OK</small></div>
             <div class="health-stat warn"><span>Warning</span><strong>3</strong><small>Need review</small></div>
-            <div class="health-stat bad"><span>Critical</span><strong>0</strong><small>Release risk</small></div>
+            <div class="health-stat bad"><span>Critical</span><strong>0</strong><small>Failed</small></div>
           </div>
           <div class="next-focus-card">
-            <span>Next Focus <i class="metric-help" data-air-tooltip="Recommended next improvement based on current module and evidence readiness." aria-label="Recommended next improvement based on current module and evidence readiness." tabindex="0">?</i></span>
+            <span>Next focus <i class="metric-help" data-air-tooltip="Recommended next improvement based on current module and evidence readiness." aria-label="Recommended next improvement based on current module and evidence readiness." tabindex="0">?</i></span>
             <strong>Review the warnings</strong>
             <p>Review warnings and attached evidence before approval.</p>
           </div>
@@ -7582,21 +7589,34 @@
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">OOLTool</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m7 15 3-3 2 2 3-4 2 5"></path><circle cx="8" cy="9" r="1"></circle></svg></span><h1>Evidence</h1></div><p>What proof was saved with this run?</p></div><a class="btn" href="../playwright-report/index.html" target="_blank" rel="noopener">Open test log</a></div>
+      <div class="topbar"><div><div class="eyebrow">OOLTool</div><div class="page-title-row"><span class="page-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m7 15 3-3 2 2 3-4 2 5"></path><circle cx="8" cy="9" r="1"></circle></svg></span><h1>Evidence</h1></div><p>Proof from this run — open Playwright report for step detail.</p></div><a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a></div>
       
   <div class="evidence-hero">
     <div>
       <span class="mission-label">Evidence</span>
-      <strong>No images saved</strong>
-      <p>No screenshots, videos, or traces. 2 logs are in the test log.</p>
+      <strong>Run log available</strong>
+      <p>No screenshots, videos, or traces. 2 logs are under test-results/.</p>
+      <p class="evidence-path-note">Same local package as this AIR report: playwright-report/ (step-by-step HTML) and test-results/ (raw artifacts — screenshots, videos, traces, logs, results.json).</p>
+      <div class="evidence-cta-row">
+        <a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>
+        <a class="btn" href="../test-results/results.json" target="_blank" rel="noopener">Open results.json</a>
+      </div>
     </div>
     <div class="evidence-score-card muted">
       <span>Screenshots</span>
       <strong>0</strong>
-      <small>Test log is linked</small>
+      <small>Playwright report linked</small>
     </div>
   </div>
   
+      <div class="panel">
+        <h2 class="icon-title"><span class="section-icon">PKG</span>Where to look</h2>
+        <ul class="evidence-location-list">
+          <li><strong>Playwright report</strong> — <code>playwright-report/index.html</code> (steps, failures, attachments). <a href="../playwright-report/index.html" target="_blank" rel="noopener">Open now</a></li>
+          <li><strong>Raw artifacts</strong> — <code>test-results/</code> (screenshots, videos, traces, logs, <code>results.json</code>).</li>
+          <li><strong>AIR summary</strong> — this file under <code>execution-report/</code> (decision, health, paths, gaps).</li>
+        </ul>
+      </div>
       <div class="evidence-grid">
     <div class="evidence-card none">
       <div class="evidence-icon">IMG</div>
@@ -7639,14 +7659,15 @@
     </section>
 
     <nav class="report-more reader-guide" aria-label="Full detail">
-      <h2>Full detail</h2>
+      <h2>More detail (one click)</h2>
       <div class="reader-guide-list">
-        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>What was checked inside every product area.</strong><em>Open</em></a>
+        <a class="reader-step" href="#executive"><span>Why</span><strong>Full decision drivers and workflow.</strong><em>Open</em></a>
+        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>Scenarios checked inside every product area.</strong><em>Open</em></a>
         <a class="reader-step" href="#failures"><span>Failures</span><strong>No failed checks in this run.</strong><em>Open</em></a>
-        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why they were skipped.</strong><em>Open</em></a>
-        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>The scenarios this run actually validated.</strong><em>Open</em></a>
-        <a class="reader-step" href="#insight"><span>Next step</span><strong>The recommendation, written out in full.</strong><em>Open</em></a>
-        <a class="reader-step" href="#comparison"><span>History</span><strong>How this run compares with earlier ones.</strong><em>Open</em></a>
+        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why.</strong><em>Open</em></a>
+        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>Scenarios this run validated.</strong><em>Open</em></a>
+        <a class="reader-step" href="#insight"><span>Next step</span><strong>Full recommendation write-up.</strong><em>Open</em></a>
+        <a class="reader-step" href="#comparison"><span>History</span><strong>Compare with earlier runs.</strong><em>Open</em></a>
       </div>
     </nav>
 
