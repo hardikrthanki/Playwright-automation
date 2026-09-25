@@ -256,5 +256,93 @@ test.describe(
         );
       }
     );
+
+    test(
+      'Deep link to protected page returns to intended route after login',
+      async ({ page }) => {
+        const intendedRoute =
+          '/dashboard/billing';
+
+        await test.step(
+          'Unauthenticated deep link redirects to login with next param',
+          async () => {
+            await page.goto(
+              `${BASE_URL}${intendedRoute}`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+
+            await expect(
+              page
+            ).toHaveURL(
+              /\/login/,
+              {
+                timeout: 30000
+              }
+            );
+
+            const loginUrl =
+              new URL(
+                page.url()
+              );
+
+            expect(
+              loginUrl.searchParams.get(
+                'next'
+              ),
+              'Login should preserve the intended deep link in next'
+            ).toBe(
+              intendedRoute
+            );
+
+            await expect(
+              page.locator(
+                'input[type="email"]'
+              ).first()
+            ).toBeVisible({
+              timeout: 10000
+            });
+          }
+        );
+
+        await test.step(
+          'Login returns to the intended protected page',
+          async () => {
+            const login =
+              new LoginPage(
+                page
+              );
+
+            await login.login(
+              TEST_USERS.subscriber.email,
+              TEST_USERS.subscriber.password
+            );
+
+            await expect(
+              page
+            ).toHaveURL(
+              new RegExp(
+                `${intendedRoute.replace(
+                  /[.*+?^${}()|[\]\\]/g,
+                  '\\$&'
+                )}`
+              ),
+              {
+                timeout: 30000
+              }
+            );
+
+            await expect(
+              page.getByText(
+                /billing|current plan|current subscription|plans|history/i
+              ).first()
+            ).toBeVisible({
+              timeout: 15000
+            });
+          }
+        );
+      }
+    );
   }
 );

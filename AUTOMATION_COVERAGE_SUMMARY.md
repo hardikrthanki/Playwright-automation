@@ -448,6 +448,8 @@ Validated coverage:
 - Browser back after logout does not restore authenticated session.
 - Refresh without login redirects to login.
 - Protected URL handling in a new tab.
+- Logout invalidates an already opened dashboard tab.
+- Deep link to a protected page redirects to login with `next` and returns to the intended route after authentication.
 
 Primary specs:
 
@@ -617,7 +619,7 @@ start execution-report\index.html
 | Billing | Covered | Overview, plans, history, transactions, invoice, PDF links, tab stability, browser back/forward behavior. |
 | Subscription Portal | Controlled | Manage subscription, invoice history, add payment, update info, cancel form. |
 | Permissions | Controlled | Role/permission access validation prepared. |
-| Session Security | Covered | Protected route redirects, logout, back-button behavior. |
+| Session Security | Covered | Protected route redirects, logout, multi-tab invalidation, deep-link return via `next`. |
 | Accessibility | Covered | Keyboard navigation and responsive usability checks. |
 | AIR Report | Covered | Execution intelligence, evidence, history, release decision, search. |
 

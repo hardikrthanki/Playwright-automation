@@ -183,6 +183,7 @@ const suites = {
     'BillingEdgeValidation.spec.ts',
     'BillingSubscriptionManagement.spec.ts',
     'Subscriber.spec.ts',
+    'SessionSecurity.spec.ts',
     'ResetPasswordNegative.spec.ts'
   ]),
   userJourneyControlled: pick([
@@ -190,7 +191,8 @@ const suites = {
     'forgotpassword.spec.ts',
     'UnlockAccount.spec.ts',
     'AuthConfigurationLimits.spec.ts',
-    'MfaUserFlow.spec.ts'
+    'MfaUserFlow.spec.ts',
+    'PermissionAccess.spec.ts'
   ]),
   userJourneyFull: pick([
     'onboarding.spec.ts',
@@ -205,10 +207,12 @@ const suites = {
     'BillingEdgeValidation.spec.ts',
     'BillingSubscriptionManagement.spec.ts',
     'Subscriber.spec.ts',
+    'SessionSecurity.spec.ts',
     'forgotpassword.spec.ts',
     'UnlockAccount.spec.ts',
     'AuthConfigurationLimits.spec.ts',
-    'MfaUserFlow.spec.ts'
+    'MfaUserFlow.spec.ts',
+    'PermissionAccess.spec.ts'
   ])
 };
 

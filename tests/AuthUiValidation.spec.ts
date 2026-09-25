@@ -889,5 +889,76 @@ test.describe(
         );
       }
     );
+
+    test(
+      'Login register and forgot-password expose usable privacy policy links',
+      async ({ page }) => {
+        const publicAuthRoutes = [
+          {
+            name: 'login',
+            path: '/login'
+          },
+          {
+            name: 'register',
+            path: '/register'
+          },
+          {
+            name: 'forgot-password',
+            path: '/forgot-password'
+          }
+        ];
+
+        for (const route of publicAuthRoutes) {
+          await test.step(
+            `${route.name} privacy policy link`,
+            async () => {
+              await page.goto(
+                `${BASE_URL}${route.path}`,
+                {
+                  waitUntil: 'domcontentloaded'
+                }
+              );
+
+              // Keep cookie consent visible: register currently exposes
+              // Privacy Policy mainly through that consent copy/link.
+              const privacyLink =
+                page
+                  .getByRole(
+                    'link',
+                    {
+                      name: /privacy policy/i
+                    }
+                  )
+                  .first();
+
+              await expect(
+                privacyLink
+              ).toBeVisible({
+                timeout: 10000
+              });
+
+              const href =
+                await privacyLink.getAttribute(
+                  'href'
+                );
+
+              expect(
+                href,
+                `${route.name} Privacy Policy should have a usable href`
+              ).toMatch(
+                /^(\/|https?:\/\/)(?!#)/i
+              );
+
+              expect(
+                href,
+                `${route.name} Privacy Policy should point at the privacy policy route`
+              ).toMatch(
+                /privacy/i
+              );
+            }
+          );
+        }
+      }
+    );
   }
 );

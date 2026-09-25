@@ -429,8 +429,9 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Access Control',
     journey: 'Permissions',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires role/permission matrix, admin fixture, and expected access rules.'
+    status: 'controlled',
+    automation: 'PermissionAccess.spec.ts',
+    dependency: 'Requires PERMISSION_TEST_ENABLED plus prepared allowed and restricted users.'
   },
   {
     id: 'UJ-044',
@@ -492,8 +493,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Session Security',
     journey: 'Session Security',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires confirmed return-url behavior and stable protected route fixture.'
+    status: 'automated',
+    automation: 'SessionSecurity.spec.ts > Deep link to protected page returns to intended route after login'
   },
   {
     id: 'UJ-051',
@@ -510,8 +511,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Session Security',
     journey: 'Session Security',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires multi-tab session fixture and deterministic logout propagation behavior.'
+    status: 'automated',
+    automation: 'SessionSecurity.spec.ts > Login once then logout blocks back refresh tabs and protected routes'
   },
   {
     id: 'UJ-053',
@@ -528,8 +529,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Legal Links',
     journey: 'Legal / Terms',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires final list of legal routes and expected link destinations.'
+    status: 'automated',
+    automation: 'AuthUiValidation.spec.ts > Login register and forgot-password expose usable privacy policy links; DashboardNavigation.spec.ts > Dashboard footer legal and support links; PlanSelectionValidation.spec.ts / OverlayStrategistsTrial.spec.ts > trial terms'
   },
   {
     id: 'UJ-055',
