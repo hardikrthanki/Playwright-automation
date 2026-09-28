@@ -169,7 +169,8 @@ export class PlanSelectionPage extends BasePage {
       await this.page.waitForURL(
         /checkout\.stripe\.com|billing\.stripe\.com/i,
         {
-          timeout: 30000
+          timeout: 30000,
+          waitUntil: 'commit'
         }
       );
 
@@ -422,8 +423,26 @@ export class PlanSelectionPage extends BasePage {
 
   async returnFromCheckoutBeforePayment() {
     await this.page.goBack({
-      waitUntil: 'domcontentloaded'
-    });
+      waitUntil: 'domcontentloaded',
+      timeout: 15000
+    }).catch(
+      () => undefined
+    );
+
+    if (
+      /checkout\.stripe\.com|billing\.stripe\.com/i.test(
+        this.page.url()
+      )
+    ) {
+      await this.page.goto(
+        this.appUrl(
+          '/onboarding'
+        ),
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
+    }
 
     await expect(
       this.page

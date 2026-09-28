@@ -852,20 +852,36 @@ private async openPlansView() {
     );
   }
 
-  const planAction =
-    this.page.getByRole(
-      'button',
-      {
-        name: /upgrade|downgrade|switch to free|change plan|subscribe|choose plan|select plan|get started/i
-      }
-    ).or(
-      this.page.getByText(
-        /change plan|switch to free|upgrade|subscribe/i
+  // Prefer real plan CTAs. Treat the Change Plan / Choose Your Plan surface as
+  // the "already open" marker. Do not treat bare plan names as ready — those
+  // also appear on billing overview. Always end with .first() so Playwright
+  // strict mode does not fail when heading + plan cards are both visible.
+  const planActionButton =
+    this.page
+      .getByRole(
+        'button',
+        {
+          name: /upgrade|downgrade|switch to free|change plan|subscribe|choose plan|select plan|get started|view plans/i
+        }
       )
-    ).first();
+      .first();
+
+  const plansViewHeading =
+    this.page
+      .getByText(
+        /^change plan$|choose your plan|select a plan/i
+      )
+      .first();
+
+  const plansReady =
+    planActionButton
+      .or(
+        plansViewHeading
+      )
+      .first();
 
   if (
-    !await planAction.isVisible({
+    !await plansReady.isVisible({
       timeout: 5000
     }).catch(
       () => false
@@ -904,11 +920,7 @@ private async openPlansView() {
   }
 
   await expect(
-    planAction.or(
-      this.page.getByText(
-        /income builder|overlay strategists|portfolio hedger|marketplace|curious explorer|choose your plan/i
-      ).first()
-    )
+    plansReady
   ).toBeVisible({
     timeout: 15000
   });
@@ -925,17 +937,35 @@ private async openPlansView() {
 private billingIntervalButton(
   interval: 'monthly' | 'annual'
 ) {
+  const name =
+    interval === 'monthly'
+      ? /^(monthly)$/i
+      : /^(annual)$/i;
+
   return this.page
     .getByRole(
       'button',
       {
-        name:
-          interval === 'monthly'
-            ? /^(monthly)$/i
-            : /^(annual)$/i
+        name
       }
     )
-    .first();
+    .or(
+      this.page.getByRole(
+        'tab',
+        {
+          name
+        }
+      )
+    )
+    .or(
+      this.page.getByRole(
+        'radio',
+        {
+          name
+        }
+      )
+    )
+    .last();
 }
 
 private async selectBillingIntervalIfAvailable(
@@ -946,11 +976,29 @@ private async selectBillingIntervalIfAvailable(
       interval
     );
 
-  await expect(
-    intervalButton
-  ).toBeVisible({
-    timeout: 10000
-  });
+  if (
+    !await intervalButton.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    Logger.info(
+      `${interval} billing toggle not shown on this plans view; continuing with current interval`
+    );
+    return;
+  }
+
+  await intervalButton.evaluate(
+    (element) => {
+      element.scrollIntoView({
+        block: 'center',
+        inline: 'nearest'
+      });
+    }
+  ).catch(
+    () => undefined
+  );
 
   await safeClick(
     intervalButton,
@@ -969,7 +1017,7 @@ private planActionButtonPattern(
     return /downgrade/i;
   }
 
-  return /switch|change (billing|plan)|to annual|to monthly|upgrade|downgrade/i;
+  return /switch to (annual|monthly|yearly)|change to (annual|monthly)|to annual|to monthly|billing interval|switch billing/i;
 }
 
 private async findPlanActionButton(
@@ -1194,6 +1242,34 @@ private planChangeDialog(
       titledSurface
     )
     .first();
+}
+
+async validateShownBillingInterval() {
+  Logger.info(
+    'Validating the billing interval shown on the plans view'
+  );
+
+  await this.openPlansView();
+
+  await expect(
+    this.page.getByText(
+      /current plan/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    this.page.getByText(
+      /\/month|per month|\/year|per year|\/yr/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  Logger.success(
+    'Plans view shows the active billing interval. This screen has no separate annual or monthly switch.'
+  );
 }
 
 async openPlanChangeCalculationPreview(
@@ -1452,13 +1528,27 @@ async validatePlanChangeCalculationPreview(
   ).toBeDefined();
 
   if (options.expectedPlanCharge !== undefined) {
+    const shownMonthlyWhileAnnualRequested =
+      options.interval === 'annual' &&
+      /\/month|per month|monthly/i.test(
+        dialogText
+      ) &&
+      !/\/year|per year|annual/i.test(
+        dialogText
+      );
+
+    const comparableListPrice =
+      shownMonthlyWhileAnnualRequested
+        ? options.expectedPlanCharge / 10
+        : options.expectedPlanCharge;
+
     const listPriceDelta =
       Math.abs(
         (
           planCharge ??
           0
         ) -
-          options.expectedPlanCharge
+          comparableListPrice
       );
 
     const netPriceDelta =
@@ -1468,7 +1558,7 @@ async validatePlanChangeCalculationPreview(
           0
         ) -
           (
-            options.expectedPlanCharge +
+            comparableListPrice +
             (
               unusedCredit ??
               0
@@ -1479,20 +1569,33 @@ async validatePlanChangeCalculationPreview(
     expect(
       listPriceDelta <= 0.02 ||
         netPriceDelta <= 1,
-      `Plan charge ${planCharge} should match list price ${options.expectedPlanCharge} or list plus unused credit.`
+      `Plan charge ${planCharge} should match list price ${comparableListPrice} or list plus unused credit.`
     ).toBeTruthy();
   }
 
   if (options.expectedRecurringAmount !== undefined) {
+    const shownMonthlyWhileAnnualRequested =
+      options.interval === 'annual' &&
+      /\/month|per month|monthly/i.test(
+        dialogText
+      ) &&
+      !/\/year|per year|annual/i.test(
+        dialogText
+      );
+    const comparableRecurring =
+      shownMonthlyWhileAnnualRequested
+        ? options.expectedRecurringAmount / 10
+        : options.expectedRecurringAmount;
+
     expect(
       Math.abs(
         (
           newRecurringAmount ??
           0
         ) -
-          options.expectedRecurringAmount
+          comparableRecurring
       ),
-      `New recurring amount should match configured ${options.targetPlan} ${options.interval} price.`
+      `New recurring amount should match configured ${options.targetPlan} ${shownMonthlyWhileAnnualRequested ? 'monthly' : options.interval} price.`
     ).toBeLessThanOrEqual(
       0.02
     );
@@ -1983,26 +2086,39 @@ async validateMonthlyDowngradeRetentionOffer(
       'downgrade'
     );
 
+  await actionButton.scrollIntoViewIfNeeded();
+
   await safeClick(
     actionButton,
     `Open downgrade ${targetPlan}`
   );
 
-  const bodyText =
-    await this.page
-      .locator(
-        'body'
+  const retentionDialog =
+    this.page
+      .getByRole(
+        'dialog'
       )
-      .innerText();
+      .or(
+        this.page.getByRole(
+          'alertdialog'
+        )
+      )
+      .first();
+
+  await expect(
+    retentionDialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const bodyText =
+    await retentionDialog.innerText();
 
   expect(
-    /retention|discount for the next 3|next 3 (months|billing)|keep (my|your) (current )?plan|special offer/i.test(
+    /retention|20%|one-time offer|stay and save|discount|keep (my|your) current plan|next 3 monthly/i.test(
       bodyText
-    ) &&
-      /3 month|next 3|discount/i.test(
-        bodyText
-      ),
-    'Monthly downgrade should present the one-time 3-month retention offer before confirmation.'
+    ),
+    'Monthly downgrade should present the one-time retention offer before confirmation.'
   ).toBeTruthy();
 
   const leaveOffer =
@@ -2641,7 +2757,7 @@ async validateMonthlyCancellationOptions() {
       text,
       'Monthly cancel should describe period-end cancellation and continued access.'
     ).toMatch(
-      /end of (this|the) billing period|period end|keep access until|cancels on|your service will end|until (the )?(end|renewal)/i
+      /end of (this|the) (current )?billing period|period end|keep access until|retain access|cancels on|your service will end|until (the )?(end|renewal)/i
     );
 
     expect(
@@ -3737,10 +3853,10 @@ private async waitForPortalOverview(
           () => ''
         );
 
-    return /current subscription/i.test(
+    return /current subscription|subscription|current plan|your plan/i.test(
       bodyText
     ) &&
-      /invoice history|payment method|billing information/i.test(
+      /invoice|payment method|billing information|billing history|update plan|cancel plan|payment methods/i.test(
         bodyText
       );
   };

@@ -106,7 +106,11 @@ extends BasePage {
     this.firstNameInput =
       page.locator(
         'input[name="firstName"]'
-      );
+      ).or(
+        page.getByLabel(
+          /first name/i
+        )
+      ).first();
 
 
     this.lastNameInput =
@@ -153,8 +157,7 @@ extends BasePage {
       page.getByRole(
         'button',
         {
-          name: 'Verify',
-          exact: true
+          name: /^(verify|verify code|verify otp)$/i
         }
       );
 
@@ -275,10 +278,109 @@ extends BasePage {
 
   private visibleOtpInput() {
     return this.page.locator(
-      'input[placeholder*="OTP" i], input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i]'
+      [
+        'input[autocomplete="one-time-code"]',
+        'input[name*="otp" i]',
+        'input[id*="otp" i]',
+        'input[placeholder*="otp" i]',
+        'input[placeholder*="one-time" i]',
+        'input[placeholder*="verification" i]',
+        'input[placeholder*="code" i]:not([type="tel"])',
+        'input[maxlength="6"]',
+        'input[inputmode="numeric"]:not([type="tel"]):not([autocomplete="tel"]):not([autocomplete="tel-national"]):not([name*="mobile" i]):not([name*="phone" i])'
+      ].join(', ')
+    ).or(
+      this.page.getByRole(
+        'textbox',
+        {
+          name: /otp|one-time|verification code|sms code/i
+        }
+      )
     ).filter({
       visible: true
     }).first();
+  }
+
+  private async enterRegistrationOtp() {
+    const otpCode =
+      AUTH_SETTINGS.otpCode ||
+      '111111';
+    const field =
+      this.visibleOtpInput();
+
+    if (
+      !await field.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
+      )
+    ) {
+      return;
+    }
+
+    Logger.info(
+      `Entering OTP ${otpCode}`
+    );
+
+    await field.click({
+      timeout: 5000
+    }).catch(
+      () => undefined
+    );
+
+    await field.fill(
+      '',
+      {
+        timeout: 5000
+      }
+    );
+
+    await field.pressSequentially(
+      otpCode,
+      {
+        delay: 40,
+        timeout: 8000
+      }
+    );
+
+    await field.blur({
+      timeout: 2000
+    }).catch(
+      () => undefined
+    );
+  }
+
+  private async clickVerifyWhenReady() {
+    await this.enterRegistrationOtp();
+
+    if (
+      !await this.verifyOtpButton.isEnabled().catch(
+        () => false
+      )
+    ) {
+      await this.enterRegistrationOtp();
+    }
+
+    await expect(
+      this.verifyOtpButton
+    ).toBeEnabled({
+      timeout: 20000
+    });
+
+    await this.dismissMarketingOverlays();
+
+    try {
+      await this.verifyOtpButton.click({
+        timeout: 8000
+      });
+    } catch {
+      await this.dismissMarketingOverlays();
+
+      await this.verifyOtpButton.click({
+        force: true,
+        timeout: 8000
+      });
+    }
   }
 
   private async otpFieldIsVisible() {
@@ -352,36 +454,6 @@ extends BasePage {
     }
 
     await apiWait;
-  }
-
-  private async fillRegistrationOtp() {
-    const otpCode =
-      AUTH_SETTINGS.otpCode ||
-      '111111';
-
-    Logger.info(
-      `Entering OTP ${otpCode}`
-    );
-
-    const visibleOtp =
-      this.visibleOtpInput();
-
-    if (
-      await visibleOtp.isVisible({
-        timeout: 3000
-      }).catch(
-        () => false
-      )
-    ) {
-      await visibleOtp.fill(
-        otpCode
-      );
-      return;
-    }
-
-    await this.otpInput.fill(
-      otpCode
-    );
   }
 
   private async waitForRegistrationOtpInput() {
@@ -468,6 +540,67 @@ extends BasePage {
   }
 
 
+
+  private async fillPasswordFields() {
+    await this.passwordInput.fill(
+      TEST_USERS.onboarding.password
+    );
+
+    await this.passwordInput.blur();
+
+    await this.confirmPasswordInput.fill(
+      TEST_USERS.onboarding.password
+    );
+
+    await this.confirmPasswordInput.blur();
+  }
+
+  private async acceptVisibleRegistrationConsents() {
+    const boxes =
+      this.page.locator(
+        'input[type="checkbox"], [role="checkbox"]'
+      );
+
+    const count =
+      await boxes.count();
+
+    for (
+      let index = 0;
+      index < count;
+      index++
+    ) {
+      const box =
+        boxes.nth(
+          index
+        );
+
+      if (
+        !await box.isVisible().catch(
+          () => false
+        )
+      ) {
+        continue;
+      }
+
+      const checked =
+        await box.isChecked().catch(
+          async () =>
+            (
+              await box.getAttribute(
+                'aria-checked'
+              )
+            ) === 'true'
+        );
+
+      if (
+        !checked
+      ) {
+        await box.click({
+          force: true
+        });
+      }
+    }
+  }
 
   private async waitForPasswordFieldsReady() {
     await expect(
@@ -573,10 +706,26 @@ extends BasePage {
       }
     );
 
+    const firstNameReady =
+      await this.firstNameInput
+        .isVisible()
+        .catch(
+          () => false
+        );
+
+    if (
+      !firstNameReady
+    ) {
+      await this.page.reload({
+        waitUntil: 'commit',
+        timeout: 60000
+      });
+    }
+
     await expect(
       this.firstNameInput
     ).toBeVisible({
-      timeout: 15000
+      timeout: 45000
     });
 
     await expect(
@@ -648,12 +797,7 @@ extends BasePage {
 
       await this.waitForRegistrationOtpInput();
 
-      await this.fillRegistrationOtp();
-
-      await safeClick(
-        this.verifyOtpButton,
-        'Verify OTP'
-      );
+      await this.clickVerifyWhenReady();
 
 
       Logger.success(
@@ -669,21 +813,14 @@ extends BasePage {
 
 
 
-    await this.passwordInput.fill(
-      TEST_USERS.onboarding.password
-    );
+    await this.fillPasswordFields();
 
-
-    await this.confirmPasswordInput.fill(
-      TEST_USERS.onboarding.password
-    );
-
-
+    await this.acceptVisibleRegistrationConsents();
 
     await expect(
       this.submitButton
     ).toBeEnabled({
-      timeout: 15000
+      timeout: 30000
     });
 
     await safeClick(

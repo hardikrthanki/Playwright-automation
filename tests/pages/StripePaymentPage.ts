@@ -96,7 +96,8 @@ export class StripePaymentPage
     await this.page.waitForURL(
       /checkout.stripe.com/,
       {
-        timeout: 60000
+        timeout: 60000,
+        waitUntil: 'commit'
       }
     );
 

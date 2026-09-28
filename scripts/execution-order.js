@@ -32,6 +32,7 @@ const coreExecutableJourneyOrder = [
 
   'AuthUiValidation.spec.ts',
   'AuthNegative.spec.ts',
+  'PublicRouteGuard.spec.ts',
   'AccessibilityBrowser.spec.ts',
 
   'OnboardingFieldValidation.spec.ts',
@@ -109,6 +110,7 @@ const suites = {
   sanity: pick([
     'AuthUiValidation.spec.ts',
     'AuthNegative.spec.ts',
+    'PublicRouteGuard.spec.ts',
     'SignupNegative.spec.ts',
     'PasswordPolicy.spec.ts',
     'onboarding.spec.ts',
@@ -123,6 +125,7 @@ const suites = {
   regression: pick([
     'AuthUiValidation.spec.ts',
     'AuthNegative.spec.ts',
+    'PublicRouteGuard.spec.ts',
     'SignupNegative.spec.ts',
     'PasswordPolicy.spec.ts',
     'AccessibilityBrowser.spec.ts',
@@ -145,6 +148,7 @@ const suites = {
   regressionAll: pick([
     'AuthUiValidation.spec.ts',
     'AuthNegative.spec.ts',
+    'PublicRouteGuard.spec.ts',
     'SignupNegative.spec.ts',
     'PasswordPolicy.spec.ts',
     'AccessibilityBrowser.spec.ts',
@@ -237,6 +241,7 @@ const executableBatches = [
     files: testPaths([
       'AuthUiValidation.spec.ts',
       'AuthNegative.spec.ts',
+      'PublicRouteGuard.spec.ts',
       'AccessibilityBrowser.spec.ts'
     ])
   },

@@ -31,6 +31,9 @@ import {
 import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
+import {
+  isGmailAutomationEnabled
+} from './helpers/gmailImap';
 
 /* =============================================================================
 TEST FILE: onboarding.spec.ts
@@ -129,6 +132,11 @@ test.describe('OOLTool Onboarding Flow', () => {
   test(
     'Register -> Verify Email -> Login -> Risk -> Compliance',
     async () => {
+      test.skip(
+        !isGmailAutomationEnabled(),
+        'Gmail IMAP is not configured, so this registration flow cannot finish email verification unattended.'
+      );
+
       test.setTimeout(20 * 60 * 1000); // 20 minutes
 
       const browser = await chromium.launch({

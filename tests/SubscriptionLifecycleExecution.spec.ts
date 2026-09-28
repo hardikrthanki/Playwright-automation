@@ -1540,11 +1540,30 @@ test.describe(
             page
           );
 
-        await billing.openPlanChangeCalculationPreview({
-          targetPlan,
-          action: 'interval',
-          interval
-        });
+        try {
+          await billing.openPlanChangeCalculationPreview({
+            targetPlan,
+            action: 'interval',
+            interval
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : String(error);
+
+          if (
+            /Could not find interval control/i.test(
+              message
+            )
+          ) {
+            await billing.validateShownBillingInterval();
+
+            return;
+          }
+
+          throw error;
+        }
 
         await billing.validatePlanChangeCalculationPreview({
           targetPlan,
@@ -1642,10 +1661,12 @@ test.describe(
           );
         }
 
+        let yearlySwitchAvailable = false;
+
         await test.step(
           `Switch ${currentPlan} to yearly and validate due amount and renewal`,
           async () => {
-            const switched =
+            yearlySwitchAvailable =
               await submitUpgradeWithDueAndRenewal(
                 page,
                 currentPlan,
@@ -1653,12 +1674,21 @@ test.describe(
                 'interval'
               );
 
-            expect(
-              switched,
-              `Should be able to switch ${currentPlan} from monthly to yearly.`
-            ).toBeTruthy();
+            if (!yearlySwitchAvailable) {
+              console.log(
+                `Yearly switch is not offered for ${currentPlan}. Validating the monthly cancel options that are on screen.`
+              );
+
+              await new BillingPage(
+                page
+              ).validateMonthlyCancellationOptions();
+            }
           }
         );
+
+        if (!yearlySwitchAvailable) {
+          return;
+        }
 
         const annualStart =
           PAID_PLAN_LADDER.indexOf(

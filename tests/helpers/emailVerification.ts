@@ -43,9 +43,17 @@ export async function openFreshLoginPage(
   await page.goto(
     `${BASE_URL}${URLS.LOGIN}`,
     {
-      waitUntil: 'domcontentloaded'
+      waitUntil: 'commit',
+      timeout: 60000
     }
   );
+
+  await page.locator(
+    'input[type="email"], input[name="email"]'
+  ).first().waitFor({
+    state: 'visible',
+    timeout: 30000
+  });
 }
 
 export async function waitForManualEmailVerification(
@@ -122,7 +130,7 @@ export async function waitForManualEmailVerification(
         message
       );
 
-      if (process.env.CI) {
+      if (process.env.CI || process.env.EMAIL_VERIFICATION_PAUSE !== 'true') {
         throw new Error(
           `Automatic Gmail verification failed for ${email}. ${message}`
         );
@@ -140,7 +148,7 @@ export async function waitForManualEmailVerification(
       'Copy .env.example to .env and paste the Gmail App Password, or set $env:GMAIL_APP_PASSWORD in this VS Code terminal.'
     );
 
-    if (process.env.CI) {
+    if (process.env.CI || process.env.EMAIL_VERIFICATION_PAUSE !== 'true') {
       throw new Error(
         `Automatic Gmail verification is not configured for ${email}. Set GMAIL_APP_PASSWORD in .env.`
       );

@@ -179,6 +179,9 @@ npx playwright test tests/SignupNegative.spec.ts --headed
 test.describe(
   'Signup Negative Scenarios',
   () => {
+    test.describe.configure({
+      timeout: 120000
+    });
 
     test(
       'Signup form blocks empty required fields',

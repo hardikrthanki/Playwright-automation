@@ -15,11 +15,12 @@ import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
 import {
+  completeRiskAndComplianceUnlessPlanReady
+} from './helpers/onboardingContinuation';
+import {
   continueAfterWithCardTrialCheckout,
   submitAnotherWithCardTrialAttempt
 } from './helpers/withCardTrial';
-import { CompliancePage }
-  from './pages/CompliancePage';
 import { LoginPage }
   from './pages/LoginPage';
 import { MobileVerificationPage }
@@ -28,8 +29,6 @@ import { PlanSelectionPage }
   from './pages/PlanSelectionPage';
 import { RegistrationPage }
   from './pages/RegistrationPage';
-import { RiskProfilePage }
-  from './pages/RiskProfilePage';
 import { StripePaymentPage }
   from './pages/StripePaymentPage';
 import { DashboardPage }
@@ -126,13 +125,9 @@ async function registerOverlayUserAndReachPlanSelection(
     mobileNumber
   );
 
-  await new RiskProfilePage(
+  await completeRiskAndComplianceUnlessPlanReady(
     page
-  ).fill();
-
-  await new CompliancePage(
-    page
-  ).fill();
+  );
 
   return {
     email,
@@ -227,13 +222,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 
@@ -472,13 +463,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 
@@ -590,13 +577,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 
@@ -706,13 +689,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 
@@ -816,13 +795,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 
@@ -940,13 +915,9 @@ if (
               mobileNumber
             );
 
-            await new RiskProfilePage(
+            await completeRiskAndComplianceUnlessPlanReady(
               page
-            ).fill();
-
-            await new CompliancePage(
-              page
-            ).fill();
+            );
           }
         );
 

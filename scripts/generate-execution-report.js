@@ -2059,8 +2059,11 @@ function renderModuleHealthCard(module) {
   const failedCount = Number(module.failed ?? 0) || 0;
   const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
   const health = Number(module.score ?? 0);
-  const ranShare = module.total === 0 ? 0 : Math.round((executed / module.total) * 100);
+  const notRun = Math.max(0, Number(module.total || 0) - executed);
   const documentedSkipped = Number(module.documentedSkipped ?? Math.max(0, (module.skipped ?? 0) - (module.unexpectedSkipped ?? 0)));
+  const healthLine = executed === 0
+    ? `None ran. ${module.total} ${Number(module.total) === 1 ? 'check is' : 'checks are'} planned.`
+    : `${module.passed} passed. ${failedCount} failed. ${notRun} did not run.`;
 
   return `
     <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
@@ -2072,13 +2075,12 @@ function renderModuleHealthCard(module) {
         <span class="badge ${tone}"${tooltipAttr(getModuleStatusTooltip(module))}>${escapeHtml(module.status)}</span>
       </div>
       <div class="module-health-score">
-        <strong>${health}%</strong>
-        <span>of checks that ran</span>
+        <span>${healthLine}</span>
       </div>
       <div class="module-card-stats">
         <span><b>${module.passed}</b><small>Passed</small></span>
-        <span><b>${executed || 0}</b><small>Ran</small></span>
-        <span><b>${ranShare}%</b><small>Planned</small></span>
+        <span><b>${failedCount}</b><small>Failed</small></span>
+        <span><b>${notRun}</b><small>Not run</small></span>
       </div>
       <div class="module-progress" aria-hidden="true"><span style="width:${health}%"></span></div>
       <p>${failedCount > 0
@@ -2109,7 +2111,7 @@ const moduleDashboardCards =
       const filterTone = getModuleFilterTone(module);
       const failedCount = Number(module.failed ?? 0) || 0;
       const executed = Number(module.executed ?? ((module.passed ?? 0) + failedCount + (module.interrupted ?? 0)));
-      const ranShare = module.total === 0 ? 0 : Math.round((executed / module.total) * 100);
+      const notRun = Math.max(0, Number(module.total || 0) - executed);
       const moduleExecutionMs =
         getModuleExecutionMs(module.name);
       const scenarioCount =
@@ -2125,12 +2127,14 @@ const moduleDashboardCards =
             <span class="badge ${tone}">${escapeHtml(module.status)}</span>
           </div>
           <div class="module-dashboard-score-row">
-            <strong>${module.score}%</strong>
-            <span>${ranShare}% of planned checks ran</span>
+            <span>${executed === 0
+              ? `None ran. ${module.total} ${Number(module.total) === 1 ? 'check is' : 'checks are'} planned.`
+              : `${module.passed} passed. ${failedCount} failed. ${notRun} did not run.`}</span>
           </div>
           <div class="module-selector-summary">
-            <span>Of checks that ran <b>${module.score}%</b></span>
-            <span>Passed <b>${module.passed} of ${executed || 0}</b></span>
+            <span>Passed <b>${module.passed}</b></span>
+            <span>Failed <b>${failedCount}</b></span>
+            <span>Not run <b>${notRun}</b></span>
             <span>Risk <b>${escapeHtml(module.risk)}</b></span>
             <span>Scenarios <b>${scenarioCount}</b></span>
             <span>Evidence <b>${escapeHtml(moduleEvidenceLabel)}</b></span>
@@ -2139,7 +2143,7 @@ const moduleDashboardCards =
           <div class="module-progress"><span style="width:${module.score}%"></span></div>
           <p>${escapeHtml(getModuleFocus(module.name))}</p>
           <div class="module-dashboard-footer">
-            <span>${failedCount > 0 ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review` : 'No recent failures'}</span>
+            <span>${failedCount > 0 ? `${failedCount} failure${failedCount === 1 ? '' : 's'} need review` : executed === 0 ? 'None of these checks ran' : 'No failures in this run'}</span>
             <em>Open detail drawer</em>
           </div>
         </div>`;
@@ -2347,6 +2351,7 @@ const failedSourceItems = demoMode
   : failedTests;
 
 const FAILED_TESTS_INITIAL_VISIBLE = 6;
+const FAILURE_LIST_PREVIEW = 4;
 const FAILED_TESTS_LOAD_BATCH = 6;
 const shouldShowFailureLoadMore = failedSourceItems.length > FAILED_TESTS_INITIAL_VISIBLE;
 const warningSourceItems = demoMode
@@ -2444,7 +2449,30 @@ function getFailureShortTitle(test, index = 0) {
     return 'Subscriber billing journey did not complete';
   }
 
-  return lastPart;
+  return clientCheckTitle(lastPart);
+}
+
+function clientCheckTitle(title) {
+  return String(title)
+    .replace(/^[A-Z]{1,4}-\d+[A-Z]?\s*[-–:]\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function onceSentence(value) {
+  const text = String(value ?? '').replace(/\s+/g, ' ').trim();
+  const parts = text.split(/(?<=[.!?])\s+/).filter(Boolean);
+
+  if (parts.length >= 2 && parts[0] === parts[1]) {
+    return parts[0];
+  }
+
+  const half = Math.floor(text.length / 2);
+  if (half > 24 && text.slice(0, half).trim() === text.slice(half).trim()) {
+    return text.slice(0, half).trim();
+  }
+
+  return text;
 }
 
 function getFailureClientDescription(test, index = 0) {
@@ -2483,6 +2511,162 @@ function getFailureClientDescription(test, index = 0) {
   return defaultReason === 'Review failure evidence.'
     ? 'The expected validation did not complete in the latest execution.'
     : defaultReason;
+}
+
+function plainFailureStory(test, index = 0) {
+  const title = getFailureFullTitle(test, index);
+  const raw = String(getFailureTechnicalError(test) || '')
+    .replace(/\u001b\[[0-9;]*m/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const lower = `${title} ${raw}`.toLowerCase();
+
+  let happened = 'This check did not finish the way we expected.';
+  let wanted = 'The screen should show the expected result and let the check finish.';
+  let next = 'Fix the screen this check was waiting for, then rerun it.';
+
+  if (lower.includes('combobox')) {
+    happened = 'The check looked for an experience menu, but Choose Your Plan was already open.';
+    wanted = 'When the plan page is already open, the check should start the trial from that page.';
+    next = 'On Choose Your Plan, start the Overlay Strategists 30-day trial with card.';
+  } else if (lower.includes('tobeenabled') && lower.includes('create account')) {
+    happened = 'Create Account stayed off after the signup fields were filled.';
+    wanted = 'Create Account should turn on once the name, email, mobile code, and both passwords are accepted.';
+    next = 'On signup, confirm the text-message code is accepted and both passwords match, then wait for Create Account to turn on.';
+  } else if (lower.includes('/login') && (lower.includes('timeout') || lower.includes('domcontentloaded'))) {
+    happened = 'The login page took too long to open.';
+    wanted = 'The login page should show the email field before the time limit.';
+    next = 'Open the login page and wait until the email field is visible, then rerun this check.';
+  } else if (lower.includes('input[name="firstname"]')) {
+    happened = 'The signup form did not show the first name field in time.';
+    wanted = 'The create-account form should show first name, last name, email, and mobile.';
+    next = 'Open signup and wait until the first name field is on the page, then rerun this check.';
+  } else if (lower.includes('gmail') || lower.includes('verify email') || lower.includes('onboarding flow')) {
+    happened = 'The new account email was not confirmed, so signup could not continue.';
+    wanted = 'The email link should be opened and the account should be marked verified.';
+    next = 'Set the Gmail app password so the test can open the verification email, then rerun onboarding.';
+  } else if (lower.includes('otp') || lower.includes('sms code') || lower.includes('verification code')) {
+    happened = 'The text-message code box did not appear after Send code.';
+    wanted = 'A box for the text-message code should appear so the check can continue.';
+    next = 'Click Send code and confirm the text-message box appears before the check moves on.';
+  } else if (
+    lower.includes('could not find interval')
+    || lower.includes('billing interval')
+    || lower.includes('annual switch')
+    || lower.includes('monthly switch')
+    || (lower.includes('switch') && (lower.includes('yearly') || lower.includes('annual') || lower.includes('monthly')))
+  ) {
+    happened = 'The billing page did not show a switch between monthly and yearly.';
+    wanted = 'The plans page should show the current plan and its monthly or yearly price.';
+    next = 'Open Change Plan and confirm the monthly or yearly switch is on the page, then rerun this check.';
+  } else if (lower.includes('list price') || lower.includes('plan charge') || lower.includes('recurring amount') || (lower.includes('upgrade') && lower.includes('expected'))) {
+    happened = 'The price on the screen did not match the price this check expected.';
+    wanted = 'The upgrade box should show the charge, credit, and next bill we expected.';
+    next = 'Open the upgrade box and compare the charge, credit, and amount due with the plan price, then rerun the preview.';
+  } else if (lower.includes('retention') || lower.includes('stay and save') || lower.includes('20%')) {
+    happened = 'The downgrade screen did not show the offer to stay on the current plan.';
+    wanted = 'A stay-and-save offer should appear before the plan is changed.';
+    next = 'Start a downgrade and confirm the stay-and-save offer appears before the plan changes, then rerun this check.';
+  } else if (lower.includes('billing period') || lower.includes('period-end') || lower.includes('cancel')) {
+    happened = 'The cancel screen did not show the wording this check expected.';
+    wanted = 'The cancel box should say access continues until the end of the billing period.';
+    next = 'Open cancel and confirm it says access lasts until the end of the billing period, then rerun this check.';
+  } else if (lower.includes('portal') && lower.includes('stripe')) {
+    happened = 'Stripe opened, but the subscription summary was not on the page.';
+    wanted = 'The Stripe page should show the current plan and billing details.';
+    next = 'Open Manage subscription and confirm Stripe shows the current plan, invoices, and payment method, then rerun this check.';
+  } else if (lower.includes('checkout.stripe') || lower.includes('waitforurl')) {
+    happened = 'The browser stayed on the Stripe payment page instead of coming back.';
+    wanted = 'Leaving checkout should return to the plan page without paying.';
+    next = 'From Stripe checkout, go back and confirm the plan page returns without starting a subscription, then rerun this check.';
+  } else if (lower.includes('strict mode')) {
+    happened = 'More than one item on the page matched, so the check could not choose one.';
+    wanted = 'The page should have one clear button or heading for this step.';
+    next = 'Make this step match one button or heading, then rerun this check.';
+  } else if (lower.includes('empty required')) {
+    happened = 'The signup form did not finish the empty-field check in time.';
+    wanted = 'Empty required fields should block signup.';
+    next = 'Open signup, leave the required fields empty, and confirm the form blocks you, then rerun this check.';
+  } else if (lower.includes('cardnumber') || lower.includes('#cardnumber')) {
+    happened = 'The card number field did not appear before the time limit.';
+    wanted = 'The payment form should show a card number field.';
+    next = 'Open the Overlay Strategists trial and confirm the card number field is on the page before the time limit, then rerun this check.';
+  } else if (lower.includes('received: hidden') || lower.includes('unexpected value "hidden"')) {
+    happened = 'The plan heading was on the page, but it was hidden.';
+    wanted = 'A visible plan control, such as Monthly, Annual, or a plan name, should be on the page.';
+    next = 'Open the plan page and confirm Monthly, Annual, or a plan name is visible, then rerun this check.';
+  } else if (lower.includes('tobevisible') || lower.includes('element(s) not found')) {
+    happened = 'The button or message we looked for was not on the page.';
+    wanted = 'The expected button or message should be visible.';
+    next = 'Put the missing button or message on the page, then rerun this check.';
+  } else if (lower.includes('timeout') || lower.includes('timed out')) {
+    happened = 'The page took too long, and the check stopped before it could finish.';
+    wanted = 'The page should be ready before the time limit.';
+    next = 'Open the page this check starts on and wait until it is ready, then rerun it.';
+  } else if (lower.includes('tobetruthy') || lower.includes('tomatch')) {
+    happened = 'Something on the page did not match what this check expected.';
+    wanted = 'The page should match the result this check was written for.';
+    next = 'Compare the screen with the result this check expects, then rerun it.';
+  }
+
+  const titledNext = specificFailureNextAction(title, raw);
+  if (titledNext) {
+    next = titledNext;
+  }
+
+  return { happened, wanted, next };
+}
+
+function specificFailureNextAction(title, raw = '') {
+  const text = String(title).toLowerCase();
+  const error = String(raw).toLowerCase();
+
+  if (error.includes('combobox')) {
+    return 'On Choose Your Plan, start the Overlay Strategists 30-day trial with card.';
+  }
+
+  if (error.includes('tobeenabled') && error.includes('create account')) {
+    return 'On signup, confirm the text-message code is accepted and both passwords match, then wait for Create Account to turn on.';
+  }
+
+  if (error.includes('/login') && (error.includes('timeout') || error.includes('domcontentloaded'))) {
+    return 'Open the login page and wait until the email field is visible, then rerun this check.';
+  }
+
+  if (error.includes('input[name="firstname"]')) {
+    return 'Open signup and wait until the first name field is on the page, then rerun this check.';
+  }
+
+  const rules = [
+    [/onboarding flow|register -> verify email/, 'Set the Gmail app password so the test can open the verification email, then rerun the onboarding flow.'],
+    [/empty required/, 'Open signup, leave the required fields empty, and confirm the form blocks you, then rerun this check.'],
+    [/trial with card/, error.includes('cardnumber') || error.includes('card number')
+      ? 'Open the Overlay Strategists trial and confirm the card number field is on the page before the time limit, then rerun this check.'
+      : ''],
+    [/trial without card/, 'Start the Overlay Strategists trial, click Send code, and confirm the text-message box appears, then rerun this check.'],
+    [/upgrade calculation/, 'Open the upgrade box and compare the charge, credit, and amount due with the plan price, then rerun the upgrade preview.'],
+    [/interval change without submitting/, 'Open Change Plan, check the current plan and its price, and close it without saving, then rerun this check.'],
+    [/yearly cancel|climbs every monthly/, 'Finish the plan ladder, open cancel, and confirm the period-end choices. If yearly is not offered, check cancel on the monthly plan, then rerun this check.'],
+    [/retention offer/, 'Start a downgrade and confirm the stay-and-save offer appears before the plan changes, then rerun this check.'],
+    [/period-end cancel/, 'Open cancel and confirm it says access lasts until the end of the billing period, then rerun this check.'],
+    [/sc-67|manage subscription portal/, 'Open Manage subscription and confirm Stripe shows the current plan, invoices, and payment method, then rerun SC-67.'],
+    [/sc-75c|browser back from stripe/, 'From Stripe checkout, go back and confirm the plan page returns without starting a subscription, then rerun SC-75C.'],
+    [/sc-168|annual switch action is available/, 'On an active monthly plan, open Change Plan and confirm a switch to yearly is shown, then rerun SC-168.'],
+    [/sc-170|current monthly plan and target annual/, 'Open the monthly-to-yearly confirmation and check that it names the current monthly plan and the yearly plan, then rerun SC-170.'],
+    [/sc-171|displays yearly amount/, 'Open the yearly switch confirmation and confirm the yearly amount is shown, then rerun SC-171.'],
+    [/sc-172|prorated credit or charge/, 'Open the yearly switch confirmation and confirm the prorated credit or charge is shown, then rerun SC-172.'],
+    [/sc-173|annual switch confirmation displays next renewal/, 'Open the yearly switch confirmation and confirm the next renewal date is shown, then rerun SC-173.'],
+    [/sc-174|cancel monthly-to-annual/, 'Start the monthly-to-yearly change, cancel before you confirm, and check the plan stays monthly, then rerun SC-174.'],
+    [/sc-204|monthly switch action is available/, 'On an active yearly plan, open Change Plan and confirm a switch to monthly is shown, then rerun SC-204.'],
+    [/sc-206|current annual plan and target monthly/, 'Open the yearly-to-monthly confirmation and check that it names the current yearly plan and the monthly plan, then rerun SC-206.'],
+    [/sc-207|displays monthly amount/, 'Open the monthly switch confirmation and confirm the monthly amount is shown, then rerun SC-207.'],
+    [/sc-209|annual-to-monthly confirmation displays next renewal/, 'Open the monthly switch confirmation and confirm the next renewal date is shown, then rerun SC-209.'],
+    [/sc-210|cancel annual-to-monthly/, 'Start the yearly-to-monthly change, cancel before you confirm, and check the plan stays yearly, then rerun SC-210.'],
+    [/lc-031|interval toggles/, 'Open Change Plan and confirm the monthly and yearly prices stay visible before you save a change, then rerun LC-031.'],
+  ];
+
+  const match = rules.find(([pattern]) => pattern.test(text));
+  return match ? match[1] : '';
 }
 
 function getFailureTechnicalError(test) {
@@ -2572,18 +2756,18 @@ function getFailureImpact(test, index = 0) {
   const moduleName = String(test?.module ?? getModuleName(getFailureFullTitle(test, index))).toLowerCase();
 
   if (moduleName.includes('billing') || moduleName.includes('payment')) {
-    return 'Billing confidence is reduced until the prepared account state and subscription behavior are confirmed.';
+    return 'Do not treat billing as ready until this check passes.';
   }
 
   if (moduleName.includes('authentication') || moduleName.includes('mfa')) {
-    return 'User access confidence is reduced until the authentication scenario is rerun successfully.';
+    return 'Do not treat sign-in as ready until this check passes.';
   }
 
   if (moduleName.includes('onboarding') || moduleName.includes('signup')) {
-    return 'New-user onboarding confidence is reduced until this scenario is verified.';
+    return 'Do not treat new-user signup as ready until this check passes.';
   }
 
-  return 'Requires investigation before using this scenario as release evidence.';
+  return 'This check needs a look before you use it as proof.';
 }
 
 function getFailureImpactSource(test) {
@@ -2668,14 +2852,56 @@ function getFailureEvidenceInfo(test) {
     : 0;
 
   if (directEvidenceCount > 0) {
-    const primaryEvidence = test.evidence.find(item => item.path) ?? test.evidence[0];
+    const liveShot = test.evidence.find(item =>
+      keepEvidenceCopy(item)
+      && formatEvidenceType(item.type ?? item.name) === 'Screenshot'
+      && !screenshotLooksBlank(item)
+    );
+
+    if (liveShot) {
+      return {
+        status: 'Saved with this report',
+        label: 'Open the copy kept beside this report',
+        action: 'Open picture',
+        href: getEvidenceHref(liveShot),
+        available: true,
+      };
+    }
+
+    const blankShot = test.evidence.find(item =>
+      keepEvidenceCopy(item)
+      && formatEvidenceType(item.type ?? item.name) === 'Screenshot'
+      && screenshotLooksBlank(item)
+    );
+
+    if (blankShot) {
+      return {
+        status: 'Blank screen',
+        label: 'The saved picture is a blank white screen. The page text is on the check above.',
+        action: 'Blank screen',
+        href: '#failures',
+        available: false,
+      };
+    }
+
+    const liveEvidence = test.evidence.find(item => keepEvidenceCopy(item));
+
+    if (liveEvidence) {
+      return {
+        status: 'Saved with this report',
+        label: 'Open the copy kept beside this report',
+        action: 'Open file',
+        href: getEvidenceHref(liveEvidence),
+        available: true,
+      };
+    }
 
     return {
-      status: 'Attached',
-      label: `${directEvidenceCount} artifact${directEvidenceCount === 1 ? '' : 's'} attached`,
-      action: 'Open Evidence',
-      href: getEvidenceHref(primaryEvidence),
-      available: true,
+      status: 'File removed',
+      label: 'A later test run cleared this file from the results folder',
+      action: 'Not available',
+      href: '#failures',
+      available: false,
     };
   }
 
@@ -2727,12 +2953,26 @@ function selectPrimaryFailureScreenshot(test) {
     ? `Attempt ${selected.attempt}${selected.retry ? ` / Retry ${selected.retry}` : ''}`
     : 'Latest failed attempt';
 
+  const href = getEvidenceHref(selected);
+
+  if (!href) {
+    return {
+      available: false,
+      multiple: screenshotItems.length > 1,
+      label: 'Picture no longer on disk',
+      reason: 'This picture was saved during the run, then a later test run deleted it. The next full run keeps a copy with the report.',
+    };
+  }
+
+  const blank = screenshotLooksBlank(selected);
+
   return {
     available: true,
+    blank,
     multiple: screenshotItems.length > 1,
     item: selected,
-    href: getEvidenceHref(selected),
-    label: `Primary Failure Screenshot - ${attemptLabel}`,
+    href,
+    label: blank ? 'Blank white screen' : `Primary Failure Screenshot - ${attemptLabel}`,
     reason: failedAttemptScreenshots.length > 0
       ? 'Selected from screenshot evidence owned by a failed attempt.'
       : 'Selected using the latest screenshot attached to this failed test.',
@@ -2742,12 +2982,12 @@ function selectPrimaryFailureScreenshot(test) {
 function renderPrimaryFailureScreenshot(test) {
   const primary = selectPrimaryFailureScreenshot(test);
 
-  if (!primary.available) {
+  if (!primary.available || primary.blank) {
     return `
       <div class="primary-failure-shot empty">
         <span>Primary Failure Screenshot</span>
-        <strong>Not available</strong>
-        <small>${escapeHtml(primary.reason)}</small>
+        <strong>${primary.blank ? 'Blank white screen' : 'Not available'}</strong>
+        <small>${escapeHtml(primary.blank ? 'The file is a blank white image. The page text is shown on the failure card.' : primary.reason)}</small>
       </div>`;
   }
 
@@ -2771,6 +3011,83 @@ function getEvidenceAbsolutePath(item = {}) {
     : path.join(projectRoot, rawPath);
 }
 
+function screenshotLooksBlank(item = {}) {
+  const absolutePath = getEvidenceAbsolutePath(item);
+
+  if (!absolutePath || !fs.existsSync(absolutePath)) {
+    return false;
+  }
+
+  const size = readPngSize(absolutePath);
+
+  if (!size || size.width < 640 || size.height < 360) {
+    return false;
+  }
+
+  try {
+    return fs.statSync(absolutePath).size < 12000;
+  } catch {
+    return false;
+  }
+}
+
+function readFailurePageNotes(test) {
+  const evidenceItems = Array.isArray(test?.evidence) ? test.evidence : [];
+  const logItem = evidenceItems.find(item => /error-context\.md$/i.test(String(item.path || item.name || '')))
+    || evidenceItems.find(item => formatEvidenceType(item.type ?? item.name) === 'Log');
+  const absolutePath = logItem ? getEvidenceAbsolutePath(logItem) : '';
+
+  if (!absolutePath || !fs.existsSync(absolutePath)) {
+    return { highlights: [], errorLine: '' };
+  }
+
+  const text = fs.readFileSync(absolutePath, 'utf8');
+  const errorMatch = text.match(/# Error details\s+```[^\n]*\n([^\n]+)/);
+  const errorLine = errorMatch
+    ? errorMatch[1].replace(/^Error:\s*/, '').trim()
+    : '';
+  const snapMatch = text.match(/# Page snapshot\s+```(?:\w+)?\n([\s\S]*?)```/);
+  const highlights = [];
+
+  if (snapMatch) {
+    snapMatch[1].split('\n').forEach(rawLine => {
+      const line = rawLine.replace(/\[[^\]]+\]/g, ' ').replace(/\s+/g, ' ').trim();
+      const quoted = line.match(/(?:heading|button|link)\s+"([^"]+)"/i);
+      const labeled = line.match(/(?:paragraph|generic):\s*(.+)$/i);
+      const value = (quoted?.[1] || labeled?.[1] || '').trim().replace(/:$/, '');
+
+      if (!value || value.length > 90 || highlights.includes(value)) {
+        return;
+      }
+
+      highlights.push(value);
+    });
+  }
+
+  return {
+    highlights: highlights.slice(0, 8),
+    errorLine,
+  };
+}
+
+function renderFailureScreen(test, title) {
+  const primary = selectPrimaryFailureScreenshot(test);
+  const notes = readFailurePageNotes(test);
+  const pageList = notes.highlights
+    .map(item => `<li>${escapeHtml(item)}</li>`)
+    .join('');
+
+  if (!primary.available || primary.blank) {
+    return `<div class="failure-screen-fallback">
+      <span>${primary.blank ? 'The saved picture is a blank white screen' : 'No picture was saved'}</span>
+      <p>${escapeHtml(notes.errorLine || primary.reason || 'The check stopped before a useful picture was saved.')}</p>
+      ${pageList ? `<strong>What was on the page</strong><ul>${pageList}</ul>` : ''}
+    </div>`;
+  }
+
+  return `<a class="failure-screen-link" href="${escapeHtml(primary.href)}"><img src="${escapeHtml(primary.href)}" alt="Screen when ${escapeHtml(title)} failed"></a>`;
+}
+
 function getAnnotatedEvidenceFileName(test, screenshot, index = 0) {
   const testKey = moduleSlug(test.testId || test.testName || test.title || `failure-${index}`);
   const attemptKey = moduleSlug(screenshot.attemptId || `attempt-${screenshot.attempt || screenshot.retry || 1}`);
@@ -2781,7 +3098,7 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   const originalPath = getEvidenceAbsolutePath(screenshot);
   const region = getReliableFailureRegion(screenshot);
 
-  if (!originalPath || !fs.existsSync(originalPath)) {
+  if (!originalPath || !fs.existsSync(originalPath) || screenshotLooksBlank(screenshot)) {
     return {
       available: false,
       reason: 'Original screenshot file was not available for annotation.',
@@ -2811,11 +3128,10 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
     .relative(annotationDir, originalPath)
     .replaceAll('\\', '/');
   const attemptLabel = screenshot.attemptId || `Attempt ${screenshot.attempt ?? screenshot.retry ?? 1}`;
-  const markerLabel = region.expectedElementNotFound
-    ? 'Failed/Expected Area - Expected element not found'
-    : `Failed/Expected Area - ${region.label || 'Failure location'}`;
-  const expected = compactText(getFailureExpected(test, index), 130);
-  const observed = compactText(getFailureObserved(test, index), 130);
+  const story = plainFailureStory(test, index);
+  const markerLabel = 'Where it failed';
+  const expected = compactText(story.wanted, 90);
+  const observed = compactText(story.happened, 110);
   const title = compactText(getFailureFullTitle(test, index), 110);
   const labelX = Math.min(Math.max(18, safeRegion.x), Math.max(18, size.width - 520));
   const labelY = safeRegion.y > 150
@@ -2838,8 +3154,8 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   <rect x="${labelX}" y="${labelY}" width="500" height="118" rx="14" fill="rgba(8,16,30,0.92)" stroke="rgba(255,59,59,0.75)" stroke-width="2"/>
   <text x="${labelX + 18}" y="${labelY + 28}" fill="#ffb4b4" font-family="Arial, sans-serif" font-size="18" font-weight="800">${escapeHtml(markerLabel)}</text>
   <text x="${labelX + 18}" y="${labelY + 54}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(title)}</text>
-  <text x="${labelX + 18}" y="${labelY + 78}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">Expected: ${escapeHtml(expected)}</text>
-  <text x="${labelX + 18}" y="${labelY + 100}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">Observed: ${escapeHtml(observed)}</text>
+  <text x="${labelX + 18}" y="${labelY + 78}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">What happened: ${escapeHtml(observed)}</text>
+  <text x="${labelX + 18}" y="${labelY + 100}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">What we wanted: ${escapeHtml(expected)}</text>
   <rect x="18" y="${size.height - 52}" width="420" height="34" rx="10" fill="rgba(8,16,30,0.82)"/>
   <text x="34" y="${size.height - 30}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="15">AIR Annotated Failure View - ${escapeHtml(attemptLabel)}</text>
 </svg>`;
@@ -2858,23 +3174,12 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
 
 function renderFailureScreenshotEvidence(test, index = 0) {
   const primary = selectPrimaryFailureScreenshot(test);
-  const expected = getFailureExpected(test, index);
-  const observed = getFailureObserved(test, index);
-  const technicalError = getFailureTechnicalError(test);
+  const story = plainFailureStory(test, index);
 
-  if (!primary.available) {
+  if (!primary.available || primary.blank) {
     return `
       <div class="failure-screenshot-context">
-        <div class="failure-shot-panel annotated unavailable">
-          <span>Annotated Failure View</span>
-          <strong>Not available</strong>
-          <small>${escapeHtml(primary.reason)}</small>
-        </div>
-        <div class="failure-shot-notes">
-          <p><b>Expected:</b> ${escapeHtml(expected)}</p>
-          <p><b>Observed:</b> ${escapeHtml(observed)}</p>
-          <p><b>Technical Error:</b> ${escapeHtml(technicalError)}</p>
-        </div>
+        ${renderFailureScreen(test, getFailureShortTitle(test, index))}
       </div>`;
   }
 
@@ -2883,57 +3188,75 @@ function renderFailureScreenshotEvidence(test, index = 0) {
   return `
     <div class="failure-screenshot-context">
       <div class="failure-shot-panel ${annotated.available ? 'annotated' : 'unavailable'}">
-        <span>Annotated Failure View</span>
+        <span>Picture with a mark</span>
         ${annotated.available
           ? `<a href="${escapeHtml(annotated.href)}" data-evidence-preview data-evidence-kind="Annotated Failure View" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(annotated.href)}"${tooltipAttr(annotated.reason)}>
               <img src="${escapeHtml(annotated.href)}" alt="Annotated failure view">
               <small>${escapeHtml(annotated.reason)}</small>
             </a>`
-          : `<strong>Not available</strong>
-             <small>Failure location could not be determined automatically.</small>`}
+          : `<strong>No mark</strong>
+             <small>We could not point to one spot on the screen. The picture is still the screen at failure.</small>`}
       </div>
       <div class="failure-shot-panel original">
-        <span>Original Screenshot</span>
+        <span>Screen at failure</span>
         <a href="${escapeHtml(primary.href)}" data-evidence-preview data-evidence-kind="Original Screenshot" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(primary.href)}"${tooltipAttr('Original Playwright screenshot. This file is never modified by AIR.')}>
           <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
           <small>${escapeHtml(primary.label)}</small>
         </a>
       </div>
       <div class="failure-shot-notes">
-        <p><b>Expected:</b> ${escapeHtml(expected)}</p>
-        <p><b>Observed:</b> ${escapeHtml(observed)}</p>
-        <p><b>Technical Error:</b> ${escapeHtml(technicalError)}</p>
-        ${annotated.available ? '' : '<p><b>Location:</b> Failure location could not be determined automatically.</p>'}
+        <p><b>What happened:</b> ${escapeHtml(story.happened)}</p>
+        <p><b>What we wanted:</b> ${escapeHtml(story.wanted)}</p>
       </div>
     </div>`;
 }
 
+const keptEvidenceDir = path.join(outputDir, 'kept-evidence');
+const keptEvidenceCopies = new Map();
+
+function keepEvidenceCopy(item = {}) {
+  const absolutePath = getEvidenceAbsolutePath(item);
+
+  if (!absolutePath || !fs.existsSync(absolutePath)) {
+    return '';
+  }
+
+  const stat = fs.statSync(absolutePath);
+  if (!stat.isFile()) {
+    return '';
+  }
+
+  if (keptEvidenceCopies.has(absolutePath)) {
+    return keptEvidenceCopies.get(absolutePath);
+  }
+
+  fs.mkdirSync(keptEvidenceDir, { recursive: true });
+  const parent = path.basename(path.dirname(absolutePath)).replace(/[^\w.-]+/g, '-').slice(0, 80);
+  const base = path.basename(absolutePath).replace(/[^\w.-]+/g, '-');
+  const fileName = `${parent}--${base}`;
+  fs.copyFileSync(absolutePath, path.join(keptEvidenceDir, fileName));
+  const href = `kept-evidence/${fileName}`;
+  keptEvidenceCopies.set(absolutePath, href);
+  return href;
+}
+
 function getEvidenceHref(item = {}) {
+  const kept = keepEvidenceCopy(item);
+  if (kept) {
+    return kept;
+  }
+
   const rawPath = String(item?.path ?? '').replaceAll('\\', '/');
 
   if (!rawPath) {
     return hasPlaywrightReport ? '../playwright-report/index.html' : '#evidence';
   }
 
-  if (/^(https?:|file:|#)/i.test(rawPath)) {
+  if (/^(https?:|#)/i.test(rawPath)) {
     return rawPath;
   }
 
-  if (/^[A-Za-z]:\//.test(rawPath)) {
-    const relativePath = path
-      .relative(projectRoot, rawPath)
-      .replaceAll('\\', '/');
-
-    if (relativePath && !relativePath.startsWith('..')) {
-      return `../${relativePath}`;
-    }
-  }
-
-  if (rawPath.startsWith('../')) {
-    return rawPath;
-  }
-
-  return `../${rawPath.replace(/^\.?\//, '')}`;
+  return '';
 }
 
 function formatEvidenceType(value) {
@@ -2972,8 +3295,12 @@ function renderFailureEvidenceChips(test, options = {}) {
 
   return `<div class="failure-evidence-chips">
     ${Object.entries(grouped).map(([label, items]) => {
-      const first = items.find(item => item.path) ?? items[0];
-      return `<a href="${escapeHtml(getEvidenceHref(first))}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="${items.length} available" data-evidence-href="${escapeHtml(getEvidenceHref(first))}">${escapeHtml(label)} <b>${items.length}</b></a>`;
+      const first = items.find(item => keepEvidenceCopy(item));
+      if (!first) {
+        return `<span>${escapeHtml(label)} no longer on disk</span>`;
+      }
+      const href = getEvidenceHref(first);
+      return `<a href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="${escapeHtml(label)}" data-evidence-status="Saved with this report" data-evidence-href="${escapeHtml(href)}">${escapeHtml(label)} <b>${items.length}</b></a>`;
     }).join('')}
   </div>`;
 }
@@ -2987,7 +3314,8 @@ function getFailureArtifactLinks(test) {
       status: item.attemptStatus || item.type || 'Available',
       attempt: item.attempt,
       retry: item.retry,
-    }));
+    }))
+    .filter(item => item.href);
 }
 
 function getFailureSourceLabel(test) {
@@ -3078,20 +3406,18 @@ const failedRows = (failedSourceItems.length > 0
     const title = getFailureShortTitle(test, index);
     const moduleName = test.module ?? getModuleName(title);
     const priority = test.severity ?? 'High';
-    const reason = test.whyFailed ?? getFailureClientDescription(test, index);
-    const nextAction = getFailureNextAction(test, index);
-    const sourceLabel = getFailureSourceLabel(test);
-    const evidenceInfo = getFailureEvidenceInfo(test);
+    const story = plainFailureStory(test, index);
+    const reason = story.happened;
+    const nextAction = story.next;
+    const shot = selectPrimaryFailureScreenshot(test);
     const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' class="is-hidden"' : '';
 
     return `
     <tr${hiddenClass} data-failure-row data-failure-index="${index}">
-      <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(fullTitle)}</small></td>
+      <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong></td>
       <td>${escapeHtml(moduleName)}</td>
-      <td><span class="badge ${priority === 'High' || priority === 'Critical' ? 'bad' : priority === 'Medium' ? 'warn' : 'good'}">${escapeHtml(priority)}</span></td>
-      <td><span class="failure-source-pill">${escapeHtml(sourceLabel)}</span></td>
-      <td><strong>${escapeHtml(reason)}</strong><small>Next: ${escapeHtml(nextAction)}</small></td>
-      <td><a class="table-evidence-link" href="${escapeHtml(evidenceInfo.href)}">${escapeHtml(evidenceInfo.status)}</a></td>
+      <td><strong>${escapeHtml(reason)}</strong><small>What to do: ${escapeHtml(nextAction)}</small></td>
+      <td>${shot.available && !shot.blank ? `<a class="table-evidence-link" href="${escapeHtml(shot.href)}">Open picture</a>` : `<span>${shot.blank ? 'Blank screen' : 'No picture'}</span>`}</td>
     </tr>`;
   })
   .join('');
@@ -3099,9 +3425,16 @@ const failedRows = (failedSourceItems.length > 0
 const criticalFailedCount = failedSourceItems
   .filter(test => ['Critical', 'High'].includes(test.severity ?? 'High'))
   .length;
-const failedEvidenceCount = failedSourceItems
-  .filter(test => getFailureEvidenceInfo(test).available)
+const openableFailurePictures = failedSourceItems
+  .filter(test => {
+    const shot = selectPrimaryFailureScreenshot(test);
+    return shot.available && !shot.blank;
+  })
   .length;
+const blankFailurePictures = failedSourceItems
+  .filter(test => selectPrimaryFailureScreenshot(test).blank)
+  .length;
+const failedEvidenceCount = openableFailurePictures;
 const failedModuleCount = new Set(
   failedSourceItems.map(test => test.module ?? getModuleName(test.title ?? test.testName ?? 'Unknown'))
 ).size;
@@ -3140,36 +3473,36 @@ const failureInvestigationCards = failedSourceItems
           <span class="badge ${tone}">${escapeHtml(severity)}</span>
         </div>
         <div class="failure-reason-block">
-          <span>What failed</span>
+          <span>What we checked</span>
           <p>${escapeHtml(whatFailed)}</p>
-          <span>Observed</span>
-          <p>${escapeHtml(observed)}</p>
-          <span>Expected</span>
-          <p>${escapeHtml(expected)}</p>
-          <span>Likely Impact</span>
+          <span>What happened</span>
+          <p>${escapeHtml(plainFailureStory(test, index).happened)}</p>
+          <span>What we wanted</span>
+          <p>${escapeHtml(plainFailureStory(test, index).wanted)}</p>
+          <span>Why it matters</span>
           <p>${escapeHtml(impact)}</p>
-          <span>Cause Status</span>
-          <p>${escapeHtml(cause)}</p>
-          <span>Technical Error</span>
-          <p class="technical-error">${escapeHtml(getFailureTechnicalError(test))}</p>
-          <span>Summary</span>
-          <p>${escapeHtml(reason)}</p>
         </div>
         ${renderFailureScreenshotEvidence(test, index)}
-        <p class="failure-next-action"><b>Next:</b> ${escapeHtml(nextAction)}</p>
+        <p class="failure-next-action"><b>What to do:</b> ${escapeHtml(plainFailureStory(test, index).next)}</p>
+        <details class="failure-more-detail">
+          <summary>Error detail</summary>
+          <p class="technical-error">${escapeHtml(getFailureTechnicalError(test))}</p>
+        </details>
         <div class="failure-artifact-group">
           <span>Trace / Video / Logs</span>
           ${renderFailureEvidenceChips(test, { includeScreenshots: false })}
         </div>
         <div class="failure-card-meta">
-          <span><b>${escapeHtml(test.status ?? 'failed')}</b><small>Status</small></span>
-          <span><b>${escapeHtml(sourceLabel)}</b><small>Source</small></span>
-          <span><b>${escapeHtml(evidenceInfo.status)}</b><small>Evidence</small></span>
-          <span><b>${escapeHtml(moduleName)}</b><small>Module</small></span>
+          <span><b>${escapeHtml(test.status ?? 'failed')}</b><small>Result</small></span>
+          <span><b>${escapeHtml(sourceLabel)}</b><small>From</small></span>
+          <span><b>${escapeHtml(evidenceInfo.status)}</b><small>Picture</small></span>
+          <span><b>${escapeHtml(moduleName)}</b><small>Area</small></span>
         </div>
         <div class="failure-card-action">
           <span>${escapeHtml(evidenceInfo.label)}</span>
-          <a href="${escapeHtml(evidenceInfo.href)}">${escapeHtml(evidenceInfo.action)}</a>
+          ${evidenceInfo.available
+            ? `<a href="${escapeHtml(evidenceInfo.href)}">${escapeHtml(evidenceInfo.action)}</a>`
+            : `<span>${escapeHtml(evidenceInfo.action)}</span>`}
         </div>
       </article>`;
   })
@@ -3177,17 +3510,93 @@ const failureInvestigationCards = failedSourceItems
 
 const failureCardLoadMoreHtml = shouldShowFailureLoadMore
   ? `<div class="failure-load-more" data-failure-load-more="cards">
-      <span data-failure-count="cards">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed tests</span>
+      <span data-failure-count="cards">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed checks</span>
       <button type="button" data-load-more-failures data-failure-target="cards" aria-label="Load more failed test cards">Load More</button>
     </div>`
   : '';
 
 const failureTableLoadMoreHtml = shouldShowFailureLoadMore
   ? `<div class="failure-load-more" data-failure-load-more="rows">
-      <span data-failure-count="rows">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed tests</span>
+      <span data-failure-count="rows">Showing ${FAILED_TESTS_INITIAL_VISIBLE} of ${failedSourceItems.length} failed checks</span>
       <button type="button" data-load-more-failures data-failure-target="rows" aria-label="Load more failed test list rows">Load More</button>
     </div>`
   : '';
+
+const failurePreviewLoadMoreHtml = failedSourceItems.length > FAILURE_LIST_PREVIEW
+  ? `<div class="failure-load-more" data-failure-load-more="preview">
+      <span data-failure-count="preview">Showing ${FAILURE_LIST_PREVIEW} of ${failedSourceItems.length} failed checks</span>
+      <button type="button" data-load-more-failures data-failure-target="preview" data-failure-initial="${FAILURE_LIST_PREVIEW}">Show more</button>
+    </div>`
+  : '';
+
+const failureGroups = failedSourceItems.reduce((groups, test, index) => {
+  const story = plainFailureStory(test, index);
+  const title = getFailureShortTitle(test, index);
+  const entry = {
+    test,
+    index,
+    story,
+    title,
+    moduleName: test.module ?? getModuleName(title),
+  };
+  const existing = groups.find(group => group.happened === story.happened);
+
+  if (existing) {
+    existing.items.push(entry);
+  } else {
+    groups.push({ happened: story.happened, items: [entry] });
+  }
+
+  return groups;
+}, []);
+
+const nextStepListHtml = failureGroups.length === 0
+  ? ''
+  : (() => {
+    const cards = failureGroups.map((group, index) => {
+      const sharedNext = group.items.every(item => item.story.next === group.items[0].story.next)
+        ? group.items[0].story.next
+        : 'Open the checks in this group. Each one has its own next step.';
+
+      return `<a class="next-step-card" href="#failures">
+      <span>${String(index + 1).padStart(2, '0')}</span>
+      <div>
+        <strong>${escapeHtml(group.happened)}</strong>
+        <p>${escapeHtml(sharedNext)}</p>
+        <small>${group.items.length} check${group.items.length === 1 ? '' : 's'}</small>
+      </div>
+    </a>`;
+    });
+    const visible = cards.slice(0, 3).join('');
+    const rest = cards.slice(3);
+
+    return `<div class="next-step-list">${visible}</div>${rest.length ? `<details class="fold"><summary><b>${rest.length} more next steps</b><span>Open when you need them</span></summary><div class="next-step-list">${rest.join('')}</div></details>` : ''}`;
+  })();
+
+const failureEvidenceBoard = failureGroups.length === 0
+  ? ''
+  : `<div class="failure-groups">${failureGroups.map(group => {
+    const checks = group.items.map(entry => {
+      const shot = renderFailureScreen(entry.test, entry.title);
+
+      return `<article class="failure-shot-card" data-failure-preview data-failure-index="${entry.index}">
+        <header><div><strong>${escapeHtml(entry.title)}</strong><small>${escapeHtml(entry.moduleName)}</small></div></header>
+        ${shot}
+        <p class="failure-next-line">What to do: ${escapeHtml(entry.story.next)}</p>
+      </article>`;
+    }).join('');
+
+    return `<details class="failure-group">
+      <summary>
+        <b>${group.items.length}</b>
+        <span>
+          <strong>${escapeHtml(group.happened)}</strong>
+          <small>${group.items.length === 1 ? '1 check' : `${group.items.length} checks`}. Open to see each one.</small>
+        </span>
+      </summary>
+      <div class="failure-group-body">${checks}</div>
+    </details>`;
+  }).join('')}</div>`;
 
 const failedTestsContent =
   !demoMode && failedTests.length === 0
@@ -3206,28 +3615,38 @@ const failedTestsContent =
     : `
       <div class="failure-command-center">
         <div class="failure-summary-card primary">
-          <span>Release Impact</span>
-          <strong>${releaseLabel}</strong>
-          <p>${escapeHtml(airResults?.releaseDecision?.recommendedAction ?? airResults?.release?.recommendedAction ?? 'Review failed tests before approval.')}</p>
+          <span>Stories</span>
+          <strong>${failureGroups.length}</strong>
+          <p>${failedSourceItems.length} checks sit inside these stories. Open a story to see each check.</p>
         </div>
-        <button class="failure-summary-card issue-summary-button" type="button" data-open-failure-details>
-          <span>Failures</span>
-          <strong>${failedSourceItems.length}</strong>
-          <p>${criticalFailedCount} critical or high priority</p>
-          <em>Open details</em>
-        </button>
         <div class="failure-summary-card">
-          <span>Modules</span>
-          <strong>${failedModuleCount}</strong>
-          <p>Impacted by current failures</p>
+          <span>Failed checks</span>
+          <strong>${failedSourceItems.length}</strong>
+          <p>These did not pass</p>
         </div>
-        <button class="failure-summary-card issue-summary-button" type="button" data-open-failure-details>
-          <span>Evidence</span>
-          <strong>${failedEvidenceCount}/${failedSourceItems.length}</strong>
-          <p>${failedEvidenceCount > 0 ? 'Evidence source available' : 'Needs attachment'}</p>
-          <em>Open details</em>
-        </button>
+        <div class="failure-summary-card">
+          <span>Areas touched</span>
+          <strong>${failedModuleCount}</strong>
+          <p>Parts of the product in this list</p>
+        </div>
+        <div class="failure-summary-card">
+          <span>Pictures you can open</span>
+          <strong>${openableFailurePictures}/${failedSourceItems.length}</strong>
+          <p>${openableFailurePictures > 0 ? 'Saved with this report' : blankFailurePictures > 0 ? 'Saved pictures are blank. Page text is shown instead.' : 'Cleared by a later test run'}</p>
+        </div>
       </div>
+      <h2>What failed</h2>
+      <p>${failureGroups.length} stories cover ${failedSourceItems.length} checks. Open a story for the picture and the next step. The full table stays below.</p>
+      ${failureEvidenceBoard}
+      <details class="report-fold">
+        <summary>Open the full list (${failedSourceItems.length})</summary>
+        <div class="table-wrap"><table class="data failure-detail-table"><thead><tr><th>Check</th><th>Area</th><th>What happened</th><th>Picture</th></tr></thead><tbody data-long-list="${FAILED_TESTS_INITIAL_VISIBLE}" data-long-item="tr" data-long-label="failed checks">${failedRows}</tbody></table></div>
+      </details>
+      <details class="report-fold">
+        <summary>Open extra detail</summary>
+        <p>The raw error is inside each card.</p>
+        <div class="failure-investigation-grid" data-long-list="${FAILED_TESTS_INITIAL_VISIBLE}" data-long-item="[data-failure-card]" data-long-label="failed checks">${failureInvestigationCards}</div>
+      </details>
       `;
 
 const warningInvestigationCards = warningSourceItems
@@ -3464,17 +3883,42 @@ const coverageGapsContent = coverageGapItems.length === 0
   })
   : `
     <div class="coverage-gap-summary">
-      <div><span>Total Not Executed</span><strong>${coverageGapSummary.total ?? coverageGapItems.length}</strong><small>Skipped, controlled, blocked, or reference rows</small></div>
-      <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Needs dev/admin/API support</small></div>
-      <div><span>Controlled</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Needs manual link, OTP, or fixture</small></div>
-      <div><span>Traceability</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Covered by linked executable specs</small></div>
-      <div><span>Future</span><strong>${coverageGapSummary.future ?? 0}</strong><small>Roadmap coverage, not this run</small></div>
-      <div><span>Unexpected Skips</span><strong>${coverageGapSummary.skipped ?? 0}</strong><small>Not classified; triage these first</small></div>
+      <div><span>Did not run</span><strong>${coverageGapSummary.total ?? coverageGapItems.length}</strong><small>Out of the full plan</small></div>
+      <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Need a product or admin change first</small></div>
+      <div><span>Need a setup</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Need an email, code, or prepared user</small></div>
+      <div><span>Already covered</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Checked by another test that did run</small></div>
+      <div><span>Later</span><strong>${coverageGapSummary.future ?? 0}</strong><small>Not part of this release</small></div>
+      <div><span>Need a look</span><strong>${coverageGapSummary.skipped ?? 0}</strong><small>Skipped without a clear reason</small></div>
     </div>
     <div class="coverage-gap-explainer">
-      <strong>Why this section exists</strong>
-      <p>These are not product failures. AIR separates blocked, skipped, controlled, and traceability-only scenarios so stakeholders can see exactly what was missed and why.</p>
-      <button class="issue-detail-button" type="button" data-open-coverage-gap-details>Open Blocked / Skipped Details</button>
+      <strong>These are not failures</strong>
+      <p>A check in this list did not run. It does not mean the product failed. Open a group to see examples and what would let that check run.</p>
+    </div>
+    <div class="coverage-next">
+      ${[
+        ['Blocked', 'Need a product or admin change first', coverageGapSummary.blocked ?? 0],
+        ['Controlled', 'Need an email, code, or prepared user', coverageGapSummary.controlled ?? 0],
+        ['Traceability', 'Already checked by another test', coverageGapSummary.traceability ?? 0],
+        ['Future', 'Planned for a later release', coverageGapSummary.future ?? 0],
+        ['Skipped', 'Skipped without a clear reason', coverageGapSummary.skipped ?? 0],
+      ].map(([category, meaning, count]) => {
+        const samples = coverageGapItems
+          .filter(item => String(item.category || '').toLowerCase() === String(category).toLowerCase())
+          .slice(0, 6);
+        const rows = samples.map(item => `<li><strong>${escapeHtml(clientCheckTitle(item.title || item.fullTitle || 'Check'))}</strong><span>${escapeHtml(onceSentence(item.reason || item.nextAction || meaning))}</span></li>`).join('');
+        return `<details class="coverage-next-group">
+          <summary><b>${count}</b><span><strong>${escapeHtml(meaning)}</strong><small>${samples.length ? 'Examples below' : 'No examples in this run'}</small></span></summary>
+          ${rows ? `<ul>${rows}</ul>` : ''}
+        </details>`;
+      }).join('')}
+      ${displayModules.filter(module => Number(module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0))) === 0).map(module => {
+        const notes = {
+          'Access Control': 'The permission check is already in the suite. It runs when two prepared users are available.',
+          'General': 'Sign out and email trim already have tests that can run. The unlock-link check needs a locked account.',
+        };
+        const note = notes[module.name] || 'The tests are in the suite. Include that area in the next full run.';
+        return `<p class="coverage-next-note"><strong>${escapeHtml(module.name)}</strong> has ${module.total} planned check${Number(module.total) === 1 ? '' : 's'} and none of those matrix rows ran. ${escapeHtml(note)}</p>`;
+      }).join('')}
     </div>
     `;
 
@@ -3509,7 +3953,9 @@ function getFailureScreenshotContextData(test, index = 0) {
 }
 
 const failureDetailDataJson =
-  JSON.stringify(failedSourceItems.map((test, index) => ({
+  JSON.stringify(failedSourceItems.map((test, index) => {
+    const story = plainFailureStory(test, index);
+    return {
     index: index + 1,
     title: getFailureShortTitle(test, index),
     fullTitle: getFailureFullTitle(test, index),
@@ -3518,9 +3964,9 @@ const failureDetailDataJson =
     status: test.status ?? 'failed',
     category: test.category ?? 'Execution',
     whatFailed: test.whatFailed ?? getFailureShortTitle(test, index),
-    whyFailed: test.whyFailed ?? getFailureClientDescription(test, index),
-    expected: getFailureExpected(test, index),
-    observed: getFailureObserved(test, index),
+    whyFailed: story.happened,
+    expected: story.wanted,
+    observed: story.happened,
     impact: getFailureImpact(test, index),
     cause: getFailureCauseLabel(test),
     technicalError: getFailureTechnicalError(test),
@@ -3534,12 +3980,13 @@ const failureDetailDataJson =
         ? 'Fallback explanation'
         : 'Playwright error',
     },
-    nextAction: getFailureNextAction(test, index),
+    nextAction: story.next,
     evidence: getFailureEvidenceInfo(test).status,
     screenshotContext: getFailureScreenshotContextData(test, index),
     artifactLinks: getFailureArtifactLinks(test),
     source: getFailureSourceLabel(test),
-  })))
+    };
+  }))
     .replaceAll('<', '\\u003c')
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
@@ -3622,7 +4069,18 @@ const attemptsWithEvidenceCount =
     }, new Set())
     .size;
 
-const evidenceStatusLabel = count => count > 0 ? `${count} saved` : 'None in this run';
+const evidenceStatusLabel = (label, count) => {
+  if (label === 'Screenshots') {
+    if (openableFailurePictures > 0) {
+      return `${openableFailurePictures} can be opened`;
+    }
+    if (count > 0) {
+      return `${count} saved, then cleared`;
+    }
+  }
+
+  return count > 0 ? `${count} recorded` : 'None in this run';
+};
 const evidenceCards = [
   ['Screenshots', evidenceCounts.screenshots, 'IMG'],
   ['Videos', evidenceCounts.videos, 'VID'],
@@ -3630,58 +4088,57 @@ const evidenceCards = [
   ['Logs', evidenceCounts.logs, 'LOG'],
 ]
   .map(([label, count, icon]) => `
-    <div class="evidence-card ${count > 0 ? 'good' : 'none'}">
+    <div class="evidence-card ${(label === 'Screenshots' ? openableFailurePictures : count) > 0 ? 'good' : 'none'}">
       <div class="evidence-icon">${escapeHtml(icon)}</div>
       <div class="evidence-card-body">
         <strong>${escapeHtml(label)}</strong>
-        <span>${escapeHtml(evidenceStatusLabel(count))}</span>
+        <span>${escapeHtml(evidenceStatusLabel(label, count))}</span>
       </div>
     </div>`)
   .join('');
 const visualProofCount = evidenceCounts.screenshots + evidenceCounts.videos + evidenceCounts.traces;
-const evidenceProofStripHtml = visualProofCount > 0
+const evidenceProofStripHtml = openableFailurePictures > 0
   ? `<div class="evidence-proof-strip">
-      ${[
-        ['Screenshots', evidenceCounts.screenshots],
-        ['Videos', evidenceCounts.videos],
-        ['Traces', evidenceCounts.traces],
-        ['Logs', evidenceCounts.logs],
-      ].filter(([, count]) => count > 0).map(([label, count]) => `<span><b>${count}</b><small>${escapeHtml(label)}</small></span>`).join('')}
+      <span><b>${openableFailurePictures}</b><small>Pictures you can open</small></span>
     </div>`
   : '';
-const evidenceSummaryText = visualProofCount > 0
-  ? [
-      evidenceCounts.screenshots ? `${evidenceCounts.screenshots} screenshot${evidenceCounts.screenshots === 1 ? '' : 's'}` : '',
-      evidenceCounts.videos ? `${evidenceCounts.videos} video${evidenceCounts.videos === 1 ? '' : 's'}` : '',
-      evidenceCounts.traces ? `${evidenceCounts.traces} trace${evidenceCounts.traces === 1 ? '' : 's'}` : '',
-      evidenceCounts.logs ? `${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'}` : '',
-    ].filter(Boolean).join(', ') + ' saved with this run.'
-  : evidenceCounts.logs > 0
-    ? `No screenshots, videos, or traces. ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'} are under test-results/.`
-    : hasPlaywrightReport
-      ? 'No screenshots, videos, or traces for this run. Step detail is still in playwright-report/.'
-      : 'No proof was saved for this run.';
-const evidencePackageNote =
-  'Same local package as this AIR report: playwright-report/ (step-by-step HTML) and test-results/ (raw artifacts — screenshots, videos, traces, logs, results.json).';
+const evidenceSummaryText = openableFailurePictures > 0
+  ? `${openableFailurePictures} picture${openableFailurePictures === 1 ? '' : 's'} can be opened from this report.`
+  : blankFailurePictures > 0
+    ? `The saved picture${blankFailurePictures === 1 ? ' is' : 's are'} a blank white screen. Each failed check shows the page text instead.`
+    : evidenceCounts.screenshots > 0
+    ? `This run saved ${evidenceCounts.screenshots} screenshot${evidenceCounts.screenshots === 1 ? '' : 's'}${evidenceCounts.logs ? ` and ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'}` : ''}. A later test run cleared them, so none can be opened here.`
+    : evidenceCounts.logs > 0
+      ? `No screenshots were saved. ${evidenceCounts.logs} log${evidenceCounts.logs === 1 ? '' : 's'} were recorded, then cleared.`
+      : hasPlaywrightReport
+        ? 'No screenshots were saved. The test log is still available.'
+        : 'No proof was saved for this run.';
+const evidencePackageNote = openableFailurePictures > 0
+  ? 'These pictures are saved beside the report, so a later test run will not remove them.'
+  : 'The next full run will keep a copy of each picture with this report.';
+const resultsFileExists = fs.existsSync(resultsPath);
 const evidencePlaywrightCta = hasPlaywrightReport
-  ? `<a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>`
-  : `<span class="btn ghost" title="Run tests to create playwright-report/index.html">Playwright report not found</span>`;
+  ? `<a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open the full test log</a>`
+  : `<span class="btn ghost" title="Run tests to create playwright-report/index.html">Full test log was not saved</span>`;
+const resultsFileCta = resultsFileExists
+  ? `<a class="btn" href="../test-results/results.json" target="_blank" rel="noopener">Open the run file</a>`
+  : `<span class="btn ghost">Run file was cleared</span>`;
 const evidenceHeroHtml = `
   <div class="evidence-hero">
     <div>
-      <span class="mission-label">Evidence</span>
-      <strong>${visualProofCount > 0 ? 'Proof available' : hasPlaywrightReport || evidenceCounts.logs > 0 ? 'Run log available' : 'No proof saved'}</strong>
+      <span class="mission-label">Proof</span>
+      <strong>${openableFailurePictures > 0 ? 'Pictures you can open' : blankFailurePictures > 0 ? 'Pictures are blank' : evidenceCounts.screenshots > 0 ? 'Pictures were cleared' : hasPlaywrightReport ? 'Test log available' : 'No proof saved'}</strong>
       <p>${escapeHtml(evidenceSummaryText)}</p>
       <p class="evidence-path-note">${escapeHtml(evidencePackageNote)}</p>
       <div class="evidence-cta-row">
         ${evidencePlaywrightCta}
-        <a class="btn" href="../test-results/results.json" target="_blank" rel="noopener">Open results.json</a>
+        ${resultsFileCta}
       </div>
     </div>
-    <div class="evidence-score-card ${visualProofCount > 0 ? '' : 'muted'}">
-      <span>Screenshots</span>
-      <strong>${evidenceCounts.screenshots}</strong>
-      <small>${hasPlaywrightReport ? 'Playwright report linked' : 'Playwright report missing'}</small>
+    <div class="evidence-score-card ${openableFailurePictures > 0 ? '' : 'muted'}">
+      <span>Can open</span>
+      <strong>${openableFailurePictures}</strong>
+      <small>${evidenceCounts.screenshots} pictures were saved in the run</small>
     </div>
   </div>
   ${evidenceProofStripHtml}`;
@@ -3726,6 +4183,10 @@ const evidenceThumbnails =
         const href = getEvidenceHref(item);
         const label = item.testTitle || item.name || `Screenshot ${index + 1}`;
 
+        if (!href || screenshotLooksBlank(item)) {
+          return '';
+        }
+
         return `
         <a class="thumb" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(label)}>
           <img src="${escapeHtml(href)}" alt="${escapeHtml(label)}">
@@ -3764,14 +4225,14 @@ const failureEvidenceMapHtml =
       <div class="panel evidence-failure-map">
         <div class="evidence-map-head">
           <div>
-            <h2 class="icon-title"><span class="section-icon">MAP</span>Failure Evidence Map</h2>
-            <p>Failed-test evidence is available for investigation. Open details only when review is needed.</p>
+            <h2>Pictures for failed checks</h2>
+            <p>${openableFailurePictures > 0 ? 'Open a story on the failure page to see the screen.' : blankFailurePictures > 0 ? 'The picture file is blank. The page text is on each failed check.' : 'The pictures from this run are no longer on disk.'}</p>
           </div>
           <button class="issue-detail-button" type="button" data-open-failure-details>Open Failed Evidence Details</button>
         </div>
         <div class="evidence-map-summary">
           <div><span>Failed Tests</span><strong>${failedSourceItems.length}</strong><small>Open details for full investigation</small></div>
-          <div><span>Evidence Attached</span><strong>${failedEvidenceCount}/${failedSourceItems.length}</strong><small>Screenshot, video, trace, log, or raw report</small></div>
+          <div><span>Pictures you can open</span><strong>${openableFailurePictures}/${failedSourceItems.length}</strong><small>Saved beside this report</small></div>
           <div><span>Impacted Modules</span><strong>${failedModuleCount}</strong><small>Modules with current failed checks</small></div>
         </div>
       </div>`;
@@ -4500,8 +4961,7 @@ const aiWhyItems =
     .map(item => `<li>${escapeHtml(item)}</li>`)
     .join('');
 
-const footerHtml =
-  'Generated by AIR Platform &bull; Automation Intelligence Report &bull; AIR Platform v1.2 Historical Intelligence';
+const footerHtml = 'Prepared by AIR';
 
 const executiveConfidence =
   airResults?.releaseDecision?.confidence ??
@@ -4981,7 +5441,7 @@ const validationAreaCards = validationTopAreas
     <article class="validation-area-card">
       <span>${escapeHtml(area)}</span>
       <strong>${escapeHtml(count)}</strong>
-      <small>validated scenario${Number(count) === 1 ? '' : 's'}</small>
+      <small>checks in this area</small>
     </article>`)
   .join('') || `
     <article class="validation-area-card">
@@ -5043,7 +5503,7 @@ const validationCoverageGapCards = (airResults?.coverageGaps?.items ?? [])
     <article class="validation-gap-card">
       <span>${escapeHtml(item.category ?? item.status ?? 'Review')}</span>
       <strong>${escapeHtml(item.title ?? item.fullTitle ?? 'Coverage item')}</strong>
-      <p>${escapeHtml(compactText(item.reason ?? item.dependency ?? item.nextAction ?? 'Review required.', 150))}</p>
+      <p>${escapeHtml(onceSentence(compactText(item.reason ?? item.dependency ?? item.nextAction ?? 'Review required.', 150)))}</p>
     </article>`)
   .join('');
 function getAirCoreEngineGroup(index) {
@@ -5140,18 +5600,12 @@ const airCoreLayerHtml = airCoreLayerDefinitions
 
 const airCoreEngineGroupsHtml = airCoreLayerDefinitions
   .map(layer => `
-    <div class="engine-output-group engine-output-${layer.className}">
-      <div class="engine-output-group-head">
-        <div>
-          <span>${escapeHtml(layer.name)}</span>
-          <p>${escapeHtml(layer.description)}</p>
-        </div>
-        <strong>${layer.engines.length} engine${layer.engines.length === 1 ? '' : 's'}</strong>
-      </div>
+    <details class="fold engine-output-group engine-output-${layer.className}">
+      <summary><b>${escapeHtml(layer.name)}</b><span>${escapeHtml(layer.engines.map(engine => engine.name).join(' · '))}</span></summary>
       <div class="engine-output-cards">
         ${layer.engines.map(engine => renderAirCoreEngineCard(engine, engineStatusItems.indexOf(engine), layer.name.replace(' Layer', ''))).join('')}
       </div>
-    </div>`)
+    </details>`)
   .join('');
 
 const airCorePipelineHtml = engineStatusItems
@@ -5301,6 +5755,10 @@ const executiveEvidenceHighlights =
         const href = getEvidenceHref(item);
         const label = item.testTitle || item.name || `Screenshot ${index + 1}`;
 
+        if (!href || screenshotLooksBlank(item)) {
+          return '';
+        }
+
         return `
         <a class="executive-evidence-card ${index === 0 && executiveData.failed > 0 ? 'attention' : ''}" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(label)}>
           <img src="${escapeHtml(href)}" alt="${escapeHtml(label)}">
@@ -5327,55 +5785,73 @@ const readerAttentionNames = journeysNeedingReview.map(journey => journey.name);
 const readerGuideSteps = [
   {
     question: 'Can we release?',
-    answer: `${executiveData.releaseDecision}. Confidence ${executiveConfidence}%. Risk ${estimatedReleaseRisk}.`,
+    count: executiveData.releaseDecision,
+    answer: `Confidence ${executiveConfidence}%. Risk ${estimatedReleaseRisk}.`,
     href: '#executive',
-    open: 'Why',
+    open: 'Open why',
     tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
   },
   {
     question: 'Did anything fail?',
+    count: String(executiveData.failed),
     answer: executiveData.failed > 0
-      ? `${executiveData.failed} check${executiveData.failed === 1 ? '' : 's'} failed.`
-      : `No. ${executiveData.executed ?? executiveData.passed} of ${executiveData.total} ran and passed.`,
+      ? `${failureGroups.length} ${failureGroups.length === 1 ? 'story' : 'stories'} to open`
+      : `No. ${executiveData.executed ?? executiveData.passed} checks ran and passed.`,
     href: '#failures',
-    open: 'Failures',
+    open: 'Open failures',
     tone: executiveData.failed > 0 ? 'bad' : 'good',
   },
   {
     question: 'What needs a look?',
+    count: String(readerAttentionNames.length),
     answer: readerAttentionNames.length
-      ? `${readerAttentionNames.join(', ')}.`
-      : `Nothing. ${healthyModuleCount}/${displayModules.length} areas healthy.`,
+      ? readerAttentionNames.join(', ')
+      : `${healthyModuleCount} of ${displayModules.length} areas are healthy`,
     href: '#journey',
-    open: 'Paths',
+    open: 'Open paths',
     tone: readerAttentionNames.length ? 'warn' : 'good',
   },
   {
     question: 'What proof is there?',
-    answer: visualProofCount > 0
-      ? evidenceSummaryText
-      : hasPlaywrightReport
-        ? 'Open Playwright report for step detail.'
-        : evidenceSummaryText,
+    count: String(openableFailurePictures),
+    answer: openableFailurePictures > 0
+      ? `${openableFailurePictures} picture${openableFailurePictures === 1 ? '' : 's'} you can open`
+      : blankFailurePictures > 0
+        ? 'Saved pictures are blank. Page text is shown instead.'
+        : 'Pictures from this run were cleared.',
     href: '#evidence',
-    open: 'Evidence',
-    tone: visualProofCount > 0 || hasPlaywrightReport ? 'good' : 'warn',
+    open: 'Open proof',
+    tone: openableFailurePictures > 0 ? 'good' : 'warn',
   },
   {
     question: 'What should we do?',
-    answer: releaseRecommendedAction,
-    href: '#executive',
-    open: 'Next',
+    count: String(failureGroups.length),
+    answer: failureGroups.length
+      ? `${failureGroups.length} next step${failureGroups.length === 1 ? '' : 's'} before the next run`
+      : releaseRecommendedAction,
+    href: '#insight',
+    open: 'Open next step',
     tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
   },
 ];
+const scanNowHtml = failureGroups.length === 0
+  ? `<p class="scan-now good">Nothing failed in the checks that ran.</p>`
+  : `<p class="scan-now"><a href="#failures"><b>${executiveData.failed} failed</b><span>${failureGroups.length} ${failureGroups.length === 1 ? 'story' : 'stories'} on What failed</span></a></p>`;
+const statusBoardHtml = `
+  <div class="status-board" aria-label="This run at a glance">
+    <a class="status-card ${releaseClass}" href="#executive"><b>${escapeHtml(executiveData.releaseDecision)}</b><span>Release</span></a>
+    <a class="status-card ${executiveData.failed > 0 ? 'bad' : 'good'}" href="#failures"><b>${executiveData.failed}</b><span>Failed</span></a>
+    <a class="status-card good" href="#validation-summary"><b>${executiveData.passed}</b><span>Passed</span></a>
+    <a class="status-card warn" href="#coverage-gaps"><b>${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))}</b><span>Not run</span></a>
+    <a class="status-card good" href="#health"><b>${executiveData.qualityScore}%</b><span>Of what ran</span></a>
+  </div>`;
 const readerGuideHtml = `
-  <section class="reader-guide" aria-label="How to read this report">
+  <section class="reader-guide" aria-label="Five answers">
     <h2>Five answers</h2>
     <div class="reader-guide-list">
-      ${readerGuideSteps.map((step, index) => `
+      ${readerGuideSteps.map((step) => `
         <a class="reader-step ${step.tone}" href="${step.href}">
-          <i>${String(index + 1).padStart(2, '0')}</i>
+          <b>${escapeHtml(step.count)}</b>
           <span>${escapeHtml(step.question)}</span>
           <strong>${escapeHtml(step.answer)}</strong>
           <em>${escapeHtml(step.open)}</em>
@@ -5387,15 +5863,15 @@ const executiveModeShellHtml = `
     <div>
       <div class="eyebrow">${escapeHtml(projectName)} · ${escapeHtml(environment)}</div>
       <h1>Release Brief</h1>
-      <p>Five answers, then the decision. Health, paths, and evidence follow. Everything else is one click.</p>
+      <p>Click a count to open that page.</p>
     </div>
     <div class="executive-toolbar">
       <span>${escapeHtml(generatedAt)}</span>
-      <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf" title="This downloads the last saved PDF. Re-export from the browser if it still shows the old layout.">Download PDF</a>
-      <a class="btn ghost" href="#executive">Why this decision</a>
+      <a class="btn ghost" href="#failures">Open the failures</a>
     </div>
   </div>
-  ${readerGuideHtml}
+  ${statusBoardHtml}
+  ${scanNowHtml}
   <div class="executive-mode-grid">
     <div class="release-cockpit ${releaseClass} interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
       <div class="release-orb">
@@ -5404,9 +5880,9 @@ const executiveModeShellHtml = `
       <div class="release-cockpit-content">
         <span class="cockpit-label">Decision</span>
         ${releaseStatusBadge}
-        <p>${executiveData.executed ?? executiveData.passed} of ${executiveData.total} planned checks ran. ${executiveData.failed === 0 ? 'Every one passed.' : `${executiveData.failed} failed.`}</p>
+        <p class="brief-count">${executiveData.passed} passed and ${executiveData.failed} failed, out of ${executiveData.executed ?? executiveData.passed} checks that ran. ${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))} were not run. Quality of the checks that ran is ${executiveData.qualityScore}%.</p>
         <div class="cockpit-mini-grid">
-          <div><span>Confidence</span><strong>${executiveConfidence}%</strong></div>
+          <div><span>Quality</span><strong>${executiveData.qualityScore}%</strong></div>
           <div><span>Risk</span><strong class="${estimatedReleaseRiskTone}">${escapeHtml(estimatedReleaseRisk)}</strong></div>
           <div><span>Paths</span><strong class="${journeysNeedingReview.length ? 'amber' : ''}">${liveBusinessJourneys.length - journeysNeedingReview.length}/${liveBusinessJourneys.length}</strong></div>
         </div>
@@ -5414,13 +5890,25 @@ const executiveModeShellHtml = `
       </div>
     </div>
     <div class="executive-kpi-stack">
-      <button class="executive-kpi mark-good interactive-card" type="button" data-open-quality aria-label="Open quality score calculation"><span>Quality</span><strong>${executiveData.qualityScore}%</strong><small>Of checks that ran</small></button>
-      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>${executiveData.inventoryPassRate ?? executiveData.passRate}% of plan</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'None' : `${executiveData.passRate}% pass`}</small></div>
-      <div class="executive-kpi ${healthyModuleCount < displayModules.length ? 'mark-warn' : 'mark-good'}"><span>Areas</span><strong>${healthyModuleCount}</strong><small>healthy of ${displayModules.length}</small></div>
-      <div class="executive-kpi ${journeysNeedingReview.length ? 'mark-warn' : 'mark-good'}"><span>Paths</span><strong>${liveBusinessJourneys.length - journeysNeedingReview.length}</strong><small>healthy of ${liveBusinessJourneys.length}</small></div>
+      <div class="executive-kpi mark-good"><span>Passed</span><strong>${executiveData.passed}</strong><small>Of the checks that ran</small></div>
+      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'None' : 'Need a fix before release'}</small></div>
+      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>of ${executiveData.total} planned</small></div>
+      <div class="executive-kpi mark-warn"><span>Not run</span><strong>${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))}</strong><small>Planned, but not in this run</small></div>
     </div>
-  </div>`;
+  </div>
+  <section class="coverage-board" aria-label="Plan coverage">
+    <h2>Plan coverage</h2>
+    <div class="coverage-meter-track" aria-hidden="true"><span class="coverage-meter-ran" style="width:${executiveData.total ? Math.round(((executiveData.executed ?? executiveData.passed) / executiveData.total) * 100) : 0}%"></span></div>
+    <div class="coverage-meter-note"><span>${executiveData.executed ?? executiveData.passed} ran</span><span>${executiveData.total ? Math.round(((executiveData.executed ?? executiveData.passed) / executiveData.total) * 100) : 0}% of ${executiveData.total} planned</span></div>
+    <div class="coverage-chip-row">
+      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.blocked ?? 0}</b> need a product change</a>
+      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.controlled ?? 0}</b> need a setup</a>
+      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.traceability ?? 0}</b> already covered</a>
+      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.future ?? 0}</b> later</a>
+      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.skipped ?? 0}</b> need a look</a>
+    </div>
+  </section>
+  ${readerGuideHtml}`;
 
 const aiDecisionSummary =
   executiveData.releaseDecision === 'GO'
@@ -5696,7 +6184,6 @@ const airRoadmapCards =
           <p>${escapeHtml(item.purpose)}</p>
           <div class="roadmap-card-meta">
             <span>${item.features.length} deliverables</span>
-            <span>${escapeHtml(item.goal)}</span>
           </div>
           <ul>${features}</ul>
         </article>`;
@@ -5753,15 +6240,18 @@ const futurePlatformVisionHtml =
           <strong>${escapeHtml(item.status)}</strong>
         </div>
         <p>${escapeHtml(item.purpose)}</p>
-        <div class="future-vision-groups">
-          ${item.groups.map(([groupName, features]) => `
-            <div>
-              <h4>${escapeHtml(groupName)}</h4>
-              <ul>
-                ${features.map(feature => `<li>${escapeHtml(feature)}</li>`).join('')}
-              </ul>
-            </div>`).join('')}
-        </div>
+        <details class="fold">
+          <summary><b>${item.groups.length} groups</b><span>${escapeHtml(item.groups.map(([groupName]) => groupName).join(' · '))}</span></summary>
+          <div class="future-vision-groups">
+            ${item.groups.map(([groupName, features]) => `
+              <div>
+                <h4>${escapeHtml(groupName)}</h4>
+                <ul>
+                  ${features.map(feature => `<li>${escapeHtml(feature)}</li>`).join('')}
+                </ul>
+              </div>`).join('')}
+          </div>
+        </details>
       </article>`)
     .join('');
 
@@ -5801,6 +6291,43 @@ function renderPageFooter() {
         <span>${escapeHtml(generatedAt)}</span>
         <span>Prepared by AIR</span>
       </div>`;
+}
+
+const primaryPages = [
+  ['cover', 'Brief'],
+  ['health', 'Product health'],
+  ['journey', 'User paths'],
+  ['failures', 'What failed'],
+  ['evidence', 'Proof'],
+];
+
+const morePages = [
+  ['executive', 'Why'],
+  ['module-dashboard', 'Each area'],
+  ['coverage-gaps', 'Not run'],
+  ['validation-summary', 'What passed'],
+  ['insight', 'Next step'],
+  ['comparison', 'History'],
+  ['air-core', 'About AIR'],
+  ['roadmap', 'Roadmap'],
+];
+
+const reportPages = [...primaryPages, ...morePages];
+
+function renderNavGroup(pages, id) {
+  return pages.map(([pageId, label]) => (
+    pageId === id
+      ? `<span class="page-nav-here">${escapeHtml(label)}</span>`
+      : `<a href="#${pageId}">${escapeHtml(label)}</a>`
+  )).join('');
+}
+
+function renderPageNav() {
+  return '';
+}
+
+function renderModuleJump(prefix) {
+  return `<nav class="module-jump" aria-label="Areas on this page">${displayModules.map(module => `<a href="#${prefix}${moduleSlug(module.name)}">${escapeHtml(module.name)}</a>`).join('')}</nav>`;
 }
 
 function navIcon(name) {
@@ -7916,10 +8443,11 @@ const airGoldenDashboardHtml = `<!doctype html>
     }
     .primary-failure-shot img {
       width:100%;
-      max-height:220px;
-      object-fit:cover;
+      max-height:420px;
+      object-fit:contain;
+      object-position:top center;
       border-radius:12px;
-      border:1px solid rgba(57,231,95,.24);
+      border:1px solid rgba(255,59,59,.55);
       background:#050e18;
     }
     .primary-failure-shot small {
@@ -7966,12 +8494,38 @@ const airGoldenDashboardHtml = `<!doctype html>
     }
     .failure-shot-panel img {
       width:100%;
-      height:150px;
-      object-fit:cover;
+      max-height:420px;
+      height:auto;
+      object-fit:contain;
+      object-position:top center;
       border-radius:14px;
-      border:1px solid rgba(148,163,184,.12);
+      border:2px solid rgba(255,59,59,.72);
       background:#fff;
     }
+    .failure-evidence-board{display:grid;grid-template-columns:1fr;gap:18px;margin:18px 0 28px}
+    .failure-shot-card.is-hidden,[data-long-list] .is-hidden,[data-long-list] > .is-hidden{display:none}
+    .failure-open{margin-top:4px}
+    .failure-open summary{cursor:pointer;color:#9affac;font-weight:800;font-size:15px}
+    .failure-open summary::-webkit-details-marker{color:#9affac}
+    .report-fold{margin:18px 0;border:1px solid rgba(57,231,95,.22);border-radius:16px;background:rgba(8,16,30,.45);padding:14px 16px}
+    .report-fold summary{cursor:pointer;color:#f8fafc;font-size:17px;font-weight:800}
+    .report-fold[open] summary{margin-bottom:12px}
+    .long-list-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;border:1px solid rgba(57,231,95,.18);border-radius:16px;background:rgba(8,16,30,.55);padding:12px 14px}
+    .long-list-bar span{color:#9fb0c5;font-size:13px;font-weight:800}
+    .long-list-bar button{border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:800;padding:10px 16px;cursor:pointer}
+    .failure-shot-card{display:grid;gap:12px;min-width:0;border:1px solid rgba(255,59,59,.45);border-radius:16px;background:#120910;padding:18px}
+    .failure-shot-card header{display:flex;gap:12px;align-items:flex-start}
+    .failure-shot-card header b{display:grid;place-items:center;min-width:36px;height:36px;border-radius:999px;background:rgba(255,59,59,.18);color:#ffb4b4;font-size:16px}
+    .failure-shot-card header strong{display:block;color:#f8fafc;font-size:20px;line-height:1.35}
+    .failure-shot-card header small{display:block;color:#9fb0c5;font-size:14px;margin-top:2px}
+    .failure-shot-card .failure-plain{margin:0;color:#f8fafc;font-size:17px;line-height:1.5}
+    .failure-shot-card .failure-next-line{margin:0;color:#cbd5e1;font-size:14px;line-height:1.45}
+    .failure-shot-card img{width:100%;max-height:480px;object-fit:contain;object-position:top center;border:2px solid #ff3b3b;border-radius:12px;background:#fff}
+    .failure-shot-missing{border:1px dashed rgba(255,59,59,.45);border-radius:12px;padding:16px;background:rgba(255,59,59,.06)}
+    .failure-shot-missing span{display:block;color:#ffb4b4;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+    .failure-shot-missing p{margin:0;color:#e2e8f0;font-size:15px;line-height:1.5}
+    .failure-more-detail{color:#cbd5e1;font-size:13px}
+    .failure-more-detail summary{cursor:pointer;color:#9fb0c5}
     .failure-shot-panel small,
     .failure-shot-notes p {
       display:block;
@@ -8351,6 +8905,639 @@ const airGoldenDashboardHtml = `<!doctype html>
     .evidence-location-list code{color:#9af7ad;font-size:13px}
     .evidence-location-list a{color:#39e75f;font-weight:700;text-decoration:none}
     .evidence-location-list a:hover{text-decoration:underline}
+    .global-search{display:none!important}
+    .section-icon{display:none!important}
+    .release-orb{display:none!important}
+    .release-cockpit{grid-template-columns:1fr!important;background:#0c1522!important;box-shadow:none!important}
+    .executive-kpi strong,.module-score{text-shadow:none!important}
+    .brief-count{margin:8px 0 0;max-width:680px;color:#d5e0ec;font-size:16px;line-height:1.55;font-weight:500}
+    .nav-more{margin-top:14px;border-top:1px solid rgba(148,163,184,.16);padding-top:8px}
+    .nav-more summary{cursor:pointer;list-style:none;color:#9fb0c5;font-size:13px;font-weight:700;padding:10px 14px}
+    .nav-more summary::-webkit-details-marker{display:none}
+    .nav-more[open] summary{color:#f8fafc}
+    .failure-groups{display:grid;gap:12px}
+    .failure-group{border:1px solid rgba(148,163,184,.16);border-radius:18px;background:#0c1522}
+    .failure-group summary{display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;align-items:center;padding:16px 18px;cursor:pointer;list-style:none}
+    .failure-group summary::-webkit-details-marker{display:none}
+    .failure-group summary b{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:rgba(255,123,114,.12);color:#ffb4ae;font-size:18px}
+    .failure-group summary strong{display:block;color:#f8fafc;font-size:16px;font-weight:600;line-height:1.4}
+    .failure-group summary small{display:block;margin-top:4px;color:#9fb0c5;font-size:13px}
+    .failure-group-body{display:grid;gap:12px;padding:0 18px 18px 80px}
+    .failure-group-body .failure-shot-card{margin:0}
+    .next-step-list{display:grid;gap:12px;margin:0 0 22px}
+    .next-step-card{display:grid;grid-template-columns:52px minmax(0,1fr);gap:16px;align-items:start;padding:18px 20px;border:1px solid rgba(148,163,184,.16);border-radius:18px;background:#0c1522;color:inherit;text-decoration:none}
+    .next-step-card span{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:rgba(148,163,184,.1);color:#f8fafc;font-weight:700}
+    .next-step-card strong{display:block;color:#f8fafc;font-size:17px;font-weight:600;line-height:1.4}
+    .next-step-card p{margin:6px 0 0;color:#d5e0ec;font-size:14px;line-height:1.5}
+    .next-step-card small{display:block;margin-top:8px;color:#9fb0c5}
+    .next-step-card:hover{border-color:rgba(148,163,184,.4)}
+    .reader-guide:not(.report-more) .reader-step{background:#0c1522!important;box-shadow:none!important}
+    .failure-screen-fallback{border:1px solid rgba(148,163,184,.22);border-radius:16px;background:#101826;padding:16px 18px}
+    .failure-screen-fallback span{display:block;color:#f5c542;font-size:13px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;margin-bottom:8px}
+    .failure-screen-fallback p{margin:0;color:#f8fafc;font-size:15px;line-height:1.5}
+    .failure-screen-fallback strong{display:block;margin:14px 0 8px;color:#d5e0ec;font-size:13px;font-weight:700}
+    .failure-screen-fallback ul{margin:0;padding-left:18px;display:grid;gap:6px}
+    .failure-screen-fallback li{color:#f8fafc;font-size:15px;line-height:1.4}
+    .failure-screen-link img{width:100%;max-height:520px;object-fit:contain;object-position:top center;border:1px solid rgba(148,163,184,.28);border-radius:12px;background:#0b1220}
+    .coverage-next{display:grid;gap:10px;margin-top:16px}
+    .coverage-next-group{border:1px solid rgba(148,163,184,.16);border-radius:16px;background:#0c1522}
+    .coverage-next-group summary{display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;align-items:center;padding:14px 16px;cursor:pointer;list-style:none}
+    .coverage-next-group summary::-webkit-details-marker{display:none}
+    .coverage-next-group summary b{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:rgba(148,163,184,.12);color:#f8fafc}
+    .coverage-next-group summary strong{display:block;color:#f8fafc;font-size:15px;font-weight:600;line-height:1.35}
+    .coverage-next-group summary small{display:block;margin-top:4px;color:#9fb0c5}
+    .coverage-next-group ul{margin:0;padding:0 16px 14px 78px;display:grid;gap:10px;list-style:none}
+    .coverage-next-group li strong{display:block;color:#f8fafc;font-size:14px}
+    .coverage-next-group li span{display:block;margin-top:3px;color:#d5e0ec;font-size:13px;line-height:1.45}
+    .coverage-next-note{margin:0;color:#d5e0ec;font-size:14px;line-height:1.5}
+    body{background:#070b12!important}
+    .sidebar{background:#070b12!important;border-right:1px solid rgba(148,163,184,.12)}
+    .page{background:#0c121b!important;border:1px solid rgba(148,163,184,.1)}
+    .topbar h1{font-weight:600;letter-spacing:-.03em;line-height:1.05}
+    .module-health-card,.module-dashboard-card,.executive-kpi,.release-cockpit,.reader-guide:not(.report-more) .reader-step{min-height:0!important;background:#101826!important;border-color:rgba(148,163,184,.14)!important;box-shadow:none!important}
+    .module-health-card:hover,.module-dashboard-card:hover{transform:none!important;box-shadow:none!important}
+    .coverage-board{margin-top:22px;padding:20px 22px;border:1px solid rgba(148,163,184,.14);border-radius:18px;background:#101826}
+    .coverage-board h2{margin:0 0 14px;color:#f8fafc;font-size:16px;font-weight:600}
+    .coverage-meter-track{display:flex;height:12px;border-radius:999px;background:#1a2433;overflow:hidden}
+    .coverage-meter-ran{display:block;height:100%;background:#7ee787}
+    .coverage-meter-note{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:#9fb0c5;font-size:13px}
+    .coverage-chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .coverage-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(148,163,184,.16);border-radius:999px;background:#0c1522;color:#dbe5ef;text-decoration:none;font-size:13px}
+    .coverage-chip b{color:#f8fafc;font-size:14px}
+    .coverage-chip:hover{border-color:rgba(148,163,184,.4);color:#f8fafc}
+    .scan-bar{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:-32px -40px 18px;padding:12px 40px;background:rgba(7,11,18,.92);border-bottom:1px solid rgba(148,163,184,.16);backdrop-filter:blur(10px)}
+    .scan-bar a,.scan-bar span{color:#dbe5ef;font-size:13px;text-decoration:none}
+    .scan-bar b{color:#f8fafc;font-size:16px;margin-right:4px}
+    .scan-call{font-weight:700;letter-spacing:.04em}
+    .scan-call.bad{color:#ff7b72}
+    .scan-call.warn{color:#f5c542}
+    .scan-call.good{color:#7ee787}
+    .scan-now{margin:0 0 16px}
+    .scan-now a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 16px;border:1px solid rgba(255,123,114,.4);border-radius:14px;background:#1a1216;color:#f8fafc;text-decoration:none}
+    .scan-now a:hover{border-color:#ff7b72}
+    .scan-now b{font-size:16px;font-weight:700}
+    .scan-now span{color:#d5e0ec;font-size:14px;font-weight:500;text-align:right}
+    .scan-now.good{padding:12px 16px;border:1px solid rgba(126,231,135,.35);border-radius:14px;background:#101826;color:#7ee787}
+    .fold{margin:10px 0;border:1px solid rgba(148,163,184,.16);border-radius:16px;background:#101826}
+    .fold>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 16px;cursor:pointer;list-style:none}
+    .fold>summary::-webkit-details-marker{display:none}
+    .fold>summary b{color:#f8fafc;font-size:15px;font-weight:650}
+    .fold>summary span{color:#9fb0c5;font-size:13px;text-align:right}
+    .fold[open]>summary{border-bottom:1px solid rgba(148,163,184,.12)}
+    .fold>.historical-wins,.fold>.history-comparison-dashboard,.fold>.history-section-grid,.fold>.history-test-change-panel,.fold>.history-signal-layout,.fold>.panel,.fold>.engine-output-cards,.fold>.air-core-pipeline,.fold>.future-vision-groups{padding:14px 16px}
+    .roadmap-card ul{display:none}
+    .roadmap-card{min-height:0!important}
+    body{font-size:15px!important;line-height:1.5!important}
+    .topbar p,.panel p,.card p,.brief-count,.summary-lead,.history-narrative p,.coverage-next-note{color:#d5e0ec!important;font-size:15px!important;line-height:1.55!important;max-width:72ch}
+    .executive-mode-header h1{font-size:clamp(32px,2.4vw,42px)!important;font-weight:650!important;letter-spacing:-.03em!important;text-shadow:none!important;line-height:1.05!important}
+    .executive-mode-header h1:after{display:none!important}
+    .topbar h1{font-size:clamp(26px,2vw,34px)!important;font-weight:650!important;text-shadow:none!important}
+    .release-meter,.cockpit-mini-grid,.freshness-strip,.page-footer{display:none!important}
+    th{font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important;font-weight:650!important;color:#9fb0c5!important}
+    td{font-size:14px!important;line-height:1.45!important;color:#e8eef5!important}
+    td strong{font-weight:650}
+    .report-meta{display:grid!important;gap:10px;color:#9fb0c5;font-size:12px;line-height:1.4}
+    .report-meta br{display:none}
+    .nav a{font-size:14px;line-height:1.35}
+    .status-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:0 0 18px}
+    .status-card{display:grid;gap:4px;align-content:center;min-height:92px;padding:14px 16px;border-radius:16px;border:1px solid rgba(148,163,184,.2);background:#101826;text-decoration:none;color:#f8fafc!important}
+    .status-card b{font-size:28px;font-weight:700;line-height:1;letter-spacing:-.03em}
+    .status-card span{color:#d5e0ec;font-size:13px}
+    .status-card.bad{background:#2a1518;border-color:rgba(255,123,114,.55)}
+    .status-card.bad b{color:#ff8b82}
+    .status-card.warn{background:#2a2210;border-color:rgba(245,197,66,.5)}
+    .status-card.warn b{color:#f5c542}
+    .status-card.good{background:#122218;border-color:rgba(126,231,135,.45)}
+    .status-card.good b{color:#7ee787}
+    .status-card:hover{transform:translateY(-1px);filter:brightness(1.08)}
+    .reader-guide{margin-top:8px}
+    .reader-guide h2{margin:0 0 12px;color:#f8fafc;font-size:16px;font-weight:650}
+    .reader-guide .reader-guide-list{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding:0}
+    .reader-guide .reader-step{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;min-height:0!important;padding:14px!important;border-radius:16px!important;border:1px solid rgba(148,163,184,.22)!important;background:#101826!important;text-decoration:none;color:#f8fafc!important;text-align:left}
+    .reader-guide .reader-step b{font-size:26px;font-weight:700;line-height:1;letter-spacing:-.03em}
+    .reader-guide .reader-step span{color:#d5e0ec;font-size:13px;line-height:1.3}
+    .reader-guide .reader-step strong{font-size:14px!important;font-weight:500!important;line-height:1.4!important;color:#f8fafc!important}
+    .reader-guide .reader-step em{justify-self:start;margin-top:auto;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#f8fafc;font-style:normal;font-size:12px;font-weight:650}
+    .reader-guide .reader-step.bad{background:#2a1518!important;border-color:rgba(255,123,114,.55)!important}
+    .reader-guide .reader-step.bad b{color:#ff8b82}
+    .reader-guide .reader-step.warn{background:#2a2210!important;border-color:rgba(245,197,66,.5)!important}
+    .reader-guide .reader-step.warn b{color:#f5c542}
+    .reader-guide .reader-step.good{background:#122218!important;border-color:rgba(126,231,135,.45)!important}
+    .reader-guide .reader-step.good b{color:#7ee787}
+    .reader-guide .reader-step:hover{transform:translateY(-2px);filter:brightness(1.08)}
+    .executive-kpi-stack{display:none!important}
+    @media(max-width:1100px){.status-board,.reader-guide .reader-guide-list{grid-template-columns:1fr!important}}
+    .page-nav{display:none!important}
+    .executive-mode-grid{display:none!important}
+    .topbar,.panel,.failure-shot-card,.failure-group summary,.module-health-card,.status-card,.reader-step{text-align:left}
+    .failure-group summary strong,.failure-next-line,.next-step-card strong,.next-step-card p{text-align:left}
+    .fold>.next-step-list{padding:0 16px 16px}
+    .page-nav a,.page-nav-here{display:inline-flex;align-items:center;padding:6px 10px;border:1px solid rgba(148,163,184,.22);border-radius:999px;background:#101826;color:#e8eef5!important;text-decoration:none;font-size:13px;line-height:1.2}
+    .page-nav a:hover{border-color:rgba(148,163,184,.45);color:#fff!important}
+    .page-nav-here{margin:0;background:#1c2838;color:#f8fafc!important;font-weight:700}
+    .page-nav-more{margin-top:-8px}
+    .module-jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+    .module-jump a{padding:5px 9px;border:1px solid rgba(148,163,184,.2);border-radius:999px;background:#101826;color:#d5e0ec!important;text-decoration:none;font-size:12px;line-height:1.2}
+    .module-jump a:hover{border-color:rgba(148,163,184,.45);color:#fff!important}
+    #health .module-filter{display:flex!important;flex-wrap:wrap;align-items:center;gap:6px!important;grid-template-columns:none!important}
+    #health .module-filter button{width:auto!important;min-width:0!important;min-height:32px!important;padding:5px 10px!important;font-size:13px!important}
+    #health .module-filter-search{width:160px!important;min-width:0!important;height:32px!important;margin-left:auto;padding:0 10px!important}
+    #health .health-stat{min-height:0!important;padding:10px 12px!important}
+    #health .health-stat strong{font-size:22px!important;margin:4px 0 0!important}
+    #health .health-stat-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;margin-bottom:12px}
+    #health .module-health-card{min-height:0!important;gap:8px!important;padding:12px 14px!important}
+    #health .module-health-card p,#health .module-button,#health .module-progress{display:none!important}
+    #health .module-card-stats{display:flex;gap:12px}
+    #health .next-focus-card{padding:12px 14px}
+    #health .next-focus-card p{margin:4px 0 0;font-size:13px}
+    .nav a.active{background:rgba(148,163,184,.14)!important;color:#f8fafc!important}
+    .page{box-shadow:none!important}
+    .cover-page{min-height:0!important;display:block!important;gap:18px}
+    main{padding:28px 36px 48px}
+    .page{padding:28px 32px}
+    .topbar{align-items:flex-end;margin-bottom:18px}
+    .topbar p,.panel>p,.failure-next-line,.summary-lead{margin:6px 0 0;max-width:68ch}
+    h1,h2,h3,p,li,td,th,summary,label{text-align:left}
+    th,td{vertical-align:top}
+    table{border-collapse:collapse}
+    th,td{padding:12px 10px}
+    .status-card,.reader-step,.health-stat,.failure-summary-card,.module-health-card,.module-dashboard-card,.next-step-card{text-align:left}
+    .status-card b,.health-stat strong,.failure-summary-card strong{display:block;text-align:left}
+    .reader-guide .reader-guide-list{align-items:stretch}
+    .reader-guide .reader-step{grid-template-rows:auto auto minmax(2.8em,auto) auto!important;min-height:156px!important}
+    .reader-guide .reader-step strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .reader-guide .reader-step em{margin-top:8px}
+    #health .module-card-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    #health .module-card-stats span{min-width:0}
+    #health .module-health-score{display:flex;align-items:baseline;gap:8px}
+    #health .module-health-score strong{font-size:22px;line-height:1}
+    #health .module-health-score span{color:#b7c3d4;font-size:13px}
+    .failure-command-center{align-items:stretch}
+    .failure-summary-card{text-align:left}
+    .failure-summary-card p{margin:8px 0 0;max-width:36ch}
+    .failure-group summary{align-items:start}
+    .failure-group summary strong,.failure-group summary small{text-align:left}
+    .report-meta>div{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+    .report-meta strong{color:#f8fafc;font-weight:650}
+    .release-mini{text-align:left}
+    .release-mini .release-status-badge{margin-left:0}
+    #journey .journey-node{min-height:0!important;padding:14px 12px!important}
+    .module-jump{align-items:center}
+    .coverage-chip-row,.module-filter{justify-content:flex-start}
+    .panel h2,.icon-title{text-align:left}
+    @media(max-width:1100px){.reader-guide .reader-step{min-height:0!important}}
+    #cover .status-card,
+    #cover .reader-guide .reader-step,
+    #cover .scan-now a,
+    #cover .coverage-board,
+    #health .module-health-card,
+    #health .health-stat,
+    #health .next-focus-card,
+    #health .risk-snap,
+    #journey .journey-node,
+    #failures .failure-summary-card,
+    #failures .failure-shot-card,
+    #failures .failure-group,
+    #module-dashboard .module-dashboard-card,
+    #evidence .evidence-card,
+    #insight .next-step-card,
+    #comparison .compare-card,
+    #roadmap .roadmap-card,
+    .recommendation-card,
+    .validation-card{
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      padding:16px 18px!important;
+      min-height:0!important;
+      text-align:left!important;
+      color:#f8fafc!important;
+    }
+    #cover .status-card.bad,
+    #cover .reader-step.bad,
+    #health .module-health-card.red,
+    #journey .journey-node.red,
+    #failures .failure-summary-card.primary,
+    #failures .failure-group{
+      border-left:4px solid #ff7b72!important;
+    }
+    #cover .status-card.warn,
+    #cover .reader-step.warn,
+    #health .module-health-card.amber,
+    #health .health-stat.warn,
+    #journey .journey-node.amber{
+      border-left:4px solid #f5c542!important;
+    }
+    #cover .status-card.good,
+    #cover .reader-step.good,
+    #health .module-health-card.green,
+    #health .health-stat.good,
+    #journey .journey-node.green{
+      border-left:4px solid #7ee787!important;
+    }
+    #cover .status-card b,
+    #cover .reader-step b,
+    #health .health-stat strong,
+    #health .module-health-score strong,
+    #failures .failure-summary-card strong,
+    #journey .journey-node span{
+      display:block!important;
+      font-size:26px!important;
+      font-weight:700!important;
+      line-height:1!important;
+      letter-spacing:-.03em!important;
+      text-align:left!important;
+      margin:0 0 6px!important;
+    }
+    #journey .journey-node,
+    #journey .journey-node strong,
+    #journey .journey-node span,
+    #journey .journey-node small{
+      align-items:flex-start!important;
+      justify-content:flex-start!important;
+      text-align:left!important;
+    }
+    #journey .journey-node strong{font-size:16px!important;min-height:0!important;margin:0!important}
+    #journey .journey-node span{font-size:26px!important;min-height:0!important}
+    #journey .journey-node small{font-size:12px!important;min-height:0!important;letter-spacing:0!important;text-transform:none!important}
+    #cover .status-card:hover,
+    #cover .reader-step:hover,
+    #health .module-health-card:hover,
+    #journey .journey-node:hover,
+    #failures .failure-shot-card:hover,
+    #insight .next-step-card:hover{
+      transform:none!important;
+      filter:none!important;
+      border-color:rgba(148,163,184,.45)!important;
+    }
+    #health .module-health-score,
+    #module-dashboard .module-dashboard-score-row{display:block!important}
+    .report-more{
+      display:block!important;
+      margin:0 0 26px!important;
+      padding:0!important;
+      border:0!important;
+      border-radius:0!important;
+      background:transparent!important;
+    }
+    .report-more h2{
+      margin:0 0 12px!important;
+      color:#f8fafc!important;
+      font-size:16px!important;
+      font-weight:650!important;
+      letter-spacing:0!important;
+      text-transform:none!important;
+    }
+    .report-more-grid{
+      display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      gap:12px!important;
+      align-items:stretch!important;
+    }
+    .report-more-card{
+      display:flex!important;
+      flex-direction:column!important;
+      align-items:flex-start!important;
+      justify-content:flex-start!important;
+      gap:6px!important;
+      height:100%!important;
+      min-height:148px!important;
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      padding:16px 18px!important;
+      text-align:left!important;
+      text-decoration:none!important;
+      color:#f8fafc!important;
+    }
+    .report-more-card span{
+      display:block!important;
+      color:#f8fafc!important;
+      font-size:16px!important;
+      font-weight:650!important;
+      letter-spacing:0!important;
+      line-height:1.3!important;
+      white-space:nowrap!important;
+    }
+    .report-more-card strong{
+      display:block!important;
+      margin:0!important;
+      min-height:1.45em!important;
+      font-size:14px!important;
+      font-weight:500!important;
+      line-height:1.45!important;
+      color:#d5e0ec!important;
+      hyphens:none!important;
+      overflow-wrap:normal!important;
+      word-break:normal!important;
+    }
+    .report-more-card em{
+      margin-top:auto!important;
+      padding:6px 10px!important;
+      border:0!important;
+      border-radius:999px!important;
+      background:rgba(255,255,255,.08)!important;
+      color:#f8fafc!important;
+      font-style:normal!important;
+      font-size:12px!important;
+      font-weight:650!important;
+    }
+    .report-more-card:hover{border-color:rgba(148,163,184,.45)!important}
+    @media(max-width:1100px){.report-more-grid{grid-template-columns:1fr!important}.report-more-card{min-height:0!important}}
+    #air-core .air-core-hero,
+    #air-core .air-core-map,
+    #air-core .air-core-engines,
+    #air-core .engine-card,
+    #comparison .history-narrative,
+    #comparison .historical-wins,
+    #comparison .history-comparison-dashboard,
+    #comparison .history-test-change-panel,
+    #comparison .history-signal-panel,
+    #comparison .release-timeline-panel,
+    #comparison .executive-focus-panel,
+    #comparison .history-timeline-panel,
+    #comparison .history-trend-card,
+    #validation-summary .validation-command-panel,
+    #validation-summary .panel,
+    #coverage-gaps .panel,
+    #coverage-gaps .coverage-gap-explainer{
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      color:#f8fafc!important;
+    }
+    #comparison .history-command-hero{
+      margin:0 0 18px!important;
+      padding:0!important;
+      border:0!important;
+      border-radius:0!important;
+      background:transparent!important;
+      box-shadow:none!important;
+    }
+    #air-core .air-core-hero-stats div,
+    #air-core .air-core-layer,
+    #comparison .compare-card,
+    #validation-summary .validation-stat,
+    #validation-summary .validation-area-card,
+    #validation-summary .validation-group-card,
+    #validation-summary .validation-gap-card,
+    #coverage-gaps .coverage-gap-summary div,
+    #coverage-gaps .coverage-next-group{
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      padding:16px 18px!important;
+      min-height:0!important;
+      text-align:left!important;
+      color:#f8fafc!important;
+    }
+    #validation-summary .validation-stat.bad{
+      border-left:4px solid #ff7b72!important;
+    }
+    #validation-summary .validation-stat.warn{
+      border-left:4px solid #f5c542!important;
+    }
+    #validation-summary .validation-stat.good{
+      border-left:4px solid #7ee787!important;
+    }
+    #air-core .air-core-hero-stats strong,
+    #comparison .compare-card strong,
+    #validation-summary .validation-stat strong,
+    #validation-summary .validation-area-card strong,
+    #coverage-gaps .coverage-gap-summary strong{
+      display:block!important;
+      margin:0 0 6px!important;
+      color:#f8fafc!important;
+      font-size:26px!important;
+      font-weight:700!important;
+      line-height:1.1!important;
+      letter-spacing:-.03em!important;
+      text-align:left!important;
+    }
+    #air-core .air-core-hero-stats strong.is-text{
+      font-size:16px!important;
+      font-weight:650!important;
+      letter-spacing:0!important;
+      line-height:1.35!important;
+    }
+    #air-core .air-core-hero-stats span,
+    #air-core .air-core-layer-head span,
+    #comparison .compare-card span,
+    #comparison .history-narrative .mission-label,
+    #validation-summary .validation-stat span,
+    #validation-summary .validation-area-card span,
+    #validation-summary .validation-group-head span,
+    #validation-summary .mission-label,
+    #coverage-gaps .coverage-gap-summary span{
+      display:block!important;
+      color:#d5e0ec!important;
+      font-size:13px!important;
+      font-weight:650!important;
+      letter-spacing:0!important;
+      text-transform:none!important;
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+    }
+    #air-core .air-core-hero-copy p,
+    #air-core .air-core-map p,
+    #comparison .history-narrative p,
+    #comparison .compare-card small,
+    #validation-summary .validation-story p,
+    #validation-summary .validation-stat small,
+    #validation-summary .validation-area-card small,
+    #coverage-gaps .coverage-gap-summary small,
+    #coverage-gaps .coverage-gap-explainer p{
+      color:#d5e0ec!important;
+      font-size:14px!important;
+      line-height:1.45!important;
+    }
+    #comparison .history-change-list li:before{
+      background:#7ee787!important;
+      box-shadow:none!important;
+    }
+    #validation-summary .validation-group-head em{
+      border:0!important;
+      border-radius:999px!important;
+      background:rgba(255,255,255,.08)!important;
+      color:#f8fafc!important;
+      font-style:normal!important;
+      font-size:12px!important;
+      font-weight:650!important;
+    }
+    #validation-summary .validation-group-card li:before,
+    #air-core .air-core-layer{
+      box-shadow:none!important;
+    }
+    #coverage-gaps .coverage-gap-explainer strong{
+      color:#f8fafc!important;
+      font-size:16px!important;
+      font-weight:650!important;
+    }
+    #air-core .air-core-hero-stats div:hover,
+    #air-core .air-core-layer:hover,
+    #comparison .compare-card:hover,
+    #validation-summary .validation-stat:hover,
+    #validation-summary .validation-area-card:hover,
+    #validation-summary .validation-group-card:hover,
+    #coverage-gaps .coverage-gap-summary div:hover{
+      transform:none!important;
+      filter:none!important;
+      border-color:rgba(148,163,184,.45)!important;
+    }
+    #health .module-health-score span,
+    #module-dashboard .module-dashboard-score-row span{
+      display:block!important;
+      max-width:none!important;
+      white-space:normal!important;
+      overflow:visible!important;
+      text-overflow:clip!important;
+      writing-mode:horizontal-tb!important;
+      transform:none!important;
+      text-transform:none!important;
+      letter-spacing:0!important;
+      font-size:15px!important;
+      font-weight:650!important;
+      line-height:1.45!important;
+      color:#f8fafc!important;
+      border:0!important;
+      background:transparent!important;
+      padding:0!important;
+      border-radius:0!important;
+    }
+    main .page{
+      background:#0c121b!important;
+      border:1px solid rgba(148,163,184,.16)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      padding:28px 32px!important;
+    }
+    main .page .topbar{
+      display:flex!important;
+      align-items:flex-end!important;
+      justify-content:space-between!important;
+      gap:18px!important;
+      margin:0 0 18px!important;
+    }
+    main .page .topbar h1{font-size:clamp(26px,2vw,34px)!important;font-weight:650!important;letter-spacing:-.03em!important;text-align:left!important}
+    main .page .topbar p,
+    main .page .panel p,
+    main .page .mission-label{
+      color:#d5e0ec!important;
+      font-size:15px!important;
+      line-height:1.5!important;
+      letter-spacing:0!important;
+      text-transform:none!important;
+    }
+    main .page .panel,
+    main .page .executive-decision-card,
+    main .page .decision-intel-block,
+    main .page .why-release,
+    main .page .evidence-hero,
+    main .page .evidence-card,
+    main .page .thumb,
+    main .page .ai-command-hero,
+    main .page .ai-reasoning-card,
+    main .page .ai-workflow-card,
+    main .page .ai-action-panel,
+    main .page .ai-role-panel,
+    main .page .ai-priority-panel,
+    main .page .next-step-card,
+    main .page .recommendation-card,
+    main .page .role-recommendation-card,
+    main .page .module-dashboard-intro,
+    main .page .module-dashboard-card,
+    main .page .roadmap-card,
+    main .page .future-vision-card,
+    main .page .future-vision-panel,
+    main .page .engine-card,
+    main .page .history-trend-card,
+    main .page .wow,
+    main .page .narrative,
+    main .page .roadmap-summary div{
+      background:#101826!important;
+      background-image:none!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      color:#f8fafc!important;
+      text-align:left!important;
+    }
+    main .page .roadmap-summary{
+      display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      gap:12px!important;
+      margin:0 0 18px!important;
+    }
+    main .page .roadmap-summary div{padding:16px 18px!important;min-height:0!important}
+    main .page .roadmap-summary strong,
+    main .page .health-stat strong{
+      display:block!important;
+      margin:0 0 6px!important;
+      color:#f8fafc!important;
+      font-size:26px!important;
+      font-weight:700!important;
+      line-height:1.1!important;
+      letter-spacing:-.03em!important;
+      text-align:left!important;
+    }
+    main .page .roadmap-summary div:last-child strong{
+      font-size:16px!important;
+      font-weight:650!important;
+      letter-spacing:0!important;
+      line-height:1.35!important;
+    }
+    main .page .panel:hover,
+    main .page .executive-decision-card:hover,
+    main .page .evidence-card:hover,
+    main .page .next-step-card:hover,
+    main .page .recommendation-card:hover,
+    main .page .roadmap-card:hover,
+    main .page .module-dashboard-card:hover,
+    main .page .future-vision-card:hover{
+      transform:none!important;
+      filter:none!important;
+    }
+    #cover .status-card.bad,
+    #cover .reader-step.bad,
+    #health .module-health-card.red,
+    #journey .journey-node.red,
+    #failures .failure-summary-card.primary,
+    #failures .failure-group,
+    #validation-summary .validation-stat.bad{
+      border-left:4px solid #ff7b72!important;
+    }
+    #cover .status-card.warn,
+    #cover .reader-step.warn,
+    #health .module-health-card.amber,
+    #health .health-stat.warn,
+    #journey .journey-node.amber,
+    #validation-summary .validation-stat.warn{
+      border-left:4px solid #f5c542!important;
+    }
+    #cover .status-card.good,
+    #cover .reader-step.good,
+    #health .module-health-card.green,
+    #health .health-stat.good,
+    #journey .journey-node.green,
+    #validation-summary .validation-stat.good,
+    #evidence .evidence-card.good{
+      border-left:4px solid #7ee787!important;
+    }
+    @media(max-width:1100px){
+      main .page{padding:20px 16px!important}
+      main .page .roadmap-summary{grid-template-columns:1fr!important}
+    }
+    main > section.page{display:none!important}
+    main > section.page.is-current{display:block!important}
+    .global-search,.freshness-strip,.air-provenance-warning,nav.report-more{display:none!important}
+    body[data-air-page="cover"] .freshness-strip{display:grid!important}
+    body[data-air-page="cover"] .air-provenance-warning{display:block!important}
+    body[data-air-page="cover"] nav.report-more{display:block!important}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -8364,25 +9551,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     </div>
     <div class="brand-sub">Automation Intelligence<br><span>Report</span></div>
     <nav class="nav">
-      <div class="nav-section">This release</div>
       <a class="active" href="#cover">${navIcon('home')}<span>Brief</span></a>
-      <a class="nav-extra" href="#executive">${navIcon('release')}<span>Why</span></a>
-      <div class="nav-section">Health</div>
-      <a href="#health">${navIcon('product')}<span>Product Health</span></a>
+      <a href="#health">${navIcon('product')}<span>Product health</span></a>
       <a href="#journey">${navIcon('journey')}<span>User paths</span></a>
-      <a class="nav-extra" href="#module-dashboard">${navIcon('modules')}<span>Each area</span></a>
-      <div class="nav-section">Issues</div>
-      <a class="nav-extra" href="#failures">${navIcon('failures')}<span>Failures</span></a>
-      <a class="nav-extra" href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
-      <a class="nav-extra" href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
-      <div class="nav-section">Evidence</div>
-      <a href="#evidence">${navIcon('evidence')}<span>Evidence</span></a>
-      <div class="nav-section">Insights</div>
-      <a class="nav-extra" href="#insight">${navIcon('insight')}<span>Next step</span></a>
-      <a class="nav-extra" href="#comparison">${navIcon('analytics')}<span>History</span></a>
-      <div class="nav-section">About</div>
-      <a class="nav-extra" href="#air-core">${navIcon('roadmap')}<span>About AIR</span></a>
-      <a class="nav-extra" href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span></a>
+      <a href="#failures">${navIcon('failures')}<span>What failed</span></a>
+      <a href="#evidence">${navIcon('evidence')}<span>Proof</span></a>
+      <details class="nav-more">
+        <summary>More</summary>
+        <a href="#executive">${navIcon('release')}<span>Why</span></a>
+        <a href="#module-dashboard">${navIcon('modules')}<span>Each area</span></a>
+        <a href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
+        <a href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
+        <a href="#insight">${navIcon('insight')}<span>Next step</span></a>
+        <a href="#comparison">${navIcon('analytics')}<span>History</span></a>
+        <a href="#air-core">${navIcon('roadmap')}<span>About AIR</span></a>
+        <a href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span></a>
+      </details>
     </nav>
     <div class="report-search">
       <label for="airSearch">Search Report</label>
@@ -8396,13 +9580,14 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div>Generated<br><strong>${escapeHtml(generatedAt)}</strong></div>
     </div>
     <div class="release-mini">
-      <span>Release Decision</span>
+      <span>Can we ship?</span>
       ${releaseStatusCompact}
       <small>${demoMode ? 'Demo data shown' : 'Based on last execution'}</small>
     </div>
   </aside>
   <main>
     <section class="page cover-page" id="cover">
+      ${renderPageNav('cover')}
       ${executiveModeShellHtml}
       ${renderPageFooter(1)}
     </section>
@@ -8418,6 +9603,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     ${provenanceWarningHtml}
 
     <section class="page report-extra" id="executive">
+      ${renderPageNav('executive')}
       <div class="topbar">
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
@@ -8426,8 +9612,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <div class="actions">
           <span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span>
-          <a class="btn" href="AIR_Report.pdf" download="AIR_Report.pdf">Export PDF</a>
-          <a class="btn" href="#evidence">Evidence</a>
+          <a class="btn" href="#evidence">Proof</a>
           <a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open Playwright report</a>
         </div>
       </div>
@@ -8451,7 +9636,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
         </div>
         <div class="panel">
-          <h2 class="icon-title"><span class="section-icon">RD</span>Drivers and next steps</h2>
+          <h2 class="icon-title"><span class="section-icon">RD</span>Why, and what to do next</h2>
           <div class="decision-intelligence">
             <section class="decision-intel-block decision-drivers-block">
               <div class="decision-intel-head">
@@ -8502,22 +9687,22 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="health">
+      ${renderPageNav('health')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('product', 'Product Health')}<p>Which areas need attention?</p></div><a class="btn" href="#module-dashboard">See each area</a></div>
       <div class="panel">
         <h2 class="icon-title"><span class="section-icon">MH</span>Area status</h2>
         <div class="module-filter" aria-label="Filter areas by health">
-          <button class="active" type="button" data-module-filter="all">All (${moduleStatusGroupCounts.all})</button>
-          <button type="button" data-module-filter="healthy">Healthy (${moduleStatusGroupCounts.healthy})</button>
-          <button type="button" data-module-filter="warning">Warning (${moduleStatusGroupCounts.warning})</button>
-          <button type="button" data-module-filter="critical">Critical (${moduleStatusGroupCounts.critical})</button>
-          <button type="button" data-module-filter="not-executed">Not run (${moduleStatusGroupCounts['not-executed']})</button>
+          <button class="active" type="button" data-module-filter="all">All ${moduleStatusGroupCounts.all}</button>
+          <button type="button" data-module-filter="healthy">Healthy ${moduleStatusGroupCounts.healthy}</button>
+          <button type="button" data-module-filter="critical">Critical ${moduleStatusGroupCounts.critical}</button>
+          <button type="button" data-module-filter="not-executed">Not run ${moduleStatusGroupCounts['not-executed']}</button>
+          ${moduleStatusGroupCounts.warning ? `<button type="button" data-module-filter="warning">Warning ${moduleStatusGroupCounts.warning}</button>` : ''}
           <label class="module-filter-search">
-            <span>Search areas</span>
-            <input id="moduleStatusSearch" type="search" placeholder="Search an area" aria-label="Search product areas">
+            <input id="moduleStatusSearch" type="search" placeholder="Find an area" aria-label="Search product areas">
           </label>
         </div>
         <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} areas</div>
-        <div class="module-card-grid">${moduleHealthCards}</div>
+        <div class="module-card-grid" data-long-list="6" data-long-label="areas">${moduleHealthCards}</div>
         <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching areas found in this run.</div>
       </div>
       <br>
@@ -8534,9 +9719,10 @@ const airGoldenDashboardHtml = `<!doctype html>
           <h2>${helpLabel('Summary', 'businessHealth')}</h2>
           <p class="summary-lead">${escapeHtml(healthSummaryLead)}</p>
           <div class="health-stat-grid">
-            <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong><small>Areas OK</small></div>
-            <div class="health-stat warn"><span>Warning</span><strong>${warningModuleCount}</strong><small>Need review</small></div>
-            <div class="health-stat bad"><span>Critical</span><strong>${criticalModuleCount}</strong><small>Failed</small></div>
+            <div class="health-stat good"><span>Healthy</span><strong>${healthyModuleCount}</strong></div>
+            <div class="health-stat bad"><span>Critical</span><strong>${criticalModuleCount}</strong></div>
+            <div class="health-stat warn"><span>Not run</span><strong>${moduleStatusGroupCounts['not-executed']}</strong></div>
+            ${moduleStatusGroupCounts.warning ? `<div class="health-stat warn"><span>Warning</span><strong>${moduleStatusGroupCounts.warning}</strong></div>` : ''}
           </div>
           <div class="next-focus-card">
             <span>${helpLabel('Next focus', 'nextStep')}</span>
@@ -8549,6 +9735,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="journey">
+      ${renderPageNav('journey')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('journey', 'User paths')}<p>Can a user complete the important paths?</p></div><span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span></div>
       <div class="panel journey-flow-panel"><div class="journey">${journeyHealthRows}</div></div>
       <br>
@@ -8560,27 +9747,31 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page report-extra" id="module-dashboard">
+      ${renderPageNav('module-dashboard')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('modules', 'Each area')}<p>What was checked in this area?</p></div><a class="btn" href="#health">Back to product health</a></div>
       <div class="module-dashboard-intro">
         <h2>Choose an area</h2>
-        <p>Product Health is the status. Open an area here for the scenarios, proof, and gaps.</p>
+        <p>Stay on this page. Pick an area below.</p>
       </div>
-      <div class="module-dashboard-grid">${moduleDashboardCards}</div>
+      ${renderModuleJump('module-dashboard-')}
+      <div class="module-dashboard-grid" data-long-list="6" data-long-label="areas">${moduleDashboardCards}</div>
       ${renderPageFooter(5)}
     </section>
 
     <section class="page${executiveData.failed > 0 ? '' : ' report-extra'}" id="failures">
-      <div class="topbar"><div><div class="eyebrow">PAGE 06</div>${pageHeading('failures', 'Failed Tests')}<p>What failed and why?</p></div><span class="pill">${executiveData.failed} Failures</span></div>
+      ${renderPageNav('failures')}
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>${failureGroups.length} stories cover the checks that did not pass. Open a story for the picture and the next step.</p></div><span class="pill">${executiveData.failed} failed</span></div>
       <div class="panel">${failedTestsContent}${warningTestsContent}</div>
       ${renderPageFooter(6)}
     </section>
 
     <section class="page report-extra" id="coverage-gaps">
+      ${renderPageNav('coverage-gaps')}
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 07</div>
-          ${pageHeading('analytics', 'Blocked / Skipped Coverage')}
-          <p>What was not executed, and why?</p>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
+          ${pageHeading('analytics', 'Checks we did not run')}
+          <p>${coverageGapSummary.total ?? coverageGapItems.length} of the planned checks did not run. They are grouped by the reason, with a few examples in each group.</p>
         </div>
         <span class="pill">${coverageGapSummary.total ?? coverageGapItems.length} Items</span>
       </div>
@@ -8589,19 +9780,20 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page report-extra" id="validation-summary">
+      ${renderPageNav('validation-summary')}
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 08</div>
-          ${pageHeading('analytics', 'Validation Summary')}
-          <p>What did this automation execution validate?</p>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
+          ${pageHeading('analytics', 'What passed')}
+          <p>What this run actually checked.</p>
         </div>
         <a class="btn" href="validation-summary.md" target="_blank" rel="noopener">Open Full Summary</a>
       </div>
       <div class="panel validation-command-panel">
         <div class="validation-story">
-          <span class="mission-label">Automation Coverage Narrative</span>
-          <h2>AIR translated test execution into business-readable validation coverage.</h2>
-          <p>${escapeHtml(validationIntelligence.purpose ?? 'This section explains what the latest automation execution validated in plain business language.')}</p>
+          <span class="mission-label">Coverage</span>
+          <h2>${executiveData.passed} checks passed. ${executiveData.failed} failed. ${executiveData.skipped} did not run.</h2>
+          <p>The area numbers below count every check in that area, including ones that did not run. A high number is the size of the plan, not the number that passed.</p>
           <div class="validation-stat-grid">${validationStatusCards}</div>
         </div>
         <div>
@@ -8613,16 +9805,16 @@ const airGoldenDashboardHtml = `<!doctype html>
       <div class="panel">
         <div class="section-heading-row">
           <div>
-            <h2>What Was Validated</h2>
-            <p>Grouped by product area so stakeholders can quickly understand coverage without reading every test case.</p>
+          <h2>What was checked</h2>
+          <p>Grouped by area. Open the full table only when you need one check.</p>
           </div>
         </div>
-        <div class="validation-group-grid">${validationGroupCards}</div>
+        <div class="validation-group-grid" data-long-list="4" data-long-label="areas">${validationGroupCards}</div>
         <details class="validation-details validation-toggle">
           <summary></summary>
           <table>
             <thead><tr><th>Result</th><th>Area</th><th>Scenario</th><th>Expected Outcome</th></tr></thead>
-            <tbody>${validationDetailRows}</tbody>
+            <tbody data-long-list="8" data-long-item="tr" data-long-label="checks">${validationDetailRows}</tbody>
           </table>
         </details>
       </div>
@@ -8630,7 +9822,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <br>
         <div class="panel">
           <h2>Not Executed / Controlled Coverage</h2>
-          <div class="validation-gap-grid">${validationCoverageGapCards}</div>
+          <div class="validation-gap-grid" data-long-list="4" data-long-label="items">${validationCoverageGapCards}</div>
           <details class="validation-details">
             <summary>Open complete Blocked / Skipped section</summary>
             <p>See the Blocked / Skipped Coverage page for the full reason list and next actions.</p>
@@ -8640,42 +9832,43 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page" id="evidence">
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Evidence')}<p>Proof from this run — open Playwright report for step detail.</p></div>${evidencePlaywrightCta}</div>
+      ${renderPageNav('evidence')}
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Proof')}<p>Pictures and the full test log from this run.</p></div>${evidencePlaywrightCta}</div>
       ${evidenceHeroHtml}
       <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">PKG</span>Where to look</h2>
-        <ul class="evidence-location-list">
-          <li><strong>Playwright report</strong> — <code>playwright-report/index.html</code> (steps, failures, attachments). ${hasPlaywrightReport ? '<a href="../playwright-report/index.html" target="_blank" rel="noopener">Open now</a>' : 'Not present for this package.'}</li>
-          <li><strong>Raw artifacts</strong> — <code>test-results/</code> (screenshots, videos, traces, logs, <code>results.json</code>).</li>
-          <li><strong>AIR summary</strong> — this file under <code>execution-report/</code> (decision, health, paths, gaps).</li>
-        </ul>
+        <h2>Where the files are</h2>
+        <p class="evidence-path-note">${escapeHtml(evidencePackageNote)}</p>
       </div>
       <div class="evidence-grid">${evidenceCards}</div>
       ${failureEvidenceMapHtml}
-      ${airEvidenceThumbnails.length > 0 || evidenceThumbnailFiles.length > 0 ? `
+      ${String(evidenceThumbnails).includes('<a') ? `
       <div class="panel">
-        <h2 class="icon-title"><span class="section-icon">EV</span>Latest screenshots</h2>
+        <h2>Latest screenshots</h2>
         <div class="thumb-grid">${evidenceThumbnails}</div>
       </div>` : ''}
-      ${executiveData.failed > 0 ? '<div class="panel"><h2>Evidence rule</h2><p>Every failed check should link to a screenshot, video, trace, or the Playwright report.</p></div>' : ''}
       ${renderPageFooter(9)}
     </section>
 
-    <nav class="report-more reader-guide" aria-label="Full detail">
-      <h2>More detail (one click)</h2>
-      <div class="reader-guide-list">
-        <a class="reader-step" href="#executive"><span>Why</span><strong>Full decision drivers and workflow.</strong><em>Open</em></a>
-        <a class="reader-step" href="#module-dashboard"><span>Each area</span><strong>Scenarios checked inside every product area.</strong><em>Open</em></a>
-        <a class="reader-step" href="#failures"><span>Failures</span><strong>${executiveData.failed > 0 ? `${executiveData.failed} failed check${executiveData.failed === 1 ? '' : 's'} to review.` : 'No failed checks in this run.'}</strong><em>Open</em></a>
-        <a class="reader-step" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run, and why.</strong><em>Open</em></a>
-        <a class="reader-step" href="#validation-summary"><span>What passed</span><strong>Scenarios this run validated.</strong><em>Open</em></a>
-        <a class="reader-step" href="#insight"><span>Next step</span><strong>Full recommendation write-up.</strong><em>Open</em></a>
-        <a class="reader-step" href="#comparison"><span>History</span><strong>Compare with earlier runs.</strong><em>Open</em></a>
+    <nav class="report-more" aria-label="More detail">
+      <h2>More detail</h2>
+      <div class="report-more-grid">
+        <a class="report-more-card" href="#executive"><span>Why</span><strong>The release call.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#module-dashboard"><span>Each area</span><strong>What each area checked.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#validation-summary"><span>What passed</span><strong>Checks that passed.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#insight"><span>Next step</span><strong>What to do next.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#comparison"><span>History</span><strong>Earlier runs.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#air-core"><span>About AIR</span><strong>How this report is built.</strong><em>Open</em></a>
+        <a class="report-more-card" href="#roadmap"><span>Roadmap</span><strong>What comes next.</strong><em>Open</em></a>
       </div>
     </nav>
 
     <section class="page report-extra" id="insight">
-      <div class="topbar"><div><div class="eyebrow">PAGE 10</div>${pageHeading('insight', 'AI Insights')}<p>What should we do next?</p></div><button class="btn" type="button" data-open-recommendations>${demoMode ? 'Sample Recommendation' : 'Execution Recommendation'}</button></div>
+      ${renderPageNav('insight')}
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('insight', 'What to do next')}<p>The work behind this release call. Open a step to see the checks.</p></div></div>
+      ${nextStepListHtml}
+      <details class="report-fold">
+        <summary>Release write-up</summary>
       <div class="ai-command-hero">
         <div>
           <span class="mission-label">AIR Recommendation</span>
@@ -8713,19 +9906,17 @@ const airGoldenDashboardHtml = `<!doctype html>
         <h2 class="icon-title"><span class="section-icon">P1</span>Priority Recommendations</h2>
         <div class="recommendation-grid">${aiPriorityRecommendations}</div>
       </div>
-      <div class="ai-roadmap-note">
-        <span>Roadmap Context</span>
-        <p>Phase 1 remains Playwright execution intelligence. API, database, security, performance, trend analysis, and AI recommendations stay architecture-ready and will become dynamic as those data sources are connected.</p>
-      </div>
+      </details>
       ${renderPageFooter(10)}
     </section>
 
     <section class="page report-extra" id="comparison">
+      ${renderPageNav('comparison')}
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 11</div>
-          ${pageHeading('analytics', 'Historical Intelligence')}
-          <p>How has software quality evolved over time?</p>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
+          ${pageHeading('analytics', 'Past runs')}
+          <p>How this run compares with earlier ones.</p>
         </div>
         <span class="pill demo">${hasPreviousComparison ? 'Historical Comparison' : 'First Recorded Execution'}</span>
       </div>
@@ -8751,11 +9942,16 @@ const airGoldenDashboardHtml = `<!doctype html>
             </div>
           </div>
         </div>
+        <details class="fold">
+          <summary><b>What improved</b><span>Resolved failures, modules, and journeys</span></summary>
         <div class="historical-wins">
           <h2>Improvement Highlights</h2>
           <p>Positive movement detected from History Engine comparison data.</p>
           ${renderComparisonList(historicalWinItems, 'No improvement highlights yet')}
         </div>
+        </details>
+        <details class="fold">
+          <summary><b>Build comparison</b><span>Quality, pass rate, time, failures, and suite size</span></summary>
         <div class="history-comparison-dashboard">
           <div class="history-panel-head">
             <span>Build Delta</span>
@@ -8777,12 +9973,23 @@ const airGoldenDashboardHtml = `<!doctype html>
               <div class="compare-card"><span>Tests Modified</span><strong>${historyComparison.tests?.summary?.modified ?? 0}</strong><small>Status, module, file, or title changed</small></div>
             </div>
         </div>
+        </details>
+        <details class="fold">
+          <summary><b>Charts</b><span>Quality, release, failures, pass rate, and coverage over time</span></summary>
         <div class="history-section-grid">
           ${renderHistoryTrendCard('Quality Trend', 'quality')}
           ${renderReleaseTrendCard()}
           ${renderHistoryTrendCard('Failure Trend', 'failures', value => `${value} failed`, { max: Math.max(5, ...(airResults?.history?.trends?.failures?.points ?? []).map(point => Number(point.value) || 0)) })}
           ${renderHistoryTrendCard('Flaky Trend', 'flaky', value => `${value} flaky`, { max: Math.max(5, ...(airResults?.history?.trends?.flaky?.points ?? []).map(point => Number(point.value) || 0)) })}
         </div>
+        <div class="history-section-grid">
+          ${renderHistoryTrendCard('Pass Rate Trend', 'passRate')}
+          ${renderHistoryTrendCard('Module Coverage Trend', 'moduleCoverage')}
+          ${renderHistoryTrendCard('Journey Coverage Trend', 'journeyCoverage')}
+        </div>
+        </details>
+        <details class="fold">
+          <summary><b>Tests that changed</b><span>${addedTests.length} added, ${removedTests.length} removed, ${modifiedTests.length} modified</span></summary>
         <div class="history-test-change-panel">
           <div class="history-panel-head">
             <span>Suite Movement</span>
@@ -8795,11 +10002,9 @@ const airGoldenDashboardHtml = `<!doctype html>
             <div><h2>Modified Tests</h2>${renderTestChangeSummary('modified test(s)', modifiedTests, 'No modified tests')}</div>
           </div>
         </div>
-        <div class="history-section-grid">
-          ${renderHistoryTrendCard('Pass Rate Trend', 'passRate')}
-          ${renderHistoryTrendCard('Module Coverage Trend', 'moduleCoverage')}
-          ${renderHistoryTrendCard('Journey Coverage Trend', 'journeyCoverage')}
-        </div>
+        </details>
+        <details class="fold">
+          <summary><b>Areas and paths</b><span>Which modules and user paths moved</span></summary>
         <div class="history-signal-layout">
           <div class="panel history-signal-panel">
             <div class="history-panel-head">
@@ -8828,6 +10033,9 @@ const airGoldenDashboardHtml = `<!doctype html>
             </div>
           </div>
         </div>
+        </details>
+        <details class="fold">
+          <summary><b>Failures and release calls</b><span>New, resolved, and how often the release was blocked</span></summary>
         <div class="history-signal-layout">
           <div class="panel history-signal-panel failure-panel">
             <div class="history-panel-head">
@@ -8866,6 +10074,9 @@ const airGoldenDashboardHtml = `<!doctype html>
             </div>
           </div>
         </div>
+        </details>
+        <details class="fold">
+          <summary><b>Where to look next</b><span>The focus items from this comparison</span></summary>
         <div class="panel executive-focus-panel">
           <div class="history-panel-head">
             <span>Decision Guidance</span>
@@ -8874,6 +10085,9 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
           ${renderExecutiveFocusCards(engineeringInsightItems)}
         </div>
+        </details>
+        <details class="fold">
+          <summary><b>Earlier runs</b><span>Quality, release call, and duration for each saved run</span></summary>
         <div class="panel history-timeline-panel">
           <div class="history-panel-head">
             <span>Execution Memory</span>
@@ -8889,6 +10103,7 @@ const airGoldenDashboardHtml = `<!doctype html>
             </table>
           </details>
         </div>
+        </details>
       ` : `
         ${renderEmptyState({
           title: 'No historical executions available.',
@@ -8900,11 +10115,12 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page report-extra" id="air-core">
+      ${renderPageNav('air-core')}
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 12</div>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('settings', 'About AIR')}
-          <p>How this report is produced.</p>
+          <p>Five layers turn the test run into this report. Open a layer to see the numbers it produced.</p>
         </div>
         <a class="btn" href="#roadmap">Product roadmap</a>
       </div>
@@ -8923,11 +10139,11 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
           <div>
             <span>Pipeline Status</span>
-            <strong>Operational</strong>
+            <strong class="is-text">Operational</strong>
           </div>
           <div>
             <span>Output Model</span>
-            <strong>air-results.json</strong>
+            <strong class="is-text">air-results.json</strong>
           </div>
         </div>
       </div>
@@ -8940,7 +10156,10 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
         </div>
         <div class="air-core-layer-grid">${airCoreLayerHtml}</div>
-        <div class="air-core-pipeline">${airCorePipelineHtml}</div>
+        <details class="fold">
+          <summary><b>Each step, in order</b><span>${engineStatusItems.length} engines</span></summary>
+          <div class="air-core-pipeline">${airCorePipelineHtml}</div>
+        </details>
       </div>
 
       <div class="air-core-engines panel">
@@ -8956,11 +10175,12 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page report-extra" id="roadmap">
+      ${renderPageNav('roadmap')}
       <div class="topbar">
         <div>
-          <div class="eyebrow">PAGE 13</div>
+          <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('roadmap', 'AIR Product Roadmap')}
-          <p>How AIR evolves from executive visibility into an Engineering Intelligence Platform.</p>
+          <p>What is done, what is in progress, and what comes later. Open a version for the full list.</p>
         </div>
         <span class="pill demo">Platform Evolution</span>
       </div>
@@ -8977,7 +10197,8 @@ const airGoldenDashboardHtml = `<!doctype html>
       </div>
       <br>
       <div class="roadmap-grid">${airRoadmapCards}</div>
-      <br>
+      <details class="fold">
+        <summary><b>Version table</b><span>The same versions, in one list</span></summary>
       <div class="panel">
         <h2>AIR Product Evolution Roadmap</h2>
         <table>
@@ -8985,12 +10206,13 @@ const airGoldenDashboardHtml = `<!doctype html>
           <tbody>${airRoadmapWhyRows}</tbody>
         </table>
       </div>
+      </details>
       <div class="panel future-vision-panel">
         <div class="future-vision-intro">
           <div>
             <div class="eyebrow">FUTURE PLATFORM VISION</div>
             <h2>Beyond AIR v1.x</h2>
-            <p>These milestones describe AIR's long-term product direction after the current Engineering Mode UI, Dynamic Data Model, and Dynamic Intelligence Engine phases are complete. They are roadmap items only, not active implementation scope.</p>
+            <p>Later versions of this report. Open a card for the groups inside it.</p>
           </div>
           <span class="pill demo">Strategic Vision</span>
         </div>
@@ -9030,7 +10252,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <p id="drawerFocus"></p>
       </div>
       <div class="drawer-section business-impact">
-        <h3>Business Impact</h3>
+        <h3>Why it matters</h3>
         <p id="drawerBusinessImpact"></p>
       </div>
       <div class="drawer-section">
@@ -9042,7 +10264,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div class="drawer-test-list" id="drawerRelatedTests"></div>
       </div>
       <div class="drawer-section">
-        <h3>Failed Tests</h3>
+        <h3>What failed</h3>
         <div class="drawer-test-list" id="drawerFailedTests"></div>
       </div>
       <div class="drawer-section">
@@ -9206,6 +10428,51 @@ const airGoldenDashboardHtml = `<!doctype html>
   </section>
 </div>
 <script>
+  const reportPageIds = ${JSON.stringify(reportPages.map(([pageId]) => pageId))};
+  function pageForTarget(id) {
+    const target = id ? document.getElementById(id) : null;
+    if (!target) {
+      return document.getElementById('cover');
+    }
+    if (target.classList.contains('page')) {
+      return target;
+    }
+    return target.closest('section.page') || document.getElementById('cover');
+  }
+  function currentPageId() {
+    return document.body.dataset.airPage || 'cover';
+  }
+  function showCurrentPage() {
+    const hashId = decodeURIComponent((location.hash || '#cover').replace(/^#/, ''));
+    const page = pageForTarget(hashId);
+    const pageId = page && page.id ? page.id : 'cover';
+    document.body.dataset.airPage = pageId;
+    document.querySelectorAll('main > section.page').forEach((section) => {
+      section.classList.toggle('is-current', section.id === pageId);
+    });
+    document.querySelectorAll('.nav a').forEach((link) => {
+      const active = link.getAttribute('href') === '#' + pageId;
+      link.classList.toggle('active', active);
+      if (active) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+    const more = document.querySelector('.nav-more');
+    if (more) {
+      more.open = Boolean(more.querySelector('a[href="#' + pageId + '"]'));
+    }
+    const focus = document.getElementById(hashId);
+    if (focus && focus !== page) {
+      focus.scrollIntoView({ block: 'start' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }
+  window.addEventListener('hashchange', showCurrentPage);
+  showCurrentPage();
+
   const moduleDrawerData = ${moduleDrawerDataJson};
   const journeyDetailData = ${journeyDetailDataJson};
   const recommendationDetailData = ${recommendationDetailDataJson};
@@ -9546,7 +10813,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         '</div>';
 
       if (!context.available) {
-        return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel unavailable"><span>Annotated Failure View</span><strong>Not available</strong><small>' + escapeModalText(context.annotationMessage || 'Failure screenshot evidence was not available.') + '</small></div><div class="failure-shot-notes"><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p></div></div>' + artifactBlock;
+        return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel unavailable"><span>Picture</span><strong>No picture was saved</strong><small>' + escapeModalText(item.whyFailed || 'This check failed before a screenshot was taken.') + '</small></div></div>' + artifactBlock;
       }
 
       const annotatedBlock = context.annotatedAvailable
@@ -9556,7 +10823,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         ? '<a href="' + escapeModalText(context.originalHref) + '" data-evidence-preview data-evidence-kind="Original Screenshot" data-evidence-status="' + escapeModalText(context.originalLabel) + '" data-evidence-href="' + escapeModalText(context.originalHref) + '"><img src="' + escapeModalText(context.originalHref) + '" alt="' + escapeModalText(context.originalLabel) + '"><small>' + escapeModalText(context.originalLabel) + '</small></a>'
         : '<strong>Not available</strong><small>Original screenshot was not attached.</small>';
 
-      return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel ' + (context.annotatedAvailable ? 'annotated' : 'unavailable') + '"><span>Annotated Failure View</span>' + annotatedBlock + '</div><div class="failure-shot-panel original"><span>Original Screenshot</span>' + originalBlock + '</div><div class="failure-shot-notes"><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p>' + (context.annotatedAvailable ? '' : '<p><b>Location:</b> Failure location could not be determined automatically.</p>') + '</div></div>' + artifactBlock;
+      return '<div class="failure-screenshot-context modal-evidence-context"><div class="failure-shot-panel ' + (context.annotatedAvailable ? 'annotated' : 'unavailable') + '"><span>Picture with a mark</span>' + annotatedBlock + '</div><div class="failure-shot-panel original"><span>Screen at failure</span>' + originalBlock + '</div><div class="failure-shot-notes"><p><b>What happened:</b> ' + escapeModalText(item.whyFailed) + '</p><p><b>What we wanted:</b> ' + escapeModalText(item.expected) + '</p></div></div>' + artifactBlock;
     }
 
     function renderFailureSourceNotes(item) {
@@ -9586,7 +10853,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           ? 'W'
           : 'G';
       const mainText = type === 'failure'
-        ? '<p><b>Failure Summary:</b> ' + escapeModalText(item.whyFailed) + '</p><p><b>Expected:</b> ' + escapeModalText(item.expected) + '</p><p><b>Observed:</b> ' + escapeModalText(item.observed) + '</p><p><b>Impact:</b> ' + escapeModalText(item.impact) + '</p><p><b>Cause Status:</b> ' + escapeModalText(item.cause) + '</p><p><b>Technical Error:</b> ' + escapeModalText(item.technicalError) + '</p>'
+        ? '<p><b>What happened:</b> ' + escapeModalText(item.whyFailed) + '</p><p><b>What we wanted:</b> ' + escapeModalText(item.expected) + '</p><p><b>Why it matters:</b> ' + escapeModalText(item.impact) + '</p><details><summary>Error detail</summary><p>' + escapeModalText(item.technicalError) + '</p></details>'
         : '<p><b>Reason:</b> ' + escapeModalText(item.reason) + '</p>';
       const evidenceContext = type === 'failure'
         ? renderFailureScreenshotModal(item)
@@ -9595,7 +10862,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         ? renderFailureSourceNotes(item)
         : '';
       const nextAction = item.nextAction
-        ? '<p><b>Next:</b> ' + escapeModalText(item.nextAction) + '</p>'
+        ? '<p><b>What to do:</b> ' + escapeModalText(item.nextAction) + '</p>'
         : '';
       const meta = [
         item.module,
@@ -9713,8 +10980,10 @@ const airGoldenDashboardHtml = `<!doctype html>
         body.innerHTML = '<img src="' + href + '" alt="' + kind + ' preview">';
       } else if (lowerHref.endsWith('.webm') || lowerHref.endsWith('.mp4')) {
         body.innerHTML = '<video controls src="' + href + '"></video>';
+      } else if (!href || href.indexOf('test-results/') !== -1) {
+        body.innerHTML = '<div class="preview-meta"><p>This file is no longer on disk. A later test run cleared the results folder, so the link cannot open.</p></div>';
       } else {
-        body.innerHTML = '<div class="preview-meta"><p>This evidence type is available for review. AIR preview support for this artifact will expand as the Evidence Engine grows.</p><a href="' + href + '" target="_blank" rel="noopener">Open source evidence</a></div>';
+        body.innerHTML = '<div class="preview-meta"><p>This file is saved with the report.</p><a href="' + href + '" target="_blank" rel="noopener">Open this file</a></div>';
       }
     }
 
@@ -9797,12 +11066,18 @@ const airGoldenDashboardHtml = `<!doctype html>
   updateModuleFilter();
 
   document.querySelectorAll('[data-load-more-failures]').forEach(button => {
-    const target = button.dataset.failureTarget === 'rows' ? 'rows' : 'cards';
-    const items = Array.from(document.querySelectorAll(target === 'rows' ? '[data-failure-row]' : '[data-failure-card]'));
+    const target = button.dataset.failureTarget || 'cards';
+    const selector = target === 'rows'
+      ? '[data-failure-row]'
+      : target === 'preview'
+        ? '[data-failure-preview]'
+        : '[data-failure-card]';
+    const items = Array.from(document.querySelectorAll(selector));
     const countLabel = document.querySelector('[data-failure-count="' + target + '"]');
     const loadMoreWrap = button.closest('[data-failure-load-more]');
     const totalFailures = items.length;
-    let visibleFailures = Math.min(${FAILED_TESTS_INITIAL_VISIBLE}, totalFailures);
+    const initialVisible = Number(button.dataset.failureInitial) || ${FAILED_TESTS_INITIAL_VISIBLE};
+    let visibleFailures = Math.min(initialVisible, totalFailures);
     const failureBatchSize = ${FAILED_TESTS_LOAD_BATCH};
 
     const updateFailureVisibility = () => {
@@ -9811,7 +11086,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       });
 
       if (countLabel) {
-        countLabel.textContent = 'Showing ' + Math.min(visibleFailures, totalFailures) + ' of ' + totalFailures + ' failed tests';
+        countLabel.textContent = 'Showing ' + Math.min(visibleFailures, totalFailures) + ' of ' + totalFailures + ' failed checks';
       }
 
       if (visibleFailures >= totalFailures && loadMoreWrap) {
@@ -9890,6 +11165,48 @@ const airGoldenDashboardHtml = `<!doctype html>
     });
 
     updateCoverageGapVisibility();
+  });
+
+  document.querySelectorAll('[data-long-list]').forEach(list => {
+    const limit = Number(list.getAttribute('data-long-list')) || 6;
+    const itemSelector = list.getAttribute('data-long-item');
+    const label = list.getAttribute('data-long-label') || 'items';
+    const items = itemSelector
+      ? Array.from(list.querySelectorAll(itemSelector))
+      : Array.from(list.children).filter(item => item.nodeType === 1);
+    if (items.length <= limit) {
+      return;
+    }
+
+    let shown = limit;
+    const bar = document.createElement('div');
+    bar.className = 'failure-load-more long-list-bar';
+    const count = document.createElement('span');
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.textContent = 'Show more';
+
+    const updateLongList = () => {
+      items.forEach((item, index) => {
+        item.classList.toggle('is-hidden', index >= shown);
+      });
+      count.textContent = 'Showing ' + Math.min(shown, items.length) + ' of ' + items.length + ' ' + label;
+      if (shown >= items.length) {
+        bar.remove();
+      }
+    };
+
+    more.addEventListener('click', () => {
+      shown = Math.min(shown + 6, items.length);
+      updateLongList();
+    });
+
+    bar.append(count, more);
+    const host = list.tagName === 'TBODY'
+      ? list.parentElement.parentElement || list.parentElement
+      : list;
+    host.insertAdjacentElement('afterend', bar);
+    updateLongList();
   });
 
   const airSearch = document.getElementById('airSearch');
@@ -10014,6 +11331,12 @@ const airGoldenDashboardHtml = `<!doctype html>
       }
 
       const targetId = link.getAttribute('data-search-target');
+      const destination = pageForTarget(targetId);
+      if (destination && destination.id !== currentPageId()) {
+        location.hash = targetId;
+        closeSearchResults(input, resultsContainer);
+        return;
+      }
       const target = document.getElementById(targetId);
       if (target) {
         clearSearchHighlight();
@@ -10113,12 +11436,18 @@ const airGoldenDashboardHtml = `<!doctype html>
 
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', event => {
-      if (link.classList.contains('disabled') || link.hasAttribute('data-evidence-preview')) {
+      if (link.classList.contains('disabled') || link.hasAttribute('data-evidence-preview') || link.target === '_blank') {
         return;
       }
 
       const href = link.getAttribute('href') || '';
       const id = decodeURIComponent(href.slice(1));
+      const destination = pageForTarget(id);
+      if (destination && destination.id !== currentPageId()) {
+        event.preventDefault();
+        location.hash = id;
+        return;
+      }
       if (!id || !scrollToReportTarget(id)) {
         return;
       }
@@ -10168,5 +11497,19 @@ fs.mkdirSync(outputDir, {
   recursive: true
 });
 
-fs.writeFileSync(outputPath, airGoldenDashboardHtml);
-console.log(`Execution report created: ${outputPath}`);
+try {
+  fs.writeFileSync(outputPath, airGoldenDashboardHtml);
+  console.log('Execution report created:', outputPath);
+} catch (error) {
+  console.log(`Could not replace ${outputPath} because the file is open.`);
+  console.log(error.message);
+}
+
+const fallbackPath = path.join(outputDir, 'index-updated.html');
+try {
+  fs.writeFileSync(fallbackPath, airGoldenDashboardHtml);
+  console.log('Execution report created:', fallbackPath);
+} catch (error) {
+  console.log(`Could not replace ${fallbackPath} because the file is open.`);
+  console.log(error.message);
+}

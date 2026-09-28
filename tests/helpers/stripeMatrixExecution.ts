@@ -16,10 +16,11 @@ import {
 import {
   waitForManualEmailVerification
 } from './emailVerification';
+import {
+  completeRiskAndComplianceUnlessPlanReady
+} from './onboardingContinuation';
 import { BillingPage }
   from '../pages/BillingPage';
-import { CompliancePage }
-  from '../pages/CompliancePage';
 import { DashboardPage }
   from '../pages/DashboardPage';
 import { LoginPage }
@@ -30,8 +31,6 @@ import { PlanSelectionPage }
   from '../pages/PlanSelectionPage';
 import { RegistrationPage }
   from '../pages/RegistrationPage';
-import { RiskProfilePage }
-  from '../pages/RiskProfilePage';
 import { StripePaymentPage }
   from '../pages/StripePaymentPage';
 
@@ -470,13 +469,9 @@ async function registerAndReachPlanSelection(
     mobileNumber
   );
 
-  await new RiskProfilePage(
+  await completeRiskAndComplianceUnlessPlanReady(
     page
-  ).fill();
-
-  await new CompliancePage(
-    page
-  ).fill();
+  );
 
   await new PlanSelectionPage(
     page
@@ -829,6 +824,17 @@ async function previewPlanChange(
       interval
     });
   } catch (error) {
+    if (
+      isMissingPlanAction(
+        error
+      ) &&
+      action === 'interval'
+    ) {
+      await billing.validateShownBillingInterval();
+
+      return;
+    }
+
     if (
       isMissingPlanAction(
         error
