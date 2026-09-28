@@ -1,0 +1,122 @@
+import {
+  BASE_URL
+} from './config/testData';
+
+import { DashboardPage }
+  from './pages/DashboardPage';
+
+import { test }
+  from './fixtures/subscriberAuth';
+
+/* =============================================================================
+TEST SUITE: Dashboard Widgets
+
+PURPOSE
+-------
+Confirms the signed-in dashboard shows portfolio, score, events, allocation,
+strategy, broker, opportunity, expiry, and performance cards. Amounts and
+symbols are checked by shape, because those values change with the account.
+
+RUN
+---
+npx playwright test tests/DashboardWidgets.spec.ts --reporter=line
+============================================================================= */
+
+test.describe(
+  'Dashboard Widgets',
+  () => {
+
+    test.describe.configure({
+      timeout: 120000
+    });
+
+    test(
+      'Dashboard shows portfolio score events allocation and opportunities',
+      async ({ page }) => {
+        const dashboard =
+          new DashboardPage(
+            page
+          );
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await dashboard.validateLoaded();
+
+        await test.step(
+          'Portfolio value',
+          async () => {
+            await dashboard.validatePortfolioSummary();
+          }
+        );
+
+        await test.step(
+          'Ools score',
+          async () => {
+            await dashboard.validateOolsScore();
+          }
+        );
+
+        await test.step(
+          'Upcoming events',
+          async () => {
+            await dashboard.validateUpcomingEvents();
+          }
+        );
+
+        await test.step(
+          'Asset allocation',
+          async () => {
+            await dashboard.validateAssetAllocation();
+          }
+        );
+
+        await test.step(
+          'Option strategy breakdown',
+          async () => {
+            await dashboard.validateOptionStrategyBreakdown();
+          }
+        );
+
+        await test.step(
+          'Broker accounts',
+          async () => {
+            await dashboard.validateBrokerAccounts();
+          }
+        );
+
+        await test.step(
+          'Top 10 opportunities',
+          async () => {
+            await dashboard.validateTopOpportunities();
+          }
+        );
+
+        await test.step(
+          'Option expiry overview',
+          async () => {
+            await dashboard.validateExpiryOverview();
+          }
+        );
+
+        await test.step(
+          'Performance',
+          async () => {
+            await dashboard.validatePerformanceSummary();
+          }
+        );
+
+        await test.step(
+          'Card links',
+          async () => {
+            await dashboard.validateDashboardCardLinks();
+          }
+        );
+      }
+    );
+  }
+);

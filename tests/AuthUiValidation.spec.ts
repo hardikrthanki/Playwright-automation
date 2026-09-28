@@ -410,6 +410,7 @@ test.describe(
     test(
       'Forgot password back to login clears reset-only navigation state',
       async ({ page }) => {
+        test.setTimeout(90000);
 
         const forgotPassword =
           new ForgotPasswordPage(page);

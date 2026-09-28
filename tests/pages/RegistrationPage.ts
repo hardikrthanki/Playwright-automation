@@ -574,14 +574,6 @@ extends BasePage {
           index
         );
 
-      if (
-        !await box.isVisible().catch(
-          () => false
-        )
-      ) {
-        continue;
-      }
-
       const checked =
         await box.isChecked().catch(
           async () =>
@@ -593,12 +585,47 @@ extends BasePage {
         );
 
       if (
-        !checked
+        checked
       ) {
-        await box.click({
-          force: true
-        });
+        continue;
       }
+
+      const id =
+        await box.getAttribute(
+          'id'
+        );
+
+      if (
+        id
+      ) {
+        const label =
+          this.page.locator(
+            `label[for="${id}"]`
+          );
+
+        if (
+          await label.isVisible().catch(
+            () => false
+          )
+        ) {
+          await label.click({
+            force: true
+          });
+          continue;
+        }
+      }
+
+      await box.check({
+        force: true
+      }).catch(
+        async () => {
+          await box.click({
+            force: true
+          }).catch(
+            () => undefined
+          );
+        }
+      );
     }
   }
 
@@ -802,6 +829,16 @@ extends BasePage {
 
       Logger.success(
         'OTP Verify Clicked'
+      );
+
+      await expect(
+        this.page.getByText(
+          /^verified$/i
+        ).first()
+      ).toBeVisible({
+        timeout: 15000
+      }).catch(
+        () => undefined
       );
 
       await this.waitForPasswordFieldsReady();

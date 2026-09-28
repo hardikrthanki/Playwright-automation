@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-28T09:10:36.153Z",
+  "generatedAt": "2026-09-28T10:42:42.166Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-28T09:10:35.795Z",
+    "generatedAt": "2026-09-28T10:42:41.806Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -13,22 +13,22 @@
     "total": 640,
     "rawTestCount": 640,
     "attempts": 640,
-    "passed": 199,
-    "failed": 46,
+    "passed": 242,
+    "failed": 3,
     "skipped": 395,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 199,
+      "expected": 242,
       "skipped": 395,
-      "unexpected": 46
+      "unexpected": 3
     }
   },
   "airExecution": {
     "total": 640,
     "attempts": 640,
-    "passed": 199,
-    "failed": 46,
+    "passed": 242,
+    "failed": 3,
     "skipped": 395,
     "flaky": 0,
     "interrupted": 0,
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 59,
+    "perTestEvidence": 5,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 61,
+    "totalWithRawReports": 7,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,278 +61,20 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "testName": "Onboarding Field Validation > Fast Risk and Compliance field validation",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OnboardingFieldValidation.spec.ts > Onboarding Field Validation > Full Risk and Compliance field validation in one session",
-        "testName": "Onboarding Field Validation > Full Risk and Compliance field validation in one session",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > PlanSelectionValidation.spec.ts > Plan Selection Validation > Plan catalog pricing overlay trial and complete-setup in one session",
-        "testName": "Plan Selection Validation > Plan catalog pricing overlay trial and complete-setup in one session",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > PlanSelectionValidation.spec.ts > Plan Selection Validation > Curious Explorer free plan completes onboarding without Stripe",
-        "testName": "Plan Selection Validation > Curious Explorer free plan completes onboarding without Stripe",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrial.spec.ts > Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
-        "testName": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrial.spec.ts > Overlay Strategists Trial Experience > New user can start Overlay Strategists trial without card",
-        "testName": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial without card",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrial.spec.ts > Overlay Strategists Trial Experience > Overlay Strategists trial requires terms acceptance",
-        "testName": "Overlay Strategists Trial Experience > Overlay Strategists trial requires terms acceptance",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DirectSubscriptionPurchase.spec.ts > Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-        "testName": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
-        "testName": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable monthly user sees downgrade retention offer",
-        "testName": "Subscription Lifecycle Execution > Disposable monthly user sees downgrade retention offer",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-        "testName": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-01 - Start trial without payment details",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-01 - Start trial without payment details",
+        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Forgot password back to login clears reset-only navigation state",
+        "testName": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-02 - Trial is displayed as available",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-02 - Trial is displayed as available",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-06 - Premium Overlay Strategists features are presented",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-06 - Premium Overlay Strategists features are presented",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-31 - Terms must be accepted before activating trial",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-31 - Terms must be accepted before activating trial",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-37 - Income Builder monthly checkout shows selected plan before payment",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-37 - Income Builder monthly checkout shows selected plan before payment",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-38 - Portfolio Hedger annual checkout shows selected plan before payment",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-38 - Portfolio Hedger annual checkout shows selected plan before payment",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-39 - Marketplace monthly checkout shows selected plan before payment",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-39 - Marketplace monthly checkout shows selected plan before payment",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-40 - Annual paid checkout displays selected plan and billing interval before payment",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-40 - Annual paid checkout displays selected plan and billing interval before payment",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-41 - Paid subscription can be started from onboarding plan selection",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-41 - Paid subscription can be started from onboarding plan selection",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-45 - Stripe checkout displays subscriber email",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-45 - Stripe checkout displays subscriber email",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-46 - Stripe checkout displays selected plan name",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-46 - Stripe checkout displays selected plan name",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-47 - Stripe checkout displays correct billing interval",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-47 - Stripe checkout displays correct billing interval",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-64 - Payment currency and conversion details are displayed correctly",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-64 - Payment currency and conversion details are displayed correctly",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75A - Terms and subscription terms must be accepted before paid checkout starts",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75A - Terms and subscription terms must be accepted before paid checkout starts",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75C - Browser back from Stripe checkout returns without activating subscription",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75C - Browser back from Stripe checkout returns without activating subscription",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75D - Refreshing Stripe checkout keeps selected plan and customer context",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75D - Refreshing Stripe checkout keeps selected plan and customer context",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
-        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-167 - Annual price is displayed for the same subscription tier",
-        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-167 - Annual price is displayed for the same subscription tier",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-201 - Annual plan subscriber sees monthly billing option",
-        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-201 - Annual plan subscriber sees monthly billing option",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-203 - Monthly price is displayed for the same subscription tier",
-        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-203 - Monthly price is displayed for the same subscription tier",
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
         "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
         "testName": "Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-002 - Overlay Strategists trial is displayed as available for eligible new user",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-002 - Overlay Strategists trial is displayed as available for eligible new user",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-003 - User can start Overlay Strategists trial without payment details",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-003 - User can start Overlay Strategists trial without payment details",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-004 - Without-card trial requires terms acceptance before activation",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-004 - Without-card trial requires terms acceptance before activation",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-013 - Overlay Strategists features remain visible while trial is active",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-013 - Overlay Strategists features remain visible while trial is active",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -352,162 +94,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Fast Risk and Compliance field validation",
+            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Full Risk and Compliance field validation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Plan Selection Validation > Curious Explorer free plan completes onboarding without Stripe",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial without card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > Overlay Strategists trial requires terms acceptance",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable monthly user sees downgrade retention offer",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-01 - Start trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-02 - Trial is displayed as available",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-06 - Premium Overlay Strategists features are presented",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-31 - Terms must be accepted before activating trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-37 - Income Builder monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-38 - Portfolio Hedger annual checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-39 - Marketplace monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-40 - Annual paid checkout displays selected plan and billing interval before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-41 - Paid subscription can be started from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-45 - Stripe checkout displays subscriber email",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-46 - Stripe checkout displays selected plan name",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-47 - Stripe checkout displays correct billing interval",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-64 - Payment currency and conversion details are displayed correctly",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75A - Terms and subscription terms must be accepted before paid checkout starts",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75D - Refreshing Stripe checkout keeps selected plan and customer context",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-167 - Annual price is displayed for the same subscription tier",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-201 - Annual plan subscriber sees monthly billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-203 - Monthly price is displayed for the same subscription tier",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -516,68 +108,8 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-002 - Overlay Strategists trial is displayed as available for eligible new user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-003 - User can start Overlay Strategists trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-004 - Without-card trial requires terms acceptance before activation",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-013 - Overlay Strategists features remain visible while trial is active",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -598,11 +130,6 @@
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
             "detail": "Critical module risk is High."
           }
         ]
@@ -613,162 +140,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Fast Risk and Compliance field validation",
+            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Full Risk and Compliance field validation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Plan Selection Validation > Curious Explorer free plan completes onboarding without Stripe",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial without card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > Overlay Strategists trial requires terms acceptance",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable monthly user sees downgrade retention offer",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-01 - Start trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-02 - Trial is displayed as available",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-06 - Premium Overlay Strategists features are presented",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-31 - Terms must be accepted before activating trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-37 - Income Builder monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-38 - Portfolio Hedger annual checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-39 - Marketplace monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-40 - Annual paid checkout displays selected plan and billing interval before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-41 - Paid subscription can be started from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-45 - Stripe checkout displays subscriber email",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-46 - Stripe checkout displays selected plan name",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-47 - Stripe checkout displays correct billing interval",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-64 - Payment currency and conversion details are displayed correctly",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75A - Terms and subscription terms must be accepted before paid checkout starts",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75D - Refreshing Stripe checkout keeps selected plan and customer context",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-167 - Annual price is displayed for the same subscription tier",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-201 - Annual plan subscriber sees monthly billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-203 - Monthly price is displayed for the same subscription tier",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -777,68 +154,8 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-002 - Overlay Strategists trial is displayed as available for eligible new user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-003 - User can start Overlay Strategists trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-004 - Without-card trial requires terms acceptance before activation",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-013 - Overlay Strategists features remain visible while trial is active",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -859,11 +176,6 @@
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
             "detail": "Critical module risk is High."
           }
         ]
@@ -874,162 +186,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Fast Risk and Compliance field validation",
+            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Onboarding Field Validation > Full Risk and Compliance field validation in one session",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Plan Selection Validation > Curious Explorer free plan completes onboarding without Stripe",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial with card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > New user can start Overlay Strategists trial without card",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial Experience > Overlay Strategists trial requires terms acceptance",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable monthly user sees downgrade retention offer",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-01 - Start trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-02 - Trial is displayed as available",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-06 - Premium Overlay Strategists features are presented",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-31 - Terms must be accepted before activating trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-37 - Income Builder monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-38 - Portfolio Hedger annual checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-39 - Marketplace monthly checkout shows selected plan before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-40 - Annual paid checkout displays selected plan and billing interval before payment",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-41 - Paid subscription can be started from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-45 - Stripe checkout displays subscriber email",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-46 - Stripe checkout displays selected plan name",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-47 - Stripe checkout displays correct billing interval",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-49 - Stripe checkout exposes card number, expiry, CVC, country, and cardholder name fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-64 - Payment currency and conversion details are displayed correctly",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75A - Terms and subscription terms must be accepted before paid checkout starts",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75D - Refreshing Stripe checkout keeps selected plan and customer context",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75L - Currency and conversion-fee copy remains visible for non-USD checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-167 - Annual price is displayed for the same subscription tier",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-201 - Annual plan subscriber sees monthly billing option",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-203 - Monthly price is displayed for the same subscription tier",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -1038,68 +200,8 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-002 - Overlay Strategists trial is displayed as available for eligible new user",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-003 - User can start Overlay Strategists trial without payment details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-004 - Without-card trial requires terms acceptance before activation",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-006 - User can choose Overlay Strategists trial with card and reach Stripe checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-013 - Overlay Strategists features remain visible while trial is active",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
             "type": "Business Journey",
             "name": "Authentication",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Risk Profile",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Compliance",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -1121,16 +223,11 @@
             "type": "Module",
             "name": "Billing",
             "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Onboarding",
-            "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 9,
-    "blockers": 51
+    "warnings": 5,
+    "blockers": 8
   }
 }

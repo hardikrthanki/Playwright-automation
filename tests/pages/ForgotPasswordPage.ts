@@ -78,17 +78,45 @@ export class ForgotPasswordPage
       );
   }
 
+  private async openUrl(
+    url: string
+  ) {
+    try {
+      await this.page.goto(
+        url,
+        {
+          waitUntil: 'domcontentloaded',
+          timeout: 20000
+        }
+      );
+    } catch {
+      await this.page.goto(
+        url,
+        {
+          waitUntil: 'commit',
+          timeout: 20000
+        }
+      );
+
+      await this.page.waitForLoadState(
+        'domcontentloaded',
+        {
+          timeout: 20000
+        }
+      ).catch(
+        () => undefined
+      );
+    }
+  }
+
   async open() {
 
     Logger.info(
       'Opening Forgot Password Page'
     );
 
-    await this.page.goto(
-      `${BASE_URL}/login`,
-      {
-        waitUntil: 'domcontentloaded'
-      }
+    await this.openUrl(
+      `${BASE_URL}/login`
     );
 
     await this.dismissMarketingOverlays();
@@ -104,11 +132,8 @@ export class ForgotPasswordPage
         this.page.url()
       )
     ) {
-      await this.page.goto(
-        `${BASE_URL}/forgot-password`,
-        {
-          waitUntil: 'domcontentloaded'
-        }
+      await this.openUrl(
+        `${BASE_URL}/forgot-password`
       );
     }
 

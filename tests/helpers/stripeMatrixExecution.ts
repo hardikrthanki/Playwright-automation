@@ -70,6 +70,7 @@ export type StripeMatrixCoverageKey =
   | 'downgrade-preview'
   | 'interval-preview'
   | 'payment-negative'
+  | 'current-plan-before-upgrade'
   | 'air-traceability'
   | 'blocked-scenario';
 
@@ -382,6 +383,13 @@ export function inferStripeMatrixCoverageKey(
   }
 
   if (
+    /current/i.test(title) &&
+    /displayed before upgrade/i.test(title)
+  ) {
+    return 'current-plan-before-upgrade';
+  }
+
+  if (
     /cancel|portal|manage subscription|payment recovery|payment method|invoice history|return link|validatestripeportalsession|add payment|billing information/.test(
       text
     )
@@ -551,6 +559,29 @@ async function reachPlanSelection(
     page,
     scenario
   );
+}
+
+async function executeCurrentPlanBeforeUpgrade(
+  page: Page
+) {
+  await loginPaidSubscriber(
+    page
+  );
+
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  await billing.validateOverview();
+
+  await expect(
+    page.getByText(
+      /income builder|overlay strategists|portfolio hedger|marketplace|current plan|your plan/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
 }
 
 async function executeBillingInApp(
@@ -1105,6 +1136,8 @@ const coverageExecutors: Record<
     executeIntervalPreview,
   'payment-negative':
     executePaymentNegative,
+  'current-plan-before-upgrade':
+    executeCurrentPlanBeforeUpgrade,
   'air-traceability':
     async () => {
       throw new CoverageSkip(

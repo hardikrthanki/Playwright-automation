@@ -1037,21 +1037,500 @@ export class DashboardPage
     );
   }
 
+  private async cardText(
+    heading: RegExp,
+    marker: RegExp,
+    content?: RegExp
+  ) {
+    const title =
+      this.page.getByRole(
+        'heading',
+        {
+          name: heading
+        }
+      ).or(
+        this.page.getByText(
+          heading
+        )
+      ).first();
+
+    await expect(
+      title
+    ).toBeVisible({
+      timeout: 20000
+    });
+
+    const text =
+      await title.evaluate(
+        (node, sources) => {
+          const pattern =
+            new RegExp(
+              sources.markerSource,
+              'i'
+            );
+
+          const contentPattern =
+            sources.contentSource
+              ? new RegExp(
+                sources.contentSource,
+                'i'
+              )
+              : null;
+
+          let current =
+            node as HTMLElement | null;
+
+          let fallback = '';
+
+          while (current) {
+            const value =
+              current.innerText || '';
+
+            const matches =
+              pattern.test(value) &&
+              (
+                !contentPattern ||
+                contentPattern.test(value)
+              );
+
+            if (
+              matches
+            ) {
+              fallback = value;
+
+              if (
+                value.length < 4000
+              ) {
+                return value;
+              }
+            }
+
+            current =
+              current.parentElement;
+          }
+
+          return fallback;
+        },
+        {
+          markerSource: marker.source,
+          contentSource: content?.source
+        }
+      );
+
+    expect(
+      text,
+      `Dashboard card ${heading} should include ${marker}`
+    ).toMatch(
+      marker
+    );
+
+    return text;
+  }
+
+  async validatePortfolioSummary() {
+    Logger.info(
+      'Validating Total Portfolio Value'
+    );
+
+    const text =
+      await this.cardText(
+        /total portfolio value/i,
+        /cash\s*&\s*buying power/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /\$[\d,]+/
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /invested value/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /%\s*of portfolio/i
+    );
+
+    const percentAfter = (
+      label: string
+    ) => {
+      const match =
+        text.match(
+          new RegExp(
+            `${label}[\\s\\S]{0,160}?(\\d+(?:\\.\\d+)?)\\s*%\\s*of portfolio`,
+            'i'
+          )
+        );
+
+      return match
+        ? Number(match[1])
+        : Number.NaN;
+    };
+
+    const investedPercent =
+      percentAfter(
+        'invested value'
+      );
+
+    const cashPercent =
+      percentAfter(
+        'cash\\s*&\\s*buying power'
+      );
+
+    expect(
+      investedPercent
+    ).not.toBeNaN();
+
+    expect(
+      cashPercent
+    ).not.toBeNaN();
+
+    expect(
+      Math.abs(
+        investedPercent +
+        cashPercent -
+        100
+      )
+    ).toBeLessThanOrEqual(
+      1.5
+    );
+
+    Logger.success(
+      'Total Portfolio Value is shown'
+    );
+  }
+
+  async validateOolsScore() {
+    Logger.info(
+      'Validating Ools Score'
+    );
+
+    const text =
+      await this.cardText(
+        /ools score/i,
+        /diversified/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /overlayed|hedged/i
+    );
+
+    const scores =
+      [...text.matchAll(
+        /\b(\d{1,3})\b/g
+      )].map(
+        (match) =>
+          Number(match[1])
+      );
+
+    expect(
+      scores.some(
+        (score) =>
+          score >= 0 &&
+          score <= 100
+      )
+    ).toBe(
+      true
+    );
+
+    Logger.success(
+      'Ools Score is shown'
+    );
+  }
+
+  async validateUpcomingEvents() {
+    Logger.info(
+      'Validating Upcoming Events'
+    );
+
+    const text =
+      await this.cardText(
+        /upcoming events/i,
+        /portfolio symbols|no upcoming|view more/i,
+        /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b|no upcoming/i
+      );
+
+    const dates =
+      text.match(
+        /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\b/gi
+      ) ?? [];
+
+    const empty =
+      /no upcoming/i.test(
+        text
+      );
+
+    expect(
+      empty ||
+      (
+        dates.length >= 1 &&
+        dates.length <= 3
+      )
+    ).toBe(
+      true
+    );
+
+    Logger.success(
+      'Upcoming Events are shown'
+    );
+  }
+
+  async validateAssetAllocation() {
+    Logger.info(
+      'Validating Asset Allocation'
+    );
+
+    const text =
+      await this.cardText(
+        /asset allocation/i,
+        /equity/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /cash/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /options/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /\d+(?:\.\d+)?%/
+    );
+
+    Logger.success(
+      'Asset Allocation is shown'
+    );
+  }
+
+  async validateOptionStrategyBreakdown() {
+    Logger.info(
+      'Validating Option Strategy Breakdown'
+    );
+
+    const text =
+      await this.cardText(
+        /option strategy breakdown/i,
+        /covered calls/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /cash secured puts/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /protective puts/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /long calls/i
+    );
+
+    expect(
+      text
+    ).toMatch(
+      /\$[\d,]+|\+\$[\d,]+/
+    );
+
+    Logger.success(
+      'Option Strategy Breakdown is shown'
+    );
+  }
+
+  async validateBrokerAccounts() {
+    Logger.info(
+      'Validating Broker Accounts'
+    );
+
+    const text =
+      await this.cardText(
+        /broker accounts/i,
+        /manual entry|market value|last refresh/i,
+        /\$[\d,]+|manual entry/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /\$[\d,]+/
+    );
+
+    Logger.success(
+      'Broker Accounts are shown'
+    );
+  }
+
+  async validateTopOpportunities() {
+    Logger.info(
+      'Validating Top 10 Opportunities'
+    );
+
+    const text =
+      await this.cardText(
+        /top 10 opportunities/i,
+        /symbol/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /covered call|cash secured put|protective put|long call|\bCC\b|\bCSP\b/i
+    );
+
+    const ignored =
+      new Set([
+        'CC',
+        'CSP',
+        'PP',
+        'LC',
+        'ATM',
+        'ITM',
+        'OTM',
+        'DTE',
+        'USD',
+        'AI'
+      ]);
+
+    const symbols =
+      [...new Set(
+        [...text.matchAll(
+          /\b[A-Z]{2,5}\b/g
+        )].map(
+          (match) => match[0]
+        ).filter(
+          (symbol) =>
+            !ignored.has(symbol)
+        )
+      )];
+
+    expect(
+      symbols.length
+    ).toBeGreaterThan(
+      0
+    );
+
+    expect(
+      symbols.length
+    ).toBeLessThanOrEqual(
+      10
+    );
+
+    Logger.success(
+      'Top 10 Opportunities are shown'
+    );
+  }
+
+  async validatePerformanceSummary() {
+    Logger.info(
+      'Validating OolTool Performance'
+    );
+
+    const text =
+      await this.cardText(
+        /ooltool performance/i,
+        /opportunities executed|successful opportunities/i
+      );
+
+    expect(
+      text
+    ).toMatch(
+      /\d+\s*\/\s*\d+/
+    );
+
+    Logger.success(
+      'OolTool Performance is shown'
+    );
+  }
+
+  async validateDashboardCardLinks() {
+    Logger.info(
+      'Validating dashboard card links'
+    );
+
+    const labels = [
+      /view option exposure/i,
+      /manage accounts/i,
+      /view all opportunities/i,
+      /view full expiry calendar/i
+    ];
+
+    for (const label of labels) {
+      await expect(
+        this.page.getByRole(
+          'link',
+          {
+            name: label
+          }
+        ).or(
+          this.page.getByRole(
+            'button',
+            {
+              name: label
+            }
+          )
+        ).or(
+          this.page.getByText(
+            label
+          )
+        ).first()
+      ).toBeVisible({
+        timeout: 15000
+      });
+    }
+
+    Logger.success(
+      'Dashboard card links are visible'
+    );
+  }
+
   async validateExpiryOverview() {
     Logger.info(
       'Validating Option Expiry Overview'
     );
 
-    await expect(
-      this.page.getByRole(
-        'heading',
-        {
-          name: /option expiry overview/i
-        }
-      )
-    ).toBeVisible({
-      timeout: 15000
-    });
+    const text =
+      await this.cardText(
+        /option expiry overview/i,
+        /expiration|symbol/i
+      );
+
+    const hasContractRow =
+      /\b[A-Z]{2,5}\b/.test(
+        text
+      ) &&
+      /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}\b/i.test(
+        text
+      );
+
+    const empty =
+      /no expir|none|no option/i.test(
+        text
+      );
+
+    expect(
+      empty || hasContractRow
+    ).toBe(
+      true
+    );
 
     Logger.success(
       'Option Expiry Overview is visible'

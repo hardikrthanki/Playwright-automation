@@ -2066,7 +2066,7 @@ function renderModuleHealthCard(module) {
     : `${module.passed} passed. ${failedCount} failed. ${notRun} did not run.`;
 
   return `
-    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
+    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
       <div class="module-card-head">
         <div class="module-title">
           <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2118,7 +2118,7 @@ const moduleDashboardCards =
         getModuleBusinessScenarios(module.name).length;
 
       return `
-        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}">
+        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}">
           <div class="module-card-head">
             <div class="module-title">
               <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2276,7 +2276,7 @@ const journeyHealthRows = (demoMode ? [
         : '';
 
     return `
-    <div class="journey-node ${statusTone(state)} interactive-card" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
+    <div class="journey-node ${statusTone(state)} interactive-card" id="journey-${moduleSlug(name)}" data-step-item data-step-label="${escapeHtml(name)}" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
       <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' || state === 'Warning' ? '!' : 'NA'}</div>
       <strong>${escapeHtml(name)}</strong>
       <span>${score}%</span>
@@ -3575,7 +3575,7 @@ const nextStepListHtml = failureGroups.length === 0
 
 const failureEvidenceBoard = failureGroups.length === 0
   ? ''
-  : `<div class="failure-groups">${failureGroups.map(group => {
+  : `<div class="failure-groups">${failureGroups.map((group, groupIndex) => {
     const checks = group.items.map(entry => {
       const shot = renderFailureScreen(entry.test, entry.title);
 
@@ -3586,7 +3586,7 @@ const failureEvidenceBoard = failureGroups.length === 0
       </article>`;
     }).join('');
 
-    return `<details class="failure-group">
+    return `<details class="failure-group" id="failure-story-${groupIndex}" data-step-item data-step-label="${escapeHtml(group.happened)}">
       <summary>
         <b>${group.items.length}</b>
         <span>
@@ -6283,8 +6283,9 @@ const roadmapDetailDataJson =
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
 
-function renderPageFooter() {
+function renderPageFooter(pageId) {
   return `
+      ${pageId ? renderPageNav(pageId, 'bottom') : ''}
       <div class="page-footer">
         <span>${escapeHtml(projectName)}</span>
         <span>${escapeHtml(environment)}</span>
@@ -6322,8 +6323,36 @@ function renderNavGroup(pages, id) {
   )).join('');
 }
 
-function renderPageNav() {
-  return '';
+function renderPageNav(pageId, placement = 'top') {
+  const index = reportPages.findIndex(([id]) => id === pageId);
+  if (index < 0) {
+    return '';
+  }
+
+  const previous = reportPages[index - 1];
+  const next = reportPages[index + 1];
+  const side = (page, direction) => {
+    if (!page) {
+      return `<span class="page-pager-end"></span>`;
+    }
+
+    const className = direction === 'Previous' ? 'prev' : 'next';
+    const mark = direction === 'Previous' ? '←' : '→';
+    const label = direction === 'Previous'
+      ? `${mark} ${escapeHtml(page[1])}`
+      : `${escapeHtml(page[1])} ${mark}`;
+    return `<a class="page-pager-${className}" href="#${page[0]}"><small>${direction}</small><strong>${label}</strong></a>`;
+  };
+
+  return `<nav class="page-pager ${placement}" aria-label="Report pages">${side(previous, 'Previous')}<span class="page-pager-count">${index + 1} / ${reportPages.length}</span>${side(next, 'Next')}</nav>`;
+}
+
+function renderInnerNav(kind) {
+  return `<nav class="step-nav" aria-label="Move between ${escapeHtml(kind)}s" hidden>
+    <button type="button" data-step-prev><small>Previous</small><strong data-step-prev-name></strong></button>
+    <span class="step-nav-here"><span data-step-count></span><strong data-step-label></strong></span>
+    <button type="button" data-step-next><small>Next</small><strong data-step-next-name></strong></button>
+  </nav>`;
 }
 
 function renderModuleJump(prefix) {
@@ -9538,6 +9567,76 @@ const airGoldenDashboardHtml = `<!doctype html>
     body[data-air-page="cover"] .freshness-strip{display:grid!important}
     body[data-air-page="cover"] .air-provenance-warning{display:block!important}
     body[data-air-page="cover"] nav.report-more{display:block!important}
+    .page-pager,.step-nav{
+      display:flex!important;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin:0 0 16px;
+      padding:8px 12px;
+      background:#101826;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:12px;
+      box-shadow:none;
+    }
+    .page-pager.bottom{margin:20px 0 0}
+    .page-pager a,.page-pager-end,.step-nav button{
+      display:flex!important;
+      flex-direction:column;
+      justify-content:center;
+      gap:1px;
+      flex:1 1 0;
+      min-width:0;
+      min-height:0!important;
+      margin:0;
+      padding:4px 2px;
+      background:transparent!important;
+      border:0!important;
+      border-radius:0!important;
+      box-shadow:none!important;
+      color:#f8fafc!important;
+      text-decoration:none;
+      cursor:pointer;
+    }
+    .page-pager-next,.step-nav [data-step-next]{align-items:flex-end;text-align:right}
+    .page-pager-count,.step-nav-here{
+      flex:0 0 auto;
+      display:flex!important;
+      flex-direction:column;
+      align-items:center;
+      gap:1px;
+      min-height:0!important;
+      padding:0 8px;
+      background:transparent!important;
+      border:0!important;
+      color:#9fb0c5;
+      font-size:12px;
+      font-weight:650;
+      text-align:center;
+    }
+    .page-pager small,.step-nav small{
+      color:#9fb0c5!important;
+      font-size:11px!important;
+      font-weight:650;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .page-pager strong,.step-nav strong{
+      color:#f8fafc!important;
+      font-size:14px!important;
+      font-weight:650!important;
+      line-height:1.3!important;
+      letter-spacing:0!important;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .step-nav-here strong{font-size:13px!important}
+    .page-pager-end{visibility:hidden}
+    .step-nav button:disabled{visibility:hidden}
+    .is-step-current{outline:2px solid #7ee787;outline-offset:3px}
+    .step-nav[hidden]{display:none!important}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -9589,7 +9688,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <section class="page cover-page" id="cover">
       ${renderPageNav('cover')}
       ${executiveModeShellHtml}
-      ${renderPageFooter(1)}
+      ${renderPageFooter('cover')}
     </section>
 
     <div class="global-search">
@@ -9683,7 +9782,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      ${renderPageFooter(2)}
+      ${renderPageFooter('executive')}
     </section>
 
     <section class="page" id="health">
@@ -9702,6 +9801,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           </label>
         </div>
         <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} areas</div>
+        ${renderInnerNav('area')}
         <div class="module-card-grid" data-long-list="6" data-long-label="areas">${moduleHealthCards}</div>
         <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching areas found in this run.</div>
       </div>
@@ -9731,19 +9831,20 @@ const airGoldenDashboardHtml = `<!doctype html>
           </div>
         </div>
       </div>
-      ${renderPageFooter(3)}
+      ${renderPageFooter('health')}
     </section>
 
     <section class="page" id="journey">
       ${renderPageNav('journey')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('journey', 'User paths')}<p>Can a user complete the important paths?</p></div><span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span></div>
+      ${renderInnerNav('path')}
       <div class="panel journey-flow-panel"><div class="journey">${journeyHealthRows}</div></div>
       <br>
       <div class="grid two journey-support-grid">
         <div class="panel"><h2>How much of each path ran</h2><p class="chart-explainer">Bar height is the share of that path that ran in this execution.</p><div class="chart journey-coverage-chart">${journeyCoverageChartHtml}</div></div>
         <div class="panel journey-answer-panel"><h2>Answer</h2><p>${escapeHtml(journeyAnswerHtml)}</p><br><div class="empty-note">Email and payment steps that need an outside service are listed under Not run when they were skipped.</div></div>
       </div>
-      ${renderPageFooter(4)}
+      ${renderPageFooter('journey')}
     </section>
 
     <section class="page report-extra" id="module-dashboard">
@@ -9754,15 +9855,17 @@ const airGoldenDashboardHtml = `<!doctype html>
         <p>Stay on this page. Pick an area below.</p>
       </div>
       ${renderModuleJump('module-dashboard-')}
+      ${renderInnerNav('area')}
       <div class="module-dashboard-grid" data-long-list="6" data-long-label="areas">${moduleDashboardCards}</div>
-      ${renderPageFooter(5)}
+      ${renderPageFooter('module-dashboard')}
     </section>
 
     <section class="page${executiveData.failed > 0 ? '' : ' report-extra'}" id="failures">
       ${renderPageNav('failures')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>${failureGroups.length} stories cover the checks that did not pass. Open a story for the picture and the next step.</p></div><span class="pill">${executiveData.failed} failed</span></div>
+      ${renderInnerNav('story')}
       <div class="panel">${failedTestsContent}${warningTestsContent}</div>
-      ${renderPageFooter(6)}
+      ${renderPageFooter('failures')}
     </section>
 
     <section class="page report-extra" id="coverage-gaps">
@@ -9776,7 +9879,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <span class="pill">${coverageGapSummary.total ?? coverageGapItems.length} Items</span>
       </div>
       <div class="panel">${coverageGapsContent}</div>
-      ${renderPageFooter(7)}
+      ${renderPageFooter('coverage-gaps')}
     </section>
 
     <section class="page report-extra" id="validation-summary">
@@ -9828,7 +9931,7 @@ const airGoldenDashboardHtml = `<!doctype html>
             <p>See the Blocked / Skipped Coverage page for the full reason list and next actions.</p>
           </details>
         </div>` : ''}
-      ${renderPageFooter(8)}
+      ${renderPageFooter('validation-summary')}
     </section>
 
     <section class="page" id="evidence">
@@ -9846,7 +9949,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <h2>Latest screenshots</h2>
         <div class="thumb-grid">${evidenceThumbnails}</div>
       </div>` : ''}
-      ${renderPageFooter(9)}
+      ${renderPageFooter('evidence')}
     </section>
 
     <nav class="report-more" aria-label="More detail">
@@ -9907,7 +10010,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div class="recommendation-grid">${aiPriorityRecommendations}</div>
       </div>
       </details>
-      ${renderPageFooter(10)}
+      ${renderPageFooter('insight')}
     </section>
 
     <section class="page report-extra" id="comparison">
@@ -10111,7 +10214,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           action: 'Build comparison will appear after multiple executions.',
         })}
       `}
-      ${renderPageFooter(11)}
+      ${renderPageFooter('comparison')}
     </section>
 
     <section class="page report-extra" id="air-core">
@@ -10171,7 +10274,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         </div>
         <div class="engine-output-stack">${airCoreEngineGroupsHtml}</div>
       </div>
-      ${renderPageFooter(12)}
+      ${renderPageFooter('air-core')}
     </section>
 
     <section class="page report-extra" id="roadmap">
@@ -10222,7 +10325,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           <strong>Final Engineering Mode UI → Dynamic Data Model → Dynamic Intelligence Engine</strong>
         </div>
       </div>
-      ${renderPageFooter(13)}
+      ${renderPageFooter('roadmap')}
     </section>
     <footer class="footer">
       <span>${footerHtml}</span>
@@ -10469,7 +10572,67 @@ const airGoldenDashboardHtml = `<!doctype html>
     } else {
       window.scrollTo(0, 0);
     }
+    updateStepNav();
   }
+  function visibleStepItems(page) {
+    return Array.from(page.querySelectorAll('[data-step-item]')).filter((item) => (
+      !item.hidden && !item.classList.contains('is-hidden')
+    ));
+  }
+  function updateStepNav() {
+    document.querySelectorAll('section.page .step-nav').forEach((nav) => {
+      const page = nav.closest('section.page');
+      const items = page ? visibleStepItems(page) : [];
+      if (items.length < 2) {
+        nav.hidden = true;
+        return;
+      }
+      nav.hidden = false;
+      const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+      let index = items.findIndex((item) => item.id === hashId);
+      if (index < 0) {
+        index = 0;
+      }
+      const current = items[index];
+      const previous = items[index - 1];
+      const next = items[index + 1];
+      items.forEach((item) => {
+        item.classList.toggle('is-step-current', item.id === hashId);
+      });
+      const label = nav.querySelector('[data-step-label]');
+      const count = nav.querySelector('[data-step-count]');
+      const prevName = nav.querySelector('[data-step-prev-name]');
+      const nextName = nav.querySelector('[data-step-next-name]');
+      if (label) label.textContent = current?.getAttribute('data-step-label') || '';
+      if (count) count.textContent = (index + 1) + ' of ' + items.length;
+      if (prevName) prevName.textContent = previous ? '← ' + previous.getAttribute('data-step-label') : '';
+      if (nextName) nextName.textContent = next ? next.getAttribute('data-step-label') + ' →' : '';
+      const prevButton = nav.querySelector('[data-step-prev]');
+      const nextButton = nav.querySelector('[data-step-next]');
+      if (prevButton) prevButton.disabled = !previous;
+      if (nextButton) nextButton.disabled = !next;
+      nav.dataset.prev = previous?.id || '';
+      nav.dataset.next = next?.id || '';
+    });
+  }
+  document.querySelectorAll('.step-nav').forEach((nav) => {
+    nav.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-step-prev], [data-step-next]');
+      if (!button || button.disabled) {
+        return;
+      }
+      const id = button.hasAttribute('data-step-prev') ? nav.dataset.prev : nav.dataset.next;
+      if (!id) {
+        return;
+      }
+      if (location.hash === '#' + id) {
+        document.getElementById(id)?.scrollIntoView({ block: 'start' });
+        updateStepNav();
+        return;
+      }
+      location.hash = id;
+    });
+  });
   window.addEventListener('hashchange', showCurrentPage);
   showCurrentPage();
 
@@ -11041,6 +11204,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       moduleFilterEmpty.hidden = visible !== 0;
       moduleFilterEmpty.textContent = 'No ' + (activeFilter === 'all' ? '' : activeFilter.replace('-', ' ') + ' ') + 'areas found in this run.';
     }
+    updateStepNav();
   }
 
   moduleFilterButtons.forEach(button => {
@@ -11497,9 +11661,12 @@ fs.mkdirSync(outputDir, {
   recursive: true
 });
 
+let reportWritten = false;
+
 try {
   fs.writeFileSync(outputPath, airGoldenDashboardHtml);
   console.log('Execution report created:', outputPath);
+  reportWritten = true;
 } catch (error) {
   console.log(`Could not replace ${outputPath} because the file is open.`);
   console.log(error.message);
@@ -11509,7 +11676,14 @@ const fallbackPath = path.join(outputDir, 'index-updated.html');
 try {
   fs.writeFileSync(fallbackPath, airGoldenDashboardHtml);
   console.log('Execution report created:', fallbackPath);
+  reportWritten = true;
 } catch (error) {
   console.log(`Could not replace ${fallbackPath} because the file is open.`);
   console.log(error.message);
+}
+
+if (!reportWritten) {
+  const navPath = path.join(outputDir, 'index-nav.html');
+  fs.writeFileSync(navPath, airGoldenDashboardHtml);
+  console.log('Execution report created:', navPath);
 }
