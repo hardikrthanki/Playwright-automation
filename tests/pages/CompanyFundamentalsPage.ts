@@ -17,8 +17,8 @@ PAGE OBJECT: CompanyFundamentalsPage
 PURPOSE
 -------
 A calendar event opens one company. Search loads a symbol, and Overview,
-Valuation, Earnings, Dividends, Finance, and Analyze options stay on that
-company.
+Valuation, Earnings, Dividends, News, Finance, Analyze options, and Event
+calendar stay on that company.
 ============================================================================= */
 
 const TAB_CONTENT: Record<string, RegExp> = {
@@ -29,7 +29,9 @@ const TAB_CONTENT: Record<string, RegExp> = {
   Earnings:
     /earnings|eps|revenue|income/i,
   Dividends:
-    /dividend|yield|payout|ex-div/i
+    /dividend|yield|payout|ex-div/i,
+  News:
+    /news|headline|article|story|reported/i
 };
 
 export class CompanyFundamentalsPage
@@ -224,7 +226,12 @@ export class CompanyFundamentalsPage
   }
 
   async openDetailTab(
-    name: 'Overview' | 'Valuation' | 'Earnings' | 'Dividends'
+    name:
+      | 'Overview'
+      | 'Valuation'
+      | 'Earnings'
+      | 'Dividends'
+      | 'News'
   ) {
     Logger.info(
       `Opening ${name}`
@@ -273,7 +280,11 @@ export class CompanyFundamentalsPage
   }
 
   async openRelatedView(
-    name: 'Finance' | 'Analyze options' | 'Event calendar',
+    name:
+      | 'Finance'
+      | 'Analyze options'
+      | 'Event calendar'
+      | 'News',
     expected: RegExp
   ) {
     Logger.info(

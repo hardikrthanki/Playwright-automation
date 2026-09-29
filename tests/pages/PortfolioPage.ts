@@ -17,7 +17,8 @@ PAGE OBJECT: PortfolioPage
 PURPOSE
 -------
 Portfolio holdings show an overview and one tab per account source.
-Each tab keeps the positions table.
+Each tab keeps the positions table. Edit and delete open a prompt and are
+cancelled, so the holding stays.
 ============================================================================= */
 
 export class PortfolioPage
@@ -125,7 +126,174 @@ export class PortfolioPage
     }
   }
 
-  private async validatePositionsTable() {
+  async verifyEditAndDelete() {
+    Logger.info(
+      'Opening edit and delete for a position'
+    );
+
+    await this.showPositions();
+
+    const manual =
+      this.page.getByRole(
+        'tab',
+        {
+          name: /^manual\b/i
+        }
+      ).or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /^manual\b/i
+          }
+        )
+      ).first();
+
+    if (
+      await manual.waitFor({
+        state: 'visible',
+        timeout: 4000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        manual,
+        'Manual positions'
+      );
+
+      await this.showPositions();
+    }
+
+    const row =
+      this.page.locator(
+        'main tbody tr'
+      ).first();
+
+    await expect(
+      row
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    const actions =
+      () =>
+        row.locator(
+          'td'
+        ).last().getByRole(
+          'button'
+        );
+
+    await safeClick(
+      actions().nth(
+        0
+      ),
+      'Edit position'
+    );
+
+    await expect(
+      row.getByRole(
+        'spinbutton'
+      )
+    ).toHaveCount(
+      2,
+      {
+        timeout: 10000
+      }
+    );
+
+    await safeClick(
+      actions().nth(
+        1
+      ),
+      'Cancel edit'
+    );
+
+    await expect(
+      row.getByRole(
+        'spinbutton'
+      )
+    ).toHaveCount(
+      0
+    );
+
+    await safeClick(
+      actions().nth(
+        1
+      ),
+      'Remove position'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'alertdialog'
+      ).or(
+        this.page.getByRole(
+          'dialog'
+        )
+      ).last();
+
+    await expect(
+      dialog.getByRole(
+        'heading',
+        {
+          name: /remove position/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await expect(
+      dialog
+    ).toContainText(
+      /cannot be undone|remove/i
+    );
+
+    await expect(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^remove$/i
+        }
+      )
+    ).toBeVisible();
+
+    await safeClick(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      ),
+      'Cancel remove'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+
+    await expect(
+      row
+    ).toBeVisible();
+
+    await expect(
+      this.page.locator(
+        'main'
+      )
+    ).toContainText(
+      /showing/i
+    );
+
+    Logger.success(
+      'Edit and delete were cancelled'
+    );
+  }
+
+  private async showPositions() {
     const showPositions =
       this.page.getByRole(
         'button',
@@ -135,7 +303,12 @@ export class PortfolioPage
       );
 
     if (
-      await showPositions.isVisible().catch(
+      await showPositions.waitFor({
+        state: 'visible',
+        timeout: 4000
+      }).then(
+        () => true
+      ).catch(
         () => false
       )
     ) {
@@ -144,6 +317,10 @@ export class PortfolioPage
         'Show positions'
       );
     }
+  }
+
+  private async validatePositionsTable() {
+    await this.showPositions();
 
     for (const header of [
       /position/i,

@@ -57,7 +57,10 @@ export const test = base.extend({
     );
 
     if (
-      !prepareStorage
+      !prepareStorage ||
+      !fs.existsSync(
+        SUBSCRIBER_STORAGE_STATE
+      )
     ) {
       prepareStorage =
         (async () => {

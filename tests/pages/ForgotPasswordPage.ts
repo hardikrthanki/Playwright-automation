@@ -155,6 +155,41 @@ export class ForgotPasswordPage
     );
   }
 
+  async openDirect() {
+    Logger.info(
+      'Opening the forgot-password link'
+    );
+
+    await this.openUrl(
+      `${BASE_URL}/forgot-password`
+    );
+
+    await this.dismissMarketingOverlays();
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /forgot-password/,
+      {
+        timeout: 20000
+      }
+    );
+
+    await expect(
+      this.emailInput
+    ).toBeVisible({
+      timeout: 20000
+    });
+
+    await expect(
+      this.sendResetButton
+    ).toBeVisible();
+
+    Logger.success(
+      'Forgot-password link is open'
+    );
+  }
+
   async requestReset(
     email: string
   ) {

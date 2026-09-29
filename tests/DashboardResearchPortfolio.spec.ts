@@ -84,6 +84,41 @@ test.describe(
     );
 
     test(
+      'Option exposure changes symbol expiration calls puts strike count and news',
+      async ({ page }) => {
+        const research =
+          new OptionsResearchPage(
+            page
+          );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /view option exposure/i
+            }
+          ).first(),
+          'View option exposure'
+        );
+
+        await research.validateLoaded();
+
+        await research.selectSymbol(
+          'MSFT'
+        );
+
+        await research.selectSymbol(
+          'AAPL'
+        );
+
+        await research.changeExpiration();
+        await research.showCallsAndPuts();
+        await research.validateChainControls();
+        await research.validateLatestNews();
+      }
+    );
+
+    test(
       'View full expiry calendar opens the option chain',
       async ({ page }) => {
         const research =

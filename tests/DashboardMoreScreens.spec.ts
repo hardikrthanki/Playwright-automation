@@ -72,36 +72,33 @@ test.describe(
           'Research menu'
         );
 
-        const equity =
-          page.getByRole(
-            'link',
-            {
-              name: /equity research/i
-            }
-          ).or(
+        for (const item of [
+          /^equity$/i,
+          /company fundamentals/i,
+          /company finance/i,
+          /^news$/i,
+          /event calendar/i,
+          /^simulator$/i
+        ]) {
+          await expect(
             page.getByRole(
               'menuitem',
               {
-                name: /equity research/i
+                name: item
               }
             )
-          ).first();
-
-        if (
-          await equity.waitFor({
-            state: 'visible',
-            timeout: 4000
-          }).then(
-            () => true
-          ).catch(
-            () => false
-          )
-        ) {
-          await safeClick(
-            equity,
-            'Equity research'
-          );
+          ).toBeVisible();
         }
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /^equity$/i
+            }
+          ),
+          'Equity research'
+        );
 
         await expect(
           page.getByRole(

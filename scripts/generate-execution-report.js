@@ -5415,88 +5415,233 @@ const engineStatusItems = [
   },
 ];
 
-const validationIntelligence = airResults?.validationIntelligence ?? {};
-const validationStatusCounts = validationIntelligence.summary?.byStatus ?? {};
-const validationAreaCounts = validationIntelligence.summary?.byArea ?? {};
 const validationTests = Array.isArray(airResults?.tests) ? airResults.tests : [];
-const validationTopAreas = Object.entries(validationAreaCounts)
-  .sort((left, right) => Number(right[1]) - Number(left[1]))
-  .slice(0, 6);
-const validationStatusCards = Object.entries(validationStatusCounts)
-  .sort(([left], [right]) => left.localeCompare(right))
-  .map(([status, count]) => `
-    <div class="validation-stat ${resultTone(status)}">
-      <span>${escapeHtml(statusLabel(status))}</span>
-      <strong>${escapeHtml(count)}</strong>
-      <small>Validation result</small>
-    </div>`)
-  .join('') || `
-    <div class="validation-stat info">
-      <span>No Data</span>
-      <strong>0</strong>
-      <small>Run tests to populate this section</small>
-    </div>`;
-const validationAreaCards = validationTopAreas
-  .map(([area, count]) => `
-    <article class="validation-area-card">
-      <span>${escapeHtml(area)}</span>
-      <strong>${escapeHtml(count)}</strong>
-      <small>checks in this area</small>
-    </article>`)
-  .join('') || `
-    <article class="validation-area-card">
-      <span>No Area Data</span>
-      <strong>0</strong>
-      <small>Validation areas unavailable</small>
-    </article>`;
-const validationAreaGroups = validationTests.reduce((groups, test) => {
-  const validation = test.validation ?? {};
-  const area = validation.area ?? test.module ?? 'General';
+const passedValidationTests = validationTests.filter(test => String(test.status).toLowerCase() === 'passed');
 
-  if (!groups[area]) {
-    groups[area] = [];
-  }
+function passedSentence(test) {
+  const raw = String(test.validation?.scenario || test.title || 'Passed check')
+    .split('>')
+    .map(part => part.trim())
+    .filter(Boolean)
+    .at(-1) || 'Passed check';
+  const text = raw.charAt(0).toUpperCase() + raw.slice(1);
+  return /[.!?]$/.test(text) ? text : `${text}.`;
+}
 
-  groups[area].push(test);
+function passedTopicName(test) {
+  const file = String(test.file || '').split(/[/\\]/).pop();
+  const rules = [
+    [/Opportunities\.spec/i, 'Opportunities'],
+    [/EventCalendar/i, 'Event calendar and company research'],
+    [/DashboardMenuWalk/i, 'Each dashboard menu'],
+    [/DashboardMenus/i, 'Dashboard menus'],
+    [/DashboardCoverageDepth/i, 'Deeper dashboard checks'],
+    [/DashboardScenarioSweep/i, 'Dashboard scenarios'],
+    [/DashboardNavigation/i, 'Dashboard navigation'],
+    [/DashboardResearchPortfolio/i, 'Research and portfolio'],
+    [/DashboardMoreScreens/i, 'More dashboard screens'],
+    [/DashboardPortfolioViews/i, 'Portfolio views'],
+    [/DashboardScreenDepth/i, 'Screen depth'],
+    [/DashboardRemainingScreens/i, 'Remaining screens'],
+    [/DashboardOptions/i, 'Header menus'],
+    [/DashboardPositionActions/i, 'Position actions'],
+    [/DashboardWidgets/i, 'Dashboard home'],
+    [/AddManualPosition/i, 'Manual positions'],
+    [/RiskCompliance/i, 'Risk and compliance'],
+    [/NewSubscriptionPurchase/i, 'New subscription checkout'],
+    [/SubscriptionLifecycleE2E/i, 'Full subscription lifecycle'],
+    [/SubscriptionLifecycleExecution/i, 'Subscription lifecycle steps'],
+    [/SubscriptionCancellation/i, 'Cancellation'],
+    [/MonthlyAnnualBilling|AnnualMonthlyBilling/i, 'Monthly and annual billing'],
+    [/UpgradeSubscription/i, 'Plan upgrades'],
+    [/DowngradeSubscription/i, 'Plan downgrades'],
+    [/OverlayStrategists/i, 'Trial signup'],
+    [/FailedPayment/i, 'Failed payment'],
+    [/PlanSelection/i, 'Plan selection'],
+    [/DirectSubscription/i, 'Direct purchase'],
+    [/BillingEdge|BillingSubscription/i, 'Billing account'],
+    [/AuthNegative/i, 'Sign-in rules'],
+    [/AuthUiValidation|AuthConfiguration/i, 'Sign-in screens'],
+    [/SignupNegative/i, 'Signup rules'],
+    [/PasswordPolicy/i, 'Password rules'],
+    [/Profile/i, 'Profile and security'],
+    [/AccessibilityBrowser/i, 'Accessibility and browser'],
+    [/SessionSecurity|PublicRoute/i, 'Session and protected pages'],
+    [/OnboardingField|onboarding\.spec/i, 'Onboarding'],
+    [/Subscriber\.spec/i, 'Signed-in home'],
+    [/ResetPassword/i, 'Password recovery'],
+  ];
+  const match = rules.find(([pattern]) => pattern.test(file));
+  if (match) return match[1];
+  return test.validation?.area || test.module || 'General';
+}
 
+function passedMeaning(test) {
+  const text = `${test.title || ''} ${test.file || ''}`.toLowerCase();
+  const rules = [
+    [/how opportunities work/, 'The explanation of how opportunities work opens.'],
+    [/save view|saved view/, 'A filter set can be saved and opened again from Saved Views.'],
+    [/add to watchlist|stop watching/, 'An opportunity can be watched and then removed from the watchlist.'],
+    [/pagination|page size|rows per page/, 'The list page size and page controls work.'],
+    [/expir/, 'The expiry filter narrows the list and can be set back.'],
+    [/risk tab|conservative|moderate|aggressive/, 'Available risk tabs show their opportunities. Locked tabs stay locked.'],
+    [/watchlist/, 'The watchlist opens, including an empty list and its opportunities tab.'],
+    [/simulator/, 'The simulator accepts a symbol, a risk choice, and a time range.'],
+    [/academy|glossary|lesson|strategy library/, 'Academy pages open, including lessons, the glossary, and strategy filters.'],
+    [/support|ticket/, 'Support fields can be filled. The ticket is not submitted.'],
+    [/fundamental/, 'Company fundamentals open for a symbol, including the chart ranges.'],
+    [/company finance|income statement|balance sheet|cash flow|ratios/, 'Company finance statements open and the period can be changed.'],
+    [/\bnews\b/, 'News headlines load and can be filtered.'],
+    [/analytics/, 'Analytics measures load and the date range can be changed.'],
+    [/filters by symbol|day filter/, 'A calendar day can be filtered by symbol and can open company research.'],
+    [/event calendar|agenda/, 'The event calendar opens and the month, agenda, and event type can be changed.'],
+    [/option exposure|calls puts|strike/, 'Option research changes the symbol, expiration, calls, puts, and strike count.'],
+    [/portfolio menu|holdings destination/, 'The Portfolio menu opens each holdings page.'],
+    [/sync all/, 'Sync all stays on the dashboard.'],
+    [/connect broker|disconnect|remove account|remove position|cancelled/, 'The confirmation opens and can be cancelled, so nothing is removed.'],
+    [/position/, 'Position actions open and can be left without saving a change.'],
+    [/checkout|stripe|currency|before payment/, 'Checkout shows the plan, price, and currency, and the user can leave before paying.'],
+    [/cancel/, 'Cancellation reaches the confirmation step and is not completed.'],
+    [/upgrade/, 'The upgrade path shows the current plan before the change.'],
+    [/downgrade/, 'The downgrade path shows the lower plan before the change.'],
+    [/annual|monthly/, 'Monthly and annual billing can be switched before payment.'],
+    [/trial/, 'The trial path reaches plan selection without starting a paid charge.'],
+    [/otp|six digit/, 'The signup code follows the six-digit rule, including the known verify-button behavior.'],
+    [/forgot|reset password/, 'Password recovery opens and can return to sign-in.'],
+    [/login|sign in|authenticate|invalid credential|invalid email/, 'Sign-in accepts a valid user and blocks an invalid one.'],
+    [/password policy|password mismatch|change password|weak password|confirm password/, 'A weak, empty, or mismatched password is blocked.'],
+    [/signup|register/, 'Signup fields and gates are checked before an account is created.'],
+    [/accessibility|keyboard|contrast|browser/, 'The page can be opened and inspected in the browser.'],
+    [/protected|session|route guard/, 'A signed-out visitor is sent to sign-in, and a signed-in session stays in the product.'],
+    [/onboarding/, 'Onboarding fields are checked before the user continues.'],
+    [/billing|invoice|subscription/, 'Billing shows the plan and the account actions that are safe to open.'],
+    [/profile|mfa|authenticator/, 'Profile and security controls stay visible and are not saved during the check.'],
+    [/risk/, 'Risk and compliance choices can be reviewed and set back.'],
+    [/menu/, 'The menu opens each listed page and that page loads.'],
+    [/filter|sort|search/, 'Filters, sort, and search narrow the list and can be cleared.'],
+  ];
+  const match = rules.find(([pattern]) => pattern.test(text));
+  return match ? match[1] : 'The check finished and the screen showed the expected result.';
+}
+
+const passedTopicPurpose = {
+  Opportunities: 'Filters, saved views, risk tabs, research, the watchlist, and paging.',
+  'Event calendar and company research': 'Calendar views, a day filter, and company research opened from an event.',
+  'Each dashboard menu': 'Every main menu, with values changed where the screen allows it and then set back.',
+  'Dashboard menus': 'Research and Portfolio menus open each destination.',
+  'Deeper dashboard checks': 'Finance, news, analytics, academy, watchlist, support, simulator, and fundamentals.',
+  'Dashboard scenarios': 'Strategy filters, related research links, support fields, the simulator, and sync.',
+  'Dashboard navigation': 'Moving across the signed-in product without losing the session.',
+  'Research and portfolio': 'Equity research, company pages, the calendar, and portfolio accounts.',
+  'More dashboard screens': 'Watchlist, analytics, the calendar, and the screens reached from the dashboard.',
+  'Portfolio views': 'Holdings layouts, accounts, and the portfolio list.',
+  'Screen depth': 'Finance, news, the simulator, and add-position screens opened without saving.',
+  'Remaining screens': 'Footer pages, opportunity filters, and broker or upload prompts that can be closed.',
+  'Header menus': 'The add-options menu and the profile menu.',
+  'Position actions': 'Edit and remove prompts that can be cancelled.',
+  'Dashboard home': 'The signed-in home screen and its main widgets.',
+  'Manual positions': 'A manual position can be started and closed without saving.',
+  'Risk and compliance': 'Risk experience choices can be reviewed and set back.',
+  'New subscription checkout': 'Each paid plan shows its checkout summary before payment.',
+  'Full subscription lifecycle': 'A new subscriber can move from signup through plan selection.',
+  'Subscription lifecycle steps': 'Lifecycle steps that are safe to run in this environment.',
+  'Cancellation': 'Cancellation reaches confirmation and is not completed.',
+  'Monthly and annual billing': 'Monthly and annual prices can be switched before payment.',
+  'Plan upgrades': 'The upgrade path shows the current plan before a change.',
+  'Plan downgrades': 'The downgrade path shows the lower plan before a change.',
+  'Trial signup': 'The trial path reaches plan selection without a paid charge.',
+  'Failed payment': 'A failed payment stays on the billing recovery path.',
+  'Plan selection': 'The plan catalog and billing interval are visible.',
+  'Direct purchase': 'One user can open each paid checkout, refresh it, and return before paying.',
+  'Billing account': 'Billing overview, plans, and history stay available.',
+  'Sign-in rules': 'Invalid sign-in is blocked and a valid sign-in reaches the product.',
+  'Sign-in screens': 'Sign-in, forgot password, and the related screens load and can be used.',
+  'Signup rules': 'Signup fields, consent, and the one-time code behave as required.',
+  'Password rules': 'Weak, empty, and mismatched passwords are blocked.',
+  'Profile and security': 'Profile, password, and security controls are visible and are not saved.',
+  'Accessibility and browser': 'Pages can be opened and inspected in the browser.',
+  'Session and protected pages': 'Signed-out visitors go to sign-in. A signed-in session stays in the product.',
+  Onboarding: 'Onboarding fields are checked before the user continues.',
+  'Signed-in home': 'A subscriber lands on the dashboard.',
+  'Password recovery': 'Password recovery opens and can return to sign-in.',
+};
+
+function passedTopicSlug(topic) {
+  return `passed-${String(topic).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+}
+
+const passedTopicGroups = passedValidationTests.reduce((groups, test) => {
+  const topic = passedTopicName(test);
+  if (!groups[topic]) groups[topic] = [];
+  groups[topic].push(test);
   return groups;
 }, {});
-const validationGroupCards = Object.entries(validationAreaGroups)
-  .sort((left, right) => right[1].length - left[1].length)
-  .slice(0, 8)
-  .map(([area, testsInArea]) => {
-    const passedInArea = testsInArea.filter(test => String(test.status).toLowerCase() === 'passed').length;
-    const failedInArea = testsInArea.filter(test => String(test.status).toLowerCase() === 'failed').length;
-    const sampleScenarios = testsInArea
-      .slice(0, 4)
-      .map(test => `<li>${escapeHtml(test.validation?.scenario ?? test.title ?? 'Validation scenario')}</li>`)
+const passedTopicEntries = Object.entries(passedTopicGroups)
+  .sort((left, right) => right[1].length - left[1].length || left[0].localeCompare(right[0]));
+function passedTopicMark(topic) {
+  const words = String(topic)
+    .split(/\s+/)
+    .filter(word => !/^(and|the|of|a)$/i.test(word));
+  return words
+    .slice(0, 2)
+    .map(word => word.charAt(0).toUpperCase())
+    .join('') || 'OK';
+}
+
+const validationAreaCards = passedTopicEntries
+  .map(([topic, testsInTopic]) => {
+    const purpose = passedTopicPurpose[topic] || 'Checks in this part of the product that passed in this run.';
+    const searchText = `${topic} ${purpose}`.toLowerCase();
+    return `
+    <a class="passed-card" href="#${passedTopicSlug(topic)}" data-passed-card data-passed-search="${escapeHtml(searchText)}">
+      <div class="passed-card-top">
+        <span class="module-icon">${escapeHtml(passedTopicMark(topic))}</span>
+        <strong>${escapeHtml(topic)}</strong>
+      </div>
+      <div class="passed-card-count"><b>${testsInTopic.length}</b><span>checks passed</span></div>
+      <p>${escapeHtml(purpose)}</p>
+      <span class="module-button">Open detail</span>
+    </a>`;
+  })
+  .join('') || `
+    <article class="module-health-card green">
+      <strong>No passes</strong>
+      <p>This run has no passed checks.</p>
+    </article>`;
+const validationGroupCards = passedTopicEntries
+  .map(([topic, testsInTopic]) => {
+    const purpose = passedTopicPurpose[topic] || 'Checks in this part of the product that passed in this run.';
+    const items = testsInTopic
+      .map(test => `
+          <div class="passed-check">
+            <strong>${escapeHtml(passedSentence(test))}</strong>
+            <span>${escapeHtml(passedMeaning(test))}</span>
+          </div>`)
       .join('');
 
     return `
-      <article class="validation-group-card">
-        <div class="validation-group-head">
+      <article class="passed-detail" id="${passedTopicSlug(topic)}" data-step-item data-step-label="${escapeHtml(topic)}">
+        <div class="passed-detail-head">
           <div>
-            <span>${escapeHtml(area)}</span>
-            <strong>${testsInArea.length} scenario${testsInArea.length === 1 ? '' : 's'}</strong>
+            <div class="eyebrow">Passed in this run</div>
+            <h2>${escapeHtml(topic)}</h2>
+            <div class="passed-card-count"><b>${testsInTopic.length}</b><span>checks passed</span></div>
           </div>
-          <em>${passedInArea} pass${failedInArea ? ` / ${failedInArea} fail` : ''}</em>
+          <a class="btn" href="#validation-summary">All areas</a>
         </div>
-        <ul>${sampleScenarios}</ul>
+        <p>${escapeHtml(purpose)}</p>
+        <div class="passed-checks">${items}</div>
       </article>`;
   })
-  .join('') || '<div class="empty-note">No validation records were found in this AIR execution.</div>';
-const validationDetailRows = validationTests
-  .map(test => {
-    const validation = test.validation ?? {};
-    return `
+  .join('') || '<div class="empty-note">No passed checks were found in this run.</div>';
+const validationDetailRows = passedValidationTests
+  .map(test => `
       <tr>
-        <td><span class="badge ${resultTone(test.status)}">${escapeHtml(statusLabel(test.status))}</span></td>
-        <td>${escapeHtml(validation.area ?? test.module ?? 'General')}</td>
-        <td>${escapeHtml(validation.scenario ?? test.title ?? 'Validation scenario')}</td>
-        <td>${escapeHtml(validation.expectedOutcome ?? 'Expected outcome was not provided.')}</td>
-      </tr>`;
-  })
-  .join('') || '<tr><td colspan="4">No validation records were found.</td></tr>';
+        <td>${escapeHtml(passedTopicName(test))}</td>
+        <td>${escapeHtml(passedSentence(test))}</td>
+        <td>${escapeHtml(passedMeaning(test))}</td>
+      </tr>`)
+  .join('') || '<tr><td colspan="3">No passed checks were found in this run.</td></tr>';
 const validationCoverageGapCards = (airResults?.coverageGaps?.items ?? [])
   .slice(0, 6)
   .map(item => `
@@ -6347,8 +6492,9 @@ function renderPageNav(pageId, placement = 'top') {
   return `<nav class="page-pager ${placement}" aria-label="Report pages">${side(previous, 'Previous')}<span class="page-pager-count">${index + 1} / ${reportPages.length}</span>${side(next, 'Next')}</nav>`;
 }
 
-function renderInnerNav(kind) {
-  return `<nav class="step-nav" aria-label="Move between ${escapeHtml(kind)}s" hidden>
+function renderInnerNav(kind, options = {}) {
+  const selection = options.requireSelection ? ' data-step-require-selection' : '';
+  return `<nav class="step-nav" aria-label="Move between ${escapeHtml(kind)}s"${selection} hidden>
     <button type="button" data-step-prev><small>Previous</small><strong data-step-prev-name></strong></button>
     <span class="step-nav-here"><span data-step-count></span><strong data-step-label></strong></span>
     <button type="button" data-step-next><small>Next</small><strong data-step-next-name></strong></button>
@@ -8768,6 +8914,46 @@ const airGoldenDashboardHtml = `<!doctype html>
       background:#39e75f;
       box-shadow:0 0 14px rgba(57,231,95,.45);
     }
+    a.validation-area-card,
+    a.validation-stat {
+      color:inherit;
+      text-decoration:none;
+    }
+    #validation-summary .section-heading-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:18px;
+      margin-bottom:16px;
+    }
+    #validation-summary .section-heading-row h2 { margin:0; }
+    #validation-summary .section-heading-row p { margin:8px 0 0; color:#91a4b8; line-height:1.45; }
+    .validation-group-purpose {
+      margin:0 0 12px;
+      color:#b7c6d6;
+      font-size:14px;
+      line-height:1.45;
+    }
+    .validation-group-card li strong {
+      display:block;
+      color:#f8fafc;
+      font-size:14px;
+      font-weight:800;
+      line-height:1.35;
+    }
+    .validation-group-card li span {
+      display:block;
+      margin-top:3px;
+      color:#93a4b8;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .validation-group-count {
+      margin:0 0 14px;
+      color:#9fb0c5;
+      font-size:13px;
+      font-weight:800;
+    }
     .validation-gap-card strong {
       color:#f8fafc;
       line-height:1.25;
@@ -8803,7 +8989,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       display:none;
     }
     .validation-toggle summary::after {
-      content:'Open detailed validation list';
+      content:'Open every passed check';
       display:inline-flex;
       align-items:center;
       min-height:38px;
@@ -8816,7 +9002,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       font-weight:950;
     }
     .validation-toggle[open] summary::after {
-      content:'Hide detailed validation list';
+      content:'Hide the full list';
     }
     .validation-gap-grid {
       display:grid;
@@ -9567,6 +9753,30 @@ const airGoldenDashboardHtml = `<!doctype html>
     body[data-air-page="cover"] .freshness-strip{display:grid!important}
     body[data-air-page="cover"] .air-provenance-warning{display:block!important}
     body[data-air-page="cover"] nav.report-more{display:block!important}
+    #validation-summary [data-step-item]{display:none!important}
+    #validation-summary [data-step-item].is-step-current{display:block!important}
+    #validation-summary .passed-board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px}
+    #validation-summary .passed-board-head h2{margin:0;font-size:28px;letter-spacing:-.03em}
+    #validation-summary .passed-board-head p{margin:8px 0 0;color:#91a4b8}
+    #validation-summary .passed-board-head .module-filter-search{width:min(320px,100%);margin:0}
+    #validation-summary .passed-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    #validation-summary .passed-card{display:flex;flex-direction:column;gap:14px;min-height:240px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;color:#f8fafc;text-decoration:none;box-shadow:0 14px 34px rgba(0,0,0,.22);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+    #validation-summary .passed-card:hover{transform:translateY(-3px);border-color:#39e75f;box-shadow:0 18px 42px rgba(57,231,95,.14)}
+    #validation-summary .passed-card-top{display:flex;align-items:center;gap:12px;min-width:0}
+    #validation-summary .passed-card-top strong{font-size:18px;line-height:1.25}
+    #validation-summary .passed-card-count b{display:block;color:#39e75f;font-size:28px;line-height:1;font-weight:800}
+    #validation-summary .passed-card-count span{display:block;margin-top:6px;color:#7f8ea3;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    #validation-summary .passed-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}
+    #validation-summary .passed-detail{border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(8,16,30,.96));padding:22px}
+    #validation-summary .passed-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    #validation-summary .passed-detail-head h2{margin:4px 0 0;font-size:32px;letter-spacing:-.03em}
+    #validation-summary .passed-detail-head .passed-card-count{margin-top:14px}
+    #validation-summary .passed-detail>p{margin:8px 0 18px;color:#9fb0c5;line-height:1.5;max-width:720px}
+    #validation-summary .passed-checks{display:grid;gap:10px}
+    #validation-summary .passed-check{border:1px solid rgba(57,231,95,.16);border-left:3px solid #39e75f;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
+    #validation-summary .passed-check strong{display:block;font-size:15px;line-height:1.35}
+    #validation-summary .passed-check span{display:block;margin-top:6px;color:#9fb0c5;font-size:13px;line-height:1.45}
+    @media(max-width:1100px){#validation-summary .passed-card-grid,#validation-summary .passed-board-head{grid-template-columns:1fr;display:grid}}
     .page-pager,.step-nav{
       display:flex!important;
       align-items:center;
@@ -9637,6 +9847,61 @@ const airGoldenDashboardHtml = `<!doctype html>
     .step-nav button:disabled{visibility:hidden}
     .is-step-current{outline:2px solid #7ee787;outline-offset:3px}
     .step-nav[hidden]{display:none!important}
+    .report-more-card{
+      position:relative!important;
+      gap:8px!important;
+      min-height:168px!important;
+      padding:16px 16px 14px 18px!important;
+      background:linear-gradient(145deg,rgba(57,231,95,.16),#101826 46%)!important;
+      border-color:rgba(57,231,95,.32)!important;
+      box-shadow:inset 4px 0 0 #39e75f,0 12px 28px rgba(0,0,0,.18)!important;
+      transition:transform .18s ease,border-color .18s ease;
+    }
+    .report-more-card .nav-icon{
+      display:inline-grid!important;
+      place-items:center!important;
+      width:40px!important;
+      height:40px!important;
+      min-width:40px!important;
+      margin:0 0 2px!important;
+      border-radius:12px!important;
+      background:rgba(57,231,95,.16)!important;
+      border:1px solid rgba(57,231,95,.42)!important;
+      color:#39e75f!important;
+    }
+    .report-more-card .nav-icon svg{
+      width:20px;
+      height:20px;
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.8;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .report-more-card em{
+      background:rgba(57,231,95,.14)!important;
+      border:1px solid rgba(57,231,95,.35)!important;
+      color:#d7fbe0!important;
+    }
+    .report-more-card.tone-warn{
+      background:linear-gradient(145deg,rgba(245,197,66,.18),#101826 46%)!important;
+      border-color:rgba(245,197,66,.4)!important;
+      box-shadow:inset 4px 0 0 #f5c542,0 12px 28px rgba(0,0,0,.18)!important;
+    }
+    .report-more-card.tone-warn .nav-icon{
+      background:rgba(245,197,66,.16)!important;
+      border-color:rgba(245,197,66,.48)!important;
+      color:#f5c542!important;
+    }
+    .report-more-card.tone-warn em{
+      background:rgba(245,197,66,.14)!important;
+      border-color:rgba(245,197,66,.4)!important;
+      color:#f5c542!important;
+    }
+    .report-more-card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(244,255,246,.4)!important;
+    }
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -9888,49 +10153,28 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('analytics', 'What passed')}
-          <p>What this run actually checked.</p>
+          <p>Choose an area. Only that area opens, and previous and next move through the areas.</p>
         </div>
-        <a class="btn" href="validation-summary.md" target="_blank" rel="noopener">Open Full Summary</a>
+        <span class="pill">${passedValidationTests.length} passed</span>
       </div>
-      <div class="panel validation-command-panel">
-        <div class="validation-story">
-          <span class="mission-label">Coverage</span>
-          <h2>${executiveData.passed} checks passed. ${executiveData.failed} failed. ${executiveData.skipped} did not run.</h2>
-          <p>The area numbers below count every check in that area, including ones that did not run. A high number is the size of the plan, not the number that passed.</p>
-          <div class="validation-stat-grid">${validationStatusCards}</div>
-        </div>
-        <div>
-          <h2>Area Coverage</h2>
-          <div class="validation-area-grid">${validationAreaCards}</div>
-        </div>
-      </div>
-      <br>
-      <div class="panel">
-        <div class="section-heading-row">
-          <div>
-          <h2>What was checked</h2>
-          <p>Grouped by area. Open the full table only when you need one check.</p>
+      <div data-passed-index>
+        <div class="panel passed-board">
+          <div class="passed-board-head">
+            <div>
+              <h2>${passedValidationTests.length} checks passed</h2>
+              <p>Open an area to see what this run confirmed.</p>
+            </div>
+            <label class="module-filter-search">
+              <input id="passedCheckSearch" type="search" placeholder="Find an area" aria-label="Search passed areas">
+            </label>
           </div>
+          <div class="validation-group-count" data-passed-count>Showing ${passedTopicEntries.length} of ${passedTopicEntries.length} areas</div>
+          <div class="passed-card-grid">${validationAreaCards}</div>
+          <div class="empty-note" data-passed-empty hidden>No area matches that search.</div>
         </div>
-        <div class="validation-group-grid" data-long-list="4" data-long-label="areas">${validationGroupCards}</div>
-        <details class="validation-details validation-toggle">
-          <summary></summary>
-          <table>
-            <thead><tr><th>Result</th><th>Area</th><th>Scenario</th><th>Expected Outcome</th></tr></thead>
-            <tbody data-long-list="8" data-long-item="tr" data-long-label="checks">${validationDetailRows}</tbody>
-          </table>
-        </details>
       </div>
-      ${validationCoverageGapCards ? `
-        <br>
-        <div class="panel">
-          <h2>Not Executed / Controlled Coverage</h2>
-          <div class="validation-gap-grid" data-long-list="4" data-long-label="items">${validationCoverageGapCards}</div>
-          <details class="validation-details">
-            <summary>Open complete Blocked / Skipped section</summary>
-            <p>See the Blocked / Skipped Coverage page for the full reason list and next actions.</p>
-          </details>
-        </div>` : ''}
+      ${renderInnerNav('area', { requireSelection: true })}
+      ${validationGroupCards}
       ${renderPageFooter('validation-summary')}
     </section>
 
@@ -9955,14 +10199,14 @@ const airGoldenDashboardHtml = `<!doctype html>
     <nav class="report-more" aria-label="More detail">
       <h2>More detail</h2>
       <div class="report-more-grid">
-        <a class="report-more-card" href="#executive"><span>Why</span><strong>The release call.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#module-dashboard"><span>Each area</span><strong>What each area checked.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#coverage-gaps"><span>Not run</span><strong>Checks that did not run.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#validation-summary"><span>What passed</span><strong>Checks that passed.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#insight"><span>Next step</span><strong>What to do next.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#comparison"><span>History</span><strong>Earlier runs.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#air-core"><span>About AIR</span><strong>How this report is built.</strong><em>Open</em></a>
-        <a class="report-more-card" href="#roadmap"><span>Roadmap</span><strong>What comes next.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#executive">${navIcon('release')}<span>Why</span><strong>The release call.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#module-dashboard">${navIcon('modules')}<span>Each area</span><strong>What each area checked.</strong><em>Open</em></a>
+        <a class="report-more-card tone-warn" href="#coverage-gaps">${navIcon('failures')}<span>Not run</span><strong>Checks that did not run.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#validation-summary">${navIcon('analytics')}<span>What passed</span><strong>What this run confirmed.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#insight">${navIcon('insight')}<span>Next step</span><strong>What to do next.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#comparison">${navIcon('journey')}<span>History</span><strong>Earlier runs.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#air-core">${navIcon('settings')}<span>About AIR</span><strong>How this report is built.</strong><em>Open</em></a>
+        <a class="report-more-card tone-good" href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span><strong>What comes next.</strong><em>Open</em></a>
       </div>
     </nav>
 
@@ -10580,25 +10824,32 @@ const airGoldenDashboardHtml = `<!doctype html>
     ));
   }
   function updateStepNav() {
+    const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
     document.querySelectorAll('section.page .step-nav').forEach((nav) => {
       const page = nav.closest('section.page');
       const items = page ? visibleStepItems(page) : [];
+      const indexPanel = page?.querySelector('[data-passed-index]');
+      const requireSelection = nav.hasAttribute('data-step-require-selection');
+      const selectedIndex = items.findIndex((item) => item.id === hashId);
+      if (requireSelection && selectedIndex < 0) {
+        nav.hidden = true;
+        items.forEach((item) => item.classList.remove('is-step-current'));
+        if (indexPanel) indexPanel.hidden = false;
+        return;
+      }
       if (items.length < 2) {
         nav.hidden = true;
         return;
       }
       nav.hidden = false;
-      const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
-      let index = items.findIndex((item) => item.id === hashId);
-      if (index < 0) {
-        index = 0;
-      }
+      const index = selectedIndex < 0 ? 0 : selectedIndex;
       const current = items[index];
       const previous = items[index - 1];
       const next = items[index + 1];
       items.forEach((item) => {
         item.classList.toggle('is-step-current', item.id === hashId);
       });
+      if (indexPanel) indexPanel.hidden = requireSelection;
       const label = nav.querySelector('[data-step-label]');
       const count = nav.querySelector('[data-step-count]');
       const prevName = nav.querySelector('[data-step-prev-name]');
@@ -10613,6 +10864,9 @@ const airGoldenDashboardHtml = `<!doctype html>
       if (nextButton) nextButton.disabled = !next;
       nav.dataset.prev = previous?.id || '';
       nav.dataset.next = next?.id || '';
+      if (requireSelection && current) {
+        current.scrollIntoView({ block: 'start' });
+      }
     });
   }
   document.querySelectorAll('.step-nav').forEach((nav) => {
@@ -11223,6 +11477,31 @@ const airGoldenDashboardHtml = `<!doctype html>
     button.setAttribute('aria-pressed', button.classList.contains('active') ? 'true' : 'false');
   });
 
+  const passedCheckSearch = document.getElementById('passedCheckSearch');
+  const passedCount = document.querySelector('[data-passed-count]');
+  const passedEmpty = document.querySelector('[data-passed-empty]');
+
+  function updatePassedSearch() {
+    const query = String(passedCheckSearch?.value || '').trim().toLowerCase();
+    const cards = Array.from(document.querySelectorAll('[data-passed-card]'));
+    let visibleCards = 0;
+
+    cards.forEach(card => {
+      const matches = !query || String(card.dataset.passedSearch || card.textContent || '').toLowerCase().includes(query);
+      card.hidden = !matches;
+      if (matches) visibleCards += 1;
+    });
+
+    if (passedCount) {
+      passedCount.textContent = 'Showing ' + visibleCards + ' of ' + cards.length + ' areas';
+    }
+    if (passedEmpty) {
+      passedEmpty.hidden = visibleCards !== 0;
+    }
+  }
+
+  passedCheckSearch?.addEventListener('input', updatePassedSearch);
+
   if (moduleFilterSearch) {
     moduleFilterSearch.addEventListener('input', updateModuleFilter);
   }
@@ -11606,9 +11885,15 @@ const airGoldenDashboardHtml = `<!doctype html>
 
       const href = link.getAttribute('href') || '';
       const id = decodeURIComponent(href.slice(1));
+      const target = document.getElementById(id);
+      const opensArea = target && (target.hasAttribute('data-step-item') || target.id === 'validation-summary');
       const destination = pageForTarget(id);
-      if (destination && destination.id !== currentPageId()) {
+      if (opensArea || (destination && destination.id !== currentPageId())) {
         event.preventDefault();
+        if (location.hash === '#' + id) {
+          showCurrentPage();
+          return;
+        }
         location.hash = id;
         return;
       }

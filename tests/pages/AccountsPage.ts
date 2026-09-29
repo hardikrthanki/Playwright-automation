@@ -1,5 +1,6 @@
 import {
-  expect
+  expect,
+  Locator
 } from '@playwright/test';
 
 import { BasePage }
@@ -16,8 +17,9 @@ PAGE OBJECT: AccountsPage
 
 PURPOSE
 -------
-Manage Accounts opens the connected broker accounts. View positions continues
-to the portfolio holdings.
+Manage Accounts opens the connected broker accounts. Delete and disconnect
+open a confirmation and are cancelled. View positions continues to the
+portfolio holdings.
 ============================================================================= */
 
 export class AccountsPage
@@ -105,6 +107,144 @@ export class AccountsPage
 
     Logger.success(
       'Accounts are shown'
+    );
+  }
+
+  async verifyDeleteAndDisconnect() {
+    Logger.info(
+      'Opening delete and disconnect confirmations'
+    );
+
+    await this.confirmAndCancel(
+      this.page.getByRole(
+        'button',
+        {
+          name: /^disconnect$/i
+        }
+      ),
+      /disconnect/i,
+      'Disconnect'
+    );
+
+    await this.confirmAndCancel(
+      this.page.getByRole(
+        'button',
+        {
+          name: /remove manual portfolio/i
+        }
+      ),
+      /remove|delete|portfolio/i,
+      'Remove Manual Portfolio'
+    );
+
+    await this.closeConnectBroker();
+
+    await expect(
+      this.page.getByText(
+        /manual portfolio/i
+      ).first()
+    ).toBeVisible();
+
+    Logger.success(
+      'Delete and disconnect were cancelled'
+    );
+  }
+
+  private async confirmAndCancel(
+    trigger: Locator,
+    expected: RegExp,
+    label: string
+  ) {
+    await safeClick(
+      trigger.first(),
+      label
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'alertdialog'
+      ).or(
+        this.page.getByRole(
+          'dialog'
+        )
+      ).last();
+
+    await expect(
+      dialog
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await expect(
+      dialog
+    ).toContainText(
+      expected
+    );
+
+    await expect(
+      dialog.getByRole(
+        'button',
+        {
+          name: /disconnect|remove|delete/i
+        }
+      )
+    ).toBeVisible();
+
+    await safeClick(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      ),
+      `Cancel ${label}`
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+  }
+
+  private async closeConnectBroker() {
+    Logger.info(
+      'Opening Connect broker without connecting'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /connect broker/i
+        }
+      ).first(),
+      'Connect broker'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      );
+
+    await expect(
+      dialog
+    ).toContainText(
+      /broker|connect/i
+    );
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+
+    Logger.success(
+      'Connect broker was closed'
     );
   }
 

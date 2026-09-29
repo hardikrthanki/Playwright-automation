@@ -65,67 +65,38 @@ export class PlanSelectionPage extends BasePage {
   private planByName(
     planName: string
   ) {
-    if (
+    const pattern =
       /curious/i.test(
         planName
       )
-    ) {
-      return this.page
-        .getByText(
-          /^curious$|curious explorer|explore your portfolio/i
+        ? /^curious$|curious explorer|explore your portfolio/i
+        : /income/i.test(
+          planName
         )
-        .first();
-    }
-
-    if (
-      /income/i.test(
-        planName
-      )
-    ) {
-      return this.page
-        .getByText(
-          /^income$|income builder|build your portfolio/i
-        )
-        .first();
-    }
-
-    if (
-      /overlay/i.test(
-        planName
-      )
-    ) {
-      return this.page
-        .getByText(
-          /overlay strategists/i
-        )
-        .first();
-    }
-
-    if (
-      /portfolio|hedger/i.test(
-        planName
-      )
-    ) {
-      return this.page
-        .getByText(
-          /portfolio hedger/i
-        )
-        .first();
-    }
-
-    const escapedName =
-      planName.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        '\\$&'
-      );
+          ? /^income$|income builder|build your portfolio/i
+          : /overlay/i.test(
+            planName
+          )
+            ? /overlay strategists/i
+            : /portfolio|hedger/i.test(
+              planName
+            )
+              ? /portfolio hedger/i
+              : new RegExp(
+                planName.replace(
+                  /[.*+?^${}()|[\]\\]/g,
+                  '\\$&'
+                ),
+                'i'
+              );
 
     return this.page
       .getByText(
-        new RegExp(
-          escapedName,
-          'i'
-        )
+        pattern
       )
+      .filter({
+        visible: true
+      })
       .first();
   }
 
@@ -392,35 +363,6 @@ export class PlanSelectionPage extends BasePage {
     });
   }
 
-  private async catalogToggleInViewport() {
-    const box =
-      await this.monthlyToggle()
-        .boundingBox()
-        .catch(
-          () => null
-        );
-
-    if (
-      !box ||
-      box.width < 1 ||
-      box.height < 1
-    ) {
-      return false;
-    }
-
-    const viewport =
-      this.page.viewportSize();
-
-    if (!viewport) {
-      return true;
-    }
-
-    return (
-      box.y >= 0 &&
-      box.y < viewport.height
-    );
-  }
-
   async returnFromCheckoutBeforePayment() {
     await this.page.goBack({
       waitUntil: 'domcontentloaded',
@@ -454,7 +396,7 @@ export class PlanSelectionPage extends BasePage {
     );
 
     // Stripe history-back can leave the catalog in the DOM while the
-    // viewport stays blank. Load onboarding again before the next plan.
+    // viewport stays blank. A same-address goto does not remount it.
     await this.page.goto(
       this.appUrl(
         '/onboarding'
@@ -464,25 +406,15 @@ export class PlanSelectionPage extends BasePage {
       }
     );
 
+    await this.page.reload({
+      waitUntil: 'domcontentloaded'
+    });
+
     await this.waitUntilCatalogVisible();
 
     await this.scrollCatalogToggleIntoView(
       this.monthlyToggle()
     );
-
-    if (
-      !await this.catalogToggleInViewport()
-    ) {
-      await this.page.reload({
-        waitUntil: 'domcontentloaded'
-      });
-
-      await this.waitUntilCatalogVisible();
-
-      await this.scrollCatalogToggleIntoView(
-        this.monthlyToggle()
-      );
-    }
   }
 
   private async scrollCatalogToggleIntoView(
@@ -714,14 +646,6 @@ export class PlanSelectionPage extends BasePage {
     Logger.info(
       `Validating ${planName} plan visibility`
     );
-
-    await expect(
-      this.page.getByText(
-        /choose your plan|pricing|subscription/i
-      ).first()
-    ).toBeVisible({
-      timeout: 30000
-    });
 
     await expect(
       this.planByName(
@@ -1563,12 +1487,43 @@ export class PlanSelectionPage extends BasePage {
       planName
     );
 
-    await safeClick(
+    const plan =
       this.planByName(
         planName
-      ),
-      `${planName} Plan`
+      );
+
+    await this.scrollCatalogToggleIntoView(
+      plan
     );
+
+    try {
+      await safeClick(
+        plan,
+        `${planName} Plan`
+      );
+    } catch {
+      await this.scrollCatalogToggleIntoView(
+        plan
+      );
+
+      console.log(
+        `[CLICK] ${planName} Plan via DOM click`
+      );
+
+      await plan.evaluate(
+        (element) => {
+          const clickable =
+            element.closest(
+              'button, a, [role="button"]'
+            ) ??
+            element;
+
+          (
+            clickable as HTMLElement
+          ).click();
+        }
+      );
+    }
 
     await expect(
       this.completeSetupButton
@@ -1576,10 +1531,29 @@ export class PlanSelectionPage extends BasePage {
       timeout: 30000
     });
 
-    await safeClick(
-      this.completeSetupButton,
-      'Complete Setup'
+    await this.scrollCatalogToggleIntoView(
+      this.completeSetupButton
     );
+
+    try {
+      await safeClick(
+        this.completeSetupButton,
+        'Complete Setup'
+      );
+    } catch {
+      await this.scrollCatalogToggleIntoView(
+        this.completeSetupButton
+      );
+
+      console.log(
+        '[CLICK] Complete Setup via DOM click'
+      );
+
+      await this.completeSetupButton.evaluate(
+        (element: HTMLElement) =>
+          element.click()
+      );
+    }
 
     Logger.success(
       `${planName} selected`

@@ -1,0 +1,299 @@
+import {
+  expect,
+  Page
+} from '@playwright/test';
+
+import {
+  BASE_URL
+} from './config/testData';
+
+import { DashboardPage }
+  from './pages/DashboardPage';
+
+import { EventCalendarPage }
+  from './pages/EventCalendarPage';
+
+import { test }
+  from './fixtures/subscriberAuth';
+
+import { safeClick }
+  from './helpers/safeClick';
+
+/* =============================================================================
+TEST SUITE: Watchlist, Analytics, and calendar views
+
+PURPOSE
+-------
+Portfolio menu opens Watchlist and Analytics. Event calendar switches
+between Month and Agenda, then moves to the next month and back.
+
+RUN
+---
+npx playwright test tests/DashboardPortfolioViews.spec.ts --reporter=line
+============================================================================= */
+
+test.describe(
+  'Watchlist Analytics and calendar views',
+  () => {
+
+    test.describe.configure({
+      timeout: 180000
+    });
+
+    async function openDashboard(
+      page: Page
+    ) {
+      const dashboard =
+        new DashboardPage(
+          page
+        );
+
+      await page.goto(
+        `${BASE_URL}/dashboard`,
+        {
+          waitUntil: 'domcontentloaded'
+        }
+      );
+
+      await dashboard.validateLoaded();
+    }
+
+    async function openPortfolioItem(
+      page: Page,
+      name: RegExp,
+      label: string
+    ) {
+      await safeClick(
+        page.getByRole(
+          'button',
+          {
+            name: /^portfolio$/i
+          }
+        ).first(),
+        'Portfolio menu'
+      );
+
+      await safeClick(
+        page.getByRole(
+          'menuitem',
+          {
+            name
+          }
+        ),
+        label
+      );
+    }
+
+    test(
+      'Watchlist shows symbols or an empty list',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openPortfolioItem(
+          page,
+          /^watchlist$/i,
+          'Watchlist'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /watchlist/i
+            }
+          )
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /watchlist|symbol|add|search|empty|no symbols/i
+        );
+
+        const search =
+          page.getByRole(
+            'combobox',
+            {
+              name: /search|symbol/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search|symbol/i
+            )
+          ).first();
+
+        if (
+          await search.waitFor({
+            state: 'visible',
+            timeout: 4000
+          }).then(
+            () => true
+          ).catch(
+            () => false
+          )
+        ) {
+          await search.fill(
+            'AAPL'
+          );
+
+          await expect(
+            page.locator(
+              'main'
+            )
+          ).toContainText(
+            /AAPL/i
+          );
+        }
+      }
+    );
+
+    test(
+      'Analytics shows portfolio measures',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openPortfolioItem(
+          page,
+          /^analytics$/i,
+          'Analytics'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /analytics/i
+            }
+          )
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /\$[\d,.]+|%|allocation|performance|return|portfolio/i
+        );
+      }
+    );
+
+    test(
+      'Event calendar switches between Month and Agenda',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /view more/i
+            }
+          ).first(),
+          'View more upcoming events'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /event calendar/i
+            }
+          )
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^agenda$/i
+            }
+          ),
+          'Agenda'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /agenda|earnings|dividend|events/i
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^month$/i
+            }
+          ),
+          'Month'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /20\d{2}/
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Event calendar changes month',
+      async ({ page }) => {
+        const calendar =
+          new EventCalendarPage(
+            page
+          );
+
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /view more/i
+            }
+          ).first(),
+          'View more upcoming events'
+        );
+
+        await calendar.validateLoaded();
+
+        const nextMonth =
+          await calendar.changeMonth(
+            'Next month'
+          );
+
+        const returned =
+          await calendar.changeMonth(
+            'Previous month'
+          );
+
+        expect(
+          returned
+        ).not.toBe(
+          nextMonth
+        );
+      }
+    );
+  }
+);

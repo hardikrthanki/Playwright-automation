@@ -1,5 +1,6 @@
 import {
-  expect
+  expect,
+  Locator
 } from '@playwright/test';
 
 import { BasePage }
@@ -155,8 +156,225 @@ export class OpportunitiesPage
       ''
     );
 
+    await this.changeEachFilter();
+
     Logger.success(
       'Opportunity filters narrow the table'
+    );
+  }
+
+  private async changeEachFilter() {
+    const count =
+      await this.page.getByRole(
+        'combobox'
+      ).count();
+
+    for (
+      let index = 0;
+      index < count;
+      index += 1
+    ) {
+      const control =
+        this.page.getByRole(
+          'combobox'
+        ).nth(
+          index
+        );
+
+      const accessible =
+        (
+          await control.getAttribute(
+            'aria-label'
+          )
+        ) || '';
+
+      if (
+        /search/i.test(
+          accessible
+        )
+      ) {
+        continue;
+      }
+
+      const changed =
+        await this.selectDifferentOption(
+          control,
+          `Opportunity filter ${index + 1}`
+        );
+
+      if (
+        !changed ||
+        changed.picked === changed.before
+      ) {
+        continue;
+      }
+
+      await expect(
+        this.page.locator(
+          'main'
+        )
+      ).toContainText(
+        /\$[\d,]+|no |showing|opportunit/i
+      );
+
+      await this.selectNamedOption(
+        control,
+        changed.before,
+        `Restore filter ${index + 1}`
+      );
+    }
+  }
+
+  private firstLine(
+    value: string
+  ) {
+    return value
+      .split(
+        '\n'
+      )[0]
+      .replace(
+        /\s+/g,
+        ' '
+      )
+      .trim();
+  }
+
+  private escape(
+    value: string
+  ) {
+    return value.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      '\\$&'
+    );
+  }
+
+  private async selectDifferentOption(
+    control: Locator,
+    action: string
+  ) {
+    const before =
+      this.firstLine(
+        await control.innerText()
+      );
+
+    await safeClick(
+      control,
+      action
+    );
+
+    const options =
+      this.page.getByRole(
+        'option'
+      );
+
+    const opened =
+      await options.first().waitFor({
+        state: 'visible',
+        timeout: 5000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (
+      !opened
+    ) {
+      await this.page.keyboard.press(
+        'Escape'
+      );
+
+      return null;
+    }
+
+    const count =
+      Math.min(
+        await options.count(),
+        8
+      );
+
+    for (
+      let index = 0;
+      index < count;
+      index += 1
+    ) {
+      const picked =
+        this.firstLine(
+          await options.nth(
+            index
+          ).innerText()
+        );
+
+      if (
+        !picked ||
+        picked === before
+      ) {
+        continue;
+      }
+
+      await safeClick(
+        options.nth(
+          index
+        ),
+        picked
+      );
+
+      await expect(
+        control
+      ).toContainText(
+        picked,
+        {
+          timeout: 10000
+        }
+      );
+
+      Logger.success(
+        `${action} changed to ${picked}`
+      );
+
+      return {
+        before,
+        picked
+      };
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    return null;
+  }
+
+  private async selectNamedOption(
+    control: Locator,
+    name: string,
+    action: string
+  ) {
+    await safeClick(
+      control,
+      action
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'option',
+        {
+          name: new RegExp(
+            `^${this.escape(name)}$`,
+            'i'
+          )
+        }
+      ).first(),
+      name
+    );
+
+    await expect(
+      control
+    ).toContainText(
+      name,
+      {
+        timeout: 10000
+      }
     );
   }
 
@@ -215,23 +433,17 @@ export class OpportunitiesPage
       'Validating opportunity row actions'
     );
 
-    const watchingRow =
+    const row =
       this.page.getByRole(
         'row'
       ).filter({
-        hasText: /watching/i
+        has: this.page.getByRole(
+          'button',
+          {
+            name: /row actions/i
+          }
+        )
       }).first();
-
-    const row =
-      await watchingRow.isVisible().catch(
-        () => false
-      )
-        ? watchingRow
-        : this.page.getByRole(
-          'row'
-        ).nth(
-          1
-        );
 
     await safeClick(
       row.getByRole(
@@ -298,6 +510,528 @@ export class OpportunitiesPage
     Logger.success(
       'Research, watch, and CTA Details are available'
     );
+  }
+
+  async validateHowOpportunitiesWork() {
+    Logger.info(
+      'Opening How Opportunities work'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /how opportunities work/i
+        }
+      ),
+      'How Opportunities work'
+    );
+
+    await expect(
+      this.page.getByRole(
+        'dialog'
+      ).or(
+        this.page.locator(
+          'main'
+        )
+      ).first()
+    ).toContainText(
+      /opportunit/i
+    );
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    Logger.success(
+      'How Opportunities work is shown'
+    );
+  }
+
+  async saveCurrentView(
+    viewName: string
+  ) {
+    Logger.info(
+      `Saving opportunity view ${viewName}`
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /^save view$/i
+        }
+      ).first(),
+      'Save View'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      );
+
+    await expect(
+      dialog
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await dialog.getByRole(
+      'textbox'
+    ).first().fill(
+      viewName
+    );
+
+    await safeClick(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^save$/i
+        }
+      ),
+      'Save the view'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+
+    Logger.success(
+      `Saved opportunity view ${viewName}`
+    );
+  }
+
+  async openSavedView(
+    viewName: string
+  ) {
+    Logger.info(
+      `Opening saved view ${viewName}`
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /^saved views$/i
+        }
+      ),
+      'Saved Views'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      );
+
+    const item =
+      dialog.getByRole(
+        'listitem'
+      ).filter({
+        hasText: viewName
+      });
+
+    await safeClick(
+      item.getByRole(
+        'button',
+        {
+          name: /^apply$/i
+        }
+      ),
+      `Apply ${viewName}`
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+
+    Logger.success(
+      `Opened saved view ${viewName}`
+    );
+  }
+
+  async deleteSavedViews(
+    name: RegExp
+  ) {
+    Logger.info(
+      'Removing saved opportunity views'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'button',
+        {
+          name: /^saved views$/i
+        }
+      ),
+      'Saved Views'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      );
+
+    await expect(
+      dialog
+    ).toBeVisible();
+
+    for (
+      let attempt = 0;
+      attempt < 6;
+      attempt += 1
+    ) {
+      const remove =
+        dialog.getByRole(
+          'button',
+          {
+            name: name
+          }
+        ).first();
+
+      if (
+        !await remove.waitFor({
+          state: 'visible',
+          timeout: 2000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        )
+      ) {
+        break;
+      }
+
+      await safeClick(
+        remove,
+        'Delete saved view'
+      );
+
+      const confirm =
+        this.page.getByRole(
+          'button',
+          {
+            name: /^delete$/i
+          }
+        );
+
+      if (
+        await confirm.waitFor({
+          state: 'visible',
+          timeout: 2000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        )
+      ) {
+        await safeClick(
+          confirm,
+          'Confirm delete'
+        );
+      }
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    Logger.success(
+      'Saved opportunity views are cleared'
+    );
+  }
+
+  async validatePagination() {
+    Logger.info(
+      'Validating opportunity pagination'
+    );
+
+    const pageSize =
+      this.page.locator(
+        'main'
+      ).getByRole(
+        'combobox'
+      ).filter({
+        hasText: /^(10|15|25)$/
+      }).first();
+
+    await safeClick(
+      pageSize,
+      'Page size'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'option',
+        {
+          name: /^15$/
+        }
+      ),
+      '15 rows'
+    );
+
+    await expect(
+      pageSize
+    ).toContainText(
+      /^15$/
+    );
+
+    const pageTwo =
+      this.page.locator(
+        'main'
+      ).getByRole(
+        'button',
+        {
+          name: /page 2|^2$/
+        }
+      ).last();
+
+    if (
+      await pageTwo.waitFor({
+        state: 'visible',
+        timeout: 4000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        pageTwo,
+        'Opportunities page 2'
+      );
+
+      await expect(
+        this.page.locator(
+          'main'
+        )
+      ).toContainText(
+        /showing/i
+      );
+    }
+
+    await safeClick(
+      pageSize,
+      'Page size'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'option',
+        {
+          name: /^10$/
+        }
+      ),
+      '10 rows'
+    );
+
+    await expect(
+      pageSize
+    ).toContainText(
+      /^10$/
+    );
+
+    Logger.success(
+      'Opportunity pagination is shown'
+    );
+  }
+
+  async validateResearchAndWatchToggle() {
+    Logger.info(
+      'Validating Research, Add to Watchlist, and Stop Watching'
+    );
+
+    const openActions =
+      async () => {
+        const row =
+          this.page.getByRole(
+            'row'
+          ).filter({
+            has: this.page.getByRole(
+              'button',
+              {
+                name: /row actions/i
+              }
+            )
+          }).first();
+
+        await safeClick(
+          row.getByRole(
+            'button',
+            {
+              name: /row actions/i
+            }
+          ),
+          'Open row actions'
+        );
+      };
+
+    await openActions();
+
+    await safeClick(
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /^research$/i
+        }
+      ),
+      'Research'
+    );
+
+    await this.page.waitForURL(
+      (url) =>
+        !/\/opportunities\/?$/.test(
+          url.pathname
+        ),
+      {
+        timeout: 20000
+      }
+    );
+
+    await expect(
+      this.page.locator(
+        'main'
+      )
+    ).toContainText(
+      /[A-Z]{1,5}|\$\d|research|fundamental/i,
+      {
+        timeout: 20000
+      }
+    );
+
+    await this.page.goBack({
+      waitUntil: 'domcontentloaded'
+    });
+
+    await this.validateLoaded();
+
+    await openActions();
+
+    const add =
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /add to watchlist/i
+        }
+      );
+
+    const stop =
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /stop watching/i
+        }
+      );
+
+    if (
+      await add.waitFor({
+        state: 'visible',
+        timeout: 4000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        add,
+        'Add to Watchlist'
+      );
+    } else {
+      await safeClick(
+        stop,
+        'Stop Watching'
+      );
+
+      await this.confirmWatchPrompt();
+
+      await openActions();
+
+      await safeClick(
+        this.page.getByRole(
+          'menuitem',
+          {
+            name: /add to watchlist/i
+          }
+        ),
+        'Add to Watchlist'
+      );
+    }
+
+    await this.confirmWatchPrompt();
+
+    await openActions();
+
+    await expect(
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /stop watching/i
+        }
+      )
+    ).toBeVisible();
+
+    await safeClick(
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /stop watching/i
+        }
+      ),
+      'Stop Watching'
+    );
+
+    await this.confirmWatchPrompt();
+
+    await openActions();
+
+    await expect(
+      this.page.getByRole(
+        'menuitem',
+        {
+          name: /add to watchlist/i
+        }
+      )
+    ).toBeVisible();
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    Logger.success(
+      'Research, Add to Watchlist, and Stop Watching are validated'
+    );
+  }
+
+  private async confirmWatchPrompt() {
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      );
+
+    if (
+      await dialog.waitFor({
+        state: 'visible',
+        timeout: 3000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        dialog.getByRole(
+          'button',
+          {
+            name: /add|stop|confirm|watch/i
+          }
+        ).last(),
+        'Confirm watch change'
+      );
+    }
   }
 
   async openCtaDetails() {
@@ -387,6 +1121,45 @@ export class OpportunitiesPage
     }
 
     return symbol;
+  }
+
+  async selectFilter(
+    current: RegExp,
+    option: RegExp
+  ) {
+    const combo =
+      this.page.locator(
+        'main'
+      ).getByRole(
+        'combobox'
+      ).filter({
+        hasText: current
+      }).first();
+
+    await safeClick(
+      combo,
+      'Opportunity filter'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'option',
+        {
+          name: option
+        }
+      ).first(),
+      'Filter value'
+    );
+
+    await expect(
+      this.page.locator(
+        'main'
+      ).getByRole(
+        'combobox'
+      ).filter({
+        hasText: option
+      }).first()
+    ).toBeVisible();
   }
 
   private async applyStrategyFilter(

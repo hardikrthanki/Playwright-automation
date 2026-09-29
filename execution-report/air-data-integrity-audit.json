@@ -1,44 +1,44 @@
 {
-  "generatedAt": "2026-09-28T10:42:42.166Z",
+  "generatedAt": "2026-09-29T09:24:56.632Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-28T10:42:41.806Z",
+    "generatedAt": "2026-09-29T09:24:55.985Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 640,
-    "rawTestCount": 640,
-    "attempts": 640,
-    "passed": 242,
+    "total": 690,
+    "rawTestCount": 690,
+    "attempts": 690,
+    "passed": 287,
     "failed": 3,
-    "skipped": 395,
+    "skipped": 400,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 242,
-      "skipped": 395,
+      "expected": 287,
+      "skipped": 400,
       "unexpected": 3
     }
   },
   "airExecution": {
-    "total": 640,
-    "attempts": 640,
-    "passed": 242,
+    "total": 690,
+    "attempts": 690,
+    "passed": 287,
     "failed": 3,
-    "skipped": 395,
+    "skipped": 400,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 640,
-    "expectedAirTotal": 640,
-    "airTotal": 640,
+    "sourceTotal": 690,
+    "expectedAirTotal": 690,
+    "airTotal": 690,
     "difference": 0
   },
   "duplicates": {
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 5,
+    "perTestEvidence": 8,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 7,
+    "totalWithRawReports": 10,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,20 +61,20 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Forgot password back to login clears reset-only navigation state",
-        "testName": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
-        "evidenceCount": 1,
+        "testId": "chromium > DirectSubscriptionPurchase.spec.ts > Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+        "testName": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+        "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
-        "evidenceCount": 1,
+        "testId": "chromium > DashboardScenarioSweep.spec.ts > Remaining dashboard scenarios > Company Finance opens related research pages and clears the symbol",
+        "testName": "Remaining dashboard scenarios > Company Finance opens related research pages and clears the symbol",
+        "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
+        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
+        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -94,23 +94,8 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -121,11 +106,6 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -140,23 +120,8 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -167,11 +132,6 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -186,23 +146,8 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Forgot password back to login clears reset-only navigation state",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-165 - Monthly plan subscriber sees annual billing option",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-76 - Current lower-tier paid subscription is displayed before upgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-001 - New user can complete signup prerequisites and reach plan selection",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -216,18 +161,13 @@
           },
           {
             "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
             "name": "Billing",
             "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 5,
-    "blockers": 8
+    "warnings": 9,
+    "blockers": 4
   }
 }

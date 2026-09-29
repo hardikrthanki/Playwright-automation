@@ -383,6 +383,52 @@ extends BasePage {
     }
   }
 
+  private async ensureMobileVerified() {
+    const verified =
+      this.page.getByText(
+        /\bverified\b/i
+      ).first();
+
+    const seen =
+      await verified.waitFor({
+        state: 'visible',
+        timeout: 20000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (
+      seen
+    ) {
+      return;
+    }
+
+    const verifyStillVisible =
+      await this.verifyOtpButton.isVisible().catch(
+        () => false
+      );
+
+    if (
+      !verifyStillVisible
+    ) {
+      return;
+    }
+
+    Logger.info(
+      'Mobile code was not accepted. Verifying once more.'
+    );
+
+    await this.clickVerifyWhenReady();
+
+    await expect(
+      verified
+    ).toBeVisible({
+      timeout: 20000
+    });
+  }
+
   private async otpFieldIsVisible() {
     return this.visibleOtpInput()
       .isVisible({
@@ -831,15 +877,7 @@ extends BasePage {
         'OTP Verify Clicked'
       );
 
-      await expect(
-        this.page.getByText(
-          /^verified$/i
-        ).first()
-      ).toBeVisible({
-        timeout: 15000
-      }).catch(
-        () => undefined
-      );
+      await this.ensureMobileVerified();
 
       await this.waitForPasswordFieldsReady();
     } else {
@@ -854,11 +892,30 @@ extends BasePage {
 
     await this.acceptVisibleRegistrationConsents();
 
-    await expect(
-      this.submitButton
-    ).toBeEnabled({
-      timeout: 30000
-    });
+    const submitReady =
+      await expect(
+        this.submitButton
+      ).toBeEnabled({
+        timeout: 8000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (
+      !submitReady
+    ) {
+      await this.acceptVisibleRegistrationConsents();
+
+      await this.fillPasswordFields();
+
+      await expect(
+        this.submitButton
+      ).toBeEnabled({
+        timeout: 20000
+      });
+    }
 
     await safeClick(
       this.submitButton,

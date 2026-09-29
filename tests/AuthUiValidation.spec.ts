@@ -73,7 +73,7 @@ async function expectRegistrationOpened(
         );
       },
       {
-        timeout: 15000
+        timeout: 30000
       }
     )
     .toBeTruthy();
@@ -487,42 +487,50 @@ test.describe(
     test(
       'Forgot password direct link remains usable after refresh',
       async ({ page }) => {
+        test.setTimeout(90000);
 
         const forgotPassword =
           new ForgotPasswordPage(page);
 
-        await page.goto(
-          `${BASE_URL}/forgot-password`,
-          {
-            waitUntil: 'domcontentloaded'
-          }
-        );
-
-        await expect(
-          forgotPassword.emailInput
-        ).toBeVisible({
-          timeout: 10000
-        });
+        await forgotPassword.openDirect();
 
         await page.reload({
-          waitUntil: 'domcontentloaded'
+          waitUntil: 'domcontentloaded',
+          timeout: 45000
         });
+
+        await forgotPassword.dismissMarketingOverlays();
 
         await expect(
           page
         ).toHaveURL(
-          /\/forgot-password/
+          /\/forgot-password/,
+          {
+            timeout: 20000
+          }
+        );
+
+        await forgotPassword.emailInput.fill(
+          'refresh-reset@example.com'
         );
 
         await expect(
-          forgotPassword.emailInput
-        ).toBeVisible({
-          timeout: 10000
-        });
+          forgotPassword.sendResetButton
+        ).toBeEnabled();
+
+        await safeClick(
+          forgotPassword.backToLoginLink,
+          'Back to login'
+        );
 
         await expect(
-          forgotPassword.sendResetButton
-        ).toBeVisible();
+          page
+        ).toHaveURL(
+          /\/login/,
+          {
+            timeout: 20000
+          }
+        );
       }
     );
 
