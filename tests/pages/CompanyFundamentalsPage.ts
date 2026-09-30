@@ -157,6 +157,16 @@ export class CompanyFundamentalsPage
         {
           name: /company fundamentals|equity research/i
         }
+      ).or(
+        this.page.getByRole(
+          'heading',
+          {
+            name: new RegExp(
+              `^${symbol}$`,
+              'i'
+            )
+          }
+        )
       ).first()
     ).toBeVisible({
       timeout: 20000

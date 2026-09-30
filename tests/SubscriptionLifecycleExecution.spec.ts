@@ -1135,37 +1135,50 @@ test.describe(
       'SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED',
       'With-card trial creates a new disposable user and starts a Stripe test-mode trial. QA-CL-005: use a unique test card so the once-per-lifetime gate does not refuse the offer.',
       async ({ page }) => {
-        const user =
+        let user =
           await openPlanSelectionForDisposableUser(
             page,
             'sub-lifecycle-trial-card'
           );
 
-        await new PlanSelectionPage(
-          page
-        ).selectOverlayStrategistsTrialWithCard();
-
-        await new StripePaymentPage(
-          page
-        ).validateTrialCheckoutDetails(
-          user.email
-        );
-
-        await new StripePaymentPage(
-          page
-        ).completeTrialPayment();
-
         let reachedDashboard =
-          await continueAfterWithCardTrialCheckout(
-            page,
-            user.mobileNumber
-          );
+          false;
 
-        if (
-          !reachedDashboard
+        for (
+          let attempt = 1;
+          attempt <= 3 && !reachedDashboard;
+          attempt += 1
         ) {
+          if (attempt > 1) {
+            console.log(
+              `With-card trial bounced. Starting a fresh user and unused card (${attempt}/3).`
+            );
+
+            user =
+              await openPlanSelectionForDisposableUser(
+                page,
+                `sub-lifecycle-trial-card-${attempt}`
+              );
+          }
+
+          await new PlanSelectionPage(
+            page
+          ).selectOverlayStrategistsTrialWithCard();
+
+          if (attempt === 1) {
+            await new StripePaymentPage(
+              page
+            ).validateTrialCheckoutDetails(
+              user.email
+            );
+          }
+
+          await new StripePaymentPage(
+            page
+          ).completeTrialPayment();
+
           reachedDashboard =
-            await submitAnotherWithCardTrialAttempt(
+            await continueAfterWithCardTrialCheckout(
               page,
               user.mobileNumber
             );
@@ -1255,13 +1268,67 @@ test.describe(
     controlledLifecycleTest(
       'Disposable user can purchase Marketplace monthly and reach Billing',
       'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
-      'Paid Marketplace purchase creates a new disposable user and submits Stripe test payment.',
+      'Marketplace is no longer a self-serve plan. The catalog ends with Portfolio Hedger, and Enterprise is contact sales only.',
       async ({ page }) => {
-        await purchasePaidPlanForDisposableUser(
+        await openPlanSelectionForDisposableUser(
           page,
-          'sub-lifecycle-marketplace-monthly',
-          'Marketplace',
-          'monthly'
+          'sub-lifecycle-marketplace-monthly'
+        );
+
+        const planPage =
+          new PlanSelectionPage(
+            page
+          );
+
+        await planPage.selectMonthlyBilling();
+
+        const marketplaceOffered =
+          await planPage.isPlanOffered(
+            'Marketplace'
+          );
+
+        if (
+          marketplaceOffered
+        ) {
+          await purchasePaidPlanForDisposableUser(
+            page,
+            'sub-lifecycle-marketplace-monthly',
+            'Marketplace',
+            'monthly'
+          );
+
+          return;
+        }
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^enterprise$/i
+            }
+          )
+        ).toBeVisible();
+
+        await expect(
+          page.getByRole(
+            'link',
+            {
+              name: /contact sales/i
+            }
+          ).or(
+            page.getByRole(
+              'button',
+              {
+                name: /contact sales/i
+              }
+            )
+          ).first()
+        ).toBeVisible();
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /checkout\.stripe\.com/
         );
       }
     );
@@ -1907,7 +1974,16 @@ test.describe(
           }
         );
 
+        let selfServeLadderEnded =
+          false;
+
         for (let index = 1; index < PAID_PLAN_LADDER.length; index += 1) {
+          if (
+            selfServeLadderEnded
+          ) {
+            break;
+          }
+
           const fromPlan =
             PAID_PLAN_LADDER[index - 1];
           const toPlan =
@@ -1924,10 +2000,19 @@ test.describe(
                   'upgrade'
                 );
 
-              expect(
-                upgraded,
-                `Expected an upgrade from ${fromPlan} to ${toPlan}.`
-              ).toBeTruthy();
+              if (
+                !upgraded
+              ) {
+                expect(
+                  toPlan,
+                  `Expected an upgrade from ${fromPlan} to ${toPlan}.`
+                ).toBe(
+                  'Marketplace'
+                );
+
+                selfServeLadderEnded =
+                  true;
+              }
             }
           );
         }

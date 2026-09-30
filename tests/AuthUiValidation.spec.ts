@@ -49,6 +49,13 @@ function authRegistrationLink(
         name: /sign up|create account|start\s+30[-\s]?day\s+free\s+trial/i
       }
     )
+  ).or(
+    page.getByRole(
+      'button',
+      {
+        name: /sign up|create account|start\s+30[-\s]?day\s+free\s+trial/i
+      }
+    )
   ).first();
 }
 
@@ -66,14 +73,21 @@ async function expectRegistrationOpened(
           return true;
         }
 
-        return page.locator(
-          'input[name="firstName"]'
-        ).first().isVisible().catch(
+        const firstName =
+          page.locator(
+            'input[name="firstName"]'
+          ).or(
+            page.getByLabel(
+              /first name/i
+            )
+          ).first();
+
+        return firstName.isVisible().catch(
           () => false
         );
       },
       {
-        timeout: 30000
+        timeout: 60000
       }
     )
     .toBeTruthy();
@@ -605,6 +619,9 @@ test.describe(
     test(
       'Login screen navigates to create account',
       async ({ page }) => {
+        test.setTimeout(
+          120000
+        );
 
         await page.goto(
           `${BASE_URL}/login`,
@@ -617,6 +634,16 @@ test.describe(
           page
         );
 
+        const popupPromise =
+          page.context().waitForEvent(
+            'page',
+            {
+              timeout: 4000
+            }
+          ).catch(
+            () => null
+          );
+
         await safeClick(
           authRegistrationLink(
             page
@@ -624,8 +651,11 @@ test.describe(
           'Open registration from login'
         );
 
+        const popup =
+          await popupPromise;
+
         await expectRegistrationOpened(
-          page
+          popup ?? page
         );
       }
     );

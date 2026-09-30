@@ -1306,6 +1306,24 @@ export async function executeStripeMatrixScenario(
   );
 
   if (
+    scenario.status ===
+    'known-bug'
+  ) {
+    const bug =
+      scenario.dependency ??
+      'Known product bug';
+
+    test.fail(
+      true,
+      bug
+    );
+
+    throw new Error(
+      bug
+    );
+  }
+
+  if (
     scenario.status !==
     'automated'
   ) {

@@ -60,9 +60,16 @@ export class ForgotPasswordPage
       );
 
     this.emailInput =
-      page.locator(
-        'input[type="email"]'
-      );
+      page.getByRole(
+        'textbox',
+        {
+          name: /^email$/i
+        }
+      ).or(
+        page.locator(
+          'input[type="email"]'
+        )
+      ).first();
 
     this.sendResetButton =
       page.getByRole(
@@ -198,12 +205,55 @@ export class ForgotPasswordPage
       `Requesting Password Reset: ${email}`
     );
 
-    await this.emailInput.fill(
-      email
-    );
+    const emailField =
+      this.page.getByRole(
+        'textbox',
+        {
+          name: /^email$/i
+        }
+      );
 
-    await safeClick(
-      this.sendResetButton,
+    await this.dismissMarketingOverlays();
+
+    for (
+      let attempt = 1;
+      attempt <= 2;
+      attempt += 1
+    ) {
+      await emailField.click();
+
+      await emailField.fill(
+        email
+      );
+
+      await expect(
+        emailField
+      ).toHaveValue(
+        email
+      );
+
+      await this.sendResetButton.click();
+
+      const sent =
+        await this.page.getByText(
+          /check your (email|inbox)|reset link sent|we sent|email sent/i
+        ).first().waitFor({
+          state: 'visible',
+          timeout: 8000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (
+        sent
+      ) {
+        return;
+      }
+    }
+
+    Logger.info(
       'Send Reset Link'
     );
   }
@@ -218,10 +268,10 @@ export class ForgotPasswordPage
 
     await expect(
       this.page.getByText(
-        /check your email/i
-      )
+        /check your (email|inbox)|reset link sent|we sent|email sent/i
+      ).first()
     ).toBeVisible({
-      timeout: 10000
+      timeout: 15000
     });
 
     await expect(

@@ -43,10 +43,8 @@ $flags = @(
   'SUB_LIFECYCLE_UPGRADE_PREVIEW_ENABLED',
   'SUB_LIFECYCLE_DOWNGRADE_PREVIEW_ENABLED',
   'SUB_LIFECYCLE_INTERVAL_PREVIEW_ENABLED',
-  'SUB_LIFECYCLE_PLAN_LADDER_ENABLED'
-)
-
-$duplicateLifecycleFlags = @(
+  'SUB_LIFECYCLE_PLAN_LADDER_ENABLED',
+  'SUB_LIFECYCLE_FREE_LADDER_ENABLED',
   'SUB_LIFECYCLE_TRIAL_WITHOUT_CARD_ENABLED',
   'SUB_LIFECYCLE_TRIAL_WITH_CARD_ENABLED',
   'SUB_LIFECYCLE_INCOME_MONTHLY_ENABLED',
@@ -55,15 +53,16 @@ $duplicateLifecycleFlags = @(
   'SUB_LIFECYCLE_PORTFOLIO_MONTHLY_ENABLED',
   'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
   'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED',
-  'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED'
+  'SUB_LIFECYCLE_UPGRADE_SUBMIT_ENABLED',
+  'SUB_LIFECYCLE_MONTHLY_CANCEL_SUBMIT_ENABLED',
+  'SUB_LIFECYCLE_YEARLY_CANCEL_EXPIRY_SUBMIT_ENABLED',
+  'SUB_LIFECYCLE_YEARLY_REFUND_SUBMIT_ENABLED',
+  'SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED',
+  'SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED'
 )
 
 foreach ($flag in $flags) {
   Set-Item -Path "Env:$flag" -Value 'true'
-}
-
-foreach ($flag in $duplicateLifecycleFlags) {
-  Set-Item -Path "Env:$flag" -Value 'false'
 }
 
 if (-not $env:SLOW_MO) {
@@ -81,7 +80,7 @@ if ($watch) {
 $env:AIR_REPORT_SCOPE = 'latest'
 $env:AIR_RESTORE_HISTORY = 'true'
 
-Write-Host 'Complete suite: user-journey file order, full speed, duplicate paid-user flows off, then AIR.' -ForegroundColor Cyan
+Write-Host 'Complete suite: user-journey file order, full speed, paid lifecycle flags on, then AIR.' -ForegroundColor Cyan
 node -e "require('./scripts/execution-order').assertAllSpecsAreListed(); require('./scripts/execution-order').printOrder()"
 if ($watch) {
   Write-Host 'WATCH=true: headed browser. Set SLOW_MO=500 to slow clicks.' -ForegroundColor Cyan

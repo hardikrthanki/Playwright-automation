@@ -230,5 +230,212 @@ test.describe(
         await opportunities.validateResearchAndWatchToggle();
       }
     );
+
+    test(
+      'Opportunity filters return to all strategies and all sources',
+      async ({ page }) => {
+        const dashboard =
+          new DashboardPage(
+            page
+          );
+
+        const opportunities =
+          new OpportunitiesPage(
+            page
+          );
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await dashboard.validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^opportunities$/i
+            }
+          ).first(),
+          'Open Opportunities'
+        );
+
+        await opportunities.validateLoaded();
+
+        await opportunities.selectFilter(
+          /all strategies|covered call|cash secured put/i,
+          /^covered call$/i
+        );
+
+        await opportunities.selectFilter(
+          /source:\s*all|portfolio|watchlist/i,
+          /^portfolio$/i
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /reset filters/i
+            }
+          ),
+          'Reset filters'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).filter({
+            hasText: /all strategies/i
+          })
+        ).toBeVisible();
+
+        await expect(
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).filter({
+            hasText: /source:\s*all/i
+          })
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'About opportunities opens and closes',
+      async ({ page }) => {
+        const dashboard =
+          new DashboardPage(
+            page
+          );
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await dashboard.validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^opportunities$/i
+            }
+          ).first(),
+          'Open Opportunities'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /about opportunities/i
+            }
+          ),
+          'About opportunities'
+        );
+
+        await expect(
+          page.getByRole(
+            'dialog'
+          ).or(
+            page.locator(
+              'main'
+            )
+          ).first()
+        ).toContainText(
+          /opportunit/i
+        );
+
+        await page.keyboard.press(
+          'Escape'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/opportunities/
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^opportunities$/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'About CTA data freshness opens and closes',
+      async ({ page }) => {
+        const dashboard =
+          new DashboardPage(
+            page
+          );
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await dashboard.validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^opportunities$/i
+            }
+          ).first(),
+          'Open Opportunities'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /about cta data freshness/i
+            }
+          ),
+          'About CTA data freshness'
+        );
+
+        await expect(
+          page.getByRole(
+            'dialog'
+          ).or(
+            page.locator(
+              'main'
+            )
+          ).first()
+        ).toContainText(
+          /fresh|delayed|data as of|cta/i
+        );
+
+        await page.keyboard.press(
+          'Escape'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/opportunities/
+        );
+      }
+    );
   }
 );

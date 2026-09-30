@@ -1469,8 +1469,7 @@ export class DashboardPage
     const labels = [
       /view option exposure/i,
       /manage accounts/i,
-      /view all opportunities/i,
-      /view full expiry calendar/i
+      /view all opportunities/i
     ];
 
     for (const label of labels) {

@@ -90,7 +90,7 @@ function decodeMime(rawEmail: string) {
   return `${quoted}\n${withBase64}`;
 }
 
-function extractVerificationLink(rawEmail: string) {
+function extractAppLinks(rawEmail: string) {
   const decoded = decodeMime(rawEmail)
     .replace(/&amp;/gi, '&')
     .replace(/&#x3d;|=3D/gi, '=');
@@ -104,7 +104,7 @@ function extractVerificationLink(rawEmail: string) {
     new RegExp(`${escapedBase}/[^\\s"'<>\\\\]+`, 'ig'),
     /https?:\/\/(?:www\.)?ooltool\.com\/[^\s"'<>\\]+/ig,
     /https?:\/\/[^\s"'<>\\]*uat\.ooltool\.com\/[^\s"'<>\\]*/ig,
-    /https?:\/\/[^\s"'<>\\]*(?:verify-email|email-verif|confirm-email|\/verify)[^\s"'<>\\]*/ig
+    /https?:\/\/[^\s"'<>\\]*(?:verify-email|email-verif|confirm-email|\/verify|reset-password|type=recovery)[^\s"'<>\\]*/ig
   ];
 
   const links: string[] = [];
@@ -114,7 +114,7 @@ function extractVerificationLink(rawEmail: string) {
     links.push(...matches);
   }
 
-  const unique = [
+  return [
     ...new Set(
       links.map((link) =>
         link
@@ -123,12 +123,23 @@ function extractVerificationLink(rawEmail: string) {
       )
     )
   ];
+}
+
+function extractVerificationLink(rawEmail: string) {
+  const unique = extractAppLinks(rawEmail);
 
   const preferred = unique.find((link) =>
     /verify|confirm|token/i.test(link)
   );
 
   return preferred ?? unique[0];
+}
+
+function extractPasswordResetLink(rawEmail: string) {
+  return extractAppLinks(rawEmail).find((link) =>
+    /reset-password|type=recovery/i.test(link) &&
+    !/verify-email|confirm-email/i.test(link)
+  );
 }
 
 function quoteImap(value: string) {
@@ -306,23 +317,30 @@ async function searchMailbox(
 
 async function fetchLink(
   send: (command: string) => Promise<string>,
-  uid: string
+  uid: string,
+  kind: 'verification' | 'reset'
 ) {
   const body = await send(`UID FETCH ${uid} BODY.PEEK[]`);
-  return extractVerificationLink(body);
+
+  return kind === 'reset'
+    ? extractPasswordResetLink(body)
+    : extractVerificationLink(body);
 }
 
-async function imapRequest(email: string) {
+async function imapRequest(
+  email: string,
+  kind: 'verification' | 'reset' = 'verification'
+) {
   return imapSession(async (send) => {
     for (const mailbox of MAILBOXES) {
       const uids = await searchMailbox(send, mailbox, email);
 
       for (const uid of uids) {
-        const link = await fetchLink(send, uid);
+        const link = await fetchLink(send, uid, kind);
 
         if (link) {
           console.log(
-            `Found verification link in Gmail ${mailbox} UID ${uid}`
+            `Found ${kind} link in Gmail ${mailbox} UID ${uid}`
           );
           return link;
         }
@@ -330,7 +348,7 @@ async function imapRequest(email: string) {
     }
 
     throw new Error(
-      `No Gmail verification message found for ${email}`
+      `No Gmail ${kind} message found for ${email}`
     );
   });
 }
@@ -347,7 +365,7 @@ export async function waitForGmailVerificationLink(
     attempt += 1;
 
     try {
-      return await imapRequest(email);
+      return await imapRequest(email, 'verification');
     } catch (error) {
       lastError = error instanceof Error
         ? error
@@ -373,5 +391,46 @@ export async function waitForGmailVerificationLink(
 
   throw lastError ?? new Error(
     `Timed out waiting for Gmail verification mail to ${email}`
+  );
+}
+
+export async function waitForGmailPasswordResetLink(
+  email: string,
+  timeoutMs = envTimeoutMs()
+) {
+  const startedAt = Date.now();
+  let lastError: Error | undefined;
+  let attempt = 0;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    attempt += 1;
+
+    try {
+      return await imapRequest(email, 'reset');
+    } catch (error) {
+      lastError = error instanceof Error
+        ? error
+        : new Error(String(error));
+
+      const remainingMs = timeoutMs - (Date.now() - startedAt);
+
+      if (attempt === 1 || attempt % 3 === 0) {
+        console.log(
+          `Gmail reset attempt ${attempt} for ${email}: ${lastError.message.split('\n')[0]}`
+        );
+      }
+
+      if (remainingMs <= 0) {
+        break;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.min(2000, remainingMs))
+      );
+    }
+  }
+
+  throw lastError ?? new Error(
+    `Timed out waiting for the password reset mail to ${email}`
   );
 }

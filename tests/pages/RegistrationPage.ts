@@ -383,25 +383,49 @@ extends BasePage {
     }
   }
 
-  private async ensureMobileVerified() {
-    const verified =
-      this.page.getByText(
-        /\bverified\b/i
-      ).first();
+  private async mobileVerificationSettled() {
+    const verifyVisible =
+      await this.verifyOtpButton.isVisible().catch(
+        () => false
+      );
 
-    const seen =
-      await verified.waitFor({
-        state: 'visible',
-        timeout: 20000
-      }).then(
+    if (verifyVisible) {
+      return false;
+    }
+
+    const verifiedText =
+      await this.page.getByText(
+        /\bverified\b/i
+      ).filter({
+        hasNotText:
+          /\bnot verified\b|\bunverified\b/i
+      }).first().isVisible().catch(
+        () => false
+      );
+
+    if (verifiedText) {
+      return true;
+    }
+
+    return !(
+      await this.otpFieldIsVisible()
+    );
+  }
+
+  private async ensureMobileVerified() {
+    const settled =
+      await expect.poll(
+        async () => this.mobileVerificationSettled(),
+        {
+          timeout: 20000
+        }
+      ).toBeTruthy().then(
         () => true
       ).catch(
         () => false
       );
 
-    if (
-      seen
-    ) {
+    if (settled) {
       return;
     }
 
@@ -422,11 +446,12 @@ extends BasePage {
 
     await this.clickVerifyWhenReady();
 
-    await expect(
-      verified
-    ).toBeVisible({
-      timeout: 20000
-    });
+    await expect.poll(
+      async () => this.mobileVerificationSettled(),
+      {
+        timeout: 20000
+      }
+    ).toBeTruthy();
   }
 
   private async otpFieldIsVisible() {
@@ -599,6 +624,21 @@ extends BasePage {
     );
 
     await this.confirmPasswordInput.blur();
+
+    const passwordFields =
+      this.page.locator(
+        'input[type="password"]'
+      );
+
+    if (
+      await passwordFields.count() >= 2
+    ) {
+      await passwordFields.nth(
+        1
+      ).fill(
+        TEST_USERS.onboarding.password
+      );
+    }
   }
 
   private async acceptVisibleRegistrationConsents() {

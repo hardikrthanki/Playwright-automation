@@ -341,5 +341,193 @@ test.describe(
         );
       }
     );
+
+    test(
+      'Connect broker keeps an empty form from submitting',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^portfolio$/i
+            }
+          ).first(),
+          'Portfolio menu'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /^accounts$/i
+            }
+          ),
+          'Accounts'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /connect broker/i
+            }
+          ).or(
+            page.getByRole(
+              'link',
+              {
+                name: /connect broker/i
+              }
+            )
+          ).first(),
+          'Connect broker'
+        );
+
+        const surface =
+          page.locator(
+            'main, [role="dialog"]'
+          ).first();
+
+        await expect(
+          surface
+        ).toContainText(
+          /broker|institution|account/i,
+          {
+            timeout: 15000
+          }
+        );
+
+        const submit =
+          surface.getByRole(
+            'button',
+            {
+              name: /^(connect|continue|submit|link account)$/i
+            }
+          );
+
+        if (
+          await submit.count()
+        ) {
+          await expect(
+            submit.first()
+          ).toBeDisabled();
+        }
+
+        const cancel =
+          surface.getByRole(
+            'button',
+            {
+              name: /cancel|close/i
+            }
+          ).first();
+
+        if (
+          await cancel.isVisible().catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            cancel,
+            'Cancel connect broker'
+          );
+        } else {
+          await page.keyboard.press(
+            'Escape'
+          );
+        }
+
+        await expect(
+          page
+        ).not.toHaveURL(
+          /stripe|plaid|broker-connected/i
+        );
+      }
+    );
+
+    test(
+      'Bulk upload rejects a file that is not a spreadsheet',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.locator(
+            'header button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
+          ).first(),
+          'Open plus menu'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /bulk upload/i
+            }
+          ),
+          'Bulk Upload'
+        );
+
+        const upload =
+          page.getByRole(
+            'dialog'
+          );
+
+        await expect(
+          upload
+        ).toBeVisible({
+          timeout: 10000
+        });
+
+        const file =
+          upload.locator(
+            'input[type="file"]'
+          );
+
+        await file.setInputFiles({
+          name: 'not-a-sheet.txt',
+          mimeType: 'text/plain',
+          buffer: Buffer.from(
+            'this is not a spreadsheet'
+          )
+        });
+
+        const importButton =
+          upload.getByRole(
+            'button',
+            {
+              name: /import|upload|continue/i
+            }
+          ).first();
+
+        const rejected =
+          await upload.getByText(
+            /csv|xlsx|spreadsheet|invalid|unsupported|not allowed/i
+          ).first().waitFor({
+            state: 'visible',
+            timeout: 5000
+          }).then(
+            () => true
+          ).catch(
+            () => false
+          );
+
+        if (
+          !rejected &&
+          await importButton.count()
+        ) {
+          await expect(
+            importButton
+          ).toBeDisabled();
+        }
+
+        await page.keyboard.press(
+          'Escape'
+        );
+      }
+    );
   }
 );

@@ -40,17 +40,45 @@ export function isEmailVerificationPage(
 export async function openFreshLoginPage(
   page: Page
 ) {
-  await page.goto(
-    `${BASE_URL}${URLS.LOGIN}`,
-    {
-      waitUntil: 'commit',
-      timeout: 60000
-    }
-  );
+  const emailField =
+    page.getByRole(
+      'textbox',
+      {
+        name: /^email$/i
+      }
+    ).or(
+      page.locator(
+        'input[type="email"], input[name="email"]'
+      )
+    ).first();
 
-  await page.locator(
-    'input[type="email"], input[name="email"]'
-  ).first().waitFor({
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    await page.goto(
+      `${BASE_URL}${URLS.LOGIN}`,
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000
+      }
+    ).catch(
+      () => undefined
+    );
+
+    const ready =
+      await emailField.waitFor({
+        state: 'visible',
+        timeout: 30000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (ready) {
+      return;
+    }
+  }
+
+  await emailField.waitFor({
     state: 'visible',
     timeout: 30000
   });

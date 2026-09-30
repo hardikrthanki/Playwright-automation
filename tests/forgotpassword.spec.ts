@@ -1,4 +1,5 @@
 import {
+  expect,
   Page,
   test
 } from '@playwright/test';
@@ -15,9 +16,31 @@ import { LoginPage }
 import { DashboardPage }
   from './pages/DashboardPage';
 
+import { RegistrationPage }
+  from './pages/RegistrationPage';
+
 import {
+  BASE_URL,
   TEST_USERS
 } from './config/testData';
+
+import {
+  URLS
+} from './config/constants';
+
+import {
+  generateEmail,
+  generateMobileNumber
+} from './utils/emailGenerator';
+
+import {
+  waitForManualEmailVerification
+} from './helpers/emailVerification';
+
+import {
+  isGmailAutomationEnabled,
+  waitForGmailPasswordResetLink
+} from './helpers/gmailImap';
 
 /* =============================================================================
 TEST SUITE: Forgot Password
@@ -188,3 +211,227 @@ if (
     }
   );
 }
+
+test(
+  'Disposable user resets password from the email link and signs in with the new password',
+  async ({
+    page,
+    browser
+  }) => {
+    test.setTimeout(
+      8 * 60 * 1000
+    );
+
+    test.skip(
+      !isGmailAutomationEnabled(),
+      'Password reset needs GMAIL_APP_PASSWORD so the reset link can be read from Gmail.'
+    );
+
+    const email =
+      generateEmail(
+        'forgot-reset-flow'
+      );
+    const mobileNumber =
+      generateMobileNumber();
+    const originalPassword =
+      TEST_USERS.onboarding.password;
+    const newPassword =
+      'ResetFlow#26aA';
+
+    console.log(
+      'Forgot-password flow email:',
+      email
+    );
+
+    await test.step(
+      'Create a disposable account and verify its email',
+      async () => {
+        await new RegistrationPage(
+          page
+        ).open();
+
+        await new RegistrationPage(
+          page
+        ).register(
+          email,
+          mobileNumber
+        );
+
+        await waitForManualEmailVerification(
+          page,
+          email
+        );
+      }
+    );
+
+    await test.step(
+      'Send the forgot-password link',
+      async () => {
+        const forgotPassword =
+          new ForgotPasswordPage(
+            page
+          );
+
+        await forgotPassword.openDirect();
+
+        await forgotPassword.requestReset(
+          email
+        );
+
+        await forgotPassword.validateEmailSent(
+          email
+        );
+      }
+    );
+
+    await test.step(
+      'Open the reset link and set a new password',
+      async () => {
+        const resetLink =
+          await waitForGmailPasswordResetLink(
+            email
+          );
+
+        await page.goto(
+          resetLink,
+          {
+            waitUntil: 'domcontentloaded',
+            timeout: 60000
+          }
+        );
+
+        const resetPassword =
+          new ResetPasswordPage(
+            page
+          );
+
+        await resetPassword.fillPassword(
+          newPassword
+        );
+
+        await resetPassword.updatePassword();
+
+        await resetPassword.validateSuccess();
+      }
+    );
+
+    const freshContext =
+      await browser.newContext();
+
+    try {
+      const freshPage =
+        await freshContext.newPage();
+
+      await test.step(
+        'A fresh browser has no session',
+        async () => {
+          await freshPage.goto(
+            `${BASE_URL}${URLS.DASHBOARD}`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+
+          await expect(
+            freshPage
+          ).toHaveURL(
+            /\/login/,
+            {
+              timeout: 30000
+            }
+          );
+        }
+      );
+
+      await test.step(
+        'The original password no longer signs in',
+        async () => {
+          await freshPage.locator(
+            'input[type="email"]'
+          ).fill(
+            email
+          );
+
+          await freshPage.locator(
+            'input[type="password"]'
+          ).fill(
+            originalPassword
+          );
+
+          await freshPage.getByRole(
+            'button',
+            {
+              name: /^(sign in|log in)$/i
+            }
+          ).click();
+
+          await expect(
+            freshPage
+          ).not.toHaveURL(
+            /\/dashboard/,
+            {
+              timeout: 15000
+            }
+          );
+
+          await expect(
+            freshPage.getByText(
+              /invalid|incorrect|wrong|does not match|failed|try again/i
+            ).first()
+          ).toBeVisible({
+            timeout: 15000
+          });
+        }
+      );
+
+      await test.step(
+        'The new password signs in and opens billing',
+        async () => {
+          await new LoginPage(
+            freshPage
+          ).login(
+            email,
+            newPassword
+          );
+
+          await expect(
+            freshPage
+          ).toHaveURL(
+            /\/(dashboard|onboarding)/,
+            {
+              timeout: 30000
+            }
+          );
+
+          if (
+            /\/dashboard/.test(
+              freshPage.url()
+            )
+          ) {
+            await new DashboardPage(
+              freshPage
+            ).validateLoaded();
+
+            await freshPage.goto(
+              `${BASE_URL}${URLS.BILLING}`,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+
+            await expect(
+              freshPage
+            ).toHaveURL(
+              /\/(billing|onboarding)/,
+              {
+                timeout: 30000
+              }
+            );
+          }
+        }
+      );
+    } finally {
+      await freshContext.close();
+    }
+  }
+);

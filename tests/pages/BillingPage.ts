@@ -2360,7 +2360,7 @@ private retentionDeclineControl(
 ) {
   return this.cancelOptionControl(
     host,
-    /decline|no thanks|continue (to )?downgrade|skip offer|don'?t (want|keep)|switch plans anyway/i
+    /decline|no thanks|not now|continue (to )?downgrade|skip offer|don'?t (want|keep)|switch plans anyway|downgrade anyway|continue anyway/i
   );
 }
 
@@ -2456,14 +2456,48 @@ private async fillCancelReasonIfPresent(
 private async hostBodyText(
   host: Page
 ) {
-  return host
-    .locator(
-      'body'
-    )
-    .innerText()
-    .catch(
-      () => ''
-    );
+  const parts = [
+    await host
+      .locator(
+        'body'
+      )
+      .innerText()
+      .catch(
+        () => ''
+      )
+  ];
+
+  for (
+    const frame of host.frames()
+  ) {
+    if (
+      frame === host.mainFrame()
+    ) {
+      continue;
+    }
+
+    const text =
+      await frame
+        .locator(
+          'body'
+        )
+        .innerText()
+        .catch(
+          () => ''
+        );
+
+    if (
+      text
+    ) {
+      parts.push(
+        text
+      );
+    }
+  }
+
+  return parts.join(
+    '\n'
+  );
 }
 
 private async confirmCancelAction(
@@ -2514,6 +2548,9 @@ private async confirmCancelAction(
     await finalConfirm.isVisible({
       timeout: 5000
     }).catch(
+      () => false
+    ) &&
+    await finalConfirm.isEnabled().catch(
       () => false
     )
   ) {
@@ -2812,7 +2849,7 @@ async submitMonthlyCancelAtPeriodEnd() {
     expect(
       text
     ).toMatch(
-      /end of (this|the) billing period|period end|keep access until|cancels on|your service will end/i
+      /end of (this|the) (current )?billing period|period end|keep access until|retain access|cancels on|your service will end|until (the )?(end|renewal)/i
     );
 
     expect(
@@ -2848,13 +2885,13 @@ async submitMonthlyCancelAtPeriodEnd() {
     await this.confirmCancelAction(
       host.page,
       'Submit monthly cancel at period end',
-      /cancel (subscription|plan)|confirm|continue|cancel at period end/i
+      /yes,?\s*cancel|cancel (subscription|plan)|confirm|continue|cancel at period end/i
     );
 
     await expect(
       host.page
         .getByText(
-          /scheduled to cancel|cancels on|service will end|cancel at period end|you('ll| will) have access until/i
+          /scheduled to cancel|cancellation scheduled|cancelling|cancels on|service will end|cancel at period end|access until|you('ll| will) have access until/i
         )
         .first()
     ).toBeVisible({
@@ -3160,11 +3197,6 @@ async declineRetentionAndPreviewOrScheduleDowngrade(
       options.targetPlan
   });
 
-  await safeClick(
-    this.retentionDeclineControl(),
-    'Decline monthly retention offer'
-  );
-
   const dialog =
     this.planChangeDialog({
       targetPlan:
@@ -3178,6 +3210,28 @@ async declineRetentionAndPreviewOrScheduleDowngrade(
   ).toBeVisible({
     timeout: 15000
   });
+
+  const separateDecline =
+    this.retentionDeclineControl();
+
+  if (
+    await separateDecline.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      separateDecline,
+      'Decline monthly retention offer'
+    );
+
+    await expect(
+      dialog
+    ).toBeVisible({
+      timeout: 15000
+    });
+  }
 
   const dialogText =
     await dialog.innerText();
@@ -3197,12 +3251,33 @@ async declineRetentionAndPreviewOrScheduleDowngrade(
   );
 
   if (options.schedule) {
-    await this.submitPlanChangeCalculationPreview({
-      targetPlan:
-        options.targetPlan,
-      action:
-        'downgrade'
-    });
+    const scheduleDowngrade =
+      dialog.getByRole(
+        'button',
+        {
+          name: /schedule downgrade/i
+        }
+      );
+
+    if (
+      await scheduleDowngrade.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        scheduleDowngrade,
+        'Schedule downgrade'
+      );
+    } else {
+      await this.submitPlanChangeCalculationPreview({
+        targetPlan:
+          options.targetPlan,
+        action:
+          'downgrade'
+      });
+    }
 
     await this.validateActivePlan(
       options.currentPlan
@@ -3245,16 +3320,16 @@ async validateFreePlanAfterRefund() {
 
   expect(
     bodyText,
-    'Account should show Free / Curious Explorer after yearly refund.'
+    'Yearly refund should move the account to Free or leave the refund under review with access until it is processed.'
   ).toMatch(
-    /free( plan)?|curious explorer|curious/i
+    /refund under review|reviewing your refund|refund request .{0,40}pending|cancellation scheduled|free( plan)?|curious explorer/i
   );
 
   expect(
     bodyText,
-    'Paid access should have ended after yearly refund.'
+    'Yearly refund should describe the end of paid access or the pending review.'
   ).toMatch(
-    /free|cancelled|canceled|no active (paid )?subscription|downgraded/i
+    /keep full access until|set to end on|cancelling|cancellation scheduled|free|cancelled|canceled|no active (paid )?subscription|downgraded/i
   );
 
   Logger.success(

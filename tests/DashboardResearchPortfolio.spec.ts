@@ -126,14 +126,36 @@ test.describe(
             page
           );
 
-        await safeClick(
+        const calendarLink =
           page.getByRole(
             'link',
             {
               name: /view full expiry calendar/i
             }
-          ).first(),
-          'View full expiry calendar'
+          ).first();
+
+        const calendarShown =
+          await calendarLink.waitFor({
+            state: 'visible',
+            timeout: 5000
+          }).then(
+            () => true
+          ).catch(
+            () => false
+          );
+
+        await safeClick(
+          calendarShown
+            ? calendarLink
+            : page.getByRole(
+                'link',
+                {
+                  name: /view option exposure/i
+                }
+              ).first(),
+          calendarShown
+            ? 'View full expiry calendar'
+            : 'View option exposure'
         );
 
         await research.validateLoaded();

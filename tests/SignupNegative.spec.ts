@@ -589,7 +589,7 @@ test.describe(
         'Signup OTP input trims pasted value to six digits',
         async ({ page }) => {
 
-        test.skip(
+        test.fail(
           true,
           'Known defect: signup OTP input currently allows pasted values longer than six digits.'
         );

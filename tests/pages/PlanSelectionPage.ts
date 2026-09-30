@@ -82,13 +82,17 @@ export class PlanSelectionPage extends BasePage {
               planName
             )
               ? /portfolio hedger/i
-              : new RegExp(
-                planName.replace(
-                  /[.*+?^${}()|[\]\\]/g,
-                  '\\$&'
-                ),
-                'i'
-              );
+              : /marketplace/i.test(
+                planName
+              )
+                ? /market\s*place/i
+                : new RegExp(
+                  planName.replace(
+                    /[.*+?^${}()|[\]\\]/g,
+                    '\\$&'
+                  ),
+                  'i'
+                );
 
     return this.page
       .getByText(

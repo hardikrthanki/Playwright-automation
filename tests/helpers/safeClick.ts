@@ -30,10 +30,23 @@ export async function safeClick(
     page
   );
 
-  await locator.waitFor({
-    state: 'visible',
-    timeout: 15000,
-  });
+  try {
+    await locator.waitFor({
+      state: 'visible',
+      timeout: 15000,
+    });
+  } catch {
+    // A survey or cookie layer often appears a moment after the first
+    // dismiss during a long run. Clear it and wait for the target again.
+    await dismissOverlays(
+      page
+    );
+
+    await locator.waitFor({
+      state: 'visible',
+      timeout: 15000,
+    });
+  }
 
   await locator.scrollIntoViewIfNeeded({
     timeout: 5000,

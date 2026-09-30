@@ -42,6 +42,80 @@ async function openAcademy(
   throw lastError;
 }
 
+async function markLessonIfNeeded(
+  page: Page,
+  label: string
+) {
+  const mark =
+    page.locator(
+      'main'
+    ).getByRole(
+      'button',
+      {
+        name: /^mark as complete$/i
+      }
+    );
+
+  const done =
+    page.locator(
+      'main'
+    ).getByRole(
+      'button',
+      {
+        name: /marked complete|undo/i
+      }
+    );
+
+  if (
+    !await mark.waitFor({
+      state: 'visible',
+      timeout: 5000
+    }).then(
+      () => true
+    ).catch(
+      () => false
+    )
+  ) {
+    await expect(
+      done
+    ).toBeVisible();
+
+    return false;
+  }
+
+  await safeClick(
+    mark,
+    label
+  );
+
+  const saved =
+    await done.waitFor({
+      state: 'visible',
+      timeout: 15000
+    }).then(
+      () => true
+    ).catch(
+      () => false
+    );
+
+  if (
+    !saved
+  ) {
+    await safeClick(
+      mark,
+      `${label} again`
+    );
+
+    await expect(
+      done
+    ).toBeVisible({
+      timeout: 20000
+    });
+  }
+
+  return true;
+}
+
 async function chooseOption(
   page: Page,
   comboIndex: number,
@@ -240,56 +314,11 @@ test.describe(
           /covered call requires owning at least 100 shares/i
         );
 
-        const mark =
-          page.getByRole(
-            'button',
-            {
-              name: /mark as complete/i
-            }
-          );
-
-        const alreadyDone =
-          page.getByRole(
-            'button',
-            {
-              name: /marked complete|completed|undo/i
-            }
-          );
-
-        let markedNow = false;
-
-        if (
-          await mark.waitFor({
-            state: 'visible',
-            timeout: 5000
-          }).then(
-            () => true
-          ).catch(
-            () => false
-          )
-        ) {
-          await safeClick(
-            mark,
+        const markedNow =
+          await markLessonIfNeeded(
+            page,
             'Mark as complete'
           );
-
-          markedNow = true;
-
-          await expect(
-            page.getByRole(
-              'button',
-              {
-                name: /marked complete/i
-              }
-            )
-          ).toBeVisible({
-            timeout: 15000
-          });
-        } else {
-          await expect(
-            alreadyDone
-          ).toBeVisible();
-        }
 
         await openAcademy(
           page
@@ -583,53 +612,11 @@ test.describe(
           /call option|put option|strike/i
         );
 
-        const mark =
-          page.getByRole(
-            'button',
-            {
-              name: /mark as complete/i
-            }
-          );
-
-        let markedNow = false;
-
-        if (
-          await mark.waitFor({
-            state: 'visible',
-            timeout: 4000
-          }).then(
-            () => true
-          ).catch(
-            () => false
-          )
-        ) {
-          await safeClick(
-            mark,
+        const markedNow =
+          await markLessonIfNeeded(
+            page,
             'Mark beginner lesson complete'
           );
-
-          markedNow = true;
-
-          await expect(
-            page.getByRole(
-              'button',
-              {
-                name: /marked complete/i
-              }
-            )
-          ).toBeVisible({
-            timeout: 15000
-          });
-        } else {
-          await expect(
-            page.getByRole(
-              'button',
-              {
-                name: /marked complete|undo/i
-              }
-            )
-          ).toBeVisible();
-        }
 
         await openAcademy(
           page,
@@ -771,6 +758,459 @@ test.describe(
         ).toContainText(
           /max gain|premium|strike/i
         );
+      }
+    );
+
+    test(
+      'Academy opens the next lesson without marking it complete',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy/lessons'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /reading an options chain/i
+            }
+          ).first(),
+          'Open next lesson'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /options chain|bid|ask|strike|expiration/i,
+          {
+            timeout: 15000
+          }
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /mark as complete|marked complete|undo/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Beginners lesson opens without marking it complete',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy/beginners'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /why might investors use options/i
+            }
+          ).first(),
+          'Open unmarked beginner lesson'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/beginners/
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /investor|option|hedge|income/i
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /^mark as complete$/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Strategy library opens Protective Put and returns',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^strategy library$/i
+            }
+          ).first(),
+          'Strategy library'
+        );
+
+        await safeClick(
+          page.locator(
+            'main'
+          ).getByRole(
+            'button',
+            {
+              name: /^protection\b/i
+            }
+          ),
+          'Protection strategies'
+        );
+
+        const strategy =
+          page.locator(
+            'main a'
+          ).filter({
+            hasText: /explore scenario/i
+          }).first();
+
+        await strategy.scrollIntoViewIfNeeded();
+
+        await safeClick(
+          strategy,
+          'Open Protective Put'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/strategies\//
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /put|downside|protection|premium/i
+        );
+
+        await page.goBack({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/strategies/
+        );
+      }
+    );
+
+    test(
+      'Strategy library search finds Collar and clears',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^strategy library$/i
+            }
+          ).first(),
+          'Strategy library'
+        );
+
+        const search =
+          page.getByRole(
+            'textbox',
+            {
+              name: /name or description/i
+            }
+          );
+
+        await search.fill(
+          'collar'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^collar$/i
+            }
+          )
+        ).toBeVisible();
+
+        await search.fill(
+          ''
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^covered call$/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Strategy library clear all restores every strategy',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^strategy library$/i
+            }
+          ).first(),
+          'Strategy library'
+        );
+
+        await safeClick(
+          page.locator(
+            'main'
+          ).getByRole(
+            'button',
+            {
+              name: /^protection\b/i
+            }
+          ),
+          'Protection strategies'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /2 of 18/i
+        );
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^clear all$/i
+            }
+          ),
+          'Clear all strategy filters'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /18 of 18/i
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^covered call$/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Lessons navigation returns without marking the lesson complete',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy/lessons'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /reading an options chain/i
+            }
+          ).first(),
+          'Open lesson'
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /^mark as complete$/i
+            }
+          )
+        ).toBeVisible();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^lessons$/i
+            }
+          ).first(),
+          'Lessons'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/lessons/
+        );
+
+        await expect(
+          page.getByRole(
+            'link',
+            {
+              name: /reading an options chain/i
+            }
+          ).first()
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Strategy library opens Collar and returns',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^strategy library$/i
+            }
+          ).first(),
+          'Strategy library'
+        );
+
+        await page.getByRole(
+          'textbox',
+          {
+            name: /name or description/i
+          }
+        ).fill(
+          'collar'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^collar$/i
+            }
+          )
+        ).toBeVisible();
+
+        await safeClick(
+          page.locator(
+            'main a'
+          ).filter({
+            hasText: /explore scenario/i
+          }).first(),
+          'Open Collar'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/strategies\//
+        );
+
+        await page.goBack({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/strategies/
+        );
+      }
+    );
+
+    test(
+      'Strategy library Volatility shows Long Straddle then All restores Covered Call',
+      async ({ page }) => {
+        await openAcademy(
+          page,
+          '/academy'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^strategy library$/i
+            }
+          ).first(),
+          'Strategy library'
+        );
+
+        await safeClick(
+          page.locator(
+            'main'
+          ).getByRole(
+            'button',
+            {
+              name: /^volatility\b/i
+            }
+          ),
+          'Volatility strategies'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^long straddle$/i
+            }
+          )
+        ).toBeVisible();
+
+        await safeClick(
+          page.locator(
+            'main'
+          ).getByRole(
+            'button',
+            {
+              name: /^all\b/i
+            }
+          ),
+          'All strategies'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^covered call$/i
+            }
+          )
+        ).toBeVisible();
       }
     );
   }

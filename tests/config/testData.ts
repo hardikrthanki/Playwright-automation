@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import './loadLocalEnv';
 
 /* =============================================================================
@@ -649,7 +652,14 @@ export const STRIPE_TRIAL_CARDS = [
   '2223003122003222',
   '5200828282828210',
   '5105105105105100',
-  '4000000000000077'
+  '4000000000000077',
+  '378282246310005',
+  '371449635398431',
+  '6011111111111117',
+  '6011000990139424',
+  '3056930009020004',
+  '3566002020360505',
+  '6200000000000005'
 ];
 
 let stripeTrialCardIndex =
@@ -657,6 +667,80 @@ let stripeTrialCardIndex =
     Math.random() *
       STRIPE_TRIAL_CARDS.length
   );
+
+const usedTrialCards =
+  new Set<string>();
+
+function rememberTrialCard(
+  card: string
+) {
+  usedTrialCards.add(
+    card
+  );
+
+  try {
+    const file = path.join(
+      process.cwd(),
+      'test-results',
+      'used-trial-cards.json'
+    );
+
+    fs.mkdirSync(
+      path.dirname(file),
+      {
+        recursive: true
+      }
+    );
+
+    const previous: string[] = fs.existsSync(file)
+      ? JSON.parse(fs.readFileSync(file, 'utf8'))
+      : [];
+
+    const next = [
+      ...new Set([
+        ...previous,
+        ...usedTrialCards
+      ])
+    ];
+
+    fs.writeFileSync(
+      file,
+      JSON.stringify(next)
+    );
+  } catch {
+    // A missing results folder must not block checkout.
+  }
+}
+
+function trialCardAlreadyUsed(
+  card: string
+) {
+  if (usedTrialCards.has(card)) {
+    return true;
+  }
+
+  try {
+    const file = path.join(
+      process.cwd(),
+      'test-results',
+      'used-trial-cards.json'
+    );
+
+    if (!fs.existsSync(file)) {
+      return false;
+    }
+
+    const previous: string[] = JSON.parse(
+      fs.readFileSync(file, 'utf8')
+    );
+
+    previous.forEach((saved) => usedTrialCards.add(saved));
+
+    return usedTrialCards.has(card);
+  } catch {
+    return false;
+  }
+}
 
 export function uniqueStripeTrialCard(
   _seed?: string
@@ -671,14 +755,32 @@ export function uniqueStripeTrialCard(
     return configuredCard;
   }
 
-  const card =
+  let card =
     STRIPE_TRIAL_CARDS[
       stripeTrialCardIndex %
       STRIPE_TRIAL_CARDS.length
     ];
 
-  stripeTrialCardIndex += 1;
+  for (
+    let step = 0;
+    step < STRIPE_TRIAL_CARDS.length;
+    step += 1
+  ) {
+    stripeTrialCardIndex += 1;
 
+    card =
+      STRIPE_TRIAL_CARDS[
+        (stripeTrialCardIndex - 1) %
+        STRIPE_TRIAL_CARDS.length
+      ];
+
+    if (!trialCardAlreadyUsed(card)) {
+      rememberTrialCard(card);
+      return card;
+    }
+  }
+
+  rememberTrialCard(card);
   return card;
 }
 

@@ -5,8 +5,13 @@ import {
 import { DashboardPage }
   from './pages/DashboardPage';
 
-import { test }
-  from './fixtures/subscriberAuth';
+import {
+  expect,
+  test
+} from './fixtures/subscriberAuth';
+
+import { safeClick }
+  from './helpers/safeClick';
 
 /* =============================================================================
 TEST SUITE: Dashboard Widgets
@@ -116,6 +121,68 @@ test.describe(
             await dashboard.validateDashboardCardLinks();
           }
         );
+      }
+    );
+
+    test(
+      'View all opportunities opens the list and returns',
+      async ({ page }) => {
+        const dashboard =
+          new DashboardPage(
+            page
+          );
+
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        await dashboard.validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /view all opportunities/i
+            }
+          ).first(),
+          'View all opportunities'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/opportunities/
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^opportunities$/i
+            }
+          )
+        ).toBeVisible();
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^dashboard$/i
+            }
+          ).first(),
+          'Dashboard'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/?$/
+        );
+
+        await dashboard.validateLoaded();
       }
     );
   }

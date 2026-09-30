@@ -93,11 +93,12 @@ test.describe(
         );
 
       const searchReady =
-        await search.waitFor({
-          state: 'visible',
-          timeout: 3000
+        await expect(
+          search
+        ).toBeEnabled({
+          timeout: 12000
         }).then(
-          () => search.isEnabled()
+          () => true
         ).catch(
           () => false
         );
@@ -357,6 +358,17 @@ test.describe(
           page,
           'AAPL'
         );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^AAPL$/
+            }
+          )
+        ).toBeVisible({
+          timeout: 30000
+        });
 
         await expect(
           page.getByRole(

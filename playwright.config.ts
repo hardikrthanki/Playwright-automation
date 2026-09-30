@@ -34,6 +34,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
+  // A single check often finishes inside 30s. The same check in the full
+  // suite starts later, when UAT is slower, and the default 30s budget
+  // expires before the screen is ready.
+  timeout: 90000,
 
   reporter: [
     ['dot'],

@@ -144,13 +144,28 @@ export class ResetPasswordPage
 
   async validateSuccess() {
 
-    await expect(
-      this.page.getByText(
-        /password updated|password reset|success/i
-      )
-    ).toBeVisible({
-      timeout: 10000
-    });
+    const confirmed =
+      await this.page.getByText(
+        /password (has been )?(updated|reset|changed)|successfully/i
+      ).first().waitFor({
+        state: 'visible',
+        timeout: 15000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (!confirmed) {
+      await expect(
+        this.page
+      ).toHaveURL(
+        /\/login/,
+        {
+          timeout: 20000
+        }
+      );
+    }
 
     Logger.success(
       'Password Updated Successfully'

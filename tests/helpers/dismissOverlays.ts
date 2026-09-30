@@ -29,7 +29,7 @@ export async function dismissOverlays(
       page.getByRole(
         'button',
         {
-          name: /^(essential only|accept( all)?|allow essential cookies|dismiss announcement)$/i
+          name: /^(essential only|accept( all)?|allow essential cookies|dismiss announcement|maybe later)$/i
         }
       ).or(
         page.getByRole(

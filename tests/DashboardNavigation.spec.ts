@@ -737,5 +737,85 @@ test.describe(
         );
       }
     );
+
+    test(
+      'Dashboard theme stays after refresh and can be restored',
+      async ({ page }) => {
+        await page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateLoaded();
+
+        const html =
+          page.locator(
+            'html'
+          );
+
+        const before =
+          `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`;
+
+        const themeButton =
+          page.locator(
+            'header button:has(svg.lucide-sun), header button:has(svg.lucide-moon)'
+          ).first();
+
+        await safeClick(
+          themeButton,
+          'Toggle theme'
+        );
+
+        await expect
+          .poll(
+            async () =>
+              `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`
+          )
+          .not.toBe(
+            before
+          );
+
+        const changed =
+          `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`;
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect
+          .poll(
+            async () =>
+              `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`
+          )
+          .toBe(
+            changed
+          );
+
+        await safeClick(
+          page.locator(
+            'header button:has(svg.lucide-sun), header button:has(svg.lucide-moon)'
+          ).first(),
+          'Restore theme'
+        );
+
+        await page.reload({
+          waitUntil: 'domcontentloaded'
+        });
+
+        await expect
+          .poll(
+            async () =>
+              `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`
+          )
+          .toBe(
+            before
+          );
+      }
+    );
   }
 );

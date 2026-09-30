@@ -112,7 +112,8 @@ test.describe(
 
     async function searchSymbol(
       page: Page,
-      symbol: string
+      symbol: string,
+      expectHeading = true
     ) {
       const input =
         page.locator(
@@ -156,15 +157,50 @@ test.describe(
         );
       }
 
-      await safeClick(
+      const search =
         page.getByRole(
           'button',
           {
             name: /^search$/i
           }
-        ),
-        `Search ${symbol}`
-      );
+        );
+
+      const searchReady =
+        await expect(
+          search
+        ).toBeEnabled({
+          timeout: 12000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (
+        searchReady
+      ) {
+        await safeClick(
+          search,
+          `Search ${symbol}`
+        );
+      }
+
+      if (
+        expectHeading
+      ) {
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: new RegExp(
+                `^${symbol}$`
+              )
+            }
+          )
+        ).toBeVisible({
+          timeout: 30000
+        });
+      }
     }
 
     function rangeButton(
@@ -454,7 +490,8 @@ test.describe(
 
         await searchSymbol(
           page,
-          'AAPL'
+          'AAPL',
+          false
         );
 
         await expect(
@@ -1018,5 +1055,951 @@ test.describe(
         }
       }
     );
+
+    test(
+      'Company Finance unknown symbol stays empty',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company finance/i,
+          'Company Finance'
+        );
+
+        const input =
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).or(
+            page.getByPlaceholder(
+              /symbol/i
+            )
+          ).first();
+
+        await input.fill(
+          'ZZZNOTASYMBOL'
+        );
+
+        const choice =
+          page.getByRole(
+            'option',
+            {
+              name: /ZZZNOTASYMBOL/i
+            }
+          ).first();
+
+        await expect(
+          choice
+        ).toHaveCount(
+          0
+        );
+
+        const search =
+          page.getByRole(
+            'button',
+            {
+              name: /^search$/i
+            }
+          );
+
+        if (
+          await search.isEnabled()
+        ) {
+          await safeClick(
+            search,
+            'Search unknown symbol'
+          );
+        }
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^ZZZNOTASYMBOL$/
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.getByRole(
+            'tab',
+            {
+              name: /^income statement$/i
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /search a symbol|no result|not found|no match/i
+        );
+      }
+    );
+
+    test(
+      'News opens one headline and returns to the list',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /^news$/i,
+          'News'
+        );
+
+        const story =
+          page.locator(
+            'main a[href]'
+          ).filter({
+            hasText: /[A-Za-z]{8,}/
+          }).filter({
+            hasNotText:
+              /privacy|terms|disclosure|cookie|opportunities|portfolio|academy|support|dashboard/i
+          }).first();
+
+        await expect(
+          story
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        const href =
+          await story.getAttribute(
+            'href'
+          );
+
+        const popupPromise =
+          page.context().waitForEvent(
+            'page',
+            {
+              timeout: 4000
+            }
+          ).catch(
+            () => null
+          );
+
+        await safeClick(
+          story,
+          'Open news headline'
+        );
+
+        const popup =
+          await popupPromise;
+
+        const article =
+          popup ?? page;
+
+        await expect(
+          article
+        ).not.toHaveURL(
+          /about:blank/
+        );
+
+        if (
+          !popup
+        ) {
+          await expect(
+            page
+          ).not.toHaveURL(
+            /\/dashboard\/news\/?$/
+          );
+        }
+
+        await expect(
+          article.locator(
+            'main, article, body'
+          ).first()
+        ).toContainText(
+          /[A-Za-z]{8,}/
+        );
+
+        if (
+          popup
+        ) {
+          await popup.close();
+        } else {
+          await page.goto(
+            `${BASE_URL}/dashboard/news`,
+            {
+              waitUntil: 'domcontentloaded'
+            }
+          );
+        }
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/news/
+        );
+
+        expect(
+          href || ''
+        ).not.toEqual(
+          ''
+        );
+      }
+    );
+
+    test(
+      'Company Fundamentals opens a second symbol',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company fundamentals/i,
+          'Company Fundamentals'
+        );
+
+        await searchSymbol(
+          page,
+          'AAPL'
+        );
+
+        await searchSymbol(
+          page,
+          'MSFT'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^MSFT$/
+            }
+          )
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^AAPL$/
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /\$\d[\d,]*(?:\.\d+)?/
+        );
+      }
+    );
+
+    test(
+      'Simulator clears the searched symbol',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /^simulator$/i,
+          'Simulator'
+        );
+
+        const input =
+          page.getByRole(
+            'combobox',
+            {
+              name: /search company name or symbol|search symbol/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search|symbol/i
+            )
+          ).first();
+
+        await input.fill(
+          'MSFT'
+        );
+
+        const choice =
+          page.getByRole(
+            'option',
+            {
+              name: /MSFT/i
+            }
+          ).first();
+
+        if (
+          await choice.waitFor({
+            state: 'visible',
+            timeout: 8000
+          }).then(
+            () => true
+          ).catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            choice,
+            'Select MSFT'
+          );
+        }
+
+        const analyze =
+          page.getByRole(
+            'button',
+            {
+              name: /^analyze$/i
+            }
+          );
+
+        if (
+          await analyze.isEnabled().catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            analyze,
+            'Analyze MSFT'
+          );
+        }
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /MSFT/i,
+          {
+            timeout: 20000
+          }
+        );
+
+        const clear =
+          page.getByRole(
+            'button',
+            {
+              name: /clear symbol|^reset$|^clear$/i
+            }
+          ).first();
+
+        await safeClick(
+          clear,
+          'Clear simulator symbol'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).not.toContainText(
+          /^MSFT$/
+        );
+
+        await expect(
+          input
+        ).toHaveValue(
+          ''
+        );
+      }
+    );
+
+    test(
+      'Support keeps an empty ticket from being submitted',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^support$/i
+            }
+          ).first(),
+          'Support'
+        );
+
+        const submit =
+          page.getByRole(
+            'button',
+            {
+              name: /submit ticket/i
+            }
+          );
+
+        await expect(
+          submit
+        ).toBeVisible();
+
+        await safeClick(
+          submit,
+          'Submit empty ticket'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/support/
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /subject|message|required|enter|describe/i
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /submit ticket/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'News unknown symbol stays on the list',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /^news$/i,
+          'News'
+        );
+
+        const input =
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).or(
+            page.getByPlaceholder(
+              /symbol/i
+            )
+          ).first();
+
+        await input.fill(
+          'ZZZNOTASYMBOL'
+        );
+
+        await expect(
+          page.getByRole(
+            'option',
+            {
+              name: /ZZZNOTASYMBOL/i
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        const search =
+          page.getByRole(
+            'button',
+            {
+              name: /^search$/i
+            }
+          );
+
+        if (
+          await search.isEnabled().catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            search,
+            'Search unknown news symbol'
+          );
+        }
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/news/
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /no result|no match|not found|no headlines|search a symbol/i
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).not.toContainText(
+          /results for ZZZNOTASYMBOL/i
+        );
+
+        const reset =
+          page.getByRole(
+            'button',
+            {
+              name: /^reset$/i
+            }
+          );
+
+        if (
+          await reset.isVisible().catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            reset,
+            'Reset news search'
+          );
+        }
+      }
+    );
+
+    test(
+      'Company Fundamentals unknown symbol stays empty',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company fundamentals/i,
+          'Company Fundamentals'
+        );
+
+        const input =
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).or(
+            page.getByPlaceholder(
+              /symbol/i
+            )
+          ).first();
+
+        await input.fill(
+          'ZZZNOTASYMBOL'
+        );
+
+        await expect(
+          page.getByRole(
+            'option',
+            {
+              name: /ZZZNOTASYMBOL/i
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^ZZZNOTASYMBOL$/
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /search a symbol|no result|not found|no match/i
+        );
+      }
+    );
+
+    test(
+      'Support rejects a file that is not an image',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^support$/i
+            }
+          ).first(),
+          'Support'
+        );
+
+        await page.locator(
+          'input[type="file"]'
+        ).first().setInputFiles({
+          name: 'not-an-image.txt',
+          mimeType: 'text/plain',
+          buffer: Buffer.from(
+            'this is not an image'
+          )
+        });
+
+        const rejected =
+          page.locator(
+            'main'
+          ).getByText(
+            /jpeg|png|webp|image|invalid|unsupported|not allowed/i
+          );
+
+        const attached =
+          page.locator(
+            'main'
+          ).getByText(
+            /not-an-image\.txt/i
+          );
+
+        if (
+          !(
+            await rejected.waitFor({
+              state: 'visible',
+              timeout: 5000
+            }).then(
+              () => true
+            ).catch(
+              () => false
+            )
+          )
+        ) {
+          await expect(
+            attached
+          ).toHaveCount(
+            0
+          );
+        }
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/support/
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /submit ticket/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Support clears a draft subject without submitting',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^support$/i
+            }
+          ).first(),
+          'Support'
+        );
+
+        const subject =
+          page.getByRole(
+            'textbox',
+            {
+              name: /^subject$/i
+            }
+          );
+
+        await subject.fill(
+          'AIR draft check'
+        );
+
+        await expect(
+          subject
+        ).toHaveValue(
+          'AIR draft check'
+        );
+
+        await subject.fill(
+          ''
+        );
+
+        await expect(
+          subject
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/support/
+        );
+      }
+    );
+
+    test(
+      'Company Fundamentals dividends tab returns to overview',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company fundamentals/i,
+          'Company Fundamentals'
+        );
+
+        await searchSymbol(
+          page,
+          'AAPL'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^dividends$/i
+            }
+          ),
+          'Dividends'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /dividend/i
+        );
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^overview$/i
+            }
+          ),
+          'Overview'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^AAPL$/
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+
+    test(
+      'Company Fundamentals earnings tab returns to overview',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company fundamentals/i,
+          'Company Fundamentals'
+        );
+
+        await searchSymbol(
+          page,
+          'AAPL'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^earnings$/i
+            }
+          ),
+          'Earnings'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /earnings/i
+        );
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^overview$/i
+            }
+          ),
+          'Overview'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^AAPL$/
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Company Finance ratios hide the period switch',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await openResearchItem(
+          page,
+          /company finance/i,
+          'Company Finance'
+        );
+
+        await searchSymbol(
+          page,
+          'AAPL'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^ratios$/i
+            }
+          ),
+          'Ratios'
+        );
+
+        await expect(
+          rangeButton(
+            page,
+            'Annual'
+          )
+        ).toBeHidden();
+
+        await safeClick(
+          page.getByRole(
+            'tab',
+            {
+              name: /^income statement$/i
+            }
+          ),
+          'Income Statement'
+        );
+
+        await expect(
+          rangeButton(
+            page,
+            'Annual'
+          )
+        ).toBeVisible();
+      }
+    );
+
+    test(
+      'Support clears a draft message without submitting',
+      async ({ page }) => {
+        await openDashboard(
+          page
+        );
+
+        await safeClick(
+          page.getByRole(
+            'link',
+            {
+              name: /^support$/i
+            }
+          ).first(),
+          'Support'
+        );
+
+        const message =
+          page.getByRole(
+            'textbox',
+            {
+              name: /^message$/i
+            }
+          );
+
+        await message.fill(
+          'AIR draft message'
+        );
+
+        await expect(
+          message
+        ).toHaveValue(
+          'AIR draft message'
+        );
+
+        await message.fill(
+          ''
+        );
+
+        await expect(
+          message
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/dashboard\/support/
+        );
+
+        await expect(
+          page.getByRole(
+            'button',
+            {
+              name: /submit ticket/i
+            }
+          )
+        ).toBeVisible();
+      }
+    );
+
   }
 );

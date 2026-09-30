@@ -6309,22 +6309,20 @@ const roadmapPlannedCount =
     .filter(item => ['Planned', 'Future', 'Vision'].includes(item.status))
     .reduce((sum, item) => sum + item.features.length, 0);
 
-const airRoadmapCards =
-  roadmapVersions
-    .map((item, index) => {
-      const tone = roadmapStatusTone[item.status] ?? 'amber';
-      const features = item.features
-        .map(feature => `<li>${escapeHtml(feature)}</li>`)
-        .join('');
+function renderRoadmapPlanCard(item, index) {
+  const tone = roadmapStatusTone[item.status] ?? 'amber';
+  const features = item.features
+    .map(feature => `<li>${escapeHtml(feature)}</li>`)
+    .join('');
 
-      return `
+  return `
         <article class="roadmap-card ${tone} interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for ${escapeHtml(item.version)}" data-roadmap-index="${index}">
           <div class="roadmap-card-head">
             <div>
               <span>${escapeHtml(item.version)}</span>
               <h2>${escapeHtml(item.title)}</h2>
             </div>
-            <strong>${escapeHtml(item.status)}</strong>
+            <span class="badge ${tone}">${escapeHtml(item.status)}</span>
           </div>
           <p>${escapeHtml(item.purpose)}</p>
           <div class="roadmap-card-meta">
@@ -6332,7 +6330,11 @@ const airRoadmapCards =
           </div>
           <ul>${features}</ul>
         </article>`;
-    })
+}
+
+const airRoadmapCards =
+  roadmapVersions
+    .map((item, index) => renderRoadmapPlanCard(item, index))
     .join('');
 
 const airRoadmapWhyRows =
@@ -6375,29 +6377,13 @@ const futurePlatformVision = [
 
 const futurePlatformVisionHtml =
   futurePlatformVision
-    .map(item => `
-      <article class="future-vision-card">
-        <div class="future-vision-head">
-          <div>
-            <span>${escapeHtml(item.version)}</span>
-            <h3>${escapeHtml(item.title)}</h3>
-          </div>
-          <strong>${escapeHtml(item.status)}</strong>
-        </div>
-        <p>${escapeHtml(item.purpose)}</p>
-        <details class="fold">
-          <summary><b>${item.groups.length} groups</b><span>${escapeHtml(item.groups.map(([groupName]) => groupName).join(' · '))}</span></summary>
-          <div class="future-vision-groups">
-            ${item.groups.map(([groupName, features]) => `
-              <div>
-                <h4>${escapeHtml(groupName)}</h4>
-                <ul>
-                  ${features.map(feature => `<li>${escapeHtml(feature)}</li>`).join('')}
-                </ul>
-              </div>`).join('')}
-          </div>
-        </details>
-      </article>`)
+    .map((item, index) => renderRoadmapPlanCard({
+      version: item.version,
+      title: item.title,
+      status: index === 0 ? 'Future' : 'Vision',
+      purpose: item.purpose,
+      features: item.groups.flatMap(([, features]) => features),
+    }, roadmapVersions.length + index))
     .join('');
 
 const recommendationDetailDataJson =
@@ -6415,15 +6401,26 @@ const recommendationDetailDataJson =
     .replaceAll('&', '\\u0026');
 
 const roadmapDetailDataJson =
-  JSON.stringify(roadmapVersions.map(item => ({
-    version: item.version,
-    title: item.title,
-    status: item.status,
-    purpose: item.purpose,
-    deliverables: item.features,
-    dependencies: item.status === 'Completed' ? ['Current AIR Core and report UI'] : ['AIR Core data model', 'Historical execution storage', 'Evidence mapping'],
-    futureValue: item.goal,
-  })))
+  JSON.stringify([
+    ...roadmapVersions.map(item => ({
+      version: item.version,
+      title: item.title,
+      status: item.status,
+      purpose: item.purpose,
+      deliverables: item.features,
+      dependencies: item.status === 'Completed' ? ['Current AIR Core and report UI'] : ['AIR Core data model', 'Historical execution storage', 'Evidence mapping'],
+      futureValue: item.goal,
+    })),
+    ...futurePlatformVision.map(item => ({
+      version: item.version,
+      title: item.title,
+      status: item.status,
+      purpose: item.purpose,
+      deliverables: item.groups.flatMap(([, features]) => features),
+      dependencies: item.groups.map(([groupName]) => groupName),
+      futureValue: item.purpose,
+    })),
+  ])
     .replaceAll('<', '\\u003c')
     .replaceAll('>', '\\u003e')
     .replaceAll('&', '\\u0026');
@@ -9902,6 +9899,40 @@ const airGoldenDashboardHtml = `<!doctype html>
       transform:translateY(-2px);
       border-color:rgba(244,255,246,.4)!important;
     }
+    #roadmap .roadmap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin-top:16px}
+    #roadmap .roadmap-card{
+      display:flex!important;
+      flex-direction:column!important;
+      gap:14px!important;
+      min-height:0!important;
+      padding:18px!important;
+      border:1px solid rgba(57,231,95,.34)!important;
+      border-radius:16px!important;
+      background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96))!important;
+      box-shadow:0 14px 34px rgba(0,0,0,.22)!important;
+      color:#f8fafc!important;
+    }
+    #roadmap .roadmap-card.green{border-color:rgba(57,231,95,.45)!important}
+    #roadmap .roadmap-card.amber{border-color:rgba(245,197,66,.55)!important}
+    #roadmap .roadmap-card.blue{border-color:rgba(96,165,250,.5)!important}
+    #roadmap .roadmap-card.purple{border-color:rgba(167,139,250,.55)!important}
+    #roadmap .roadmap-card:hover,#roadmap .roadmap-card:focus-visible{
+      transform:translateY(-3px)!important;
+      border-color:#39e75f!important;
+      box-shadow:0 18px 42px rgba(57,231,95,.14)!important;
+    }
+    #roadmap .roadmap-card-head{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:12px!important}
+    #roadmap .roadmap-card-head span:not(.badge){display:block;color:#8fa2b6;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    #roadmap .roadmap-card-head h2{margin:7px 0 0!important;font-size:20px!important;line-height:1.2!important;letter-spacing:-.02em!important}
+    #roadmap .roadmap-card .badge{flex:0 0 auto;border-radius:999px;font-size:11px;font-weight:800;padding:6px 10px;white-space:nowrap}
+    #roadmap .roadmap-card .badge.green{background:rgba(57,231,95,.14);border:1px solid rgba(57,231,95,.35);color:#7ee787}
+    #roadmap .roadmap-card .badge.amber{background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);color:#f5c542}
+    #roadmap .roadmap-card .badge.blue{background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.4);color:#9bd5ff}
+    #roadmap .roadmap-card .badge.purple{background:rgba(167,139,250,.14);border:1px solid rgba(167,139,250,.45);color:#ddd6fe}
+    #roadmap .roadmap-card p{margin:0!important;color:#d7fbe0!important;font-size:14px!important;line-height:1.45!important}
+    #roadmap .roadmap-card-meta span{display:inline-flex;border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.1);color:#9affac;font-size:11px;font-weight:800;padding:6px 10px}
+    #roadmap .roadmap-card ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0!important;padding:0!important;list-style:none}
+    #roadmap .roadmap-card li{border:1px solid rgba(57,231,95,.16);border-radius:12px;background:rgba(8,16,30,.72);padding:8px 10px;color:#d8e3ee;font-size:12px;line-height:1.3}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -10554,21 +10585,12 @@ const airGoldenDashboardHtml = `<!doctype html>
         </table>
       </div>
       </details>
-      <div class="panel future-vision-panel">
-        <div class="future-vision-intro">
-          <div>
-            <div class="eyebrow">FUTURE PLATFORM VISION</div>
-            <h2>Beyond AIR v1.x</h2>
-            <p>Later versions of this report. Open a card for the groups inside it.</p>
-          </div>
-          <span class="pill demo">Strategic Vision</span>
-        </div>
-        <div class="future-vision-grid">${futurePlatformVisionHtml}</div>
-        <div class="future-vision-priority">
-          <span>Current Priority</span>
-          <strong>Final Engineering Mode UI → Dynamic Data Model → Dynamic Intelligence Engine</strong>
-        </div>
+      <div class="panel">
+        <h2>Beyond AIR v1.x</h2>
+        <p>Later versions of this report. Open a card for the groups inside it.</p>
+        <p>Current priority: Final Engineering Mode UI, Dynamic Data Model, and Dynamic Intelligence Engine.</p>
       </div>
+      <div class="roadmap-grid">${futurePlatformVisionHtml}</div>
       ${renderPageFooter('roadmap')}
     </section>
     <footer class="footer">

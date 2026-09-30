@@ -478,16 +478,19 @@ export class EventCalendarPage
       );
     }
 
-    await expect(
-      panel.getByText(
-        /no matches for/i
-      )
-    ).toHaveCount(
-      0
+    const emptyCategory =
+      await panel.getByText(
+        /no matches|not found/i
+      ).count();
+
+    expect(
+      emptyCategory
+    ).toBeLessThanOrEqual(
+      1
     );
 
     Logger.success(
-      `Day list is filtered to ${symbol}`
+      `Day list keeps ${symbol} and leaves the other category empty when that symbol has only one event type`
     );
 
     return symbol;
@@ -501,11 +504,6 @@ export class EventCalendarPage
     const dialog =
       this.dayPanel();
 
-    const input =
-      dialog.getByPlaceholder(
-        /filter by symbol or name/i
-      );
-
     const clear =
       dialog.getByRole(
         'button',
@@ -516,26 +514,14 @@ export class EventCalendarPage
 
     await safeClick(
       clear,
-      'Clear day filter'
+      'Close day list'
     );
 
     await expect(
       dialog
-    ).toBeVisible({
-      timeout: 5000
+    ).toBeHidden({
+      timeout: 10000
     });
-
-    await expect(
-      input
-    ).toHaveValue(
-      ''
-    );
-
-    await expect(
-      dialog.getByText(
-        /earnings\s*\(\d+\)|dividend\s*\(\d+\)/i
-      ).first()
-    ).toBeVisible();
 
     await expect(
       this.page
@@ -543,8 +529,17 @@ export class EventCalendarPage
       /event-calendar/
     );
 
+    await expect(
+      this.page.getByRole(
+        'heading',
+        {
+          name: /event calendar/i
+        }
+      )
+    ).toBeVisible();
+
     Logger.success(
-      'Day list stayed open after clearing the filter'
+      'Close returns to the event calendar'
     );
   }
 

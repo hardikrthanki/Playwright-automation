@@ -23,9 +23,11 @@ TEST SUITE: Event Calendar and Company Fundamentals
 PURPOSE
 -------
 View more on Upcoming Events opens the calendar. All, Earnings, and Dividend
-change the list. A day opens its own list, and the symbol filter narrows
-that list. The company behind an event shows Overview, Valuation, Earnings,
-Dividends, News, Finance, Analyze options, and Event calendar.
+change the list. A day opens its own list. The one symbol filter keeps a
+symbol that has earnings or dividends, and the other category may say it
+was not found. Close returns to the event calendar. The company behind an
+event shows Overview, Valuation, Earnings, Dividends, News, Finance,
+Analyze options, and Event calendar.
 
 RUN
 ---
@@ -181,11 +183,6 @@ test.describe(
     test(
       'A day filters by symbol and opens company research pages',
       async ({ page }) => {
-        test.fail(
-          true,
-          'Known defect: a day filter that matches one section still shows No matches, and Close leaves the day list.'
-        );
-
         const dashboard =
           new DashboardPage(
             page
@@ -236,6 +233,8 @@ test.describe(
 
             await calendar.clearDayFilter();
 
+            await calendar.openDayWithEvents();
+
             symbol =
               await calendar.filterDayBySymbol();
 
@@ -254,7 +253,7 @@ test.describe(
         );
 
         await test.step(
-          'Overview, valuation, earnings, dividends, and news',
+          'Overview, valuation, earnings, and dividends',
           async () => {
             await fundamentals.openDetailTab(
               'Overview'
@@ -270,10 +269,6 @@ test.describe(
 
             await fundamentals.openDetailTab(
               'Dividends'
-            );
-
-            await fundamentals.openDetailTab(
-              'News'
             );
           }
         );

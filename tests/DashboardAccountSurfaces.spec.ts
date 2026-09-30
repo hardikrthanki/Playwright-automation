@@ -307,5 +307,488 @@ test.describe(
         }
       }
     );
+
+    test(
+      'Equity research unknown symbol does not open a company',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/dashboard'
+        );
+
+        await new DashboardPage(
+          page
+        ).validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^research$/i
+            }
+          ).first(),
+          'Research menu'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /^equity$/i
+            }
+          ),
+          'Equity research'
+        );
+
+        const search =
+          page.getByRole(
+            'combobox',
+            {
+              name: /search|symbol/i
+            }
+          ).or(
+            page.getByRole(
+              'textbox',
+              {
+                name: /search|symbol/i
+              }
+            )
+          ).first();
+
+        await search.fill(
+          'ZZZNOTASYMBOL'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /no results found/i
+        );
+
+        const analyze =
+          page.getByRole(
+            'button',
+            {
+              name: /^analyze$/i
+            }
+          );
+
+        await safeClick(
+          analyze,
+          'Analyze unknown symbol'
+        );
+
+        await expect(
+          page
+        ).toHaveURL(
+          /equity-research/
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^ZZZNOTASYMBOL$/
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /no results found|search for a symbol/i
+        );
+      }
+    );
+
+    test(
+      'Glossary opens one term and clears the search',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/academy/glossary'
+        );
+
+        const search =
+          page.getByRole(
+            'textbox',
+            {
+              name: /search/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search/i
+            )
+          ).first();
+
+        await search.fill(
+          'delta'
+        );
+
+        const term =
+          page.getByRole(
+            'heading',
+            {
+              name: /^delta$/i
+            }
+          );
+
+        await safeClick(
+          term,
+          'Open Delta'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /options greek|option's price|\$1 move/i
+        );
+
+        await search.fill(
+          ''
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /assignment|bid\s*\/\s*ask|breakeven/i
+        );
+      }
+    );
+
+    test(
+      'Glossary keeps terms when the search does not match',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/academy/glossary'
+        );
+
+        const search =
+          page.getByRole(
+            'textbox',
+            {
+              name: /search/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search/i
+            )
+          ).first();
+
+        await search.fill(
+          'ZZZNOTATERM'
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^assignment$/i
+            }
+          )
+        ).toBeVisible();
+
+        await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/glossary/
+        );
+
+        await search.fill(
+          ''
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /assignment/i
+        );
+      }
+    );
+
+    test(
+      'Equity research clears a typed symbol',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/dashboard'
+        );
+
+        await new DashboardPage(
+          page
+        ).validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^research$/i
+            }
+          ).first(),
+          'Research menu'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /^equity$/i
+            }
+          ),
+          'Equity research'
+        );
+
+        const input =
+          page.locator(
+            'main'
+          ).getByRole(
+            'combobox'
+          ).or(
+            page.getByPlaceholder(
+              /symbol/i
+            )
+          ).first();
+
+        await input.fill(
+          'ZZZNOTASYMBOL'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /no results found/i
+        );
+
+        const clear =
+          page.locator(
+            'main'
+          ).getByRole(
+            'button',
+            {
+              name: /clear/i
+            }
+          ).or(
+            page.locator(
+              'main button:has(svg.lucide-x)'
+            )
+          ).first();
+
+        await safeClick(
+          clear,
+          'Clear equity symbol'
+        );
+
+        await expect(
+          input
+        ).toHaveValue(
+          ''
+        );
+
+        await expect(
+          page.getByRole(
+            'heading',
+            {
+              name: /^ZZZNOTASYMBOL$/
+            }
+          )
+        ).toHaveCount(
+          0
+        );
+      }
+    );
+
+    test(
+      'Equity research keeps an empty symbol on the search prompt',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/dashboard'
+        );
+
+        await new DashboardPage(
+          page
+        ).validateLoaded();
+
+        await safeClick(
+          page.getByRole(
+            'button',
+            {
+              name: /^research$/i
+            }
+          ).first(),
+          'Research menu'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'menuitem',
+            {
+              name: /^equity$/i
+            }
+          ),
+          'Equity research'
+        );
+
+        const analyze =
+          page.getByRole(
+            'button',
+            {
+              name: /^analyze$/i
+            }
+          );
+
+        if (
+          await analyze.isEnabled().catch(
+            () => false
+          )
+        ) {
+          await safeClick(
+            analyze,
+            'Analyze empty symbol'
+          );
+        }
+
+        await expect(
+          page
+        ).toHaveURL(
+          /equity-research/
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /search for a symbol/i
+        );
+      }
+    );
+
+    test(
+      'Glossary opens Theta and clears the search',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/academy/glossary'
+        );
+
+        const search =
+          page.getByRole(
+            'textbox',
+            {
+              name: /search/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search/i
+            )
+          ).first();
+
+        await search.fill(
+          'theta'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'heading',
+            {
+              name: /^theta$/i
+            }
+          ),
+          'Open Theta'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /theta|time decay|passage of time/i
+        );
+
+        await search.fill(
+          ''
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /assignment/i
+        );
+      }
+    );
+
+    test(
+      'Glossary opens Vega and clears the search',
+      async ({ page }) => {
+        await openPath(
+          page,
+          '/academy/glossary'
+        );
+
+        const search =
+          page.getByRole(
+            'textbox',
+            {
+              name: /search/i
+            }
+          ).or(
+            page.getByPlaceholder(
+              /search/i
+            )
+          ).first();
+
+        await search.fill(
+          'vega'
+        );
+
+        await safeClick(
+          page.getByRole(
+            'heading',
+            {
+              name: /^vega$/i
+            }
+          ),
+          'Open Vega'
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /vega|volatility/i
+        );
+
+        await search.fill(
+          ''
+        );
+
+        await expect(
+          page.locator(
+            'main'
+          )
+        ).toContainText(
+          /assignment/i
+        );
+      }
+    );
   }
 );
