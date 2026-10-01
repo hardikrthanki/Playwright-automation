@@ -226,8 +226,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-024'],
     title: 'Browser back from interval-change checkout returns without changing billing interval',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe checkout cancel/return validation.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > interval preview checkout back does not change billing interval'
   },
   {
     id: 'SC-189',

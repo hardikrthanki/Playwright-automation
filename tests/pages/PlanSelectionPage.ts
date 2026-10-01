@@ -94,10 +94,33 @@ export class PlanSelectionPage extends BasePage {
                   'i'
                 );
 
-    return this.page
-      .getByText(
+    const textMatch =
+      this.page.getByText(
         pattern
+      );
+
+    const namedMatch =
+      /income/i.test(
+        planName
       )
+        ? this.page.getByRole(
+          'heading',
+          {
+            name: /^income$|income builder/i
+          }
+        ).or(
+          this.page.getByRole(
+            'radio',
+            {
+              name: /\bincome\b/i
+            }
+          )
+        ).or(
+          textMatch
+        )
+        : textMatch;
+
+    return namedMatch
       .filter({
         visible: true
       })
@@ -105,13 +128,17 @@ export class PlanSelectionPage extends BasePage {
   }
 
   async isPlanOffered(
-    planName: string
+    planName: string,
+    timeout = 3000
   ) {
     return this.planByName(
       planName
-    ).isVisible({
-      timeout: 3000
-    }).catch(
+    ).waitFor({
+      state: 'visible',
+      timeout
+    }).then(
+      () => true
+    ).catch(
       () => false
     );
   }

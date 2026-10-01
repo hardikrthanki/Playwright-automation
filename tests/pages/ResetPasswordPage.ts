@@ -44,26 +44,26 @@ export class ResetPasswordPage
 
   readonly backToLoginLink: Locator;
 
+  private pendingPassword = '';
+
   constructor(page: Page) {
 
     super(page);
 
     this.newPasswordInput =
-      page.getByLabel(
-        /^new password$/i
-      ).or(
-        page.locator(
-          'form input[type="password"]'
-        ).nth(0)
+      page.getByRole(
+        'textbox',
+        {
+          name: /^new password$/i
+        }
       );
 
     this.confirmPasswordInput =
-      page.getByLabel(
-        /^confirm password$/i
-      ).or(
-        page.locator(
-          'form input[type="password"]'
-        ).nth(1)
+      page.getByRole(
+        'textbox',
+        {
+          name: /^confirm password$/i
+        }
       );
 
     this.updatePasswordButton =
@@ -107,6 +107,11 @@ export class ResetPasswordPage
       password
     );
 
+    this.pendingPassword =
+      password;
+
+    await this.dismissMarketingOverlays();
+
     Logger.info(
       'Updating Password'
     );
@@ -131,11 +136,111 @@ export class ResetPasswordPage
   }
 
   async updatePassword() {
+    const cookieButton =
+      this.page.getByRole(
+        'button',
+        {
+          name: /^(essential only|accept( all)?)$/i
+        }
+      );
 
-    await safeClick(
-      this.updatePasswordButton,
-      'Update Password'
-    );
+    if (
+      await cookieButton.first().waitFor({
+        state: 'visible',
+        timeout: 3000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await cookieButton.first().click({
+        timeout: 3000
+      }).catch(
+        () => undefined
+      );
+    }
+
+    const submitReset =
+      async () => {
+        await this.dismissMarketingOverlays();
+
+        await this.page.waitForTimeout(
+          1000
+        );
+
+        await this.newPasswordInput.fill(
+          this.pendingPassword
+        );
+
+        await this.confirmPasswordInput.fill(
+          this.pendingPassword
+        );
+
+        await expect(
+          this.newPasswordInput
+        ).toHaveValue(
+          this.pendingPassword
+        );
+
+        const responsePromise =
+          this.page.waitForResponse(
+            (response) =>
+              response.request().method() === 'POST' &&
+              /\/auth\/reset-password/i.test(
+                response.url()
+              ),
+            {
+              timeout: 8000
+            }
+          ).catch(
+            () => null
+          );
+
+        await this.updatePasswordButton.click({
+          timeout: 8000
+        });
+
+        const raced =
+          await Promise.race([
+            responsePromise,
+            this.page.waitForTimeout(
+              2000
+            ).then(
+              () => null
+            )
+          ]);
+
+        if (
+          !raced
+        ) {
+          await this.page.locator(
+            'form'
+          ).evaluate(
+            (form) => {
+              (form as HTMLFormElement).requestSubmit();
+            }
+          );
+        }
+
+        return responsePromise;
+      };
+
+    let response =
+      await submitReset();
+
+    if (
+      !response
+    ) {
+      response =
+        await submitReset();
+    }
+
+    if (response) {
+      console.log(
+        `Reset response ${response.status()}`
+      );
+    }
 
     Logger.success(
       'Update Password Clicked'

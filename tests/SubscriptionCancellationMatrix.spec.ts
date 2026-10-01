@@ -282,8 +282,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-031'],
     title: 'Browser back from cancellation page does not change subscription',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires safe portal navigation fixture.'
+    status: 'automated',
+    automation: 'BillingSubscriptionManagement.spec.ts > cancel subscription form back without changing the plan'
   },
   {
     id: 'SC-272',

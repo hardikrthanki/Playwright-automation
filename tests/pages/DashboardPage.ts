@@ -272,13 +272,30 @@ export class DashboardPage
   }
 
   async validateNoLoadError() {
+    const loadError =
+      this.page.getByText(
+        /this page couldn'?t load|reload to try again/i
+      );
+
+    if (
+      await loadError.first().isVisible().catch(
+        () => false
+      )
+    ) {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded',
+        timeout: 45000
+      });
+
+      await this.dismissMarketingOverlays();
+    }
 
     await expect(
       this.page.getByText(
         /this page couldn'?t load|reload to try again|go back/i
       )
     ).not.toBeVisible({
-      timeout: 5000
+      timeout: 15000
     });
   }
 

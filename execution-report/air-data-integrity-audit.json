@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-30T11:34:40.973Z",
+  "generatedAt": "2026-09-30T13:27:52.304Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-30T11:34:40.492Z",
+    "generatedAt": "2026-09-30T13:27:51.887Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -13,23 +13,23 @@
     "total": 730,
     "rawTestCount": 730,
     "attempts": 730,
-    "passed": 336,
-    "failed": 6,
-    "skipped": 388,
+    "passed": 329,
+    "failed": 8,
+    "skipped": 393,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 336,
-      "skipped": 388,
-      "unexpected": 6
+      "unexpected": 8,
+      "expected": 329,
+      "skipped": 393
     }
   },
   "airExecution": {
     "total": 730,
     "attempts": 730,
-    "passed": 336,
-    "failed": 6,
-    "skipped": 388,
+    "passed": 329,
+    "failed": 8,
+    "skipped": 393,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 19,
+    "perTestEvidence": 23,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 21,
+    "totalWithRawReports": 25,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,8 +61,20 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial with card",
-        "testName": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial with card",
+        "testId": "chromium > onboarding.spec.ts > OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+        "testName": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+        "testName": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+        "testName": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -73,14 +85,20 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardWidgets.spec.ts > Dashboard Widgets > Dashboard shows portfolio score events allocation and opportunities",
-        "testName": "Dashboard Widgets > Dashboard shows portfolio score events allocation and opportunities",
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User D monthly retention offer accept",
+        "testName": "Subscription Lifecycle Execution > User D monthly retention offer accept",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardResearchPortfolio.spec.ts > Options Research and Portfolio Accounts > View full expiry calendar opens the option chain",
-        "testName": "Options Research and Portfolio Accounts > View full expiry calendar opens the option chain",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
+        "testName": "Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Beginners lessons overview categories and a strategy detail open",
+        "testName": "Academy depth > Beginners lessons overview categories and a strategy detail open",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -88,12 +106,6 @@
         "testId": "chromium > forgotpassword.spec.ts > Disposable user resets password from the email link and signs in with the new password",
         "testName": "Disposable user resets password from the email link and signs in with the new password",
         "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
-        "evidenceCount": 1,
         "status": "Evidence Available"
       }
     ]
@@ -112,13 +124,33 @@
         "references": [
           {
             "type": "Failure",
+            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
+            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
             "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -129,6 +161,11 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -143,13 +180,33 @@
         "references": [
           {
             "type": "Failure",
+            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
+            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
             "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -160,6 +217,11 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Module",
+            "name": "Authentication",
+            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -174,13 +236,33 @@
         "references": [
           {
             "type": "Failure",
+            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-014 - User can start paid subscription from onboarding plan selection",
+            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
             "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
+            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -194,13 +276,18 @@
           },
           {
             "type": "Module",
+            "name": "Authentication",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
             "name": "Billing",
             "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 13,
-    "blockers": 5
+    "warnings": 9,
+    "blockers": 10
   }
 }

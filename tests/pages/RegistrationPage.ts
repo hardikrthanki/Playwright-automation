@@ -351,6 +351,12 @@ extends BasePage {
   }
 
   private async clickVerifyWhenReady() {
+    if (
+      await this.mobileVerifiedBadgeVisible()
+    ) {
+      return;
+    }
+
     await this.enterRegistrationOtp();
 
     if (
@@ -383,7 +389,21 @@ extends BasePage {
     }
   }
 
+  private async mobileVerifiedBadgeVisible() {
+    return this.page.getByText(
+      /^verified$|mobile number verified/i
+    ).first().isVisible().catch(
+      () => false
+    );
+  }
+
   private async mobileVerificationSettled() {
+    if (
+      await this.mobileVerifiedBadgeVisible()
+    ) {
+      return true;
+    }
+
     const verifyVisible =
       await this.verifyOtpButton.isVisible().catch(
         () => false
@@ -391,20 +411,6 @@ extends BasePage {
 
     if (verifyVisible) {
       return false;
-    }
-
-    const verifiedText =
-      await this.page.getByText(
-        /\bverified\b/i
-      ).filter({
-        hasNotText:
-          /\bnot verified\b|\bunverified\b/i
-      }).first().isVisible().catch(
-        () => false
-      );
-
-    if (verifiedText) {
-      return true;
     }
 
     return !(

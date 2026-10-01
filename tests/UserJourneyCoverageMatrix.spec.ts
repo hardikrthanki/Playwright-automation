@@ -79,8 +79,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Signup',
     journey: 'Email Verification',
     priority: 'Critical',
-    status: 'controlled',
-    dependency: 'Requires email inbox access or backend verification-link test hook.'
+    status: 'automated',
+    automation: 'onboarding.spec.ts > Register -> Verify Email -> Login -> Risk -> Compliance'
   },
   {
     id: 'UJ-006',
@@ -143,9 +143,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Password',
     journey: 'Password Recovery',
     priority: 'Critical',
-    status: 'controlled',
-    automation: 'forgotpassword.spec.ts',
-    dependency: 'Requires email reset-link handoff or reset URL fixture.'
+    status: 'automated',
+    automation: 'forgotpassword.spec.ts > Disposable user resets password from the email link and signs in with the new password'
   },
   {
     id: 'UJ-013',
@@ -668,7 +667,7 @@ test.describe(
           );
 
           test.skip(
-            true,
+            scenario.status !== 'automated',
             statusReason(scenario)
           );
         }

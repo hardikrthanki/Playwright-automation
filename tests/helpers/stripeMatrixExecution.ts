@@ -70,6 +70,7 @@ export type StripeMatrixCoverageKey =
   | 'downgrade-preview'
   | 'interval-preview'
   | 'payment-negative'
+  | 'checkout-decline'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
   | 'blocked-scenario';
@@ -270,6 +271,14 @@ export function inferStripeMatrixCoverageKey(
       )
     ) {
       return 'direct-checkout';
+    }
+
+    if (
+      /\bdeclin|failed checkout/i.test(
+        text
+      )
+    ) {
+      return 'checkout-decline';
     }
 
     return 'payment-negative';
@@ -706,18 +715,6 @@ async function executeDirectCheckout(
       page
     );
 
-  if (
-    !(
-      await planPage.isPlanOffered(
-        'Income Builder'
-      )
-    )
-  ) {
-    throw new CoverageSkip(
-      'Income Builder is not in the current catalog; skipping direct checkout summary.'
-    );
-  }
-
   await planPage.selectMonthlyBilling();
   await planPage.selectPlan(
     'Income Builder'
@@ -737,6 +734,17 @@ async function executeDirectCheckout(
       /29|per month|monthly|subscription|total/i
   });
   await stripePage.validateCurrencyAndConversionDetails();
+
+  await expect(
+    page.locator(
+      'body'
+    )
+  ).toContainText(
+    /renew|recurring|per month|every month/i,
+    {
+      timeout: 15000
+    }
+  );
 
   await page.reload({
     waitUntil: 'domcontentloaded'
@@ -908,6 +916,20 @@ async function previewPlanChange(
     targetPlan,
     action
   });
+
+  await expect(
+    page
+  ).not.toHaveURL(
+    /checkout\.stripe\.com/i
+  );
+
+  await expect(
+    page.locator(
+      'body'
+    )
+  ).not.toContainText(
+    /subscription (has been )?(updated|upgraded|downgraded)|plan updated|payment successful/i
+  );
 }
 
 async function executeUpgradePreview(
@@ -1036,18 +1058,29 @@ async function executePaymentNegative(
   if (
     !checkoutUrl
   ) {
-    throw new CoverageSkip(
-      'Set STRIPE_CHECKOUT_URL to a fresh Stripe Checkout session to run payment-negative coverage.'
+    const planPage =
+      new PlanSelectionPage(
+        page
+      );
+
+    await registerAndReachPlanSelection(
+      page,
+      'payment-negative'
+    );
+
+    await planPage.selectMonthlyBilling();
+    await planPage.selectPlan(
+      'Income Builder'
+    );
+  } else {
+    await page.goto(
+      checkoutUrl,
+      {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000
+      }
     );
   }
-
-  await page.goto(
-    checkoutUrl,
-    {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
-    }
-  );
 
   await expect(
     page
@@ -1101,15 +1134,111 @@ async function executePaymentNegative(
       {
         name: /subscribe|pay|complete|start/i
       }
-    );
+    ).first();
 
   if (
-    await payButton.count()
+    await payButton.isDisabled().catch(
+      () => false
+    )
   ) {
-    await expect(
-      payButton.first()
-    ).toBeDisabled();
+    return;
   }
+
+  await payButton.click();
+
+  await expect(
+    page.getByText(
+      /incomplete|invalid|card number|expiry|cvc|security code/i
+    ).first()
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await expect(
+    page
+  ).toHaveURL(
+    /checkout\.stripe\.com/
+  );
+}
+
+async function executeCheckoutDecline(
+  page: Page
+) {
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  await registerAndReachPlanSelection(
+    page,
+    'checkout-decline'
+  );
+
+  await planPage.selectMonthlyBilling();
+  await planPage.selectPlan(
+    'Income Builder'
+  );
+
+  await expect(
+    page
+  ).toHaveURL(
+    /checkout\.stripe\.com/,
+    {
+      timeout: 60000
+    }
+  );
+
+  await page.locator(
+    '#cardNumber'
+  ).fill(
+    '4000000000000002'
+  );
+  await page.locator(
+    '#cardExpiry'
+  ).fill(
+    '12/34'
+  );
+  await page.locator(
+    '#cardCvc'
+  ).fill(
+    '123'
+  );
+
+  const cardholder =
+    page.locator(
+      '#billingName, input[name="billingName"]'
+    ).first();
+
+  if (
+    await cardholder.isVisible().catch(
+      () => false
+    )
+  ) {
+    await cardholder.fill(
+      'Hardik Thanki'
+    );
+  }
+
+  await page.getByRole(
+    'button',
+    {
+      name: /subscribe|pay|complete|start/i
+    }
+  ).first().click();
+
+  await expect(
+    page.getByText(
+      /declin|insufficient|do not honor|card was declined|try another|not successful/i
+    ).first()
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  await expect(
+    page
+  ).toHaveURL(
+    /checkout\.stripe\.com/
+  );
 }
 
 const coverageExecutors: Record<
@@ -1136,6 +1265,8 @@ const coverageExecutors: Record<
     executeIntervalPreview,
   'payment-negative':
     executePaymentNegative,
+  'checkout-decline':
+    executeCheckoutDecline,
   'current-plan-before-upgrade':
     executeCurrentPlanBeforeUpgrade,
   'air-traceability':

@@ -6,7 +6,7 @@
 
 # Test info
 
-- Name: SubscriptionLifecycleExecution.spec.ts >> Subscription Lifecycle Execution >> User C yearly cancel and refund
+- Name: SubscriptionLifecycleExecution.spec.ts >> Subscription Lifecycle Execution >> Prepared paid user can accept terms and submit upgrade payment
 - Location: tests\SubscriptionLifecycleExecution.spec.ts:163:9
 
 # Error details
@@ -49,7 +49,7 @@ Call Log:
             - textbox "Last name" [ref=e25]: Thanki
         - generic [ref=e26]:
           - generic [ref=e27]: Email
-          - textbox "Email" [ref=e28]: imhardikthanki+sub-lifecycl-muo3dqy1@gmail.com
+          - textbox "Email" [ref=e28]: imhardikthanki+sub-lifecycl-muo369km@gmail.com
         - generic [ref=e29]:
           - generic [ref=e30]:
             - generic [ref=e31]: Mobile number
@@ -58,7 +58,7 @@ Call Log:
               - text: Not verified
           - generic [ref=e33]:
             - generic [ref=e34]: "+1"
-            - textbox "2015550123" [ref=e35]: "2015558861"
+            - textbox "2015550123" [ref=e35]: "2015559643"
           - paragraph [ref=e36]: US mobile numbers only. We’ll text you a one-time code.
           - generic [ref=e37]:
             - textbox "Enter OTP" [ref=e38]: "111111"

@@ -330,8 +330,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-037'],
     title: 'Browser back from downgrade flow does not change plan',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe downgrade cancel/back behavior fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > downgrade preview back does not change plan'
   },
   {
     id: 'SC-150',

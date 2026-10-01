@@ -1,6 +1,6 @@
 # AIR Automation Validation Summary
 
-Generated: 9/30/2026, 5:04:40 PM
+Generated: 9/30/2026, 6:57:51 PM
 
 Project: OOLTool
 
@@ -17,9 +17,9 @@ This document explains what the latest automation execution validated in plain b
 | Metric | Count |
 | --- | ---: |
 | Unique Tests | 730 |
-| Passed | 336 |
-| Failed | 6 |
-| Skipped / Not Executed | 388 |
+| Passed | 329 |
+| Failed | 8 |
+| Skipped / Not Executed | 393 |
 | Flaky | 0 |
 | Attempts | 730 |
 
@@ -27,9 +27,9 @@ This document explains what the latest automation execution validated in plain b
 
 | Status | Count |
 | --- | ---: |
-| failed | 6 |
-| passed | 336 |
-| skipped | 388 |
+| failed | 8 |
+| passed | 329 |
+| skipped | 393 |
 
 ## Area Breakdown
 
@@ -51,7 +51,7 @@ This document explains what the latest automation execution validated in plain b
 
 | Result | Area | Scenario | Why It Matters | Expected Outcome |
 | --- | --- | --- | --- | --- |
-| PASS | Authentication | Register -> Verify Email -> Login -> Risk -> Compliance | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Authentication | Register -> Verify Email -> Login -> Risk -> Compliance | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Signup | Signup form blocks empty required fields | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Signup | Signup form blocks invalid email format | Confirm account creation inputs, OTP gates, and onboarding guardrails behave correctly. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Accessibility | Signup name fields expose browser-friendly autocomplete metadata | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The scenario should complete successfully and leave the application in the expected state. |
@@ -164,15 +164,15 @@ This document explains what the latest automation execution validated in plain b
 | SKIPPED | Billing | SC-62: Failed checkout keeps user without active paid subscription | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | SC-63: Closing Stripe checkout returns user safely without activating subscription | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can start Overlay Strategists trial without card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | Disposable user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | Disposable user can start Overlay Strategists trial with card | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Income Builder monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Overlay Strategists monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Portfolio Hedger monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Marketplace monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | Disposable user can purchase configured paid annual plan and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | Disposable user can purchase configured paid annual plan and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Prepared paid user exposes upgrade downgrade and interval controls | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | Prepared paid user can preview monthly and annual upgrade calculations | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | Prepared paid user can accept terms and submit upgrade payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | Prepared paid user can accept terms and submit upgrade payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Prepared paid user can preview downgrade calculations without submitting | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Prepared paid user can preview billing interval change without submitting | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Prepared paid user exposes non-destructive cancellation form | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
@@ -180,7 +180,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | Disposable monthly user sees downgrade retention offer | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | User A monthly plan ladder then period-end cancel | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | FAIL | Billing | User C yearly cancel and refund | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | User D monthly retention offer accept | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | Billing | User D monthly retention offer accept | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | User D monthly retention offer decline then schedule downgrade | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Purchase each paid plan and upgrade to the next | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Subscription lifecycle calculation rules are deterministic | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -206,13 +206,13 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Accessibility | Browser back returns from billing to dashboard without ending session | Ensure the application remains usable and inspectable for accessibility and browser behavior. | Browser navigation should not break the session or page state. |
 | PASS | Dashboard | Profile menu sign out blocks direct dashboard access | Confirm authenticated users can navigate the product without load errors. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Dashboard | Dashboard theme stays after refresh and can be restored | Confirm authenticated users can navigate the product without load errors. | The page should remain usable after refresh without losing required state. |
-| FAIL | Dashboard | Dashboard shows portfolio score events allocation and opportunities | Confirm authenticated users can navigate the product without load errors. | Expected controls and information should be visible to the user. |
+| PASS | Dashboard | Dashboard shows portfolio score events allocation and opportunities | Confirm authenticated users can navigate the product without load errors. | Expected controls and information should be visible to the user. |
 | PASS | Dashboard | View all opportunities opens the list and returns | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | General | View more opens event filters and a company fundamentals page | Confirm the related product behavior is stable and safe for the current execution. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | General | A day filters by symbol and opens company research pages | Confirm the related product behavior is stable and safe for the current execution. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Dashboard | View option exposure opens options research data | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Dashboard | Option exposure changes symbol expiration calls puts strike count and news | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Dashboard | View full expiry calendar opens the option chain | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
+| PASS | Dashboard | View full expiry calendar opens the option chain | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Dashboard | Manage accounts opens positions and every holdings tab | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | General | Opportunity tabs filters and row actions show CTA data | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | General | Opportunity save view research watch and pagination | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
@@ -284,8 +284,8 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Dashboard | Equity research keeps an empty symbol on the search prompt | Confirm authenticated users can navigate the product without load errors. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Dashboard | Glossary opens Theta and clears the search | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Dashboard | Glossary opens Vega and clears the search | Confirm authenticated users can navigate the product without load errors. | The requested page, modal, portal, or panel should open without a load error. |
-| PASS | General | Academy tabs lesson completion progress strategy filters and glossary | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | General | Beginners lessons overview categories and a strategy detail open | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | General | Academy tabs lesson completion progress strategy filters and glossary | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
+| FAIL | General | Beginners lessons overview categories and a strategy detail open | Confirm the related product behavior is stable and safe for the current execution. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | General | Academy opens the next lesson without marking it complete | Confirm the related product behavior is stable and safe for the current execution. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | General | Beginners lesson opens without marking it complete | Confirm the related product behavior is stable and safe for the current execution. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | General | Strategy library opens Protective Put and returns | Confirm the related product behavior is stable and safe for the current execution. | The requested page, modal, portal, or panel should open without a load error. |
@@ -686,15 +686,15 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | LC-011 - No-card trial enforces broker integration limit without counting manual entry | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | LC-012 - No-card trial enforces linked account and portfolio position limits | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | LC-013 - Overlay Strategists features remain visible while trial is active | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| FAIL | Billing | LC-014 - User can start paid subscription from onboarding plan selection | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
+| SKIPPED | Billing | LC-014 - User can start paid subscription from onboarding plan selection | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| SKIPPED | Billing | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Billing | LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| PASS | Billing | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | LC-018 - Successful paid checkout activates subscription and redirects back to dashboard | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Navigation should route the user to the correct protected or public destination. |
-| PASS | Billing | LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
+| SKIPPED | Billing | LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | LC-020 - Checkout rejects invalid, declined, insufficient-funds, stolen, and processing-error cards | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | SKIPPED | Authentication | LC-021 - Authentication-required card keeps user in Stripe checkout context | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Accessibility | LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The page should remain usable after refresh without losing required state. |
+| SKIPPED | Accessibility | LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription | Ensure the application remains usable and inspectable for accessibility and browser behavior. | The page should remain usable after refresh without losing required state. |
 | PASS | Billing | LC-023 - Subscribed user can see upgrade action or current plan status controls | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | LC-025 - Upgrade payment starts a new billing cycle immediately | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -1093,8 +1093,13 @@ This document explains what the latest automation execution validated in plain b
 | Blocked | LC-008 - With-card trial auto-renews to paid Overlay Strategists monthly subscription at expiry | Requires trial-expiry fixture, Stripe webhook/scheduler control, and Stripe ledger/API visibility. Requires trial-expiry fixture, Stripe webhook/scheduler control, and Stripe le... |
 | Blocked | LC-010 - Trial is allowed only once per verified email, verified mobile, or reused payment method | Requires deterministic repeat-trial user, repeat-phone fixture, and Stripe payment-method reuse observability. Requires deterministic repeat-trial user, repeat-phone fixture, an... |
 | Blocked | LC-012 - No-card trial enforces linked account and portfolio position limits | Requires broker linked-account fixture and portfolio position seed/API support. Requires broker linked-account fixture and portfolio position seed/API support. |
+| Controlled | LC-014 - User can start paid subscription from onboarding plan selection | Income Builder is not in the current catalog; skipping direct checkout summary. Income Builder is not in the current catalog; skipping direct checkout summary. |
+| Controlled | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Income Builder is not in the current catalog; skipping direct checkout summary. Reused coverage key direct-checkout. Income Builder is not in the current catalog; skipping direc... |
+| Controlled | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Income Builder is not in the current catalog; skipping direct checkout summary. Reused coverage key direct-checkout. Income Builder is not in the current catalog; skipping direc... |
+| Controlled | LC-019 - Billing shows current plan, invoice evidence, and Stripe currency details | Income Builder is not in the current catalog; skipping direct checkout summary. Reused coverage key direct-checkout. Income Builder is not in the current catalog; skipping direc... |
 | Controlled | LC-020 - Checkout rejects invalid, declined, insufficient-funds, stolen, and processing-error cards | Set STRIPE_CHECKOUT_URL to a fresh Stripe Checkout session to run payment-negative coverage. Set STRIPE_CHECKOUT_URL to a fresh Stripe Checkout session to run payment-negative c... |
 | Controlled | LC-021 - Authentication-required card keeps user in Stripe checkout context | Set STRIPE_CHECKOUT_URL to a fresh Stripe Checkout session to run payment-negative coverage. Reused coverage key payment-negative. Set STRIPE_CHECKOUT_URL to a fresh Stripe Chec... |
+| Controlled | LC-022 - Checkout refresh and browser-back behavior do not accidentally activate subscription | Income Builder is not in the current catalog; skipping direct checkout summary. Reused coverage key direct-checkout. Income Builder is not in the current catalog; skipping direc... |
 | Blocked | LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout | Requires dedicated lower-tier active subscription, Stripe proration visibility, and safe payment fixture. Requires dedicated lower-tier active subscription, Stripe proration vis... |
 | Blocked | LC-025 - Upgrade payment starts a new billing cycle immediately | Requires Stripe/API validation for invoice, billing-cycle anchor, and entitlement change. Requires Stripe/API validation for invoice, billing-cycle anchor, and entitlement change. |
 | Blocked | LC-027 - Downgrade schedules lower plan for next renewal instead of immediate entitlement loss | Requires dedicated higher-tier account, downgrade confirmation UI, and renewal-date fixture. Requires dedicated higher-tier account, downgrade confirmation UI, and renewal-date... |

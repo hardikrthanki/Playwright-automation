@@ -3868,6 +3868,75 @@ const coverageGapLoadMoreHtml = shouldShowCoverageGapLoadMore
     </div>`
   : '';
 
+const planCategoryOrder = [
+  ['blocked', 'Blocked', 'Need a product or admin change first'],
+  ['controlled', 'Controlled', 'Need an email, code, or prepared user'],
+  ['traceability', 'Traceability', 'Already checked by another test'],
+  ['future', 'Future', 'Planned for a later release'],
+  ['skipped', 'Skipped', 'Skipped without a clear reason'],
+];
+
+const planModuleGroups = planCategoryOrder.flatMap(([slug, label, meaning]) => {
+  const grouped = new Map();
+
+  coverageGapItems
+    .filter(item => String(item.category || '').toLowerCase() === slug)
+    .forEach(item => {
+      const moduleName = item.module || 'General';
+      if (!grouped.has(moduleName)) grouped.set(moduleName, []);
+      grouped.get(moduleName).push(item);
+    });
+
+  return [...grouped.entries()]
+    .sort((left, right) => right[1].length - left[1].length || left[0].localeCompare(right[0]))
+    .map(([moduleName, checks]) => ({
+      slug,
+      label,
+      meaning,
+      moduleName,
+      checks,
+      id: `plan-${slug}-${String(moduleName).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`,
+    }));
+});
+
+const planModuleCards = planModuleGroups.map(group => {
+  const searchText = [
+    group.moduleName,
+    group.label,
+    group.meaning,
+    ...group.checks.map(item => `${item.title || ''} ${item.fullTitle || ''} ${item.reason || ''}`),
+  ].join(' ').toLowerCase();
+
+  return `
+    <a class="passed-card" href="#${group.id}" data-plan-card data-plan-category="${group.slug}" data-plan-search="${escapeHtml(searchText)}">
+      <div class="passed-card-top"><span class="module-icon">${escapeHtml(passedTopicMark(group.moduleName))}</span><strong>${escapeHtml(group.moduleName)}</strong></div>
+      <div class="passed-card-count"><b>${group.checks.length}</b><span>checks</span></div>
+      <p>${escapeHtml(group.label)}. ${escapeHtml(group.meaning)}</p>
+      <span class="module-button">Open this group</span>
+    </a>`;
+}).join('');
+
+const planModuleDetails = planModuleGroups.map(group => {
+  const rows = group.checks.map(item => `
+    <div class="passed-check">
+      <strong>${escapeHtml(clientCheckTitle(item.title || item.fullTitle || 'Check'))}</strong>
+      <span>${escapeHtml(onceSentence(item.reason || item.nextAction || group.meaning))}</span>
+    </div>`).join('');
+
+  return `
+    <article class="passed-detail" id="${group.id}" data-step-item data-step-label="${escapeHtml(group.moduleName)}" data-plan-category="${group.slug}">
+      <div class="passed-detail-head">
+        <div>
+          <div class="eyebrow">${escapeHtml(group.label)}</div>
+          <h2>${escapeHtml(group.moduleName)}</h2>
+          <div class="passed-card-count"><b>${group.checks.length}</b><span>checks</span></div>
+        </div>
+      </div>
+      <p>${escapeHtml(group.meaning)}</p>
+      <div class="passed-checks" data-long-list="8" data-long-item=".passed-check" data-long-label="checks">${rows}</div>
+    </article>`;
+}).join('');
+
 const coverageGapsContent = coverageGapItems.length === 0
   ? renderEmptyState({
     icon: 'OK',
@@ -3882,35 +3951,45 @@ const coverageGapsContent = coverageGapItems.length === 0
     ],
   })
   : `
-    <div class="coverage-gap-summary">
-      <div><span>Did not run</span><strong>${coverageGapSummary.total ?? coverageGapItems.length}</strong><small>Out of the full plan</small></div>
-      <div><span>Blocked</span><strong>${coverageGapSummary.blocked ?? 0}</strong><small>Need a product or admin change first</small></div>
-      <div><span>Need a setup</span><strong>${coverageGapSummary.controlled ?? 0}</strong><small>Need an email, code, or prepared user</small></div>
-      <div><span>Already covered</span><strong>${coverageGapSummary.traceability ?? 0}</strong><small>Checked by another test that did run</small></div>
-      <div><span>Later</span><strong>${coverageGapSummary.future ?? 0}</strong><small>Not part of this release</small></div>
-      <div><span>Need a look</span><strong>${coverageGapSummary.skipped ?? 0}</strong><small>Skipped without a clear reason</small></div>
+    <nav class="plan-nav" aria-label="Where you are">
+      <button type="button" data-plan-back hidden><small>Back</small><strong data-plan-back-name>All reasons</strong></button>
+      <div class="plan-crumbs">
+        <button type="button" data-plan-goto="coverage-gaps">Not run</button>
+        <span data-plan-crumb-sep hidden>/</span>
+        <button type="button" data-plan-crumb-reason hidden></button>
+        <span data-plan-crumb-sep2 hidden>/</span>
+        <span data-plan-crumb-group hidden></span>
+      </div>
+      <button type="button" class="btn" data-plan-reset hidden>Reset</button>
+    </nav>
+    <nav class="plan-nav" data-plan-pager hidden aria-label="Groups in this reason">
+      <button type="button" data-plan-prev disabled><small>Previous</small><strong data-plan-prev-name></strong></button>
+      <span data-plan-pos></span>
+      <button type="button" data-plan-next disabled><small>Next</small><strong data-plan-next-name></strong></button>
+    </nav>
+    <div data-passed-index>
+    <div class="passed-board-head">
+      <div>
+        <h2 data-plan-heading>Choose a reason</h2>
+        <p data-plan-note>Only the card you open is shown. Search finds one group.</p>
+      </div>
+      <div class="plan-toolbar-actions">
+        <label class="module-filter-search">
+          <input id="planCheckSearch" type="search" placeholder="Find a check or area" aria-label="Search checks that did not run">
+        </label>
+      </div>
     </div>
-    <div class="coverage-gap-explainer">
-      <strong>These are not failures</strong>
-      <p>A check in this list did not run. It does not mean the product failed. Open a group to see examples and what would let that check run.</p>
+    <div class="passed-card-grid" data-plan-reasons>
+      <a class="passed-card" href="#plan-cat-blocked"><div class="passed-card-top"><span class="module-icon">BL</span><strong>Blocked</strong></div><div class="passed-card-count"><b>${coverageGapSummary.blocked ?? 0}</b><span>checks</span></div><p>Need a product or admin change first.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-controlled"><div class="passed-card-top"><span class="module-icon">SU</span><strong>Need a setup</strong></div><div class="passed-card-count"><b>${coverageGapSummary.controlled ?? 0}</b><span>checks</span></div><p>Need an email, code, or prepared user.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-traceability"><div class="passed-card-top"><span class="module-icon">AC</span><strong>Already covered</strong></div><div class="passed-card-count"><b>${coverageGapSummary.traceability ?? 0}</b><span>checks</span></div><p>Checked by another test that did run.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-future"><div class="passed-card-top"><span class="module-icon">LT</span><strong>Later</strong></div><div class="passed-card-count"><b>${coverageGapSummary.future ?? 0}</b><span>checks</span></div><p>Not part of this release.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-skipped"><div class="passed-card-top"><span class="module-icon">LK</span><strong>Need a look</strong></div><div class="passed-card-count"><b>${coverageGapSummary.skipped ?? 0}</b><span>checks</span></div><p>Skipped without a clear reason.</p><span class="module-button">Open</span></a>
     </div>
-    <div class="coverage-next">
-      ${[
-        ['Blocked', 'Need a product or admin change first', coverageGapSummary.blocked ?? 0],
-        ['Controlled', 'Need an email, code, or prepared user', coverageGapSummary.controlled ?? 0],
-        ['Traceability', 'Already checked by another test', coverageGapSummary.traceability ?? 0],
-        ['Future', 'Planned for a later release', coverageGapSummary.future ?? 0],
-        ['Skipped', 'Skipped without a clear reason', coverageGapSummary.skipped ?? 0],
-      ].map(([category, meaning, count]) => {
-        const samples = coverageGapItems
-          .filter(item => String(item.category || '').toLowerCase() === String(category).toLowerCase())
-          .slice(0, 6);
-        const rows = samples.map(item => `<li><strong>${escapeHtml(clientCheckTitle(item.title || item.fullTitle || 'Check'))}</strong><span>${escapeHtml(onceSentence(item.reason || item.nextAction || meaning))}</span></li>`).join('');
-        return `<details class="coverage-next-group">
-          <summary><b>${count}</b><span><strong>${escapeHtml(meaning)}</strong><small>${samples.length ? 'Examples below' : 'No examples in this run'}</small></span></summary>
-          ${rows ? `<ul>${rows}</ul>` : ''}
-        </details>`;
-      }).join('')}
+    <div class="validation-group-count" data-plan-count hidden></div>
+    <div class="passed-card-grid" data-plan-groups hidden>${planModuleCards}</div>
+    <div class="empty-note" data-plan-empty hidden>No group matches that search.</div>
+    <div class="coverage-next" data-plan-notes>
       ${displayModules.filter(module => Number(module.executed ?? ((module.passed ?? 0) + (module.failed ?? 0))) === 0).map(module => {
         const notes = {
           'Access Control': 'The permission check is already in the suite. It runs when two prepared users are available.',
@@ -3919,6 +3998,7 @@ const coverageGapsContent = coverageGapItems.length === 0
         const note = notes[module.name] || 'The tests are in the suite. Include that area in the next full run.';
         return `<p class="coverage-next-note"><strong>${escapeHtml(module.name)}</strong> has ${module.total} planned check${Number(module.total) === 1 ? '' : 's'} and none of those matrix rows ran. ${escapeHtml(note)}</p>`;
       }).join('')}
+    </div>
     </div>
     `;
 
@@ -6045,12 +6125,12 @@ const executiveModeShellHtml = `
     <h2>Plan coverage</h2>
     <div class="coverage-meter-track" aria-hidden="true"><span class="coverage-meter-ran" style="width:${executiveData.total ? Math.round(((executiveData.executed ?? executiveData.passed) / executiveData.total) * 100) : 0}%"></span></div>
     <div class="coverage-meter-note"><span>${executiveData.executed ?? executiveData.passed} ran</span><span>${executiveData.total ? Math.round(((executiveData.executed ?? executiveData.passed) / executiveData.total) * 100) : 0}% of ${executiveData.total} planned</span></div>
-    <div class="coverage-chip-row">
-      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.blocked ?? 0}</b> need a product change</a>
-      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.controlled ?? 0}</b> need a setup</a>
-      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.traceability ?? 0}</b> already covered</a>
-      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.future ?? 0}</b> later</a>
-      <a class="coverage-chip" href="#coverage-gaps"><b>${coverageGapSummary.skipped ?? 0}</b> need a look</a>
+    <div class="passed-card-grid">
+      <a class="passed-card" href="#plan-cat-blocked"><div class="passed-card-top"><span class="module-icon">BL</span><strong>Blocked</strong></div><div class="passed-card-count"><b>${coverageGapSummary.blocked ?? 0}</b><span>checks</span></div><p>Need a product or admin change first.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-controlled"><div class="passed-card-top"><span class="module-icon">SU</span><strong>Need a setup</strong></div><div class="passed-card-count"><b>${coverageGapSummary.controlled ?? 0}</b><span>checks</span></div><p>Need an email, code, or prepared user.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-traceability"><div class="passed-card-top"><span class="module-icon">AC</span><strong>Already covered</strong></div><div class="passed-card-count"><b>${coverageGapSummary.traceability ?? 0}</b><span>checks</span></div><p>Checked by another test that did run.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-future"><div class="passed-card-top"><span class="module-icon">LT</span><strong>Later</strong></div><div class="passed-card-count"><b>${coverageGapSummary.future ?? 0}</b><span>checks</span></div><p>Not part of this release.</p><span class="module-button">Open</span></a>
+      <a class="passed-card" href="#plan-cat-skipped"><div class="passed-card-top"><span class="module-icon">LK</span><strong>Need a look</strong></div><div class="passed-card-count"><b>${coverageGapSummary.skipped ?? 0}</b><span>checks</span></div><p>Skipped without a clear reason.</p><span class="module-button">Open</span></a>
     </div>
   </section>
   ${readerGuideHtml}`;
@@ -9750,8 +9830,25 @@ const airGoldenDashboardHtml = `<!doctype html>
     body[data-air-page="cover"] .freshness-strip{display:grid!important}
     body[data-air-page="cover"] .air-provenance-warning{display:block!important}
     body[data-air-page="cover"] nav.report-more{display:block!important}
-    #validation-summary [data-step-item]{display:none!important}
-    #validation-summary [data-step-item].is-step-current{display:block!important}
+    #validation-summary [data-step-item],#coverage-gaps [data-step-item]{display:none!important}
+    #validation-summary [data-step-item].is-step-current,#coverage-gaps [data-step-item].is-step-current{display:block!important}
+    #coverage-gaps .passed-card[hidden],#coverage-gaps .passed-card-grid[hidden],#coverage-gaps [data-plan-notes][hidden],#coverage-gaps [data-plan-reset][hidden],#coverage-gaps [data-passed-index][hidden],#coverage-gaps [data-plan-count][hidden],#coverage-gaps .plan-nav[hidden],#coverage-gaps .plan-nav [hidden]{display:none!important}
+    #coverage-gaps .plan-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;padding:10px 14px;background:#101826;border:1px solid rgba(148,163,184,.22);border-radius:12px}
+    #coverage-gaps .plan-nav button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;margin:0;padding:4px 2px;background:transparent;border:0;color:#f8fafc;cursor:pointer;font:inherit}
+    #coverage-gaps .plan-nav button:disabled{visibility:hidden}
+    #coverage-gaps .plan-nav small{color:#9fb0c5;font-size:11px;font-weight:650;letter-spacing:.04em;text-transform:uppercase}
+    #coverage-gaps .plan-nav strong{font-size:14px;font-weight:650;line-height:1.3}
+    #coverage-gaps .plan-crumbs{display:flex;align-items:center;gap:8px;flex:1;min-width:0;color:#9fb0c5;font-size:14px}
+    #coverage-gaps .plan-crumbs button{flex-direction:row;color:#7ee787;padding:0}
+    #coverage-gaps .plan-crumbs [aria-current="true"]{color:#f8fafc}
+    #coverage-gaps [data-plan-pager] [data-plan-next]{align-items:flex-end;text-align:right}
+    #coverage-gaps [data-plan-pos]{flex:0 0 auto;color:#9fb0c5;font-size:13px;font-weight:650;text-align:center}
+    #coverage-gaps .plan-nav .btn{flex-direction:row;border:1px solid rgba(57,231,95,.35);border-radius:10px;padding:8px 12px;color:#d7fbe0}
+    #coverage-gaps .plan-toolbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    #coverage-gaps .plan-toolbar-actions .module-filter-search{width:min(320px,100%);margin:0}
+    #coverage-gaps .passed-board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px}
+    #coverage-gaps .passed-board-head h2{margin:0;font-size:28px;letter-spacing:-.03em}
+    #coverage-gaps .passed-board-head p{margin:8px 0 0;color:#91a4b8}
     #validation-summary .passed-board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:14px}
     #validation-summary .passed-board-head h2{margin:0;font-size:28px;letter-spacing:-.03em}
     #validation-summary .passed-board-head p{margin:8px 0 0;color:#91a4b8}
@@ -9773,6 +9870,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     #validation-summary .passed-check{border:1px solid rgba(57,231,95,.16);border-left:3px solid #39e75f;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
     #validation-summary .passed-check strong{display:block;font-size:15px;line-height:1.35}
     #validation-summary .passed-check span{display:block;margin-top:6px;color:#9fb0c5;font-size:13px;line-height:1.45}
+    #cover .passed-card-grid,#coverage-gaps .passed-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+    #cover .passed-card,#coverage-gaps .passed-card{display:flex;flex-direction:column;gap:14px;min-height:220px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;color:#f8fafc;text-decoration:none;box-shadow:0 14px 34px rgba(0,0,0,.22)}
+    #cover .passed-card:hover,#coverage-gaps .passed-card:hover{transform:translateY(-3px);border-color:#39e75f;box-shadow:0 18px 42px rgba(57,231,95,.14)}
+    #cover .passed-card-top,#coverage-gaps .passed-card-top{display:flex;align-items:center;gap:12px;min-width:0}
+    #cover .passed-card-top strong,#coverage-gaps .passed-card-top strong{font-size:18px;line-height:1.25}
+    #cover .passed-card-count b,#coverage-gaps .passed-card-count b{display:block;color:#39e75f;font-size:28px;line-height:1;font-weight:800}
+    #cover .passed-card-count span,#coverage-gaps .passed-card-count span{display:block;margin-top:6px;color:#7f8ea3;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    #cover .passed-card p,#coverage-gaps .passed-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}
+    #coverage-gaps .passed-board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:18px 0 14px}
+    #coverage-gaps .passed-board-head h2{margin:0;font-size:28px;letter-spacing:-.03em}
+    #coverage-gaps .passed-board-head p{margin:8px 0 0;color:#91a4b8}
+    #coverage-gaps .passed-detail{border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(8,16,30,.96));padding:22px;margin-top:16px}
+    #coverage-gaps .passed-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    #coverage-gaps .passed-detail-head h2{margin:4px 0 0;font-size:32px;letter-spacing:-.03em;color:#f8fafc}
+    #coverage-gaps .passed-detail-head .passed-card-count{margin-top:14px}
+    #coverage-gaps .passed-detail>p{margin:8px 0 18px;color:#9fb0c5;line-height:1.5}
+    #coverage-gaps .passed-checks{display:grid;gap:10px}
+    #coverage-gaps .passed-check{border:1px solid rgba(57,231,95,.16);border-left:3px solid #39e75f;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
+    #coverage-gaps .passed-check strong{display:block;font-size:15px;line-height:1.35;color:#f8fafc}
+    #coverage-gaps .passed-check span{display:block;margin-top:6px;color:#9fb0c5;font-size:13px;line-height:1.45}
+    #coverage-gaps .plan-group{margin-top:16px;border:1px solid rgba(57,231,95,.34)!important;border-radius:16px!important;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(8,16,30,.96))!important;padding:8px 8px 18px!important}
+    #coverage-gaps .plan-group summary{cursor:pointer;list-style:none}
+    #coverage-gaps .plan-group summary::-webkit-details-marker{display:none}
+    #coverage-gaps .plan-group .passed-detail-head{display:flex;padding:14px 14px 0}
+    #coverage-gaps .plan-group .passed-detail-head h2{margin:4px 0 0;font-size:28px;letter-spacing:-.03em;color:#f8fafc}
+    #coverage-gaps .plan-group .passed-card-count{margin-top:14px}
+    #coverage-gaps .plan-group .passed-checks{display:grid;gap:10px;margin:16px 14px 0}
+    #coverage-gaps .plan-group .passed-check{border:1px solid rgba(57,231,95,.16);border-left:3px solid #39e75f;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
+    #coverage-gaps .plan-group .passed-check strong{display:block;font-size:15px;line-height:1.35;color:#f8fafc}
+    #coverage-gaps .plan-group .passed-check span{display:block;margin-top:6px;color:#9fb0c5;font-size:13px;line-height:1.45}
+    @media(max-width:1100px){#cover .passed-card-grid,#coverage-gaps .passed-card-grid{grid-template-columns:1fr}}
     @media(max-width:1100px){#validation-summary .passed-card-grid,#validation-summary .passed-board-head{grid-template-columns:1fr;display:grid}}
     .page-pager,.step-nav{
       display:flex!important;
@@ -10165,16 +10293,21 @@ const airGoldenDashboardHtml = `<!doctype html>
     </section>
 
     <section class="page report-extra" id="coverage-gaps">
+      <div id="plan-cat-blocked" hidden></div>
+      <div id="plan-cat-controlled" hidden></div>
+      <div id="plan-cat-traceability" hidden></div>
+      <div id="plan-cat-future" hidden></div>
+      <div id="plan-cat-skipped" hidden></div>
       ${renderPageNav('coverage-gaps')}
       <div class="topbar">
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('analytics', 'Checks we did not run')}
-          <p>${coverageGapSummary.total ?? coverageGapItems.length} of the planned checks did not run. They are grouped by the reason, with a few examples in each group.</p>
+          <p>${coverageGapSummary.total ?? coverageGapItems.length} of the planned checks did not run. Open one reason, then one group. Back goes up one step. Previous and Next stay inside that reason. Reset returns to the start.</p>
         </div>
         <span class="pill">${coverageGapSummary.total ?? coverageGapItems.length} Items</span>
       </div>
-      <div class="panel">${coverageGapsContent}</div>
+      <div class="panel">${coverageGapsContent}${planModuleDetails}</div>
       ${renderPageFooter('coverage-gaps')}
     </section>
 
@@ -10833,12 +10966,17 @@ const airGoldenDashboardHtml = `<!doctype html>
       more.open = Boolean(more.querySelector('a[href="#' + pageId + '"]'));
     }
     const focus = document.getElementById(hashId);
-    if (focus && focus !== page) {
+    if (focus && focus.tagName === 'DETAILS') {
+      focus.open = true;
+    }
+    const focusHidden = Boolean(focus && (focus.hidden || window.getComputedStyle(focus).display === 'none'));
+    if (focus && focus !== page && !focusHidden) {
       focus.scrollIntoView({ block: 'start' });
-    } else {
+    } else if (!focus || focus === page) {
       window.scrollTo(0, 0);
     }
     updateStepNav();
+    updatePlanBrowser({ scroll: true });
   }
   function visibleStepItems(page) {
     return Array.from(page.querySelectorAll('[data-step-item]')).filter((item) => (
@@ -11524,6 +11662,162 @@ const airGoldenDashboardHtml = `<!doctype html>
 
   passedCheckSearch?.addEventListener('input', updatePassedSearch);
 
+  function updatePlanBrowser(options = {}) {
+    const planSearch = document.getElementById('planCheckSearch');
+    const query = String(planSearch?.value || '').trim().toLowerCase();
+    const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    const category = hashId.startsWith('plan-cat-') ? hashId.slice('plan-cat-'.length) : '';
+    const labels = {
+      blocked: 'Blocked',
+      controlled: 'Need a setup',
+      traceability: 'Already covered',
+      future: 'Later',
+      skipped: 'Need a look',
+    };
+    const reasons = document.querySelector('[data-plan-reasons]');
+    const groups = document.querySelector('[data-plan-groups]');
+    const notes = document.querySelector('[data-plan-notes]');
+    const indexPanel = document.querySelector('#coverage-gaps [data-passed-index]');
+    const heading = document.querySelector('[data-plan-heading]');
+    const note = document.querySelector('[data-plan-note]');
+    const planCount = document.querySelector('[data-plan-count]');
+    const planEmpty = document.querySelector('[data-plan-empty]');
+    const back = document.querySelector('#coverage-gaps [data-plan-back]');
+    const backName = document.querySelector('[data-plan-back-name]');
+    const startCrumb = document.querySelector('#coverage-gaps [data-plan-goto="coverage-gaps"]');
+    const reasonCrumb = document.querySelector('[data-plan-crumb-reason]');
+    const groupCrumb = document.querySelector('[data-plan-crumb-group]');
+    const sep = document.querySelector('[data-plan-crumb-sep]');
+    const sep2 = document.querySelector('[data-plan-crumb-sep2]');
+    const pager = document.querySelector('[data-plan-pager]');
+    const prev = document.querySelector('[data-plan-prev]');
+    const next = document.querySelector('[data-plan-next]');
+    const prevName = document.querySelector('[data-plan-prev-name]');
+    const nextName = document.querySelector('[data-plan-next-name]');
+    const pos = document.querySelector('[data-plan-pos]');
+    const cards = Array.from(document.querySelectorAll('[data-plan-card]'));
+    const details = Array.from(document.querySelectorAll('#coverage-gaps [data-step-item]'));
+    const opened = details.find((item) => item.id === hashId) || null;
+    const activeCategory = category || opened?.dataset.planCategory || '';
+    const reasonLabel = labels[activeCategory] || 'Groups';
+    const filtering = Boolean(activeCategory || query) && !opened;
+
+    details.forEach((item) => item.classList.toggle('is-step-current', item === opened));
+    if (indexPanel) indexPanel.hidden = Boolean(opened);
+    document.querySelectorAll('#coverage-gaps [data-plan-reset]').forEach((button) => {
+      button.hidden = !activeCategory && !query && !opened;
+    });
+
+    if (startCrumb) startCrumb.setAttribute('aria-current', !activeCategory && !opened ? 'true' : 'false');
+    if (sep) sep.hidden = !activeCategory;
+    if (sep2) sep2.hidden = !opened;
+    if (reasonCrumb) {
+      reasonCrumb.hidden = !activeCategory;
+      reasonCrumb.textContent = reasonLabel;
+      reasonCrumb.dataset.planReason = activeCategory ? 'plan-cat-' + activeCategory : '';
+      reasonCrumb.setAttribute('aria-current', activeCategory && !opened ? 'true' : 'false');
+    }
+    if (groupCrumb) {
+      groupCrumb.hidden = !opened;
+      groupCrumb.textContent = opened?.getAttribute('data-step-label') || '';
+    }
+    if (back) {
+      const backTarget = opened ? 'plan-cat-' + activeCategory : 'coverage-gaps';
+      back.hidden = !activeCategory && !opened;
+      back.dataset.planBack = backTarget;
+    }
+    if (backName) backName.textContent = opened ? reasonLabel : 'All reasons';
+
+    const siblings = opened
+      ? details.filter((item) => item.dataset.planCategory === opened.dataset.planCategory)
+      : [];
+    const siblingIndex = opened ? siblings.indexOf(opened) : -1;
+    const previous = siblings[siblingIndex - 1];
+    const following = siblings[siblingIndex + 1];
+    if (pager) pager.hidden = !opened || siblings.length < 2;
+    if (prev) {
+      prev.disabled = !previous;
+      prev.dataset.planTarget = previous?.id || '';
+    }
+    if (next) {
+      next.disabled = !following;
+      next.dataset.planTarget = following?.id || '';
+    }
+    if (prevName) prevName.textContent = previous ? '← ' + previous.getAttribute('data-step-label') : '';
+    if (nextName) nextName.textContent = following ? following.getAttribute('data-step-label') + ' →' : '';
+    if (pos) pos.textContent = opened ? (siblingIndex + 1) + ' of ' + siblings.length : '';
+
+    if (reasons) reasons.hidden = filtering || Boolean(opened);
+    if (notes) notes.hidden = filtering || Boolean(opened);
+    if (groups) groups.hidden = !filtering;
+
+    let visibleCards = 0;
+    cards.forEach((card) => {
+      const categoryOk = !activeCategory || card.dataset.planCategory === activeCategory;
+      const searchOk = !query || String(card.dataset.planSearch || '').toLowerCase().includes(query);
+      const show = filtering && categoryOk && searchOk;
+      card.hidden = !show;
+      if (show) visibleCards += 1;
+    });
+
+    if (heading) {
+      heading.textContent = activeCategory ? reasonLabel : (query ? 'Search' : 'Choose a reason');
+    }
+    if (note) {
+      note.textContent = activeCategory
+        ? 'Open one group. Back returns to the five reasons.'
+        : (query
+          ? 'Open one group. Reset clears the search.'
+          : 'Open one reason. Search finds a group.');
+    }
+    if (planCount) {
+      planCount.hidden = !filtering;
+      planCount.textContent = 'Showing ' + visibleCards + (visibleCards === 1 ? ' group' : ' groups');
+    }
+    if (planEmpty) planEmpty.hidden = !filtering || visibleCards !== 0;
+
+    if (options.scroll && document.body.dataset.airPage === 'coverage-gaps') {
+      document.querySelector('#coverage-gaps .plan-nav')?.scrollIntoView({ block: 'start' });
+    }
+  }
+
+  function goPlan(id) {
+    if (!id) return;
+    const current = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    if (current === id) {
+      updatePlanBrowser({ scroll: true });
+      return;
+    }
+    location.hash = id;
+  }
+
+  document.getElementById('planCheckSearch')?.addEventListener('input', () => updatePlanBrowser());
+  document.addEventListener('click', (event) => {
+    const control = event.target.closest('#coverage-gaps [data-plan-reset], #coverage-gaps [data-plan-back], #coverage-gaps [data-plan-goto], #coverage-gaps [data-plan-crumb-reason], #coverage-gaps [data-plan-prev], #coverage-gaps [data-plan-next]');
+    if (!control || control.disabled) return;
+    event.preventDefault();
+    if (control.hasAttribute('data-plan-reset')) {
+      const input = document.getElementById('planCheckSearch');
+      if (input) input.value = '';
+      goPlan('coverage-gaps');
+      return;
+    }
+    if (control.hasAttribute('data-plan-back')) {
+      goPlan(control.dataset.planBack || 'coverage-gaps');
+      return;
+    }
+    if (control.hasAttribute('data-plan-goto')) {
+      goPlan(control.dataset.planGoto || 'coverage-gaps');
+      return;
+    }
+    if (control.hasAttribute('data-plan-crumb-reason')) {
+      goPlan(control.dataset.planReason || 'coverage-gaps');
+      return;
+    }
+    goPlan(control.dataset.planTarget || '');
+  });
+  updatePlanBrowser();
+
   if (moduleFilterSearch) {
     moduleFilterSearch.addEventListener('input', updateModuleFilter);
   }
@@ -11909,8 +12203,9 @@ const airGoldenDashboardHtml = `<!doctype html>
       const id = decodeURIComponent(href.slice(1));
       const target = document.getElementById(id);
       const opensArea = target && (target.hasAttribute('data-step-item') || target.id === 'validation-summary');
+      const opensPlan = id.startsWith('plan-');
       const destination = pageForTarget(id);
-      if (opensArea || (destination && destination.id !== currentPageId())) {
+      if (opensArea || opensPlan || (destination && destination.id !== currentPageId())) {
         event.preventDefault();
         if (location.hash === '#' + id) {
           showCurrentPage();

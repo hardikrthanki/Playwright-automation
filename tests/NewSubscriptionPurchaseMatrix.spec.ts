@@ -91,8 +91,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-007'],
     title: 'Paid subscription can be started from pricing entry point',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires confirmed pricing page route/selectors and reusable logged-in fixture.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > paid plan checkout starts from the pricing catalog and returns before payment'
   },
   {
     id: 'SC-43',
@@ -139,9 +139,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-013'],
     title: 'Stripe checkout displays renewal or auto-renewal copy before payment',
     priority: 'High',
-    status: 'controlled',
-    automation: 'BlockedScenarioExecution.spec.ts > SC-48: Stripe checkout displays renewal or auto-renewal copy before payment',
-    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; copy expectation now asserted flexibly.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > validateSubscriptionCheckoutDetails'
   },
   {
     id: 'SC-49',
@@ -253,18 +252,16 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-027'],
     title: 'Failed checkout keeps user without active paid subscription',
     priority: 'Critical',
-    status: 'controlled',
-    automation: 'BlockedScenarioExecution.spec.ts > SC-62: Failed checkout keeps user without active paid subscription',
-    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; UI-level validation (no success/activation copy after decline).'
+    status: 'automated',
+    automation: 'PaymentNegative.spec.ts > declined card does not activate subscription'
   },
   {
     id: 'SC-63',
     sourceIds: ['SUB-NEW-028'],
     title: 'Closing Stripe checkout returns user safely without activating subscription',
     priority: 'High',
-    status: 'controlled',
-    automation: 'BlockedScenarioExecution.spec.ts > SC-63: Closing Stripe checkout returns user safely without activating subscription',
-    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true, STRIPE_CHECKOUT_URL, and a checkout link exposing a cancel/return control.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > return from checkout before payment'
   },
   {
     id: 'SC-64',

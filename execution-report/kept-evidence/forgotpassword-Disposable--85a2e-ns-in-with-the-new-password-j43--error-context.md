@@ -12,23 +12,22 @@
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
+Error: expect(page).toHaveURL(expected) failed
 
-Locator: getByText(/password updated|password reset|success/i)
-Expected: visible
-Timeout: 10000ms
-Error: element(s) not found
+Expected pattern: /\/login/
+Received string:  "https://uat.ooltool.com/reset-password/fAeeY4gK12-E6pM7YBTekwEhKwNO4rrZw2BdKc-M2SU"
+Timeout: 20000ms
 
 Call log:
-  - Expect "toBeVisible" with timeout 10000ms
-  - waiting for getByText(/password updated|password reset|success/i)
+  - Expect "toHaveURL" with timeout 20000ms
+    23 × unexpected value "https://uat.ooltool.com/reset-password/fAeeY4gK12-E6pM7YBTekwEhKwNO4rrZw2BdKc-M2SU"
 
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [ref=e1]:
+- generic [active] [ref=e1]:
   - generic [ref=e3]:
     - link "OolTool" [ref=e4] [cursor=pointer]:
       - /url: /
@@ -42,14 +41,14 @@ Call log:
           - generic [ref=e12]:
             - text: New Password
             - generic [ref=e13]:
-              - textbox "New Password" [active] [ref=e14]:
+              - textbox "New Password" [ref=e14]:
                 - /placeholder: Min. 8 characters
               - button "Show password" [ref=e15] [cursor=pointer]:
                 - img [ref=e16]
           - generic [ref=e19]:
             - text: Confirm Password
             - generic [ref=e20]:
-              - textbox "Confirm Password" [ref=e21]: ResetFlow#26aA
+              - textbox "Confirm Password" [ref=e21]
               - button "Show password" [ref=e22] [cursor=pointer]:
                 - img [ref=e23]
         - generic [ref=e26]:
@@ -63,72 +62,10 @@ Call log:
 # Test source
 
 ```ts
-  1   | import {
-  2   |   Page,
-  3   |   Locator,
-  4   |   expect
-  5   | } from '@playwright/test';
-  6   | 
-  7   | import { BasePage }
-  8   |   from './BasePage';
-  9   | 
-  10  | import { safeClick }
-  11  |   from '../helpers/safeClick';
-  12  | 
-  13  | import { Logger }
-  14  |   from '../utils/logger';
-  15  | 
-  16  | import {
-  17  |   validatePasswordPolicy
-  18  | } from '../config/testData';
-  19  | 
-  20  | /* =============================================================================
-  21  | PAGE OBJECT: ResetPasswordPage
-  22  | 
-  23  | PURPOSE
-  24  | -------
-  25  | Handles password reset after clicking reset email link.
-  26  | 
-  27  | FEATURES COVERED
-  28  | ----------------
-  29  | 1. Enter New Password
-  30  | 2. Confirm Password
-  31  | 3. Update Password
-  32  | 4. Navigate Back To Login
-  33  | 
-  34  | ============================================================================= */
-  35  | 
-  36  | export class ResetPasswordPage
-  37  |   extends BasePage {
-  38  | 
-  39  |   readonly newPasswordInput: Locator;
-  40  | 
-  41  |   readonly confirmPasswordInput: Locator;
-  42  | 
-  43  |   readonly updatePasswordButton: Locator;
-  44  | 
-  45  |   readonly backToLoginLink: Locator;
-  46  | 
-  47  |   constructor(page: Page) {
-  48  | 
-  49  |     super(page);
-  50  | 
-  51  |     this.newPasswordInput =
-  52  |       page.getByLabel(
-  53  |         /^new password$/i
-  54  |       ).or(
-  55  |         page.locator(
-  56  |           'form input[type="password"]'
-  57  |         ).nth(0)
-  58  |       );
-  59  | 
-  60  |     this.confirmPasswordInput =
-  61  |       page.getByLabel(
   62  |         /^confirm password$/i
   63  |       ).or(
   64  |         page.locator(
-> 65  |           'form input[type="password"]'
-      |                                                                                              ^ Error: expect(locator).toBeVisible() failed
+  65  |           'form input[type="password"]'
   66  |         ).nth(1)
   67  |       );
   68  | 
@@ -210,23 +147,46 @@ Call log:
   144 | 
   145 |   async validateSuccess() {
   146 | 
-  147 |     await expect(
-  148 |       this.page.getByText(
-  149 |         /password updated|password reset|success/i
-  150 |       )
-  151 |     ).toBeVisible({
-  152 |       timeout: 10000
-  153 |     });
-  154 | 
-  155 |     Logger.success(
-  156 |       'Password Updated Successfully'
-  157 |     );
-  158 |   }
-  159 | 
-  160 |   async backToLogin() {
-  161 | 
-  162 |     await safeClick(
-  163 |       this.backToLoginLink,
-  164 |       'Back To Login'
-  165 |     );
+  147 |     const confirmed =
+  148 |       await this.page.getByText(
+  149 |         /password (has been )?(updated|reset|changed)|successfully/i
+  150 |       ).first().waitFor({
+  151 |         state: 'visible',
+  152 |         timeout: 15000
+  153 |       }).then(
+  154 |         () => true
+  155 |       ).catch(
+  156 |         () => false
+  157 |       );
+  158 | 
+  159 |     if (!confirmed) {
+  160 |       await expect(
+  161 |         this.page
+> 162 |       ).toHaveURL(
+      |         ^ Error: expect(page).toHaveURL(expected) failed
+  163 |         /\/login/,
+  164 |         {
+  165 |           timeout: 20000
+  166 |         }
+  167 |       );
+  168 |     }
+  169 | 
+  170 |     Logger.success(
+  171 |       'Password Updated Successfully'
+  172 |     );
+  173 |   }
+  174 | 
+  175 |   async backToLogin() {
+  176 | 
+  177 |     await safeClick(
+  178 |       this.backToLoginLink,
+  179 |       'Back To Login'
+  180 |     );
+  181 | 
+  182 |     Logger.success(
+  183 |       'Returned To Login'
+  184 |     );
+  185 |   }
+  186 | }
+  187 | 
 ```

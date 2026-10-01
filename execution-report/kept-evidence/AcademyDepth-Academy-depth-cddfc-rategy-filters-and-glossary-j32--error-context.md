@@ -7,28 +7,21 @@
 # Test info
 
 - Name: AcademyDepth.spec.ts >> Academy depth >> Academy tabs lesson completion progress strategy filters and glossary
-- Location: tests\AcademyDepth.spec.ts:104:9
+- Location: tests\AcademyDepth.spec.ts:178:9
 
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
-
-Locator: getByRole('button', { name: /marked complete/i })
-Expected: visible
-Timeout: 15000ms
-Error: element(s) not found
-
+TimeoutError: locator.waitFor: Timeout 15000ms exceeded.
 Call log:
-  - Expect "toBeVisible" with timeout 15000ms
-  - waiting for getByRole('button', { name: /marked complete/i })
+  - waiting for locator('main').getByRole('button', { name: /^mark as complete$/i }) to be visible
 
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [ref=e1]:
+- generic [active] [ref=e1]:
   - generic [ref=e2]:
     - banner [ref=e3]:
       - generic [ref=e5]:
@@ -58,7 +51,7 @@ Call log:
             - img
           - button "Notifications" [ref=e29] [cursor=pointer]:
             - img [ref=e30]
-            - generic [ref=e33]: "17"
+            - generic [ref=e33]: "18"
           - button "Enter fullscreen" [ref=e34] [cursor=pointer]:
             - img
           - button "Switch to dark theme" [ref=e35] [cursor=pointer]:
@@ -137,7 +130,9 @@ Call log:
                   - generic [ref=e112]: •
                   - generic [ref=e113]: Upside above the strike price is capped for the duration of the contract.
             - generic [ref=e114]:
-              - button "Mark as complete" [active] [ref=e115] [cursor=pointer]
+              - button "Marked complete - undo" [ref=e115] [cursor=pointer]:
+                - img
+                - text: Marked complete - undo
               - 'link "Next: Reading an Options Chain" [ref=e117] [cursor=pointer]':
                 - /url: /academy/lessons/reading-an-options-chain
                 - text: "Next: Reading an Options Chain"
@@ -174,300 +169,186 @@ Call log:
                     - /url: /academy/lessons/what-is-a-covered-call
                     - generic [ref=e145]: "1."
                     - text: What is a Covered Call?
-                - listitem [ref=e146]:
-                  - link "2.Reading an Options Chain" [ref=e147] [cursor=pointer]:
-                    - /url: /academy/lessons/reading-an-options-chain
-                    - generic [ref=e148]: "2."
-                    - text: Reading an Options Chain
+                    - img [ref=e146]
                 - listitem [ref=e149]:
-                  - link "3.Moneyness & the Option Chain" [ref=e150] [cursor=pointer]:
-                    - /url: /academy/lessons/moneyness-and-the-option-chain
-                    - generic [ref=e151]: "3."
-                    - text: Moneyness & the Option Chain
+                  - link "2.Reading an Options Chain" [ref=e150] [cursor=pointer]:
+                    - /url: /academy/lessons/reading-an-options-chain
+                    - generic [ref=e151]: "2."
+                    - text: Reading an Options Chain
                 - listitem [ref=e152]:
-                  - link "4.Intrinsic vs. Extrinsic Value" [ref=e153] [cursor=pointer]:
-                    - /url: /academy/lessons/intrinsic-vs-extrinsic-value
-                    - generic [ref=e154]: "4."
-                    - text: Intrinsic vs. Extrinsic Value
+                  - link "3.Moneyness & the Option Chain" [ref=e153] [cursor=pointer]:
+                    - /url: /academy/lessons/moneyness-and-the-option-chain
+                    - generic [ref=e154]: "3."
+                    - text: Moneyness & the Option Chain
                 - listitem [ref=e155]:
-                  - link "5.Strike Selection Basics" [ref=e156] [cursor=pointer]:
-                    - /url: /academy/lessons/strike-selection-basics
-                    - generic [ref=e157]: "5."
-                    - text: Strike Selection Basics
+                  - link "4.Intrinsic vs. Extrinsic Value" [ref=e156] [cursor=pointer]:
+                    - /url: /academy/lessons/intrinsic-vs-extrinsic-value
+                    - generic [ref=e157]: "4."
+                    - text: Intrinsic vs. Extrinsic Value
                 - listitem [ref=e158]:
-                  - link "6.Managing Assignment Risk" [ref=e159] [cursor=pointer]:
-                    - /url: /academy/lessons/managing-assignment-risk
-                    - generic [ref=e160]: "6."
-                    - text: Managing Assignment Risk
+                  - link "5.Strike Selection Basics" [ref=e159] [cursor=pointer]:
+                    - /url: /academy/lessons/strike-selection-basics
+                    - generic [ref=e160]: "5."
+                    - text: Strike Selection Basics
                 - listitem [ref=e161]:
-                  - link "7.Implied Volatility & IV Crush" [ref=e162] [cursor=pointer]:
-                    - /url: /academy/lessons/implied-volatility-and-iv-crush
-                    - generic [ref=e163]: "7."
-                    - text: Implied Volatility & IV Crush
+                  - link "6.Managing Assignment Risk" [ref=e162] [cursor=pointer]:
+                    - /url: /academy/lessons/managing-assignment-risk
+                    - generic [ref=e163]: "6."
+                    - text: Managing Assignment Risk
                 - listitem [ref=e164]:
-                  - link "8.Theta & Time Decay" [ref=e165] [cursor=pointer]:
-                    - /url: /academy/lessons/theta-and-time-decay
-                    - generic [ref=e166]: "8."
-                    - text: Theta & Time Decay
+                  - link "7.Implied Volatility & IV Crush" [ref=e165] [cursor=pointer]:
+                    - /url: /academy/lessons/implied-volatility-and-iv-crush
+                    - generic [ref=e166]: "7."
+                    - text: Implied Volatility & IV Crush
                 - listitem [ref=e167]:
-                  - link "9.Delta Explained" [ref=e168] [cursor=pointer]:
-                    - /url: /academy/lessons/delta-explained
-                    - generic [ref=e169]: "9."
-                    - text: Delta Explained
+                  - link "8.Theta & Time Decay" [ref=e168] [cursor=pointer]:
+                    - /url: /academy/lessons/theta-and-time-decay
+                    - generic [ref=e169]: "8."
+                    - text: Theta & Time Decay
                 - listitem [ref=e170]:
-                  - link "10.Gamma Explained" [ref=e171] [cursor=pointer]:
-                    - /url: /academy/lessons/gamma-explained
-                    - generic [ref=e172]: "10."
-                    - text: Gamma Explained
+                  - link "9.Delta Explained" [ref=e171] [cursor=pointer]:
+                    - /url: /academy/lessons/delta-explained
+                    - generic [ref=e172]: "9."
+                    - text: Delta Explained
                 - listitem [ref=e173]:
-                  - link "11.Putting the Greeks Together" [ref=e174] [cursor=pointer]:
-                    - /url: /academy/lessons/putting-the-greeks-together
-                    - generic [ref=e175]: "11."
-                    - text: Putting the Greeks Together
+                  - link "10.Gamma Explained" [ref=e174] [cursor=pointer]:
+                    - /url: /academy/lessons/gamma-explained
+                    - generic [ref=e175]: "10."
+                    - text: Gamma Explained
                 - listitem [ref=e176]:
-                  - link "12.Vega Explained" [ref=e177] [cursor=pointer]:
-                    - /url: /academy/lessons/vega-explained
-                    - generic [ref=e178]: "12."
-                    - text: Vega Explained
+                  - link "11.Putting the Greeks Together" [ref=e177] [cursor=pointer]:
+                    - /url: /academy/lessons/putting-the-greeks-together
+                    - generic [ref=e178]: "11."
+                    - text: Putting the Greeks Together
                 - listitem [ref=e179]:
-                  - link "13.Interpreting Payoff Diagrams" [ref=e180] [cursor=pointer]:
+                  - link "12.Vega Explained" [ref=e180] [cursor=pointer]:
+                    - /url: /academy/lessons/vega-explained
+                    - generic [ref=e181]: "12."
+                    - text: Vega Explained
+                - listitem [ref=e182]:
+                  - link "13.Interpreting Payoff Diagrams" [ref=e183] [cursor=pointer]:
                     - /url: /academy/lessons/interpreting-payoff-diagrams
-                    - generic [ref=e181]: "13."
+                    - generic [ref=e184]: "13."
                     - text: Interpreting Payoff Diagrams
-        - generic [ref=e182]:
-          - img [ref=e183]
-          - paragraph [ref=e185]: All Academy content is educational and informational only. Nothing here is investment advice, a solicitation, or an offer to buy or sell any security. You are solely responsible for any decisions you make at your broker.
-    - contentinfo [ref=e186]:
-      - generic [ref=e187]:
-        - generic [ref=e188]:
-          - paragraph [ref=e189]: © 2026 Ools Inc. All rights reserved.
-          - navigation "Legal and support" [ref=e190]:
-            - link "Privacy Policy" [ref=e192] [cursor=pointer]:
+        - generic [ref=e185]:
+          - img [ref=e186]
+          - paragraph [ref=e188]: All Academy content is educational and informational only. Nothing here is investment advice, a solicitation, or an offer to buy or sell any security. You are solely responsible for any decisions you make at your broker.
+    - contentinfo [ref=e189]:
+      - generic [ref=e190]:
+        - generic [ref=e191]:
+          - paragraph [ref=e192]: © 2026 Ools Inc. All rights reserved.
+          - navigation "Legal and support" [ref=e193]:
+            - link "Privacy Policy" [ref=e195] [cursor=pointer]:
               - /url: /privacy-policy
-            - generic [ref=e193]:
-              - generic [ref=e194]: ·
-              - link "Terms of Service" [ref=e195] [cursor=pointer]:
-                - /url: /terms-of-services
             - generic [ref=e196]:
               - generic [ref=e197]: ·
-              - link "Disclosures" [ref=e198] [cursor=pointer]:
-                - /url: /disclosures
+              - link "Terms of Service" [ref=e198] [cursor=pointer]:
+                - /url: /terms-of-services
             - generic [ref=e199]:
               - generic [ref=e200]: ·
-              - link "Risk Warning" [ref=e201] [cursor=pointer]:
-                - /url: /risk-warning
+              - link "Disclosures" [ref=e201] [cursor=pointer]:
+                - /url: /disclosures
             - generic [ref=e202]:
               - generic [ref=e203]: ·
-              - link "Contact" [ref=e204] [cursor=pointer]:
+              - link "Risk Warning" [ref=e204] [cursor=pointer]:
+                - /url: /risk-warning
+            - generic [ref=e205]:
+              - generic [ref=e206]: ·
+              - link "Contact" [ref=e207] [cursor=pointer]:
                 - /url: /contact
-        - paragraph [ref=e205]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
+        - paragraph [ref=e208]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
   - region "Notifications alt+T"
-  - alert [ref=e206]
+  - alert [ref=e209]: OolTool | See potential income opportunities in your portfolio
 ```
 
 # Test source
 
 ```ts
-  185 |             page.locator(
-  186 |               'main'
-  187 |             ).getByRole(
-  188 |               'button',
-  189 |               {
-  190 |                 name: level
-  191 |               }
-  192 |             );
-  193 | 
-  194 |           if (
-  195 |             await filter.waitFor({
-  196 |               state: 'visible',
-  197 |               timeout: 1500
-  198 |             }).then(
-  199 |               () => true
-  200 |             ).catch(
-  201 |               () => false
-  202 |             )
-  203 |           ) {
-  204 |             await safeClick(
-  205 |               filter,
-  206 |               'Lesson level'
-  207 |             );
-  208 | 
-  209 |             await expect(
-  210 |               page.locator(
-  211 |                 'main'
-  212 |               )
-  213 |             ).toContainText(
-  214 |               /lesson|covered call|no lessons/i
-  215 |             );
-  216 |           }
-  217 |         }
-  218 | 
-  219 |         await safeClick(
-  220 |           page.getByRole(
-  221 |             'link',
-  222 |             {
-  223 |               name: /what is a covered call/i
-  224 |             }
-  225 |           ).first(),
-  226 |           'Open lesson'
-  227 |         );
-  228 | 
-  229 |         await expect(
-  230 |           page
-  231 |         ).toHaveURL(
-  232 |           /\/academy\/lessons\/what-is-a-covered-call/
-  233 |         );
-  234 | 
-  235 |         await expect(
-  236 |           page.locator(
-  237 |             'main'
-  238 |           )
-  239 |         ).toContainText(
-  240 |           /covered call requires owning at least 100 shares/i
-  241 |         );
-  242 | 
-  243 |         const mark =
-  244 |           page.getByRole(
-  245 |             'button',
-  246 |             {
-  247 |               name: /mark as complete/i
-  248 |             }
-  249 |           );
-  250 | 
-  251 |         const alreadyDone =
-  252 |           page.getByRole(
-  253 |             'button',
-  254 |             {
-  255 |               name: /marked complete|completed|undo/i
-  256 |             }
-  257 |           );
-  258 | 
-  259 |         let markedNow = false;
-  260 | 
-  261 |         if (
-  262 |           await mark.waitFor({
-  263 |             state: 'visible',
-  264 |             timeout: 5000
-  265 |           }).then(
-  266 |             () => true
-  267 |           ).catch(
-  268 |             () => false
-  269 |           )
-  270 |         ) {
-  271 |           await safeClick(
-  272 |             mark,
-  273 |             'Mark as complete'
-  274 |           );
-  275 | 
-  276 |           markedNow = true;
-  277 | 
-  278 |           await expect(
-  279 |             page.getByRole(
-  280 |               'button',
-  281 |               {
-  282 |                 name: /marked complete/i
-  283 |               }
-  284 |             )
-> 285 |           ).toBeVisible({
-      |             ^ Error: expect(locator).toBeVisible() failed
-  286 |             timeout: 15000
-  287 |           });
-  288 |         } else {
-  289 |           await expect(
-  290 |             alreadyDone
-  291 |           ).toBeVisible();
-  292 |         }
-  293 | 
-  294 |         await openAcademy(
-  295 |           page
-  296 |         );
-  297 | 
-  298 |         await expect(
-  299 |           page.locator(
-  300 |             'main'
-  301 |           )
-  302 |         ).toContainText(
-  303 |           /your progress/i
-  304 |         );
-  305 | 
-  306 |         const progress =
-  307 |           page.getByRole(
-  308 |             'progressbar'
-  309 |           );
-  310 | 
-  311 |         if (
-  312 |           await progress.waitFor({
-  313 |             state: 'visible',
-  314 |             timeout: 3000
-  315 |           }).then(
-  316 |             () => true
-  317 |           ).catch(
-  318 |             () => false
-  319 |           )
-  320 |         ) {
-  321 |           await expect(
-  322 |             progress
-  323 |           ).toBeVisible();
-  324 |         }
-  325 | 
-  326 |         await expect(
-  327 |           page.locator(
-  328 |             'main'
-  329 |           )
-  330 |         ).toContainText(
-  331 |           markedNow
-  332 |             ? /[1-9]\d*\s*\/\s*13/
-  333 |             : /\d+\s*\/\s*13/,
-  334 |           {
-  335 |             timeout: 20000
-  336 |           }
-  337 |         );
-  338 | 
-  339 |         await expect(
-  340 |           page.locator(
-  341 |             'main'
-  342 |           )
-  343 |         ).toContainText(
-  344 |           /completed \d+ of 13|start your first lesson|\d+\s*\/\s*13/i
-  345 |         );
-  346 | 
-  347 |         await safeClick(
-  348 |           page.getByRole(
-  349 |             'link',
-  350 |             {
-  351 |               name: /^strategy library$/i
-  352 |             }
-  353 |           ).first(),
-  354 |           'Strategy library'
-  355 |         );
-  356 | 
-  357 |         const categories = [
-  358 |           {
-  359 |             button: /^all\b/i,
-  360 |             content: /18 of 18|covered call/i
-  361 |           },
-  362 |           {
-  363 |             button: /^income\b/i,
-  364 |             content: /covered call|5 of 18/i
-  365 |           },
-  366 |           {
-  367 |             button: /^directional\b/i,
-  368 |             content: /long call|4 of 18/i
-  369 |           },
-  370 |           {
-  371 |             button: /^protection\b/i,
-  372 |             content: /protective put|2 of 18/i
-  373 |           },
-  374 |           {
-  375 |             button: /^volatility\b/i,
-  376 |             content: /straddle|4 of 18/i
-  377 |           },
-  378 |           {
-  379 |             button: /^precision\b/i,
-  380 |             content: /butterfly|1 of 18/i
-  381 |           },
-  382 |           {
-  383 |             button: /^advanced\b/i,
-  384 |             content: /ratio spread|2 of 18/i
-  385 |           }
+  1  | import { Locator } from '@playwright/test';
+  2  | 
+  3  | import {
+  4  |   dismissOverlays
+  5  | } from './dismissOverlays';
+  6  | import {
+  7  |   watchDelayMs
+  8  | } from '../config/watchMode';
+  9  | 
+  10 | /* =============================================================================
+  11 | HELPER: safeClick
+  12 | 
+  13 | PURPOSE
+  14 | -------
+  15 | Waits for a locator to become visible, scrolls it into view, then clicks it.
+  16 | Overlays are dismissed first. Real clicks are used so cookie/announcement
+  17 | layers cannot swallow Create Account, Sign up, profile, or Plans actions.
+  18 | ============================================================================= */
+  19 | 
+  20 | export async function safeClick(
+  21 |   locator: Locator,
+  22 |   label: string
+  23 | ) {
+  24 |   console.log(`[CLICK] ${label}`);
+  25 | 
+  26 |   const page =
+  27 |     locator.page();
+  28 | 
+  29 |   await dismissOverlays(
+  30 |     page
+  31 |   );
+  32 | 
+  33 |   try {
+  34 |     await locator.waitFor({
+  35 |       state: 'visible',
+  36 |       timeout: 15000,
+  37 |     });
+  38 |   } catch {
+  39 |     // A survey or cookie layer often appears a moment after the first
+  40 |     // dismiss during a long run. Clear it and wait for the target again.
+  41 |     await dismissOverlays(
+  42 |       page
+  43 |     );
+  44 | 
+> 45 |     await locator.waitFor({
+     |                   ^ TimeoutError: locator.waitFor: Timeout 15000ms exceeded.
+  46 |       state: 'visible',
+  47 |       timeout: 15000,
+  48 |     });
+  49 |   }
+  50 | 
+  51 |   await locator.scrollIntoViewIfNeeded({
+  52 |     timeout: 5000,
+  53 |   }).catch(
+  54 |     () => undefined
+  55 |   );
+  56 | 
+  57 |   try {
+  58 |     await locator.click({
+  59 |       timeout: 8000,
+  60 |     });
+  61 |   } catch {
+  62 |     await dismissOverlays(
+  63 |       page
+  64 |     );
+  65 | 
+  66 |     await locator.scrollIntoViewIfNeeded({
+  67 |       timeout: 5000,
+  68 |     }).catch(
+  69 |       () => undefined
+  70 |     );
+  71 | 
+  72 |     await locator.click({
+  73 |       timeout: 8000,
+  74 |     });
+  75 |   }
+  76 | 
+  77 |   const watchDelay =
+  78 |     watchDelayMs();
+  79 | 
+  80 |   if (watchDelay > 0) {
+  81 |     await locator.page().waitForTimeout(
+  82 |       watchDelay
+  83 |     );
+  84 |   }
+  85 | }
+  86 | 
 ```

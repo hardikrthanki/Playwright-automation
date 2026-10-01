@@ -66,15 +66,35 @@ async function markLessonIfNeeded(
       }
     );
 
+  const deadline =
+    Date.now() + 15000;
+  let state = '';
+
+  while (
+    Date.now() < deadline &&
+    !state
+  ) {
+    if (
+      await done.isVisible().catch(
+        () => false
+      )
+    ) {
+      state = 'done';
+    } else if (
+      await mark.isVisible().catch(
+        () => false
+      )
+    ) {
+      state = 'open';
+    } else {
+      await page.waitForTimeout(
+        250
+      );
+    }
+  }
+
   if (
-    !await mark.waitFor({
-      state: 'visible',
-      timeout: 5000
-    }).then(
-      () => true
-    ).catch(
-      () => false
-    )
+    state !== 'open'
   ) {
     await expect(
       done
@@ -83,9 +103,37 @@ async function markLessonIfNeeded(
     return false;
   }
 
-  await safeClick(
-    mark,
-    label
+  if (
+    await done.isVisible().catch(
+      () => false
+    )
+  ) {
+    return false;
+  }
+
+  const clicked =
+    await mark.click({
+      timeout: 5000
+    }).then(
+      () => true
+    ).catch(
+      () => false
+    );
+
+  if (
+    !clicked
+  ) {
+    await expect(
+      done
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    return false;
+  }
+
+  console.log(
+    `[CLICK] ${label}`
   );
 
   const saved =
@@ -101,9 +149,10 @@ async function markLessonIfNeeded(
   if (
     !saved
   ) {
-    await safeClick(
-      mark,
-      `${label} again`
+    await mark.click({
+      timeout: 8000
+    }).catch(
+      () => undefined
     );
 
     await expect(

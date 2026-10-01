@@ -290,8 +290,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-032'],
     title: 'Browser back from upgrade checkout returns without changing plan',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires safe upgrade checkout cancel/return validation.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > upgrade preview cancel returns without changing plan'
   },
   {
     id: 'SC-108',

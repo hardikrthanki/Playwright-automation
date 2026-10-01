@@ -38,6 +38,10 @@ import {
 } from './helpers/emailVerification';
 
 import {
+  dismissOverlays
+} from './helpers/dismissOverlays';
+
+import {
   isGmailAutomationEnabled,
   waitForGmailPasswordResetLink
 } from './helpers/gmailImap';
@@ -346,16 +350,40 @@ test(
       await test.step(
         'The original password no longer signs in',
         async () => {
-          await freshPage.locator(
-            'input[type="email"]'
-          ).fill(
+          await dismissOverlays(
+            freshPage
+          );
+
+          const emailInput =
+            freshPage.locator(
+              'input[type="email"]'
+            );
+          const passwordInput =
+            freshPage.locator(
+              'input[type="password"]'
+            );
+
+          await emailInput.waitFor({
+            state: 'visible',
+            timeout: 15000
+          });
+
+          await dismissOverlays(
+            freshPage
+          );
+
+          await emailInput.fill(
             email
           );
 
-          await freshPage.locator(
-            'input[type="password"]'
-          ).fill(
+          await passwordInput.fill(
             originalPassword
+          );
+
+          await expect(
+            emailInput
+          ).toHaveValue(
+            email
           );
 
           await freshPage.getByRole(
