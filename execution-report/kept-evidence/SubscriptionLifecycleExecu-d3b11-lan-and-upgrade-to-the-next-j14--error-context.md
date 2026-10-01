@@ -7,22 +7,18 @@
 # Test info
 
 - Name: SubscriptionLifecycleExecution.spec.ts >> Subscription Lifecycle Execution >> Purchase each paid plan and upgrade to the next
-- Location: tests\SubscriptionLifecycleExecution.spec.ts:163:9
+- Location: tests\SubscriptionLifecycleExecution.spec.ts:158:9
 
 # Error details
 
 ```
-Error: Expected an upgrade from Portfolio Hedger to Marketplace.
-
-expect(received).toBeTruthy()
-
-Received: false
+Error: Could not find downgrade control for Income Builder. Visible controls: Dashboard | Opportunities | Portfolio | Research | Academy | Support | Sync all | HT | Overview | Plans | History | Switch to Free | Current plan | Upgrade | Upgrade | Cancel Subscription | Privacy Policy | Terms of Service | Disclosures | Risk Warning | Contact
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=e1]:
+- generic [ref=e1]:
   - generic [ref=e2]:
     - banner [ref=e3]:
       - generic [ref=e5]:
@@ -66,7 +62,7 @@ Received: false
         - generic [ref=e43]:
           - tablist [ref=e44]:
             - tab "Overview" [ref=e45] [cursor=pointer]: Overview
-            - tab "Plans" [selected] [ref=e46] [cursor=pointer]: Plans
+            - tab "Plans" [active] [selected] [ref=e46] [cursor=pointer]: Plans
             - tab "History" [ref=e47] [cursor=pointer]: History
           - tabpanel "Plans" [ref=e48]:
             - generic [ref=e49]:
@@ -135,9 +131,9 @@ Received: false
                       - listitem [ref=e115]:
                         - img [ref=e116]
                         - text: OOLS Score
-                    - button "Downgrade" [disabled]:
+                    - button "Current plan" [disabled]:
                       - img
-                      - text: Downgrade
+                      - text: Current plan
                   - generic [ref=e118]:
                     - generic [ref=e119]:
                       - paragraph [ref=e121]: Overlay Strategists
@@ -174,9 +170,9 @@ Received: false
                       - listitem [ref=e152]:
                         - img [ref=e153]
                         - text: OOLS Score
-                    - button "Current plan" [disabled]:
+                    - button "Upgrade" [disabled]:
                       - img
-                      - text: Current plan
+                      - text: Upgrade
                   - generic [ref=e155]:
                     - generic [ref=e156]:
                       - paragraph [ref=e158]: Portfolio Hedger
@@ -252,174 +248,213 @@ Received: false
               - link "Contact" [ref=e223] [cursor=pointer]:
                 - /url: /contact
         - paragraph [ref=e224]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
-  - region "Notifications alt+T":
-    - list:
-      - listitem [ref=e225]:
-        - img [ref=e227]
-        - generic [ref=e230]: Your plan has been updated.
-  - alert [ref=e231]
+  - region "Notifications alt+T"
+  - alert [ref=e225]
 ```
 
 # Test source
 
 ```ts
-  1830 |       'SUB_LIFECYCLE_RETENTION_ACCEPT_ENABLED',
-  1831 |       'Accepts the once-per-lifetime offer, then asserts a second downgrade does not show it again.',
-  1832 |       async ({ page }) => {
-  1833 |         await purchasePaidPlanForDisposableUser(
-  1834 |           page,
-  1835 |           'sub-lifecycle-user-d-retention-accept',
-  1836 |           'Portfolio Hedger',
-  1837 |           'monthly',
-  1838 |           'user-d-retention-accept'
-  1839 |         );
-  1840 | 
-  1841 |         const billing =
-  1842 |           new BillingPage(
-  1843 |             page
-  1844 |           );
-  1845 | 
-  1846 |         await billing.acceptMonthlyDowngradeRetentionOffer({
-  1847 |           currentPlan:
-  1848 |             'Portfolio Hedger',
-  1849 |           targetPlan:
-  1850 |             'Overlay Strategists'
-  1851 |         });
-  1852 | 
-  1853 |         await billing.assertRetentionOfferNotShown({
-  1854 |           currentPlan:
-  1855 |             'Portfolio Hedger',
-  1856 |           targetPlan:
-  1857 |             'Overlay Strategists'
-  1858 |         });
-  1859 |       }
-  1860 |     );
-  1861 | 
-  1862 |     controlledLifecycleTest(
-  1863 |       'User D monthly retention offer decline then schedule downgrade',
-  1864 |       'SUB_LIFECYCLE_DOWNGRADE_SUBMIT_ENABLED',
-  1865 |       'Declines retention and schedules the monthly downgrade at next renewal.',
-  1866 |       async ({ page }) => {
-  1867 |         await purchasePaidPlanForDisposableUser(
-  1868 |           page,
-  1869 |           'sub-lifecycle-user-d-downgrade-submit',
-  1870 |           'Overlay Strategists',
-  1871 |           'monthly',
-  1872 |           'user-d-downgrade-submit'
-  1873 |         );
-  1874 | 
-  1875 |         await new BillingPage(
-  1876 |           page
-  1877 |         ).declineRetentionAndPreviewOrScheduleDowngrade({
-  1878 |           currentPlan:
-  1879 |             'Overlay Strategists',
-  1880 |           targetPlan:
-  1881 |             'Income Builder',
-  1882 |           schedule:
-  1883 |             true
-  1884 |         });
-  1885 |       }
-  1886 |     );
-  1887 | 
-  1888 |     controlledLifecycleTest(
-  1889 |       'Purchase each paid plan and upgrade to the next',
-  1890 |       'SUB_LIFECYCLE_FREE_LADDER_ENABLED',
-  1891 |       'Creates one disposable user, purchases Income Builder, then upgrades to Overlay Strategists, Portfolio Hedger, and Marketplace. Each upgrade validates the due amount and renewal date.',
-  1892 |       async ({ page }) => {
-  1893 |         test.setTimeout(
-  1894 |           60 * 60 * 1000
-  1895 |         );
-  1896 | 
-  1897 |         await test.step(
-  1898 |           'Purchase Income Builder monthly',
-  1899 |           async () => {
-  1900 |             await purchasePaidPlanForDisposableUser(
-  1901 |               page,
-  1902 |               'sub-lifecycle-purchase-upgrade',
-  1903 |               'Income Builder',
-  1904 |               'monthly',
-  1905 |               'purchase-upgrade-ladder'
-  1906 |             );
-  1907 |           }
-  1908 |         );
-  1909 | 
-  1910 |         for (let index = 1; index < PAID_PLAN_LADDER.length; index += 1) {
-  1911 |           const fromPlan =
-  1912 |             PAID_PLAN_LADDER[index - 1];
-  1913 |           const toPlan =
-  1914 |             PAID_PLAN_LADDER[index];
-  1915 | 
-  1916 |           await test.step(
-  1917 |             `Upgrade ${fromPlan} to ${toPlan} and validate the calculation`,
-  1918 |             async () => {
-  1919 |               const upgraded =
-  1920 |                 await submitUpgradeWithDueAndRenewal(
-  1921 |                   page,
-  1922 |                   toPlan,
-  1923 |                   'monthly',
-  1924 |                   'upgrade'
-  1925 |                 );
-  1926 | 
-  1927 |               expect(
-  1928 |                 upgraded,
-  1929 |                 `Expected an upgrade from ${fromPlan} to ${toPlan}.`
-> 1930 |               ).toBeTruthy();
-       |                 ^ Error: Expected an upgrade from Portfolio Hedger to Marketplace.
-  1931 |             }
-  1932 |           );
-  1933 |         }
-  1934 |       }
-  1935 |     );
-  1936 | 
-  1937 |     test(
-  1938 |       'Subscription lifecycle calculation rules are deterministic',
-  1939 |       async () => {
-  1940 |         const monthlyUpgrade =
-  1941 |           proratedDelta(
-  1942 |             'Income Builder',
-  1943 |             'Overlay Strategists',
-  1944 |             'monthly',
-  1945 |             15,
-  1946 |             30
-  1947 |           );
-  1948 | 
-  1949 |         expect(
-  1950 |           monthlyUpgrade
-  1951 |         ).toBe(
-  1952 |           25
-  1953 |         );
-  1954 | 
-  1955 |         const annualUpgrade =
-  1956 |           proratedDelta(
-  1957 |             'Overlay Strategists',
-  1958 |             'Portfolio Hedger',
-  1959 |             'annual',
-  1960 |             180,
-  1961 |             365
-  1962 |           );
-  1963 | 
-  1964 |         expect(
-  1965 |           annualUpgrade
-  1966 |         ).toBe(
-  1967 |           354.79
-  1968 |         );
-  1969 | 
-  1970 |         const immediateRefund =
-  1971 |           refundEstimate(
-  1972 |             'Marketplace',
-  1973 |             'monthly',
-  1974 |             10,
-  1975 |             30
-  1976 |           );
-  1977 | 
-  1978 |         expect(
-  1979 |           immediateRefund
-  1980 |         ).toBe(
-  1981 |           166
-  1982 |         );
-  1983 |       }
-  1984 |     );
-  1985 |   }
-  1986 | );
-  1987 | 
+  1024 |   planName: string,
+  1025 |   action: 'upgrade' | 'downgrade' | 'interval'
+  1026 | ) {
+  1027 |   const actionButtons =
+  1028 |     this.page
+  1029 |       .locator(
+  1030 |         'a, button'
+  1031 |       )
+  1032 |       .filter({
+  1033 |         hasText:
+  1034 |           this.planActionButtonPattern(
+  1035 |             action
+  1036 |           )
+  1037 |       });
+  1038 | 
+  1039 |   const buttonCount =
+  1040 |     await actionButtons.count();
+  1041 | 
+  1042 |   for (let index = 0; index < buttonCount; index += 1) {
+  1043 |     const button =
+  1044 |       actionButtons.nth(
+  1045 |         index
+  1046 |       );
+  1047 | 
+  1048 |     const belongsToPlan =
+  1049 |       await button.evaluate(
+  1050 |         (
+  1051 |           element,
+  1052 |           targetPlan
+  1053 |         ) => {
+  1054 |           const plans = [
+  1055 |             {
+  1056 |               name: 'Curious Explorer',
+  1057 |               needles: ['curious explorer', 'curious']
+  1058 |             },
+  1059 |             {
+  1060 |               name: 'Income Builder',
+  1061 |               needles: ['income builder', 'income']
+  1062 |             },
+  1063 |             {
+  1064 |               name: 'Overlay Strategists',
+  1065 |               needles: ['overlay strategists', 'overlay']
+  1066 |             },
+  1067 |             {
+  1068 |               name: 'Portfolio Hedger',
+  1069 |               needles: ['portfolio hedger', 'portfolio hedge']
+  1070 |             }
+  1071 |           ];
+  1072 | 
+  1073 |           const matchedPlans = (text: string) =>
+  1074 |             plans.filter(
+  1075 |               (plan: { name: string; needles: string[] }) =>
+  1076 |                 plan.needles.some(
+  1077 |                   (needle: string) =>
+  1078 |                     text.includes(
+  1079 |                       needle
+  1080 |                     )
+  1081 |                 )
+  1082 |             );
+  1083 | 
+  1084 |           let current =
+  1085 |             element.parentElement;
+  1086 | 
+  1087 |           for (let depth = 0; current && depth < 12; depth += 1) {
+  1088 |             const currentText =
+  1089 |               (
+  1090 |                 current.textContent ?? ''
+  1091 |               ).toLowerCase();
+  1092 |             const matches =
+  1093 |               matchedPlans(
+  1094 |                 currentText
+  1095 |               );
+  1096 | 
+  1097 |             if (
+  1098 |               matches.length === 1 &&
+  1099 |               matches[0].name === targetPlan
+  1100 |             ) {
+  1101 |               return true;
+  1102 |             }
+  1103 | 
+  1104 |             current =
+  1105 |               current.parentElement;
+  1106 |           }
+  1107 | 
+  1108 |           return false;
+  1109 |         },
+  1110 |         planName
+  1111 |       )
+  1112 |         .catch(
+  1113 |           () => false
+  1114 |         );
+  1115 | 
+  1116 |     if (belongsToPlan) {
+  1117 |       return button;
+  1118 |     }
+  1119 |   }
+  1120 | 
+  1121 |   const visibleControls =
+  1122 |     await this.visibleControlSummary();
+  1123 | 
+> 1124 |   throw new Error(
+       |         ^ Error: Could not find downgrade control for Income Builder. Visible controls: Dashboard | Opportunities | Portfolio | Research | Academy | Support | Sync all | HT | Overview | Plans | History | Switch to Free | Current plan | Upgrade | Upgrade | Cancel Subscription | Privacy Policy | Terms of Service | Disclosures | Risk Warning | Contact
+  1125 |     `Could not find ${action} control for ${planName}. Visible controls: ${visibleControls.join(' | ')}`
+  1126 |   );
+  1127 | }
+  1128 | 
+  1129 | private planNamePattern(
+  1130 |   planName: string
+  1131 | ) {
+  1132 |   if (
+  1133 |     /portfolio/i.test(
+  1134 |       planName
+  1135 |     )
+  1136 |   ) {
+  1137 |     return 'Portfolio Hedger|Portfolio Hedge|3-Advanced';
+  1138 |   }
+  1139 | 
+  1140 |   if (
+  1141 |     /income/i.test(
+  1142 |       planName
+  1143 |     )
+  1144 |   ) {
+  1145 |     return 'Income Builder|Income';
+  1146 |   }
+  1147 | 
+  1148 |   if (
+  1149 |     /overlay/i.test(
+  1150 |       planName
+  1151 |     )
+  1152 |   ) {
+  1153 |     return 'Overlay Strategists|Overlay';
+  1154 |   }
+  1155 | 
+  1156 |   if (
+  1157 |     /curious|free/i.test(
+  1158 |       planName
+  1159 |     )
+  1160 |   ) {
+  1161 |     return 'Curious Explorer|Curious|Free';
+  1162 |   }
+  1163 | 
+  1164 |   return escapeRegExp(
+  1165 |     planName
+  1166 |   );
+  1167 | }
+  1168 | 
+  1169 | private planChangeDialog(
+  1170 |   options: {
+  1171 |     targetPlan: string;
+  1172 |     action: 'upgrade' | 'downgrade' | 'interval';
+  1173 |   }
+  1174 | ) {
+  1175 |   const planName =
+  1176 |     this.planNamePattern(
+  1177 |       options.targetPlan
+  1178 |     );
+  1179 | 
+  1180 |   const dialogPattern =
+  1181 |     options.action === 'interval'
+  1182 |       ? new RegExp(
+  1183 |           `(?:${planName}).{0,160}(?:annual|monthly|year|charge)|(?:switch|change).{0,40}(?:annual|monthly).{0,80}(?:${planName})`,
+  1184 |           'i'
+  1185 |         )
+  1186 |       : new RegExp(
+  1187 |           `(?:${options.action}|switch)\\s+to\\s+(?:${planName})`,
+  1188 |           'i'
+  1189 |         );
+  1190 | 
+  1191 |   const titledSurface =
+  1192 |     this.page.getByText(
+  1193 |       new RegExp(
+  1194 |         `(?:upgrade|downgrade|switch)\\s+to\\s+(?:${planName})`,
+  1195 |         'i'
+  1196 |       )
+  1197 |     );
+  1198 | 
+  1199 |   if (
+  1200 |     options.action === 'interval'
+  1201 |   ) {
+  1202 |     return this.page
+  1203 |       .getByRole(
+  1204 |         'dialog'
+  1205 |       )
+  1206 |       .or(
+  1207 |         this.page.getByRole(
+  1208 |           'alertdialog'
+  1209 |         )
+  1210 |       )
+  1211 |       .filter({
+  1212 |         hasText: dialogPattern
+  1213 |       })
+  1214 |       .first();
+  1215 |   }
+  1216 | 
+  1217 |   return this.page
+  1218 |     .getByRole(
+  1219 |       'dialog'
+  1220 |     )
+  1221 |     .or(
+  1222 |       this.page.getByRole(
+  1223 |         'alertdialog'
+  1224 |       )
 ```

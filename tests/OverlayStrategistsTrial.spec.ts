@@ -35,6 +35,12 @@ import { DashboardPage }
   from './pages/DashboardPage';
 import { BillingPage }
   from './pages/BillingPage';
+import {
+  validateNoCardTrialFollowThrough
+} from './helpers/noCardTrialChecks';
+import {
+  startNoCardTrialAndSubscribe
+} from './helpers/stripeMatrixExecution';
 
 /* =============================================================================
 TEST SUITE: Overlay Strategists Trial
@@ -838,6 +844,30 @@ if (
             );
           }
         );
+
+        await test.step(
+          'No-card trial keeps the account and position limits, history, confirmation email, and blocks the same email or mobile',
+          async () => {
+            await validateNoCardTrialFollowThrough(
+              page,
+              email,
+              mobileNumber
+            );
+          }
+        );
+        }
+      );
+
+      test(
+        'Trial user can subscribe to a paid plan before the trial ends',
+        async ({ page }) => {
+          test.setTimeout(
+            20 * 60 * 1000
+          );
+
+          await startNoCardTrialAndSubscribe(
+            page
+          );
         }
       );
     }

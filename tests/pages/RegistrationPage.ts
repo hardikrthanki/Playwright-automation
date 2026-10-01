@@ -28,6 +28,9 @@ from './BasePage';
 import { Logger }
 from '../utils/logger';
 
+import { generateMobileNumber }
+from '../utils/emailGenerator';
+
 
 /* =============================================================================
 PAGE OBJECT: RegistrationPage
@@ -82,6 +85,10 @@ extends BasePage {
   private mobileVerifiedByApi = false;
 
   private mobileNumberTaken = false;
+
+  private lastSendOtpStatus = 0;
+
+  private lastSendOtpBody = '';
 
 
 
@@ -140,7 +147,7 @@ extends BasePage {
         {
           name: /send code via sms/i
         }
-      );
+      ).first();
 
 
     this.otpInput =
@@ -587,45 +594,41 @@ extends BasePage {
   ) {
     await this.dismissMarketingOverlays();
 
-    const apiWait =
+    const responsePromise =
       this.page.waitForResponse(
-        (response) => {
-          const method =
-            response.request().method();
-
-          return method !==
-            'OPTIONS' &&
-            method !==
-            'GET' &&
-            /otp|sms|phone|mobile|verify|code/i.test(
-              response.url()
-            );
-        },
+        (response) =>
+          response.request().method() === 'POST' &&
+          /send-otp/i.test(
+            response.url()
+          ),
         {
-          timeout: 12000
+          timeout: 40000
         }
       ).catch(
         () => null
       );
 
-    if (
-      attempt <= 1
-    ) {
+    const requestStarted =
+      this.page.waitForRequest(
+        (request) =>
+          request.method() === 'POST' &&
+          /send-otp/i.test(
+            request.url()
+          ),
+        {
+          timeout: 40000
+        }
+      ).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (attempt <= 1) {
       await safeClick(
         this.sendCodeButton,
         'Send Code via SMS'
       );
-    } else if (
-      attempt === 2
-    ) {
-      console.log(
-        '[CLICK] Send Code via SMS (force)'
-      );
-
-      await this.sendCodeButton.click({
-        force: true,
-        timeout: 8000
-      });
     } else {
       console.log(
         '[CLICK] Send Code via SMS (DOM click)'
@@ -638,7 +641,42 @@ extends BasePage {
       );
     }
 
-    await apiWait;
+    const started =
+      await Promise.race([
+        requestStarted,
+        this.page.waitForTimeout(
+          3000
+        ).then(
+          () => false
+        )
+      ]);
+
+    if (!started) {
+      await this.sendCodeButton.evaluate(
+        (button) => {
+          (button as HTMLButtonElement).click();
+        }
+      ).catch(
+        () => undefined
+      );
+    }
+
+    const response =
+      await responsePromise;
+
+    this.lastSendOtpStatus =
+      response?.status() ?? 0;
+
+    this.lastSendOtpBody =
+      response
+        ? await response.text().catch(
+          () => ''
+        )
+        : '';
+
+    console.log(
+      `Send OTP ${this.lastSendOtpStatus} ${this.lastSendOtpBody.slice(0, 180)}`
+    );
   }
 
   private async waitForRegistrationOtpInput() {
@@ -671,8 +709,29 @@ extends BasePage {
         await this.collectOtpRequestDiagnostics();
 
       Logger.info(
-        `OTP input not visible after SMS request. Attempt ${attempt}/4. Visible diagnostics: ${diagnostics}`
+        `OTP input not visible after SMS request. Attempt ${attempt}/4. Send status ${this.lastSendOtpStatus}. Visible diagnostics: ${diagnostics}`
       );
+
+      const sendRejected =
+        this.lastSendOtpStatus === 0 ||
+        this.lastSendOtpStatus === 409 ||
+        this.lastSendOtpStatus === 429 ||
+        /already registered|too many|rate limit|try again/i.test(
+          this.lastSendOtpBody
+        );
+
+      if (sendRejected) {
+        const replacement =
+          generateMobileNumber();
+
+        console.log(
+          `Text code was not sent. Trying mobile ${replacement}`
+        );
+
+        await this.fillMobileNumber(
+          replacement
+        );
+      }
 
       if (
         attempt === 4
@@ -711,13 +770,47 @@ extends BasePage {
   private async fillMobileNumber(
     mobileNumber: string
   ) {
+    await this.mobileInput.click();
+
     await this.mobileInput.fill(
       ''
     );
 
-    await this.mobileInput.click();
-
     await this.mobileInput.fill(
+      mobileNumber
+    );
+
+    await this.mobileInput.evaluate(
+      (input, value) => {
+        const setter =
+          Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            'value'
+          )?.set;
+
+        setter?.call(
+          input,
+          value
+        );
+
+        input.dispatchEvent(
+          new Event(
+            'input',
+            {
+              bubbles: true
+            }
+          )
+        );
+
+        input.dispatchEvent(
+          new Event(
+            'change',
+            {
+              bubbles: true
+            }
+          )
+        );
+      },
       mobileNumber
     );
 
@@ -847,13 +940,21 @@ extends BasePage {
 
   private async waitForSendCodeEnabled() {
     const enabled =
-      await this.sendCodeButton
-        .isEnabled({
-          timeout: 15000
-        })
-        .catch(
-          () => false
-        );
+      await expect.poll(
+        async () =>
+          this.sendCodeButton.isEnabled().catch(
+            () => false
+          ),
+        {
+          timeout: 45000
+        }
+      ).toBe(
+        true
+      ).then(
+        () => true
+      ).catch(
+        () => false
+      );
 
     if (enabled) {
       return;
@@ -1094,6 +1195,104 @@ extends BasePage {
     );
 
 
+  }
+
+  async expectDuplicateEmailBlocked(
+    email: string,
+    mobileNumber: string
+  ) {
+    Logger.info(
+      `Checking ${email} cannot create another account`
+    );
+
+    await this.open();
+    await this.register(
+      email,
+      mobileNumber
+    ).catch(
+      () => undefined
+    );
+
+    await expect(
+      this.page.getByText(
+        /email.*already|already.*email|already registered|account already exists|email.*exists/i
+      ).first()
+    ).toBeVisible({
+      timeout: 20000
+    });
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /register/i
+    );
+
+    Logger.success(
+      'Same email cannot create another account'
+    );
+  }
+
+  async expectDuplicateMobileBlocked(
+    email: string,
+    mobileNumber: string
+  ) {
+    Logger.info(
+      `Checking ${mobileNumber} cannot verify another account`
+    );
+
+    await this.open();
+
+    await this.firstNameInput.fill(
+      TEST_USERS.onboarding.firstName
+    );
+
+    await this.lastNameInput.fill(
+      TEST_USERS.onboarding.lastName
+    );
+
+    await this.emailInput.fill(
+      email
+    );
+
+    await this.fillMobileNumber(
+      mobileNumber
+    );
+
+    await this.waitForSendCodeEnabled();
+    await this.clickSendCode(1);
+
+    const rejectedOnSend =
+      this.lastSendOtpStatus === 409 ||
+      /already registered/i.test(
+        this.lastSendOtpBody
+      );
+
+    if (!rejectedOnSend) {
+      await this.waitForRegistrationOtpInput();
+      await this.clickVerifyWhenReady();
+    }
+
+    const rejected =
+      rejectedOnSend ||
+      this.mobileNumberTaken ||
+      await this.page.getByText(
+        /already registered/i
+      ).first().isVisible().catch(
+        () => false
+      );
+
+    expect(
+      rejected,
+      'A mobile number that already verified an account should be refused.'
+    ).toBeTruthy();
+
+    await expect(
+      this.submitButton
+    ).toBeDisabled();
+
+    Logger.success(
+      'Same mobile number cannot create another account'
+    );
   }
 
   private async registrationLooksAccepted() {

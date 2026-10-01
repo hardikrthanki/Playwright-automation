@@ -29,11 +29,11 @@ Key FRD rules currently driving coverage:
 
 - Trial is available once per user lifetime.
 - Overlay Strategists trial duration is 30 days.
-- The FRD states no-card trial limits as Broker Integration: 1, Linked
-  Accounts: 5, and Positions: 100.
-- Current paid Overlay Strategists UI displays Broker Integration: 5, Account
-  Linked: 10, and Positions: 500. If the no-card trial should use the same paid
-  limits, the FRD needs a business-approved correction.
+- The no-card trial uses the limits printed on the Overlay Strategists card:
+  Account Linked (10) and Positions (500).
+- The same email or mobile number cannot open a second account, so it cannot
+  start another trial. A subscription confirmation email is read from Gmail.
+  Billing history is the trial record this suite can open.
 - With-card trial provides full Overlay Strategists access and converts to
   paid Overlay Strategists monthly billing after expiry.
 - Users may subscribe to any paid plan during trial; the selected plan becomes

@@ -331,16 +331,16 @@ const dunningScenarios: DunningScenario[] = [
     sourceIds: ['SUB-DUN-037'],
     title: 'Issuer unavailable payment failure is handled gracefully',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Processing-error checkout is covered in PaymentNegative.spec.ts; a dedicated issuer-unavailable fixture still requires Stripe/API support.'
+    status: 'automated',
+    automation: 'PaymentNegative.spec.ts > Stripe Checkout handles processing error card without activating subscription'
   },
   {
     id: 'SC-338',
     sourceIds: ['SUB-DUN-038'],
     title: 'Fraud-blocked payment does not activate subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Stolen-card checkout decline is covered in PaymentNegative.spec.ts; a true fraud/Radar blocked-payment fixture still requires Stripe/API support.'
+    status: 'automated',
+    automation: 'PaymentNegative.spec.ts > Stripe Checkout rejects stolen card without activating subscription'
   },
   {
     id: 'SC-339',

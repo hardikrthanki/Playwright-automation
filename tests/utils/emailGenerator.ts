@@ -1,3 +1,7 @@
+import fs from 'fs';
+
+import path from 'path';
+
 import {
   TEST_USERS
 } from '../config/testData';
@@ -83,18 +87,83 @@ export function generateEmail(
 
 }
 
-let mobileSequence = 0;
+const usedMobileFile =
+  path.join(
+    process.cwd(),
+    'test-results',
+    'used-mobiles.json'
+  );
+
+function usedMobileNumbers(): string[] {
+  try {
+    const saved =
+      JSON.parse(
+        fs.readFileSync(
+          usedMobileFile,
+          'utf8'
+        )
+      );
+
+    return Array.isArray(saved)
+      ? saved.filter(
+        (value) =>
+          typeof value === 'string'
+      )
+      : [];
+  } catch {
+    return [];
+  }
+}
 
 export function generateMobileNumber(): string {
-  mobileSequence += 1;
+  const used =
+    new Set(
+      usedMobileNumbers()
+    );
 
-  const suffix =
-    (
-      Date.now() +
-      mobileSequence * 37
+  let number =
+    '';
+
+  for (
+    let attempt = 0;
+    attempt < 40 &&
+      (
+        !number ||
+        used.has(number)
+      );
+    attempt += 1
+  ) {
+    const suffix =
+      Math.floor(
+        Math.random() * 10000
+      )
+        .toString()
+        .padStart(
+          4,
+          '0'
+        );
+
+    number =
+      `201555${suffix}`;
+  }
+
+  used.add(number);
+
+  fs.mkdirSync(
+    path.dirname(
+      usedMobileFile
+    ),
+    {
+      recursive: true
+    }
+  );
+
+  fs.writeFileSync(
+    usedMobileFile,
+    JSON.stringify(
+      [...used]
     )
-      .toString()
-      .slice(-4);
+  );
 
-  return `201555${suffix}`;
+  return number;
 }

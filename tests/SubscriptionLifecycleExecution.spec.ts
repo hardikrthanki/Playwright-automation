@@ -810,6 +810,10 @@ async function submitUpgradeWithDueAndRenewal(
     targetPlan
   );
 
+  await billing.validateHistoryShowsPlan(
+    targetPlan
+  );
+
   return true;
 }
 
@@ -1224,6 +1228,20 @@ test.describe(
         await validateDashboardAndBilling(
           page
         );
+
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await billing.validateHistoryShowsPlan(
+          'Income Builder'
+        );
+
+        await billing.validateDangerZoneCancelStaysSafe(
+          'Income Builder',
+          'monthly'
+        );
       }
     );
 
@@ -1270,9 +1288,17 @@ test.describe(
           'annual'
         );
 
-        await new BillingPage(
-          page
-        ).expectCurrentIntervalSwitchHidden(
+        const billing =
+          new BillingPage(
+            page
+          );
+
+        await billing.expectCurrentIntervalSwitchHidden(
+          'annual'
+        );
+
+        await billing.validateDangerZoneCancelStaysSafe(
+          plan,
           'annual'
         );
       }

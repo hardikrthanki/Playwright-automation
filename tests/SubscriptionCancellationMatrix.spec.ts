@@ -250,16 +250,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-027'],
     title: 'Danger-zone cancellation entry opens expected cancellation flow',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires product-side danger-zone control to be stable and non-destructive in tests.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > danger zone keep my plan'
   },
   {
     id: 'SC-268',
     sourceIds: ['SUB-CAN-028'],
     title: 'Destructive cancellation controls are guarded against accidental clicks',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires final confirmation flow fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > danger zone keep my plan'
   },
   {
     id: 'SC-269',
@@ -290,8 +290,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-032'],
     title: 'Refresh during cancellation form preserves safe state',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires safe portal form-state fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > danger zone keep my plan'
   },
   {
     id: 'SC-273',
@@ -346,16 +346,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-039'],
     title: 'Annual subscription cancellation keeps annual end date clear',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires active annual paid fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > yearly cancel end date'
   },
   {
     id: 'SC-280',
     sourceIds: ['SUB-CAN-040'],
     title: 'Monthly subscription cancellation keeps monthly end date clear',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires active monthly paid fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > danger zone keep my plan'
   },
   {
     id: 'SC-281',

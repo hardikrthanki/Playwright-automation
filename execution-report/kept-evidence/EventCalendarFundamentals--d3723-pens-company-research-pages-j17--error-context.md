@@ -14,14 +14,14 @@
 ```
 Error: expect(locator).toBeVisible() failed
 
-Locator: getByRole('heading', { name: /company fundamentals|equity research/i }).first()
+Locator: getByRole('heading', { name: /company fundamentals|equity research/i }).or(getByRole('heading', { name: /^ABBV$/i })).first()
 Expected: visible
 Timeout: 20000ms
 Error: element(s) not found
 
 Call log:
   - Expect "toBeVisible" with timeout 20000ms
-  - waiting for getByRole('heading', { name: /company fundamentals|equity research/i }).first()
+  - waiting for getByRole('heading', { name: /company fundamentals|equity research/i }).or(getByRole('heading', { name: /^ABBV$/i })).first()
 
 ```
 
@@ -58,7 +58,7 @@ Call log:
             - img
           - button "Notifications" [ref=e29] [cursor=pointer]:
             - img [ref=e30]
-            - generic [ref=e33]: "17"
+            - generic [ref=e33]: "18"
           - button "Enter fullscreen" [ref=e34] [cursor=pointer]:
             - img
           - button "Switch to dark theme" [ref=e35] [cursor=pointer]:
@@ -76,7 +76,7 @@ Call log:
               - generic [ref=e48]:
                 - button "Previous month" [ref=e49] [cursor=pointer]:
                   - img
-                - heading "September 2026" [level=2] [ref=e50]
+                - heading "October 2026" [level=2] [ref=e50]
                 - button "Next month" [ref=e51] [cursor=pointer]:
                   - img
                 - generic [ref=e52]:
@@ -99,278 +99,434 @@ Call log:
               - generic [ref=e68]: Fr
               - generic [ref=e69]: Sa
             - generic [ref=e70]:
-              - button "1" [ref=e73] [cursor=pointer]:
-                - generic [ref=e74]: "1"
-              - button "2" [ref=e75] [cursor=pointer]:
-                - generic [ref=e76]: "2"
-              - button "3" [ref=e77] [cursor=pointer]:
-                - generic [ref=e78]: "3"
-              - button "4" [ref=e79] [cursor=pointer]:
-                - generic [ref=e80]: "4"
-              - button "5" [ref=e81] [cursor=pointer]:
-                - generic [ref=e82]: "5"
-              - button "6" [ref=e83] [cursor=pointer]:
-                - generic [ref=e84]: "6"
-              - button "7" [ref=e85] [cursor=pointer]:
-                - generic [ref=e86]: "7"
-              - button "8" [ref=e87] [cursor=pointer]:
-                - generic [ref=e88]: "8"
-              - button "9" [ref=e89] [cursor=pointer]:
-                - generic [ref=e90]: "9"
-              - button "10" [ref=e91] [cursor=pointer]:
-                - generic [ref=e92]: "10"
-              - button "11" [ref=e93] [cursor=pointer]:
-                - generic [ref=e94]: "11"
-              - button "12" [ref=e95] [cursor=pointer]:
-                - generic [ref=e96]: "12"
-              - button "13" [ref=e97] [cursor=pointer]:
-                - generic [ref=e98]: "13"
-              - button "14" [ref=e99] [cursor=pointer]:
-                - generic [ref=e100]: "14"
-              - button "15" [ref=e101] [cursor=pointer]:
-                - generic [ref=e102]: "15"
-              - button "16" [ref=e103] [cursor=pointer]:
-                - generic [ref=e104]: "16"
-              - button "17" [ref=e105] [cursor=pointer]:
-                - generic [ref=e106]: "17"
-              - button "18" [ref=e107] [cursor=pointer]:
-                - generic [ref=e108]: "18"
-              - button "19" [ref=e109] [cursor=pointer]:
-                - generic [ref=e110]: "19"
-              - button "20" [ref=e111] [cursor=pointer]:
-                - generic [ref=e112]: "20"
-              - button "21" [ref=e113] [cursor=pointer]:
-                - generic [ref=e114]: "21"
-              - button "22" [ref=e115] [cursor=pointer]:
-                - generic [ref=e116]: "22"
-              - button "23" [ref=e117] [cursor=pointer]:
-                - generic [ref=e118]: "23"
-              - button "24" [ref=e119] [cursor=pointer]:
-                - generic [ref=e120]: "24"
-              - button "25" [ref=e121] [cursor=pointer]:
-                - generic [ref=e122]: "25"
-              - button "26" [ref=e123] [cursor=pointer]:
-                - generic [ref=e124]: "26"
-              - button "27" [ref=e125] [cursor=pointer]:
-                - generic [ref=e126]: "27"
-              - button "28" [ref=e127] [cursor=pointer]:
-                - generic [ref=e128]: "28"
-              - button "29" [ref=e129] [cursor=pointer]:
-                - generic [ref=e130]: "29"
-              - button "30 AMT ARE +26 more" [ref=e131] [cursor=pointer]:
-                - generic [ref=e132]: "30"
-                - generic [ref=e133]:
-                  - button "AMT" [ref=e134]:
-                    - img [ref=e135]
-                    - generic [ref=e140]: AMT
-                  - button "ARE" [ref=e141]:
-                    - img [ref=e142]
-                    - generic [ref=e147]: ARE
-                  - button "+26 more" [ref=e148]
-            - generic [ref=e149]:
-              - generic [ref=e150]:
-                - img [ref=e152]
+              - button "1 ACN APD +10 more" [ref=e75] [cursor=pointer]:
+                - generic [ref=e76]: "1"
+                - generic [ref=e77]:
+                  - button "ACN" [ref=e78]:
+                    - img [ref=e79]
+                    - generic [ref=e81]: ACN
+                  - button "APD" [ref=e82]:
+                    - img [ref=e83]
+                    - generic [ref=e88]: APD
+                  - button "+10 more" [ref=e89]
+              - button "2 BMY CSCO +5 more" [ref=e90] [cursor=pointer]:
+                - generic [ref=e91]: "2"
+                - generic [ref=e92]:
+                  - button "BMY" [ref=e93]:
+                    - img [ref=e94]
+                    - generic [ref=e99]: BMY
+                  - button "CSCO" [ref=e100]:
+                    - img [ref=e101]
+                    - generic [ref=e106]: CSCO
+                  - button "+5 more" [ref=e107]
+              - button "3" [ref=e108] [cursor=pointer]:
+                - generic [ref=e109]: "3"
+              - button "4" [ref=e110] [cursor=pointer]:
+                - generic [ref=e111]: "4"
+              - button "5 ERIE GE +1 more" [ref=e112] [cursor=pointer]:
+                - generic [ref=e113]: "5"
+                - generic [ref=e114]:
+                  - button "ERIE" [ref=e115]:
+                    - img [ref=e116]
+                    - generic [ref=e121]: ERIE
+                  - button "GE" [ref=e122]:
+                    - img [ref=e123]
+                    - generic [ref=e128]: GE
+                  - button "+1 more" [ref=e129]
+              - button "6 A DG +3 more" [ref=e130] [cursor=pointer]:
+                - generic [ref=e131]: "6"
+                - generic [ref=e132]:
+                  - button "A" [ref=e133]:
+                    - img [ref=e134]
+                    - generic [ref=e139]: A
+                  - button "DG" [ref=e140]:
+                    - img [ref=e141]
+                    - generic [ref=e146]: DG
+                  - button "+3 more" [ref=e147]
+              - button "7 CMCSA LEN" [ref=e148] [cursor=pointer]:
+                - generic [ref=e149]: "7"
+                - generic [ref=e150]:
+                  - button "CMCSA" [ref=e151]:
+                    - img [ref=e152]
+                    - generic [ref=e157]: CMCSA
+                  - button "LEN" [ref=e158]:
+                    - img [ref=e159]
+                    - generic [ref=e164]: LEN
+              - button "8 INTU PEP" [ref=e165] [cursor=pointer]:
+                - generic [ref=e166]: "8"
+                - generic [ref=e167]:
+                  - button "INTU" [ref=e168]:
+                    - img [ref=e169]
+                    - generic [ref=e174]: INTU
+                  - button "PEP" [ref=e175]:
+                    - img [ref=e176]
+                    - generic [ref=e178]: PEP
+              - button "9 DAL DRI +5 more" [ref=e179] [cursor=pointer]:
+                - generic [ref=e180]: "9"
+                - generic [ref=e181]:
+                  - button "DAL" [ref=e182]:
+                    - img [ref=e183]
+                    - generic [ref=e185]: DAL
+                  - button "DRI" [ref=e186]:
+                    - img [ref=e187]
+                    - generic [ref=e192]: DRI
+                  - button "+5 more" [ref=e193]
+              - button "10" [ref=e194] [cursor=pointer]:
+                - generic [ref=e195]: "10"
+              - button "11" [ref=e196] [cursor=pointer]:
+                - generic [ref=e197]: "11"
+              - button "12 FDX" [ref=e198] [cursor=pointer]:
+                - generic [ref=e199]: "12"
+                - button "FDX" [ref=e201]:
+                  - img [ref=e202]
+                  - generic [ref=e204]: FDX
+              - button "13 BLK C +6 more" [ref=e205] [cursor=pointer]:
+                - generic [ref=e206]: "13"
+                - generic [ref=e207]:
+                  - button "BLK" [ref=e208]:
+                    - img [ref=e209]
+                    - generic [ref=e211]: BLK
+                  - button "C" [ref=e212]:
+                    - img [ref=e213]
+                    - generic [ref=e215]: C
+                  - button "+6 more" [ref=e216]
+              - button "14 ASML BAC +4 more" [ref=e217] [cursor=pointer]:
+                - generic [ref=e218]: "14"
+                - generic [ref=e219]:
+                  - button "ASML" [ref=e220]:
+                    - img [ref=e221]
+                    - generic [ref=e223]: ASML
+                  - button "BAC" [ref=e224]:
+                    - img [ref=e225]
+                    - generic [ref=e227]: BAC
+                  - button "+4 more" [ref=e228]
+              - button "15 ABBV ABT +12 more" [ref=e229] [cursor=pointer]:
+                - generic [ref=e230]: "15"
+                - generic [ref=e231]:
+                  - button "ABBV" [ref=e232]:
+                    - img [ref=e233]
+                    - generic [ref=e238]: ABBV
+                  - button "ABT" [ref=e239]:
+                    - img [ref=e240]
+                    - generic [ref=e245]: ABT
+                  - button "+12 more" [ref=e246]
+              - button "16 CFG EOG +6 more" [ref=e247] [cursor=pointer]:
+                - generic [ref=e248]: "16"
+                - generic [ref=e249]:
+                  - button "CFG" [ref=e250]:
+                    - img [ref=e251]
+                    - generic [ref=e253]: CFG
+                  - button "EOG" [ref=e254]:
+                    - img [ref=e255]
+                    - generic [ref=e260]: EOG
+                  - button "+6 more" [ref=e261]
+              - button "17" [ref=e262] [cursor=pointer]:
+                - generic [ref=e263]: "17"
+              - button "18" [ref=e264] [cursor=pointer]:
+                - generic [ref=e265]: "18"
+              - button "19 FITB STLD +2 more" [ref=e266] [cursor=pointer]:
+                - generic [ref=e267]: "19"
+                - generic [ref=e268]:
+                  - button "FITB" [ref=e269]:
+                    - img [ref=e270]
+                    - generic [ref=e272]: FITB
+                  - button "STLD" [ref=e273]:
+                    - img [ref=e274]
+                    - generic [ref=e276]: STLD
+                  - button "+2 more" [ref=e277]
+              - button "20 CB CL +25 more" [ref=e278] [cursor=pointer]:
+                - generic [ref=e279]: "20"
+                - generic [ref=e280]:
+                  - button "CB" [ref=e281]:
+                    - img [ref=e282]
+                    - generic [ref=e284]: CB
+                  - button "CL" [ref=e285]:
+                    - img [ref=e286]
+                    - generic [ref=e291]: CL
+                  - button "+25 more" [ref=e292]
+              - button "21 ABT CME +11 more" [ref=e293] [cursor=pointer]:
+                - generic [ref=e294]: "21"
+                - generic [ref=e295]:
+                  - button "ABT" [ref=e296]:
+                    - img [ref=e297]
+                    - generic [ref=e299]: ABT
+                  - button "CME" [ref=e300]:
+                    - img [ref=e301]
+                    - generic [ref=e303]: CME
+                  - button "+11 more" [ref=e304]
+              - button "22 ALLE APA +31 more" [ref=e305] [cursor=pointer]:
+                - generic [ref=e306]: "22"
+                - generic [ref=e307]:
+                  - button "ALLE" [ref=e308]:
+                    - img [ref=e309]
+                    - generic [ref=e311]: ALLE
+                  - button "APA" [ref=e312]:
+                    - img [ref=e313]
+                    - generic [ref=e318]: APA
+                  - button "+31 more" [ref=e319]
+              - button "23 AXP GD +5 more" [ref=e320] [cursor=pointer]:
+                - generic [ref=e321]: "23"
+                - generic [ref=e322]:
+                  - button "AXP" [ref=e323]:
+                    - img [ref=e324]
+                    - generic [ref=e326]: AXP
+                  - button "GD" [ref=e327]:
+                    - img [ref=e328]
+                    - generic [ref=e330]: GD
+                  - button "+5 more" [ref=e331]
+              - button "24" [ref=e332] [cursor=pointer]:
+                - generic [ref=e333]: "24"
+              - button "25" [ref=e334] [cursor=pointer]:
+                - generic [ref=e335]: "25"
+              - button "26 ACGL ARE +13 more" [ref=e336] [cursor=pointer]:
+                - generic [ref=e337]: "26"
+                - generic [ref=e338]:
+                  - button "ACGL" [ref=e339]:
+                    - img [ref=e340]
+                    - generic [ref=e342]: ACGL
+                  - button "ARE" [ref=e343]:
+                    - img [ref=e344]
+                    - generic [ref=e346]: ARE
+                  - button "+13 more" [ref=e347]
+              - button "27 AMT AOS +33 more" [ref=e348] [cursor=pointer]:
+                - generic [ref=e349]: "27"
+                - generic [ref=e350]:
+                  - button "AMT" [ref=e351]:
+                    - img [ref=e352]
+                    - generic [ref=e354]: AMT
+                  - button "AOS" [ref=e355]:
+                    - img [ref=e356]
+                    - generic [ref=e358]: AOS
+                  - button "+33 more" [ref=e359]
+              - button "28 APH AVB +27 more" [ref=e360] [cursor=pointer]:
+                - generic [ref=e361]: "28"
+                - generic [ref=e362]:
+                  - button "APH" [ref=e363]:
+                    - img [ref=e364]
+                    - generic [ref=e366]: APH
+                  - button "AVB" [ref=e367]:
+                    - img [ref=e368]
+                    - generic [ref=e370]: AVB
+                  - button "+27 more" [ref=e371]
+              - button "29 AAPL AJG +59 more" [ref=e372] [cursor=pointer]:
+                - generic [ref=e373]: "29"
+                - generic [ref=e374]:
+                  - button "AAPL" [ref=e375]:
+                    - img [ref=e376]
+                    - generic [ref=e378]: AAPL
+                  - button "AJG" [ref=e379]:
+                    - img [ref=e380]
+                    - generic [ref=e382]: AJG
+                  - button "+59 more" [ref=e383]
+              - button "30 ABBV AON +15 more" [ref=e384] [cursor=pointer]:
+                - generic [ref=e385]: "30"
+                - generic [ref=e386]:
+                  - button "ABBV" [ref=e387]:
+                    - img [ref=e388]
+                    - generic [ref=e390]: ABBV
+                  - button "AON" [ref=e391]:
+                    - img [ref=e392]
+                    - generic [ref=e394]: AON
+                  - button "+15 more" [ref=e395]
+              - button "31" [ref=e396] [cursor=pointer]:
+                - generic [ref=e397]: "31"
+            - generic [ref=e398]:
+              - generic [ref=e399]:
+                - img [ref=e401]
                 - text: Earnings
-              - generic [ref=e154]:
-                - img [ref=e156]
+              - generic [ref=e403]:
+                - img [ref=e405]
                 - text: Dividend
-              - generic [ref=e161]: Click a day or event for details
-          - generic [ref=e162]:
-            - heading "Events this month" [level=3] [ref=e163]
-            - list [ref=e164]:
-              - listitem [ref=e165]:
-                - button "2026-09-30 Dividend AMT American Tower Corp - ex-dividend (6.98)" [ref=e166]:
-                  - generic [ref=e167]:
-                    - generic [ref=e168]: 2026-09-30
-                    - generic [ref=e169]:
-                      - img [ref=e170]
-                      - text: Dividend
-                    - generic [ref=e175]: AMT
-                  - paragraph [ref=e176]: American Tower Corp - ex-dividend (6.98)
-              - listitem [ref=e177]:
-                - button "2026-09-30 Dividend ARE Alexandria Real Estate Equities Inc - ex-dividend (3.48)" [ref=e178]:
-                  - generic [ref=e179]:
-                    - generic [ref=e180]: 2026-09-30
-                    - generic [ref=e181]:
-                      - img [ref=e182]
-                      - text: Dividend
-                    - generic [ref=e187]: ARE
-                  - paragraph [ref=e188]: Alexandria Real Estate Equities Inc - ex-dividend (3.48)
-              - listitem [ref=e189]:
-                - button "2026-09-30 Dividend BEN Franklin Resources Inc - ex-dividend (1.31)" [ref=e190]:
-                  - generic [ref=e191]:
-                    - generic [ref=e192]: 2026-09-30
-                    - generic [ref=e193]:
-                      - img [ref=e194]
-                      - text: Dividend
-                    - generic [ref=e199]: BEN
-                  - paragraph [ref=e200]: Franklin Resources Inc - ex-dividend (1.31)
-              - listitem [ref=e201]:
-                - button "2026-09-30 Dividend BXP BXP, Inc. - ex-dividend (2.8)" [ref=e202]:
-                  - generic [ref=e203]:
-                    - generic [ref=e204]: 2026-09-30
-                    - generic [ref=e205]:
-                      - img [ref=e206]
-                      - text: Dividend
-                    - generic [ref=e211]: BXP
-                  - paragraph [ref=e212]: BXP, Inc. - ex-dividend (2.8)
-              - listitem [ref=e213]:
-                - button "2026-09-30 Earnings CAG Conagra Brands, Inc. - quarterly earnings (est. EPS 0.31)" [ref=e214]:
-                  - generic [ref=e215]:
-                    - generic [ref=e216]: 2026-09-30
-                    - generic [ref=e217]:
-                      - img [ref=e218]
+              - generic [ref=e410]: Click a day or event for details
+          - generic [ref=e411]:
+            - heading "Events this month" [level=3] [ref=e412]
+            - list [ref=e413]:
+              - listitem [ref=e414]:
+                - button "2026-10-01 Earnings ACN Accenture plc - quarterly earnings (est. EPS 3.19)" [ref=e415]:
+                  - generic [ref=e416]:
+                    - generic [ref=e417]: 2026-10-01
+                    - generic [ref=e418]:
+                      - img [ref=e419]
                       - text: Earnings
-                    - generic [ref=e220]: CAG
-                  - paragraph [ref=e221]: Conagra Brands, Inc. - quarterly earnings (est. EPS 0.31)
-              - listitem [ref=e222]:
-                - button "2026-09-30 Dividend CPT Camden Property Trust - ex-dividend (4.22)" [ref=e223]:
-                  - generic [ref=e224]:
-                    - generic [ref=e225]: 2026-09-30
-                    - generic [ref=e226]:
-                      - img [ref=e227]
+                    - generic [ref=e421]: ACN
+                  - paragraph [ref=e422]: Accenture plc - quarterly earnings (est. EPS 3.19)
+              - listitem [ref=e423]:
+                - button "2026-10-01 Dividend APD Air Products and Chemicals Inc - ex-dividend (7.2)" [ref=e424]:
+                  - generic [ref=e425]:
+                    - generic [ref=e426]: 2026-10-01
+                    - generic [ref=e427]:
+                      - img [ref=e428]
                       - text: Dividend
-                    - generic [ref=e232]: CPT
-                  - paragraph [ref=e233]: Camden Property Trust - ex-dividend (4.22)
-              - listitem [ref=e234]:
-                - button "2026-09-30 Dividend DE Deere & Company - ex-dividend (6.48)" [ref=e235]:
-                  - generic [ref=e236]:
-                    - generic [ref=e237]: 2026-09-30
-                    - generic [ref=e238]:
-                      - img [ref=e239]
+                    - generic [ref=e433]: APD
+                  - paragraph [ref=e434]: Air Products and Chemicals Inc - ex-dividend (7.2)
+              - listitem [ref=e435]:
+                - button "2026-10-01 Dividend CAH Cardinal Health Inc - ex-dividend (2.048)" [ref=e436]:
+                  - generic [ref=e437]:
+                    - generic [ref=e438]: 2026-10-01
+                    - generic [ref=e439]:
+                      - img [ref=e440]
                       - text: Dividend
-                    - generic [ref=e244]: DE
-                  - paragraph [ref=e245]: Deere & Company - ex-dividend (6.48)
-              - listitem [ref=e246]:
-                - button "2026-09-30 Dividend DHR Danaher Corporation - ex-dividend (1.44)" [ref=e247]:
-                  - generic [ref=e248]:
-                    - generic [ref=e249]: 2026-09-30
-                    - generic [ref=e250]:
-                      - img [ref=e251]
+                    - generic [ref=e445]: CAH
+                  - paragraph [ref=e446]: Cardinal Health Inc - ex-dividend (2.048)
+              - listitem [ref=e447]:
+                - button "2026-10-01 Dividend CPB Campbell’s Co - ex-dividend (1.56)" [ref=e448]:
+                  - generic [ref=e449]:
+                    - generic [ref=e450]: 2026-10-01
+                    - generic [ref=e451]:
+                      - img [ref=e452]
                       - text: Dividend
-                    - generic [ref=e256]: DHR
-                  - paragraph [ref=e257]: Danaher Corporation - ex-dividend (1.44)
-              - listitem [ref=e258]:
-                - button "2026-09-30 Dividend ESS Essex Property Trust Inc - ex-dividend (10.32)" [ref=e259]:
-                  - generic [ref=e260]:
-                    - generic [ref=e261]: 2026-09-30
-                    - generic [ref=e262]:
-                      - img [ref=e263]
+                    - generic [ref=e457]: CPB
+                  - paragraph [ref=e458]: Campbell’s Co - ex-dividend (1.56)
+              - listitem [ref=e459]:
+                - button "2026-10-01 Dividend FRT Federal Realty Investment Trust - ex-dividend (4.52)" [ref=e460]:
+                  - generic [ref=e461]:
+                    - generic [ref=e462]: 2026-10-01
+                    - generic [ref=e463]:
+                      - img [ref=e464]
                       - text: Dividend
-                    - generic [ref=e268]: ESS
-                  - paragraph [ref=e269]: Essex Property Trust Inc - ex-dividend (10.32)
-              - listitem [ref=e270]:
-                - button "2026-09-30 Earnings FDS FactSet Research Systems Inc - quarterly earnings (est. EPS 4.32)" [ref=e271]:
-                  - generic [ref=e272]:
-                    - generic [ref=e273]: 2026-09-30
-                    - generic [ref=e274]:
-                      - img [ref=e275]
+                    - generic [ref=e469]: FRT
+                  - paragraph [ref=e470]: Federal Realty Investment Trust - ex-dividend (4.52)
+              - listitem [ref=e471]:
+                - button "2026-10-01 Earnings MKC McCormick & Company Incorporated - quarterly earnings (est. EPS 0.75)" [ref=e472]:
+                  - generic [ref=e473]:
+                    - generic [ref=e474]: 2026-10-01
+                    - generic [ref=e475]:
+                      - img [ref=e476]
                       - text: Earnings
-                    - generic [ref=e277]: FDS
-                  - paragraph [ref=e278]: FactSet Research Systems Inc - quarterly earnings (est. EPS 4.32)
-              - listitem [ref=e279]:
-                - button "2026-09-30 Dividend FITB Fifth Third Bancorp - ex-dividend (1.6)" [ref=e280]:
-                  - generic [ref=e281]:
-                    - generic [ref=e282]: 2026-09-30
-                    - generic [ref=e283]:
-                      - img [ref=e284]
+                    - generic [ref=e478]: MKC
+                  - paragraph [ref=e479]: McCormick & Company Incorporated - quarterly earnings (est. EPS 0.75)
+              - listitem [ref=e480]:
+                - button "2026-10-01 Dividend MRSH Marsh & McLennan Companies, Inc. - ex-dividend (3.69)" [ref=e481]:
+                  - generic [ref=e482]:
+                    - generic [ref=e483]: 2026-10-01
+                    - generic [ref=e484]:
+                      - img [ref=e485]
                       - text: Dividend
-                    - generic [ref=e289]: FITB
-                  - paragraph [ref=e290]: Fifth Third Bancorp - ex-dividend (1.6)
-              - listitem [ref=e291]:
-                - button "2026-09-30 Dividend HST Host Hotels & Resorts Inc - ex-dividend (0.8)" [ref=e292]:
-                  - generic [ref=e293]:
-                    - generic [ref=e294]: 2026-09-30
-                    - generic [ref=e295]:
-                      - img [ref=e296]
-                      - text: Dividend
-                    - generic [ref=e301]: HST
-                  - paragraph [ref=e302]: Host Hotels & Resorts Inc - ex-dividend (0.8)
-              - listitem [ref=e303]:
-                - button "2026-09-30 Dividend ITW Illinois Tool Works Inc - ex-dividend (6.44)" [ref=e304]:
-                  - generic [ref=e305]:
-                    - generic [ref=e306]: 2026-09-30
-                    - generic [ref=e307]:
-                      - img [ref=e308]
-                      - text: Dividend
-                    - generic [ref=e313]: ITW
-                  - paragraph [ref=e314]: Illinois Tool Works Inc - ex-dividend (6.44)
-              - listitem [ref=e315]:
-                - button "2026-09-30 Earnings JBL Jabil Circuit Inc - quarterly earnings (est. EPS 3.86)" [ref=e316]:
-                  - generic [ref=e317]:
-                    - generic [ref=e318]: 2026-09-30
-                    - generic [ref=e319]:
-                      - img [ref=e320]
+                    - generic [ref=e490]: MRSH
+                  - paragraph [ref=e491]: Marsh & McLennan Companies, Inc. - ex-dividend (3.69)
+              - listitem [ref=e492]:
+                - button "2026-10-01 Earnings NKE Nike Inc - quarterly earnings (est. EPS 0.44)" [ref=e493]:
+                  - generic [ref=e494]:
+                    - generic [ref=e495]: 2026-10-01
+                    - generic [ref=e496]:
+                      - img [ref=e497]
                       - text: Earnings
-                    - generic [ref=e322]: JBL
-                  - paragraph [ref=e323]: Jabil Circuit Inc - quarterly earnings (est. EPS 3.86)
-              - listitem [ref=e324]:
-                - button "2026-09-30 Dividend LII Lennox International Inc - ex-dividend (5.26)" [ref=e325]:
-                  - generic [ref=e326]:
-                    - generic [ref=e327]: 2026-09-30
-                    - generic [ref=e328]:
-                      - img [ref=e329]
+                    - generic [ref=e499]: NKE
+                  - paragraph [ref=e500]: Nike Inc - quarterly earnings (est. EPS 0.44)
+              - listitem [ref=e501]:
+                - button "2026-10-01 Dividend PGR Progressive Corp - ex-dividend (0.4)" [ref=e502]:
+                  - generic [ref=e503]:
+                    - generic [ref=e504]: 2026-10-01
+                    - generic [ref=e505]:
+                      - img [ref=e506]
                       - text: Dividend
-                    - generic [ref=e334]: LII
-                  - paragraph [ref=e335]: Lennox International Inc - ex-dividend (5.26)
-            - generic [ref=e336]:
-              - paragraph [ref=e337]:
+                    - generic [ref=e511]: PGR
+                  - paragraph [ref=e512]: Progressive Corp - ex-dividend (0.4)
+              - listitem [ref=e513]:
+                - button "2026-10-01 Dividend PWR Quanta Services Inc - ex-dividend (0.43)" [ref=e514]:
+                  - generic [ref=e515]:
+                    - generic [ref=e516]: 2026-10-01
+                    - generic [ref=e517]:
+                      - img [ref=e518]
+                      - text: Dividend
+                    - generic [ref=e523]: PWR
+                  - paragraph [ref=e524]: Quanta Services Inc - ex-dividend (0.43)
+              - listitem [ref=e525]:
+                - button "2026-10-01 Dividend RJF Raymond James Financial Inc. - ex-dividend (2.12)" [ref=e526]:
+                  - generic [ref=e527]:
+                    - generic [ref=e528]: 2026-10-01
+                    - generic [ref=e529]:
+                      - img [ref=e530]
+                      - text: Dividend
+                    - generic [ref=e535]: RJF
+                  - paragraph [ref=e536]: Raymond James Financial Inc. - ex-dividend (2.12)
+              - listitem [ref=e537]:
+                - button "2026-10-01 Dividend STT State Street Corp - ex-dividend (3.36)" [ref=e538]:
+                  - generic [ref=e539]:
+                    - generic [ref=e540]: 2026-10-01
+                    - generic [ref=e541]:
+                      - img [ref=e542]
+                      - text: Dividend
+                    - generic [ref=e547]: STT
+                  - paragraph [ref=e548]: State Street Corp - ex-dividend (3.36)
+              - listitem [ref=e549]:
+                - button "2026-10-02 Dividend BMY Bristol-Myers Squibb Company - ex-dividend (2.51)" [ref=e550]:
+                  - generic [ref=e551]:
+                    - generic [ref=e552]: 2026-10-02
+                    - generic [ref=e553]:
+                      - img [ref=e554]
+                      - text: Dividend
+                    - generic [ref=e559]: BMY
+                  - paragraph [ref=e560]: Bristol-Myers Squibb Company - ex-dividend (2.51)
+              - listitem [ref=e561]:
+                - button "2026-10-02 Dividend CSCO Cisco Systems Inc - ex-dividend (1.66)" [ref=e562]:
+                  - generic [ref=e563]:
+                    - generic [ref=e564]: 2026-10-02
+                    - generic [ref=e565]:
+                      - img [ref=e566]
+                      - text: Dividend
+                    - generic [ref=e571]: CSCO
+                  - paragraph [ref=e572]: Cisco Systems Inc - ex-dividend (1.66)
+              - listitem [ref=e573]:
+                - button "2026-10-02 Dividend IEX IDEX Corporation - ex-dividend (2.88)" [ref=e574]:
+                  - generic [ref=e575]:
+                    - generic [ref=e576]: 2026-10-02
+                    - generic [ref=e577]:
+                      - img [ref=e578]
+                      - text: Dividend
+                    - generic [ref=e583]: IEX
+                  - paragraph [ref=e584]: IDEX Corporation - ex-dividend (2.88)
+            - generic [ref=e585]:
+              - paragraph [ref=e586]:
                 - text: Showing
-                - generic [ref=e338]: 1–15
-                - text: of 28
-              - navigation "Pagination" [ref=e339]:
+                - generic [ref=e587]: 1–15
+                - text: of 316
+              - navigation "Pagination" [ref=e588]:
                 - button "First page" [disabled]:
                   - img
                 - button "Previous page" [disabled]:
                   - img
-                - button "Page 1" [ref=e340] [cursor=pointer]: "1"
-                - button "Page 2" [ref=e341] [cursor=pointer]: "2"
-                - button "Next page" [ref=e342] [cursor=pointer]:
+                - button "Page 1" [ref=e589] [cursor=pointer]: "1"
+                - button "Page 2" [ref=e590] [cursor=pointer]: "2"
+                - generic [ref=e591]: …
+                - button "Page 21" [ref=e592] [cursor=pointer]: "21"
+                - button "Page 22" [ref=e593] [cursor=pointer]: "22"
+                - button "Next page" [ref=e594] [cursor=pointer]:
                   - img
-                - button "Last page" [ref=e343] [cursor=pointer]:
+                - button "Last page" [ref=e595] [cursor=pointer]:
                   - img
-    - contentinfo [ref=e344]:
-      - generic [ref=e345]:
-        - generic [ref=e346]:
-          - paragraph [ref=e347]: © 2026 Ools Inc. All rights reserved.
-          - navigation "Legal and support" [ref=e348]:
-            - link "Privacy Policy" [ref=e350] [cursor=pointer]:
+    - contentinfo [ref=e596]:
+      - generic [ref=e597]:
+        - generic [ref=e598]:
+          - paragraph [ref=e599]: © 2026 Ools Inc. All rights reserved.
+          - navigation "Legal and support" [ref=e600]:
+            - link "Privacy Policy" [ref=e602] [cursor=pointer]:
               - /url: /privacy-policy
-            - generic [ref=e351]:
-              - generic [ref=e352]: ·
-              - link "Terms of Service" [ref=e353] [cursor=pointer]:
+            - generic [ref=e603]:
+              - generic [ref=e604]: ·
+              - link "Terms of Service" [ref=e605] [cursor=pointer]:
                 - /url: /terms-of-services
-            - generic [ref=e354]:
-              - generic [ref=e355]: ·
-              - link "Disclosures" [ref=e356] [cursor=pointer]:
+            - generic [ref=e606]:
+              - generic [ref=e607]: ·
+              - link "Disclosures" [ref=e608] [cursor=pointer]:
                 - /url: /disclosures
-            - generic [ref=e357]:
-              - generic [ref=e358]: ·
-              - link "Risk Warning" [ref=e359] [cursor=pointer]:
+            - generic [ref=e609]:
+              - generic [ref=e610]: ·
+              - link "Risk Warning" [ref=e611] [cursor=pointer]:
                 - /url: /risk-warning
-            - generic [ref=e360]:
-              - generic [ref=e361]: ·
-              - link "Contact" [ref=e362] [cursor=pointer]:
+            - generic [ref=e612]:
+              - generic [ref=e613]: ·
+              - link "Contact" [ref=e614] [cursor=pointer]:
                 - /url: /contact
-        - paragraph [ref=e363]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
+        - paragraph [ref=e615]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
   - region "Notifications alt+T"
-  - alert [ref=e364]: Event Calendar | OolTool
-  - generic [ref=e365]: $0.00
+  - alert [ref=e616]: Event Calendar | OolTool
+  - generic [ref=e617]: "0"
 ```
 
 # Test source
 
 ```ts
-  61  |         equityResearch
-  62  |       )
-  63  |     ).toBeVisible({
-  64  |       timeout: 20000
-  65  |     });
-  66  | 
-  67  |     if (
-  68  |       await equityResearch.isVisible().catch(
-  69  |         () => false
-  70  |       )
   71  |     ) {
   72  |       const input =
   73  |         this.page.getByRole(
@@ -460,107 +616,117 @@ Call log:
   157 |         {
   158 |           name: /company fundamentals|equity research/i
   159 |         }
-  160 |       ).first()
-> 161 |     ).toBeVisible({
-      |       ^ Error: expect(locator).toBeVisible() failed
-  162 |       timeout: 20000
-  163 |     });
-  164 | 
-  165 |     await expect(
-  166 |       this.page.getByText(
-  167 |         new RegExp(
-  168 |           `\\b${symbol}\\b`
+  160 |       ).or(
+  161 |         this.page.getByRole(
+  162 |           'heading',
+  163 |           {
+  164 |             name: new RegExp(
+  165 |               `^${symbol}$`,
+  166 |               'i'
+  167 |             )
+  168 |           }
   169 |         )
   170 |       ).first()
-  171 |     ).toBeVisible({
-  172 |       timeout: 15000
+> 171 |     ).toBeVisible({
+      |       ^ Error: expect(locator).toBeVisible() failed
+  172 |       timeout: 20000
   173 |     });
   174 | 
   175 |     await expect(
   176 |       this.page.getByText(
-  177 |         /\$\d[\d,]*(?:\.\d+)?/
-  178 |       ).first()
-  179 |     ).toBeVisible();
-  180 | 
-  181 |     Logger.success(
-  182 |       `Fundamentals are open for ${symbol}`
-  183 |     );
-  184 |   }
-  185 | 
-  186 |   async searchSymbol(
-  187 |     symbol: string
-  188 |   ) {
-  189 |     Logger.info(
-  190 |       `Searching symbol ${symbol}`
-  191 |     );
-  192 | 
-  193 |     const input =
-  194 |       this.page.getByPlaceholder(
-  195 |         /search symbol/i
-  196 |       ).or(
-  197 |         this.page.getByRole(
-  198 |           'textbox',
-  199 |           {
-  200 |             name: /search symbol/i
-  201 |           }
-  202 |         )
-  203 |       ).first();
-  204 | 
-  205 |     await input.fill(
-  206 |       symbol
-  207 |     );
-  208 | 
-  209 |     await safeClick(
-  210 |       this.page.getByRole(
-  211 |         'button',
-  212 |         {
-  213 |           name: /^search$/i
-  214 |         }
-  215 |       ),
-  216 |       `Search ${symbol}`
+  177 |         new RegExp(
+  178 |           `\\b${symbol}\\b`
+  179 |         )
+  180 |       ).first()
+  181 |     ).toBeVisible({
+  182 |       timeout: 15000
+  183 |     });
+  184 | 
+  185 |     await expect(
+  186 |       this.page.getByText(
+  187 |         /\$\d[\d,]*(?:\.\d+)?/
+  188 |       ).first()
+  189 |     ).toBeVisible();
+  190 | 
+  191 |     Logger.success(
+  192 |       `Fundamentals are open for ${symbol}`
+  193 |     );
+  194 |   }
+  195 | 
+  196 |   async searchSymbol(
+  197 |     symbol: string
+  198 |   ) {
+  199 |     Logger.info(
+  200 |       `Searching symbol ${symbol}`
+  201 |     );
+  202 | 
+  203 |     const input =
+  204 |       this.page.getByPlaceholder(
+  205 |         /search symbol/i
+  206 |       ).or(
+  207 |         this.page.getByRole(
+  208 |           'textbox',
+  209 |           {
+  210 |             name: /search symbol/i
+  211 |           }
+  212 |         )
+  213 |       ).first();
+  214 | 
+  215 |     await input.fill(
+  216 |       symbol
   217 |     );
   218 | 
-  219 |     await this.validateLoaded(
-  220 |       symbol
-  221 |     );
-  222 | 
-  223 |     Logger.success(
-  224 |       `Search loaded ${symbol}`
-  225 |     );
-  226 |   }
-  227 | 
-  228 |   async openDetailTab(
-  229 |     name:
-  230 |       | 'Overview'
-  231 |       | 'Valuation'
-  232 |       | 'Earnings'
-  233 |       | 'Dividends'
-  234 |       | 'News'
-  235 |   ) {
-  236 |     Logger.info(
-  237 |       `Opening ${name}`
-  238 |     );
-  239 | 
-  240 |     const pattern =
-  241 |       new RegExp(
-  242 |         `^${name}$`,
-  243 |         'i'
-  244 |       );
-  245 | 
-  246 |     const tab =
-  247 |       this.page.getByRole(
-  248 |         'tab',
-  249 |         {
-  250 |           name: pattern
-  251 |         }
-  252 |       ).or(
-  253 |         this.page.getByRole(
-  254 |           'button',
-  255 |           {
-  256 |             name: pattern
-  257 |           }
-  258 |         )
-  259 |       ).first();
-  260 | 
-  261 |     await safeClick(
+  219 |     await safeClick(
+  220 |       this.page.getByRole(
+  221 |         'button',
+  222 |         {
+  223 |           name: /^search$/i
+  224 |         }
+  225 |       ),
+  226 |       `Search ${symbol}`
+  227 |     );
+  228 | 
+  229 |     await this.validateLoaded(
+  230 |       symbol
+  231 |     );
+  232 | 
+  233 |     Logger.success(
+  234 |       `Search loaded ${symbol}`
+  235 |     );
+  236 |   }
+  237 | 
+  238 |   async openDetailTab(
+  239 |     name:
+  240 |       | 'Overview'
+  241 |       | 'Valuation'
+  242 |       | 'Earnings'
+  243 |       | 'Dividends'
+  244 |       | 'News'
+  245 |   ) {
+  246 |     Logger.info(
+  247 |       `Opening ${name}`
+  248 |     );
+  249 | 
+  250 |     const pattern =
+  251 |       new RegExp(
+  252 |         `^${name}$`,
+  253 |         'i'
+  254 |       );
+  255 | 
+  256 |     const tab =
+  257 |       this.page.getByRole(
+  258 |         'tab',
+  259 |         {
+  260 |           name: pattern
+  261 |         }
+  262 |       ).or(
+  263 |         this.page.getByRole(
+  264 |           'button',
+  265 |           {
+  266 |             name: pattern
+  267 |           }
+  268 |         )
+  269 |       ).first();
+  270 | 
+  271 |     await safeClick(
 ```

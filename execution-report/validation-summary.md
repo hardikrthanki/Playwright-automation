@@ -1,12 +1,12 @@
 # AIR Automation Validation Summary
 
-Generated: 10/1/2026, 1:45:05 PM
+Generated: 10/1/2026, 5:20:55 PM
 
 Project: OOLTool
 
 Environment: UAT
 
-Release Decision: NO GO
+Release Decision: CONDITIONAL GO
 
 ## Purpose
 
@@ -16,20 +16,19 @@ This document explains what the latest automation execution validated in plain b
 
 | Metric | Count |
 | --- | ---: |
-| Unique Tests | 730 |
-| Passed | 427 |
-| Failed | 4 |
-| Skipped / Not Executed | 299 |
+| Unique Tests | 725 |
+| Passed | 428 |
+| Failed | 0 |
+| Skipped / Not Executed | 297 |
 | Flaky | 0 |
-| Attempts | 730 |
+| Attempts | 725 |
 
 ## Status Breakdown
 
 | Status | Count |
 | --- | ---: |
-| failed | 4 |
-| passed | 427 |
-| skipped | 299 |
+| passed | 428 |
+| skipped | 297 |
 
 ## Area Breakdown
 
@@ -38,7 +37,7 @@ This document explains what the latest automation execution validated in plain b
 | Access Control | 1 |
 | Accessibility | 29 |
 | Authentication | 74 |
-| Billing | 450 |
+| Billing | 445 |
 | Dashboard | 95 |
 | General | 20 |
 | MFA | 8 |
@@ -155,7 +154,6 @@ This document explains what the latest automation execution validated in plain b
 | SKIPPED | Billing | Income Builder monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Portfolio Hedger annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Income Builder annual checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| SKIPPED | Billing | Marketplace monthly checkout shows subscription summary before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | Paid plan checkout summaries currency refresh and return use one user | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
 | SKIPPED | Billing | Income Builder checkout shows currency and conversion details before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | SKIPPED | Billing | Income Builder checkout preserves context on refresh and returns safely before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
@@ -168,7 +166,6 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | Disposable user can purchase Income Builder monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Overlay Strategists monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase Portfolio Hedger monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | Disposable user can purchase Marketplace monthly and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable user can purchase configured paid annual plan and reach Billing | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Prepared paid user exposes upgrade downgrade and interval controls | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | Prepared paid user can preview monthly and annual upgrade calculations | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -178,7 +175,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | Prepared paid user exposes non-destructive cancellation form | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | Disposable user climbs every monthly then yearly plan and sees yearly cancel options | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | Disposable monthly user sees downgrade retention offer | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | User A monthly plan ladder then period-end cancel | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | User A monthly plan ladder then period-end cancel | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | User C yearly cancel and refund | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | User D monthly retention offer accept | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | User D monthly retention offer decline then schedule downgrade | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -306,7 +303,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Authentication | Subscriber expiry overview logout and login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Authentication | Login once then logout blocks back refresh tabs and protected routes | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Authentication | Deep link to protected page returns to intended route after login | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Password | Disposable user resets password from the email link and signs in with the new password | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Password | Disposable user resets password from the email link and signs in with the new password | Confirm password rules and password-change guardrails protect the account. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Authentication | Invalid reset password link does not authenticate user | Confirm users can authenticate safely and invalid access is blocked. | Invalid or unsafe input should be blocked and the user should remain in a safe state. |
 | PASS | Billing | SC-01 - Start trial without payment details | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-02 - Trial is displayed as available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -347,7 +344,6 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | SC-36 - New user can purchase Income Builder monthly subscription during onboarding | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-37 - Income Builder monthly checkout shows selected plan before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | SC-38 - Portfolio Hedger annual checkout shows selected plan before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
-| PASS | Billing | SC-39 - Marketplace monthly checkout shows selected plan before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | SC-40 - Annual paid checkout displays selected plan and billing interval before payment | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-41 - Paid subscription can be started from onboarding plan selection | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-42 - Paid subscription can be started from pricing entry point | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -390,7 +386,7 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | SC-75D - Refreshing Stripe checkout keeps selected plan and customer context | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The page should remain usable after refresh without losing required state. |
 | SKIPPED | Authentication | SC-75E - 3DS or authentication-required card flow is handled without losing subscription context | Confirm users can authenticate safely and invalid access is blocked. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | SC-75F - Delayed Stripe webhook keeps subscription pending until payment confirmation is received | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| SKIPPED | Billing | SC-75G - User cannot access paid entitlements before successful payment confirmation | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
+| PASS | Billing | SC-75G - User cannot access paid entitlements before successful payment confirmation | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | SC-75H - Payment receipt or subscription confirmation email is received after purchase | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | SC-75I - Invoice PDF amount, currency, and plan match the purchased subscription | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-75J - Saved payment method last four digits are shown correctly after purchase | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -401,7 +397,6 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | SC-78 - Current plan does not show upgrade action for itself | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-79 - Upgrade from Income Builder to Overlay Strategists is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-80 - Upgrade from Overlay Strategists to Portfolio Hedger is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | SC-81 - Upgrade from Portfolio Hedger to Marketplace is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-82 - Upgrade CTA opens Stripe checkout or customer portal update screen | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Billing | SC-83 - Upgrade screen displays current plan and target plan | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-84 - Upgrade screen displays new price and billing interval | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -436,7 +431,6 @@ This document explains what the latest automation execution validated in plain b
 | PASS | Billing | SC-113 - Current higher-tier subscription is displayed before downgrade | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-114 - Eligible lower-tier plans show downgrade action | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-115 - Current plan does not show downgrade action for itself | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| FAIL | Billing | SC-116 - Downgrade from Marketplace to Portfolio Hedger is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-117 - Downgrade from Portfolio Hedger to Overlay Strategists is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | SC-118 - Downgrade from Overlay Strategists to Income Builder is available | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | SKIPPED | Billing | SC-119 - Downgrade from paid plan to Free is only available when business rules allow it | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
@@ -687,7 +681,7 @@ This document explains what the latest automation execution validated in plain b
 | SKIPPED | Billing | LC-012 - No-card trial enforces linked account and portfolio position limits | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
 | PASS | Billing | LC-013 - Overlay Strategists features remain visible while trial is active | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | LC-014 - User can start paid subscription from onboarding plan selection | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The scenario should complete successfully and leave the application in the expected state. |
-| PASS | Billing | LC-015 - Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
+| PASS | Billing | LC-015 - Paid checkout summary opens for Income Builder and Portfolio Hedger | Confirm subscription, plan, invoice, and billing controls are visible and safe. | The requested page, modal, portal, or panel should open without a load error. |
 | PASS | Billing | LC-016 - Monthly and annual plan prices are visible and switch correctly before checkout | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | LC-017 - Stripe checkout shows subscriber email, selected plan, billing interval, and card fields | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Expected controls and information should be visible to the user. |
 | PASS | Billing | LC-018 - Successful paid checkout activates subscription and redirects back to dashboard | Confirm subscription, plan, invoice, and billing controls are visible and safe. | Navigation should route the user to the correct protected or public destination. |
@@ -793,7 +787,6 @@ This document explains what the latest automation execution validated in plain b
 | Traceability | Income Builder monthly checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
 | Traceability | Portfolio Hedger annual checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
 | Traceability | Income Builder annual checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
-| Traceability | Marketplace monthly checkout shows subscription summary before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
 | Traceability | Income Builder checkout shows currency and conversion details before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
 | Traceability | Income Builder checkout preserves context on refresh and returns safely before payment | Covered by the one-user paid plan checkout summaries test. Covered by the one-user paid plan checkout summaries test. |
 | Controlled | SC-48: Stripe checkout displays renewal or auto-renewal copy before payment | Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. Set BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL to run. |
@@ -838,7 +831,6 @@ This document explains what the latest automation execution validated in plain b
 | Blocked | SC-75B - Double-clicking purchase does not create duplicate checkout sessions | Requires backend/API visibility into checkout session creation and idempotency keys. Requires backend/API visibility into checkout session creation and idempotency keys. |
 | Blocked | SC-75E - 3DS or authentication-required card flow is handled without losing subscription context | Requires Stripe sandbox 3DS card fixture and confirmation handling rules. Requires Stripe sandbox 3DS card fixture and confirmation handling rules. |
 | Blocked | SC-75F - Delayed Stripe webhook keeps subscription pending until payment confirmation is received | Requires webhook delay/retry control or backend subscription state API. Requires webhook delay/retry control or backend subscription state API. |
-| Future | SC-75G - User cannot access paid entitlements before successful payment confirmation | Requires entitlement selectors and safe failed/pending checkout fixture. Requires entitlement selectors and safe failed/pending checkout fixture. |
 | Blocked | SC-75H - Payment receipt or subscription confirmation email is received after purchase | Requires email inbox/API access or notification capture service. Requires email inbox/API access or notification capture service. |
 | Future | SC-75I - Invoice PDF amount, currency, and plan match the purchased subscription | Requires deterministic plan amount fixture and PDF content parsing/validation. Requires deterministic plan amount fixture and PDF content parsing/validation. |
 | Future | SC-75K - Checkout network interruption shows recoverable error and allows retry | Requires controlled network failure injection and retry expectation. Requires controlled network failure injection and retry expectation. |

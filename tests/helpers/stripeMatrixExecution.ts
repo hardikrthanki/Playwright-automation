@@ -7,6 +7,8 @@ import {
 
 import {
   BASE_URL,
+  STRIPE_PROCESSING_ERROR_CARD,
+  STRIPE_STOLEN_CARD,
   TEST_USERS
 } from '../config/testData';
 import {
@@ -33,6 +35,9 @@ import { RegistrationPage }
   from '../pages/RegistrationPage';
 import { StripePaymentPage }
   from '../pages/StripePaymentPage';
+import {
+  validateNoCardTrialFollowThrough
+} from './noCardTrialChecks';
 
 /* =============================================================================
 HELPER: Stripe matrix execution
@@ -71,6 +76,12 @@ export type StripeMatrixCoverageKey =
   | 'interval-preview'
   | 'payment-negative'
   | 'checkout-decline'
+  | 'checkout-stolen'
+  | 'checkout-processing-error'
+  | 'cancel-guard'
+  | 'yearly-cancel-date'
+  | 'upgrade-history'
+  | 'trial-to-paid'
   | 'downgrade-targets'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
@@ -256,9 +267,63 @@ export function inferStripeMatrixCoverageKey(
 
   if (
     text.includes(
+      'danger zone keep my plan'
+    )
+  ) {
+    return 'cancel-guard';
+  }
+
+  if (
+    text.includes(
+      'yearly cancel end date'
+    )
+  ) {
+    return 'yearly-cancel-date';
+  }
+
+  if (
+    text.includes(
+      'records subscription history'
+    )
+  ) {
+    return 'upgrade-history';
+  }
+
+  if (
+    text.includes(
+      'subscribe to a paid plan before the trial ends'
+    )
+  ) {
+    return 'trial-to-paid';
+  }
+
+  if (
+    text.includes(
       'paymentnegative'
     )
   ) {
+    if (
+      text.includes(
+        'stolen card'
+      ) ||
+      text.includes(
+        'fraud-blocked'
+      )
+    ) {
+      return 'checkout-stolen';
+    }
+
+    if (
+      text.includes(
+        'processing error card'
+      ) ||
+      text.includes(
+        'issuer unavailable'
+      )
+    ) {
+      return 'checkout-processing-error';
+    }
+
     if (
       text.includes(
         'directsubscriptionpurchase'
@@ -802,9 +867,44 @@ async function executeOverlayWithoutCard(
     'Starts Overlay Strategists trial without a card for one disposable user.'
   );
 
+  const user =
+    await registerAndReachPlanSelection(
+      page,
+      'stripe-matrix-overlay-no-card'
+    );
+
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  await planPage.validateOverlayStrategistsTrialOptions();
+  await planPage.selectOverlayStrategistsTrialWithoutCard();
+  await planPage.validateNotRedirectedToStripeCheckout();
+
+  await new DashboardPage(
+    page
+  ).validateLoaded();
+
+  await new BillingPage(
+    page
+  ).validateOverlayStrategistsTrialBillingState(
+    'without-card'
+  );
+
+  await validateNoCardTrialFollowThrough(
+    page,
+    user.email,
+    user.mobileNumber
+  );
+}
+
+export async function startNoCardTrialAndSubscribe(
+  page: Page
+) {
   await registerAndReachPlanSelection(
     page,
-    'stripe-matrix-overlay-no-card'
+    'trial-to-paid'
   );
 
   const planPage =
@@ -825,6 +925,10 @@ async function executeOverlayWithoutCard(
   ).validateOverlayStrategistsTrialBillingState(
     'without-card'
   );
+
+  await new BillingPage(
+    page
+  ).subscribeToPaidPlanBeforeTrialEnds();
 }
 
 async function executeOverlayWithCardCheckout(
@@ -1190,8 +1294,59 @@ async function executePaymentNegative(
   );
 }
 
-async function executeCheckoutDecline(
-  page: Page
+async function purchaseDisposablePlan(
+  page: Page,
+  tag: string,
+  planName: 'Income Builder' | 'Overlay Strategists' | 'Portfolio Hedger',
+  interval: 'monthly' | 'annual'
+) {
+  await registerAndReachPlanSelection(
+    page,
+    tag
+  );
+
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  if (
+    interval === 'annual'
+  ) {
+    await planPage.selectAnnualBilling();
+  } else {
+    await planPage.selectMonthlyBilling();
+  }
+
+  await planPage.selectPlan(
+    planName
+  );
+
+  await new StripePaymentPage(
+    page
+  ).completePayment();
+
+  await new DashboardPage(
+    page
+  ).validateLoaded();
+
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  await billing.validateActivePlan(
+    planName
+  );
+
+  return billing;
+}
+
+async function submitCheckoutCard(
+  page: Page,
+  tag: string,
+  cardNumber: string,
+  errorPattern: RegExp
 ) {
   const planPage =
     new PlanSelectionPage(
@@ -1200,7 +1355,7 @@ async function executeCheckoutDecline(
 
   await registerAndReachPlanSelection(
     page,
-    'checkout-decline'
+    tag
   );
 
   await planPage.selectMonthlyBilling();
@@ -1220,7 +1375,7 @@ async function executeCheckoutDecline(
   await page.locator(
     '#cardNumber'
   ).fill(
-    '4000000000000002'
+    cardNumber
   );
   await page.locator(
     '#cardExpiry'
@@ -1257,7 +1412,7 @@ async function executeCheckoutDecline(
 
   await expect(
     page.getByText(
-      /declin|insufficient|do not honor|card was declined|try another|not successful/i
+      errorPattern
     ).first()
   ).toBeVisible({
     timeout: 20000
@@ -1267,6 +1422,135 @@ async function executeCheckoutDecline(
     page
   ).toHaveURL(
     /checkout\.stripe\.com/
+  );
+}
+
+async function executeCheckoutDecline(
+  page: Page
+) {
+  await submitCheckoutCard(
+    page,
+    'checkout-decline',
+    '4000000000000002',
+    /declin|insufficient|do not honor|card was declined|try another|not successful/i
+  );
+}
+
+async function executeStolenCard(
+  page: Page
+) {
+  await submitCheckoutCard(
+    page,
+    'checkout-stolen',
+    STRIPE_STOLEN_CARD,
+    /declin|stolen|fraud|lost card|pickup|card was declined|try another|not successful/i
+  );
+}
+
+async function executeProcessingErrorCard(
+  page: Page
+) {
+  await submitCheckoutCard(
+    page,
+    'checkout-processing-error',
+    STRIPE_PROCESSING_ERROR_CARD,
+    /declin|processing|try again|payment failed|card was declined|try another|not successful/i
+  );
+}
+
+async function executeCancelGuard(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'cancel-guard',
+      'Income Builder',
+      'monthly'
+    );
+
+  await billing.validateDangerZoneCancelStaysSafe(
+    'Income Builder',
+    'monthly'
+  );
+}
+
+async function executeYearlyCancelDate(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'yearly-cancel-date',
+      'Income Builder',
+      'annual'
+    );
+
+  await billing.validateDangerZoneCancelStaysSafe(
+    'Income Builder',
+    'annual'
+  );
+}
+
+async function executeUpgradeHistory(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'upgrade-history',
+      'Income Builder',
+      'monthly'
+    );
+
+  await billing.openPlanChangeCalculationPreview({
+    targetPlan:
+      'Overlay Strategists',
+    action:
+      'upgrade',
+    interval:
+      'monthly'
+  });
+
+  await billing.submitPlanChangeCalculationPreview({
+    targetPlan:
+      'Overlay Strategists',
+    action:
+      'upgrade'
+  });
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    await new StripePaymentPage(
+      page
+    ).completePayment();
+  }
+
+  await billing.validateActivePlan(
+    'Overlay Strategists'
+  );
+
+  await billing.validateHistoryShowsPlan(
+    'Overlay Strategists'
+  );
+}
+
+async function executeTrialToPaid(
+  page: Page
+) {
+  requireFlag(
+    'OVERLAY_STRATEGISTS_FLOW_ENABLED'
+  );
+  requireFlag(
+    'OVERLAY_STRATEGISTS_WITHOUT_CARD_ENABLED',
+    'Starts a no-card trial, then pays for a plan before the trial ends.'
+  );
+
+  await startNoCardTrialAndSubscribe(
+    page
   );
 }
 
@@ -1308,6 +1592,18 @@ const coverageExecutors: Record<
     executePaymentNegative,
   'checkout-decline':
     executeCheckoutDecline,
+  'checkout-stolen':
+    executeStolenCard,
+  'checkout-processing-error':
+    executeProcessingErrorCard,
+  'cancel-guard':
+    executeCancelGuard,
+  'yearly-cancel-date':
+    executeYearlyCancelDate,
+  'upgrade-history':
+    executeUpgradeHistory,
+  'trial-to-paid':
+    executeTrialToPaid,
   'downgrade-targets':
     executeDowngradeTargets,
   'current-plan-before-upgrade':

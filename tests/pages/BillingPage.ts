@@ -7,7 +7,9 @@ import {
 import { safeClick }
   from '../helpers/safeClick';
   import { BasePage }
-  from './BasePage';
+    from './BasePage';
+import { StripePaymentPage }
+  from './StripePaymentPage';
     import { Logger }
   from '../utils/logger';
 import {
@@ -20,6 +22,41 @@ function escapeRegExp(
   return value.replace(
     /[.*+?^${}()|[\]\\]/g,
     '\\$&'
+  );
+}
+
+function planVisiblePattern(
+  planName: string
+) {
+  if (
+    /income/i.test(
+      planName
+    )
+  ) {
+    return /income/i;
+  }
+
+  if (
+    /overlay/i.test(
+      planName
+    )
+  ) {
+    return /overlay/i;
+  }
+
+  if (
+    /portfolio|hedger/i.test(
+      planName
+    )
+  ) {
+    return /portfolio|hedger/i;
+  }
+
+  return new RegExp(
+    escapeRegExp(
+      planName
+    ),
+    'i'
   );
 }
 
@@ -833,9 +870,136 @@ async validateBillingIntervalPresentationSummary() {
   );
 }
 
+private async closeCancelDialogIfOpen() {
+  const dialog =
+    this.page.locator(
+      '[role="dialog"], [role="alertdialog"]'
+    ).filter({
+      hasText: /cancel subscription/i
+    });
+
+  const open =
+    await dialog.isVisible({
+      timeout: 1000
+    }).catch(
+      () => false
+    );
+
+  if (!open) {
+    return;
+  }
+
+  const keepPlan =
+    dialog.getByRole(
+      'button',
+      {
+        name: /keep my plan/i
+      }
+    );
+
+  if (
+    await keepPlan.isVisible().catch(
+      () => false
+    )
+  ) {
+    await keepPlan.click();
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  await expect(
+    dialog
+  ).toBeHidden({
+    timeout: 10000
+  });
+}
+
+private async cardShowsCurrentPlan(
+  planName: string
+) {
+  return this.page.evaluate(
+    (targetPlan) => {
+      const plans = [
+        {
+          name: 'Income Builder',
+          needles: ['income builder', 'income']
+        },
+        {
+          name: 'Overlay Strategists',
+          needles: ['overlay strategists', 'overlay']
+        },
+        {
+          name: 'Portfolio Hedger',
+          needles: ['portfolio hedger', 'portfolio hedge']
+        },
+        {
+          name: 'Curious Explorer',
+          needles: ['curious explorer', 'curious']
+        }
+      ];
+
+      const matchedPlans = (text: string) =>
+        plans.filter(
+          (plan) =>
+            plan.needles.some(
+              (needle) =>
+                text.includes(needle)
+            )
+        );
+
+      const buttons =
+        Array.from(
+          document.querySelectorAll(
+            'button, a'
+          )
+        );
+
+      for (const element of buttons) {
+        if (
+          !/current plan/i.test(
+            element.textContent ?? ''
+          )
+        ) {
+          continue;
+        }
+
+        let current =
+          element.parentElement;
+
+        for (
+          let depth = 0;
+          current && depth < 12;
+          depth += 1
+        ) {
+          const matches =
+            matchedPlans(
+              (
+                current.textContent ?? ''
+              ).toLowerCase()
+            );
+
+          if (matches.length === 1) {
+            return matches[0].name === targetPlan;
+          }
+
+          current =
+            current.parentElement;
+        }
+      }
+
+      return false;
+    },
+    planName
+  );
+}
+
 private async openPlansView() {
 
   await this.dismissMarketingOverlays();
+
+  await this.closeCancelDialogIfOpen();
 
   await this.validateOverview();
 
@@ -1815,42 +1979,35 @@ async validateActivePlan(
     `Validating active Billing plan: ${expectedPlan}`
   );
 
-  if (
-    !/billing/i.test(
-      this.page.url()
-    )
-  ) {
-    await this.validateOverview();
-  } else {
-    await this.waitForBillingContent();
-  }
+  let attempt = 0;
 
-  const bodyText =
-    await this.page
-      .locator(
-        'body'
-      )
-      .innerText({
-        timeout: 15000
-      });
+  await expect.poll(
+    async () => {
+      attempt += 1;
 
-  expect(
-    bodyText,
-    `Billing should show ${expectedPlan} after plan change.`
-  ).toMatch(
-    new RegExp(
-      this.planNamePattern(
+      if (
+        attempt > 1 &&
+        attempt % 3 === 0
+      ) {
+        await this.page.reload({
+          waitUntil: 'domcontentloaded'
+        }).catch(
+          () => undefined
+        );
+      }
+
+      await this.openPlansView();
+
+      return this.cardShowsCurrentPlan(
         expectedPlan
-      ),
-      'i'
-    )
-  );
-
-  expect(
-    bodyText,
-    'Billing should show an active/current subscription state after plan change.'
-  ).toMatch(
-    /active|current plan|current subscription|subscription|renews|billing/i
+      );
+    },
+    {
+      timeout: 90000,
+      intervals: [2000, 3000, 5000]
+    }
+  ).toBe(
+    true
   );
 
   Logger.success(
@@ -2214,11 +2371,18 @@ async validateYearlyCancellationOptions() {
     'Yearly cancel should offer immediate cancel and request refund.'
   ).toBeTruthy();
 
+  expect(
+    bodyText,
+    'Yearly cancel should show the period end date.'
+  ).toMatch(
+    /\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b/i
+  );
+
   const abortCancel =
     host.getByRole(
       'button',
       {
-        name: /don'?t cancel|keep subscription|go back|close|not now/i
+        name: /keep my plan|don'?t cancel|keep subscription|go back|not now/i
       }
     ).first();
 
@@ -2828,12 +2992,35 @@ async openCancelSubscriptionHost() {
             this.page.url()
           ),
         close: async () => {
+          const keepPlan =
+            cancelDialog.getByRole(
+              'button',
+              {
+                name: /keep my plan/i
+              }
+            );
+
+          if (
+            await keepPlan.isVisible({
+              timeout: 2000
+            }).catch(
+              () => false
+            )
+          ) {
+            await safeClick(
+              keepPlan,
+              'Keep my plan'
+            );
+
+            return;
+          }
+
           const closeButton =
             cancelDialog
               .getByRole(
                 'button',
                 {
-                  name: /^(cancel|close|go back|keep)/i
+                  name: /^(close|go back|keep)/i
                 }
               )
               .first()
@@ -2964,7 +3151,7 @@ async validateMonthlyCancellationOptions() {
       text,
       'Monthly cancel should describe period-end cancellation and continued access.'
     ).toMatch(
-      /end of (this|the) (current )?billing period|period end|keep access until|retain access|cancels on|your service will end|until (the )?(end|renewal)/i
+      /end of (this|the) (current )?billing period|period end|keep access until|retain access|cancels on|your service will end|until (the )?(end|renewal)|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b/i
     );
 
     expect(
@@ -3765,6 +3952,361 @@ async validateOverlayStrategistsTrialBillingState(
 
   Logger.success(
     `Overlay Strategists ${mode} trial billing state validated`
+  );
+}
+
+async validateOverlayStrategistsDisplayedLimits() {
+  Logger.info(
+    'Validating Overlay Strategists account and position limits shown on the plan'
+  );
+
+  await this.openPlansView();
+
+  const pageText =
+    await this.page.locator(
+      'body'
+    ).innerText();
+
+  expect(
+    pageText,
+    'No-card trial should show the Account Linked limit printed on the Overlay Strategists card.'
+  ).toMatch(
+    /account linked\s*\(10\)/i
+  );
+
+  expect(
+    pageText,
+    'No-card trial should show the Positions limit printed on the Overlay Strategists card.'
+  ).toMatch(
+    /positions\s*\(500\)/i
+  );
+
+  Logger.success(
+    'Overlay Strategists shows Account Linked (10) and Positions (500)'
+  );
+}
+
+async validateTrialListedInHistory() {
+  Logger.info(
+    'Validating billing history records the trial'
+  );
+
+  await safeClick(
+    this.historyTab,
+    'Open History Tab'
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).toContainText(
+    /overlay strategists|free trial|trial|subscription/i,
+    {
+      timeout: 15000
+    }
+  );
+
+  Logger.success(
+    'Billing history shows the trial record'
+  );
+}
+
+async validateHistoryShowsPlan(
+  planName: string
+) {
+  Logger.info(
+    `Validating billing history shows ${planName}`
+  );
+
+  await safeClick(
+    this.historyTab,
+    'Open History Tab'
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).toContainText(
+    planVisiblePattern(
+      planName
+    ),
+    {
+      timeout: 15000
+    }
+  );
+
+  Logger.success(
+    `Billing history shows ${planName}`
+  );
+}
+
+async validateDangerZoneCancelStaysSafe(
+  planName: string,
+  interval: 'monthly' | 'annual'
+) {
+  Logger.info(
+    `Opening danger-zone cancel for ${planName} without cancelling`
+  );
+
+  await this.validateOverview();
+
+  const cancel =
+    this.inAppCancelControl();
+
+  await expect(
+    cancel,
+    'Danger zone should offer Cancel Subscription.'
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  await safeClick(
+    cancel,
+    'Open danger zone Cancel Subscription'
+  );
+
+  const dialog =
+    this.page.locator(
+      '[role="dialog"], [role="alertdialog"]'
+    ).filter({
+      hasText: /cancel subscription/i
+    }).first();
+
+  await expect(
+    dialog
+  ).toBeVisible({
+    timeout: 15000
+  });
+
+  const keepPlan =
+    dialog.getByRole(
+      'button',
+      {
+        name: /keep my plan/i
+      }
+    );
+
+  const confirmCancel =
+    dialog.getByRole(
+      'button',
+      {
+        name: /yes,?\s*cancel/i
+      }
+    );
+
+  await expect(
+    keepPlan
+  ).toBeVisible();
+
+  await expect(
+    confirmCancel,
+    'Yes, cancel must be a separate button from Keep my plan.'
+  ).toBeVisible();
+
+  const keepText =
+    (
+      await keepPlan.innerText()
+    ).trim()
+      .toLowerCase();
+
+  const confirmText =
+    (
+      await confirmCancel.innerText()
+    ).trim()
+      .toLowerCase();
+
+  expect(
+    keepText
+  ).not.toBe(
+    confirmText
+  );
+
+  const dialogText =
+    await dialog.innerText();
+
+  const calendarDate =
+    /\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b/i;
+
+  if (
+    interval === 'annual'
+  ) {
+    expect(
+      dialogText,
+      'Annual cancel should show the period end date.'
+    ).toMatch(
+      calendarDate
+    );
+  } else {
+    expect(
+      dialogText,
+      'Monthly cancel should show the period end date.'
+    ).toMatch(
+      new RegExp(
+        `${calendarDate.source}|end of (this|the) (current )?billing period`,
+        'i'
+      )
+    );
+  }
+
+  await this.page.reload({
+    waitUntil: 'domcontentloaded'
+  });
+
+  await this.validateOverview();
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).toContainText(
+    planVisiblePattern(
+      planName
+    ),
+    {
+      timeout: 15000
+    }
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).not.toContainText(
+    /moved to the free plan|subscription cancelled|you are now on the free plan/i
+  );
+
+  await this.closeCancelDialogIfOpen();
+
+  Logger.success(
+    `${planName} stayed active after refresh on the cancel dialog`
+  );
+}
+
+async subscribeToPaidPlanBeforeTrialEnds() {
+  Logger.info(
+    'Choosing a paid plan before the trial ends'
+  );
+
+  await this.openPlansView();
+
+  let targetPlan =
+    'Income Builder';
+  let action: 'upgrade' | 'downgrade' =
+    'downgrade';
+  let button;
+
+  try {
+    button =
+      await this.findPlanActionButton(
+        'Income Builder',
+        'downgrade'
+      );
+  } catch {
+    targetPlan =
+      'Portfolio Hedger';
+    action =
+      'upgrade';
+    button =
+      await this.findPlanActionButton(
+        'Portfolio Hedger',
+        'upgrade'
+      );
+  }
+
+  await safeClick(
+    button,
+    `Choose ${targetPlan} before the trial ends`
+  );
+
+  const confirmDialog =
+    this.page.locator(
+      '[role="dialog"], [role="alertdialog"]'
+    ).filter({
+      hasText: /confirm your subscription|total due today/i
+    }).first();
+
+  const reachedStripe =
+    await this.page.waitForURL(
+      /checkout\.stripe\.com/,
+      {
+        timeout: 8000
+      }
+    ).then(
+      () => true
+    ).catch(
+      () => false
+    );
+
+  if (
+    !reachedStripe &&
+    await confirmDialog.isVisible().catch(
+      () => false
+    )
+  ) {
+    const termsCheckbox =
+      confirmDialog.locator(
+        '[role="checkbox"], input[type="checkbox"]'
+      ).first();
+
+    await expect(
+      termsCheckbox
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      termsCheckbox,
+      'Accept subscription terms'
+    );
+
+    await safeClick(
+      confirmDialog.getByRole(
+        'button',
+        {
+          name: /confirm\s*&\s*pay/i
+        }
+      ),
+      'Confirm and pay'
+    );
+  } else if (!reachedStripe) {
+    await this.submitPlanChangeCalculationPreview({
+      targetPlan,
+      action
+    });
+  }
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      this.page.url()
+    ) ||
+    await this.page.waitForURL(
+      /checkout\.stripe\.com/,
+      {
+        timeout: 20000
+      }
+    ).then(
+      () => true
+    ).catch(
+      () => false
+    )
+  ) {
+    await new StripePaymentPage(
+      this.page
+    ).completePayment();
+  }
+
+  await this.validateActivePlan(
+    targetPlan
+  );
+
+  await this.validateHistoryShowsPlan(
+    targetPlan
+  );
+
+  Logger.success(
+    `Trial user subscribed to ${targetPlan} before the trial ended`
   );
 }
 

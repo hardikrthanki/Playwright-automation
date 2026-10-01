@@ -2603,6 +2603,22 @@ function plainFailureStory(test, index = 0) {
     happened = 'The page took too long, and the check stopped before it could finish.';
     wanted = 'The page should be ready before the time limit.';
     next = 'Open the page this check starts on and wait until it is ready, then rerun it.';
+  } else if (lower.includes('test not found in the worker')) {
+    happened = 'This check was removed while the run was already going, so the runner could not find it.';
+    wanted = 'Only checks that are still in the suite should run.';
+    next = 'Rerun the suite. This Marketplace check is no longer in the list.';
+  } else if (lower.includes('reset-password') && lower.includes('/login')) {
+    happened = 'The new password was filled in, but the page stayed on the reset link instead of opening sign-in.';
+    wanted = 'Update Password should save the new password and open the sign-in page.';
+    next = 'Open the reset link from the email, enter the new password twice, click Update Password, and confirm sign-in opens.';
+  } else if (
+    lower.includes('mobileverificationsettled')
+    || (lower.includes('tobetruthy') && (lower.includes('verified') || lower.includes('mobile') || lower.includes('otp')))
+    || lower.includes('not verified')
+  ) {
+    happened = 'The mobile code stayed on Not verified, so Create Account stayed off.';
+    wanted = 'After the six-digit code is accepted, the badge should say Verified and Create Account should turn on.';
+    next = 'On signup, enter a mobile number that is not already registered, send the code, enter 111111, click Verify once, and wait until the badge says Verified.';
   } else if (lower.includes('tobetruthy') || lower.includes('tomatch')) {
     happened = 'Something on the page did not match what this check expected.';
     wanted = 'The page should match the result this check was written for.';
@@ -3070,22 +3086,346 @@ function readFailurePageNotes(test) {
   };
 }
 
+function screenClue(test) {
+  const notes = readFailurePageNotes(test);
+  const blob = `${notes.highlights.join(' | ')} ${notes.errorLine}`;
+
+  if (/not verified/i.test(blob)) {
+    return 'The screen still says Not verified.';
+  }
+
+  if (/create account/i.test(blob) && /disabled/i.test(blob)) {
+    return 'Create Account is on the screen and stayed off.';
+  }
+
+  if (/set new password|update password/i.test(blob)) {
+    return 'The screen is still Set New Password.';
+  }
+
+  if (/test not found/i.test(blob)) {
+    return 'No screen was saved because the check was no longer in the suite.';
+  }
+
+  return '';
+}
+
+function scenarioKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function scenarioSentence(text) {
+  const clean = String(text || '').trim().replace(/[.]+$/, '');
+  if (!clean) return '';
+  const sentence = clean.charAt(0).toUpperCase() + clean.slice(1);
+  return /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
+}
+
+function humanScenarioSteps(name) {
+  const text = String(name || '')
+    .replace(/^[A-Z]{1,4}-\d+[A-Z]?\s*-\s*/, '')
+    .replace(/\.$/, '')
+    .trim();
+
+  if (/\s->\s/.test(text)) {
+    return text.split(/\s*->\s*/).map(scenarioSentence).filter(Boolean);
+  }
+
+  const blocks = text.match(/^(.*?)\bblocks\b\s+(.+)$/i);
+  if (blocks) {
+    return [
+      scenarioSentence(`Open ${blocks[1].trim()}`),
+      scenarioSentence(`Try ${blocks[2].trim()}`),
+      scenarioSentence(`Confirm ${blocks[1].trim()} stays blocked and does not continue`),
+    ];
+  }
+
+  const opens = text.match(/^(.+?)\s+opens\s+(.+)$/i);
+  if (opens) {
+    return [
+      scenarioSentence(`Open ${opens[1].trim()}`),
+      scenarioSentence(`Confirm ${opens[2].trim()} is on the screen`),
+    ];
+  }
+
+  const shows = text.match(/^(.+?)\s+(?:shows|displays)\s+(.+)$/i);
+  if (shows) {
+    return [
+      scenarioSentence(`Open ${shows[1].trim()}`),
+      scenarioSentence(`Confirm it shows ${shows[2].trim()}`),
+    ];
+  }
+
+  const can = text.match(/^(.+?)\s+can\s+(.+)$/i);
+  if (can) {
+    return [
+      scenarioSentence(`Start as ${can[1].trim()}`),
+      scenarioSentence(can[2].trim()),
+    ];
+  }
+
+  const available = text.match(/^(.+?)\s+is available$/i);
+  if (available) {
+    return [
+      scenarioSentence(`Open the screen for ${available[1].trim()}`),
+      scenarioSentence(`Confirm ${available[1].trim()} is available`),
+    ];
+  }
+
+  const parts = text
+    .split(/\s+and\s+/i)
+    .map(part => part.trim())
+    .filter(part => part.length > 12);
+
+  if (parts.length >= 2) {
+    return parts.map(part => scenarioSentence(part));
+  }
+
+  return [scenarioSentence(text)];
+}
+
+function quotedOnLine(line) {
+  const match = String(line || '').match(/['"`]([^'"`\n]{3,220})['"`]/);
+  if (!match || match[1].includes('${')) return '';
+  return match[1].trim();
+}
+
+function loadScenarioCatalog() {
+  const byFile = new Map();
+  const byName = new Map();
+  const testsDir = path.join(projectRoot, 'tests');
+  let files = [];
+
+  try {
+    files = fs.readdirSync(testsDir).filter(file => file.endsWith('.spec.ts'));
+  } catch {
+    return { byFile, byName };
+  }
+
+  files.forEach(file => {
+    const lines = fs.readFileSync(path.join(testsDir, file), 'utf8').split(/\n/);
+    let current = null;
+    let pendingId = '';
+    let pendingIdLine = 0;
+
+    const save = record => {
+      if (!record?.name) return;
+      const steps = (record.steps.length ? record.steps : humanScenarioSteps(record.name)).slice(0, 8);
+      const stored = {
+        name: record.name,
+        steps,
+        stepLines: record.stepLines.slice(0, steps.length),
+        startLine: record.startLine,
+      };
+      byFile.set(`${file}::${scenarioKey(record.name)}`, stored);
+      byName.set(scenarioKey(record.name), stored);
+    };
+
+    lines.forEach((line, index) => {
+      const lineNumber = index + 1;
+      const id = line.match(/^\s*id:\s*['"`]([A-Z]{1,4}-\d+[A-Z]?)['"`]/);
+      if (id) {
+        pendingId = id[1];
+        pendingIdLine = lineNumber;
+      }
+
+      const titled = line.match(/^\s*title:\s*['"`]([^'"`]{8,220})['"`]/);
+      if (titled && pendingId && lineNumber - pendingIdLine < 12) {
+        const name = `${pendingId} - ${titled[1]}`;
+        const stored = {
+          name,
+          steps: humanScenarioSteps(titled[1]).slice(0, 8),
+          stepLines: [],
+          startLine: lineNumber,
+        };
+        byFile.set(`${file}::${scenarioKey(name)}`, stored);
+        byName.set(scenarioKey(name), stored);
+        byName.set(scenarioKey(titled[1]), stored);
+        pendingId = '';
+      }
+
+      if (/^\s*await\s+test\.step\(/.test(line) && current) {
+        const step = quotedOnLine(line) || quotedOnLine(lines[index + 1]);
+        if (step) {
+          current.steps.push(scenarioSentence(step));
+          current.stepLines.push(lineNumber);
+        }
+        return;
+      }
+
+      if (/^\s*(?:controlledLifecycleTest|test(?:\.(?:only|skip|fail))?)\(/.test(line)) {
+        if (current) save(current);
+        const name = quotedOnLine(line) || quotedOnLine(lines[index + 1]);
+        current = name
+          ? { name, steps: [], stepLines: [], startLine: lineNumber }
+          : null;
+      }
+    });
+
+    if (current) save(current);
+  });
+
+  return { byFile, byName };
+}
+
+const scenarioCatalog = loadScenarioCatalog();
+
+function scenarioName(test) {
+  return String(test?.validation?.scenario || test?.title || getFailureFullTitle(test) || 'This check')
+    .split('>')
+    .map(part => part.trim())
+    .filter(Boolean)
+    .at(-1) || 'This check';
+}
+
+function scenarioPlaybook(test) {
+  const name = scenarioName(test);
+  const file = String(test?.file || '').split(/[/\\]/).pop();
+  const found = scenarioCatalog.byFile.get(`${file}::${scenarioKey(name)}`)
+    || scenarioCatalog.byName.get(scenarioKey(name));
+  const steps = (found?.steps?.length ? found.steps : humanScenarioSteps(name)).slice(0, 8);
+
+  return {
+    name,
+    steps,
+    stepLines: found?.stepLines || [],
+    startLine: found?.startLine || 0,
+  };
+}
+
+function failureSourceLine(test) {
+  const raw = [
+    test?.technicalError,
+    test?.errorMessage,
+    test?.error,
+    ...(Array.isArray(test?.attempts) ? test.attempts.map(attempt => attempt?.error) : []),
+  ].filter(Boolean).join('\n');
+  const file = String(test?.file || '')
+    .split(/[/\\]/)
+    .pop()
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matches = file
+    ? [...raw.matchAll(new RegExp(`${file}:(\\d+)`, 'g'))]
+    : [];
+  if (!matches.length) return 0;
+  return Number(matches[matches.length - 1][1]);
+}
+
+function failureLookedFor(test) {
+  const raw = [
+    test?.technicalError,
+    test?.errorMessage,
+    test?.error,
+  ].filter(Boolean).join('\n');
+  const pattern = raw.match(/name:\s*\/([^/\n]{3,80})\//);
+  if (pattern) {
+    const label = pattern[1]
+      .replace(/\\[bBdDsSwW]/g, ' ')
+      .replace(/[\\^$|]+/g, ' or ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return label ? `The screen did not show ${label}.` : '';
+  }
+  const quoted = raw.match(/name:\s*['"]([^'"]{3,80})['"]/);
+  return quoted ? `The screen did not show “${quoted[1]}”.` : '';
+}
+
+function failureGuide(test, story) {
+  const raw = `${getFailureTechnicalError(test) || ''} ${story.happened}`.toLowerCase();
+
+  if (raw.includes('test not found')) {
+    return {
+      checked: [
+        'The suite started with this check still in the list.',
+        'The file changed before this check was reached.',
+        'The runner then could not find the check.',
+      ],
+      again: [
+        'Leave this check out of the suite.',
+        'Rerun the full suite. This check will not be looked for again.',
+      ],
+    };
+  }
+
+  const play = scenarioPlaybook(test);
+  const line = failureSourceLine(test);
+  const stopDetail = failureLookedFor(test) || story.happened;
+  let stopIndex = -1;
+
+  if (line && play.stepLines.length) {
+    play.stepLines.forEach((stepLine, index) => {
+      if (stepLine <= line) stopIndex = index;
+    });
+    if (play.stepLines[0] && line < play.stepLines[0]) stopIndex = -1;
+  }
+
+  const checked = play.steps.map((step, index) => (
+    index === stopIndex
+      ? `${step.replace(/\.$/, '')} — this is where it stopped. ${stopDetail}`
+      : step
+  ));
+  const again = play.steps.map((step, index) => (
+    index === stopIndex
+      ? `${step.replace(/\.$/, '')}. Stop here: ${stopDetail}`
+      : step
+  ));
+
+  const setupFailure = /otp|send code|sms code|not verified|create account|reset-password|send-otp/i.test(raw)
+    && !play.steps.some(step => /otp|send code|sms|not verified|create account|reset password/i.test(step));
+
+  if (stopIndex < 0 && setupFailure) {
+    checked.unshift(`While starting “${play.name}”: ${stopDetail}`);
+    again.unshift(stopDetail);
+  } else if (stopIndex < 0) {
+    checked.push(`Stopped here: ${stopDetail}`);
+    again.push(`Repeat the steps above until this happens: ${stopDetail}`);
+  }
+
+  return { checked, again };
+}
+
+function renderFailureGuide(test, story) {
+  const guide = failureGuide(test, story);
+  const steps = items => `<ol>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ol>`;
+
+  return `<div class="failure-guide">
+    <section>
+      <h3>What we checked</h3>
+      ${steps(guide.checked)}
+    </section>
+    <section>
+      <h3>How to see it again</h3>
+      ${steps(guide.again)}
+    </section>
+  </div>`;
+}
+
 function renderFailureScreen(test, title) {
   const primary = selectPrimaryFailureScreenshot(test);
   const notes = readFailurePageNotes(test);
+  const story = plainFailureStory(test);
+  const clue = screenClue(test);
   const pageList = notes.highlights
     .map(item => `<li>${escapeHtml(item)}</li>`)
     .join('');
+  const guide = renderFailureGuide(test, story);
 
   if (!primary.available || primary.blank) {
     return `<div class="failure-screen-fallback">
       <span>${primary.blank ? 'The saved picture is a blank white screen' : 'No picture was saved'}</span>
-      <p>${escapeHtml(notes.errorLine || primary.reason || 'The check stopped before a useful picture was saved.')}</p>
+      <p>${escapeHtml(clue || notes.errorLine || primary.reason || story.happened)}</p>
       ${pageList ? `<strong>What was on the page</strong><ul>${pageList}</ul>` : ''}
-    </div>`;
+    </div>${guide}`;
   }
 
-  return `<a class="failure-screen-link" href="${escapeHtml(primary.href)}"><img src="${escapeHtml(primary.href)}" alt="Screen when ${escapeHtml(title)} failed"></a>`;
+  const annotated = createAnnotatedFailurePreview(test, primary.item, 0);
+  const src = annotated.available ? annotated.href : primary.href;
+
+  return `<a class="failure-screen-link" href="${escapeHtml(src)}"><img src="${escapeHtml(src)}" alt="Marked screen when ${escapeHtml(title)} failed"></a>
+    <span class="failure-mark-note">${escapeHtml(clue || story.happened)}</span>
+    ${guide}`;
 }
 
 function getAnnotatedEvidenceFileName(test, screenshot, index = 0) {
@@ -3096,7 +3436,6 @@ function getAnnotatedEvidenceFileName(test, screenshot, index = 0) {
 
 function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   const originalPath = getEvidenceAbsolutePath(screenshot);
-  const region = getReliableFailureRegion(screenshot);
 
   if (!originalPath || !fs.existsSync(originalPath) || screenshotLooksBlank(screenshot)) {
     return {
@@ -3105,14 +3444,13 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
     };
   }
 
-  if (!region) {
-    return {
-      available: false,
-      reason: 'Failure location could not be determined automatically.',
-    };
-  }
-
   const size = readPngSize(originalPath) || { width: 1440, height: 900 };
+  const region = getReliableFailureRegion(screenshot) || {
+    x: Math.round(size.width * 0.27),
+    y: Math.round(size.height * 0.14),
+    width: Math.round(size.width * 0.46),
+    height: Math.round(size.height * 0.7),
+  };
   const safeRegion = {
     x: Math.max(0, Math.min(region.x, size.width)),
     y: Math.max(0, Math.min(region.y, size.height)),
@@ -3127,37 +3465,18 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   const originalHrefForSvg = path
     .relative(annotationDir, originalPath)
     .replaceAll('\\', '/');
-  const attemptLabel = screenshot.attemptId || `Attempt ${screenshot.attempt ?? screenshot.retry ?? 1}`;
   const story = plainFailureStory(test, index);
-  const markerLabel = 'Where it failed';
-  const expected = compactText(story.wanted, 90);
-  const observed = compactText(story.happened, 110);
-  const title = compactText(getFailureFullTitle(test, index), 110);
-  const labelX = Math.min(Math.max(18, safeRegion.x), Math.max(18, size.width - 520));
-  const labelY = safeRegion.y > 150
-    ? Math.max(18, safeRegion.y - 132)
-    : Math.min(size.height - 132, safeRegion.y + safeRegion.height + 22);
+  const caption = compactText(screenClue(test) || story.happened, 78);
+  const labelWidth = Math.min(760, Math.max(420, size.width - 36));
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${size.width} ${size.height}">
   <image href="${escapeHtml(originalHrefForSvg)}" x="0" y="0" width="${size.width}" height="${size.height}" preserveAspectRatio="xMidYMid meet"/>
   <rect x="0" y="0" width="${size.width}" height="${size.height}" fill="rgba(0,0,0,0.18)"/>
-  <rect x="${safeRegion.x}" y="${safeRegion.y}" width="${safeRegion.width}" height="${safeRegion.height}" rx="8" fill="rgba(255,59,59,0.12)" stroke="#ff3b3b" stroke-width="6"/>
-  <circle cx="${safeRegion.x}" cy="${safeRegion.y}" r="20" fill="#ff3b3b"/>
-  <text x="${safeRegion.x}" y="${safeRegion.y + 7}" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="22" font-weight="800">1</text>
-  <line x1="${labelX + 30}" y1="${labelY + 112}" x2="${safeRegion.x + Math.min(safeRegion.width, 80)}" y2="${safeRegion.y}" stroke="#ff3b3b" stroke-width="4" marker-end="url(#arrow)"/>
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#ff3b3b"/>
-    </marker>
-  </defs>
-  <rect x="${labelX}" y="${labelY}" width="500" height="118" rx="14" fill="rgba(8,16,30,0.92)" stroke="rgba(255,59,59,0.75)" stroke-width="2"/>
-  <text x="${labelX + 18}" y="${labelY + 28}" fill="#ffb4b4" font-family="Arial, sans-serif" font-size="18" font-weight="800">${escapeHtml(markerLabel)}</text>
-  <text x="${labelX + 18}" y="${labelY + 54}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(title)}</text>
-  <text x="${labelX + 18}" y="${labelY + 78}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">What happened: ${escapeHtml(observed)}</text>
-  <text x="${labelX + 18}" y="${labelY + 100}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="14">What we wanted: ${escapeHtml(expected)}</text>
-  <rect x="18" y="${size.height - 52}" width="420" height="34" rx="10" fill="rgba(8,16,30,0.82)"/>
-  <text x="34" y="${size.height - 30}" fill="#d8e6f3" font-family="Arial, sans-serif" font-size="15">AIR Annotated Failure View - ${escapeHtml(attemptLabel)}</text>
+  <rect x="${safeRegion.x}" y="${safeRegion.y}" width="${safeRegion.width}" height="${safeRegion.height}" rx="8" fill="rgba(255,59,59,0.08)" stroke="#ff3b3b" stroke-width="6"/>
+  <rect x="16" y="16" width="${labelWidth}" height="64" rx="12" fill="rgba(42,21,24,0.94)" stroke="#ff7b72" stroke-width="2"/>
+  <text x="32" y="42" fill="#ffb4b4" font-family="Arial, sans-serif" font-size="16" font-weight="800">Stopped here</text>
+  <text x="32" y="64" fill="#ffffff" font-family="Arial, sans-serif" font-size="15">${escapeHtml(caption)}</text>
 </svg>`;
 
   fs.writeFileSync(filePath, svg, 'utf8');
@@ -5692,11 +6011,18 @@ const validationGroupCards = passedTopicEntries
   .map(([topic, testsInTopic]) => {
     const purpose = passedTopicPurpose[topic] || 'Checks in this part of the product that passed in this run.';
     const items = testsInTopic
-      .map(test => `
+      .map(test => {
+        const play = scenarioPlaybook(test);
+        const steps = play.steps
+          .map(step => `<li>${escapeHtml(step)}</li>`)
+          .join('');
+        return `
           <div class="passed-check">
-            <strong>${escapeHtml(passedSentence(test))}</strong>
-            <span>${escapeHtml(passedMeaning(test))}</span>
-          </div>`)
+            <strong>${escapeHtml(play.name)}</strong>
+            <span>What this scenario validated</span>
+            <ol class="scenario-steps">${steps}</ol>
+          </div>`;
+      })
       .join('');
 
     return `
@@ -5719,7 +6045,7 @@ const validationDetailRows = passedValidationTests
       <tr>
         <td>${escapeHtml(passedTopicName(test))}</td>
         <td>${escapeHtml(passedSentence(test))}</td>
-        <td>${escapeHtml(passedMeaning(test))}</td>
+        <td>${escapeHtml(scenarioPlaybook(test).steps.join(' '))}</td>
       </tr>`)
   .join('') || '<tr><td colspan="3">No passed checks were found in this run.</td></tr>';
 const validationCoverageGapCards = (airResults?.coverageGaps?.items ?? [])
@@ -9890,7 +10216,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     #validation-summary .passed-checks{display:grid;gap:10px}
     #validation-summary .passed-check{border:1px solid rgba(57,231,95,.16);border-left:3px solid #39e75f;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
     #validation-summary .passed-check strong{display:block;font-size:15px;line-height:1.35}
-    #validation-summary .passed-check span{display:block;margin-top:6px;color:#9fb0c5;font-size:13px;line-height:1.45}
+    #validation-summary .passed-check span{display:block;margin-top:6px;color:#7ee787;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    #validation-summary .passed-check ol.scenario-steps{margin:10px 0 0;padding-left:18px;color:#f8fafc}
+    #validation-summary .passed-check ol.scenario-steps li{margin:0 0 6px;font-size:14px;line-height:1.45}
     #cover .passed-card-grid,#coverage-gaps .passed-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
     #cover .passed-card,#coverage-gaps .passed-card{display:flex;flex-direction:column;gap:14px;min-height:220px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;color:#f8fafc;text-decoration:none;box-shadow:0 14px 34px rgba(0,0,0,.22)}
     #cover .passed-card:hover,#coverage-gaps .passed-card:hover{transform:translateY(-3px);border-color:#39e75f;box-shadow:0 18px 42px rgba(57,231,95,.14)}
@@ -10083,6 +10411,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     #roadmap .roadmap-card ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0!important;padding:0!important;list-style:none}
     #roadmap .roadmap-card li{border:1px solid rgba(57,231,95,.16);border-radius:12px;background:rgba(8,16,30,.72);padding:8px 10px;color:#d8e3ee;font-size:12px;line-height:1.3}
     .page-pager.top{position:sticky;top:12px;z-index:6}
+    .failure-guide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .failure-guide section{border:1px solid rgba(148,163,184,.22);border-radius:14px;background:#101826;padding:12px 14px}
+    .failure-guide h3{margin:0 0 8px;color:#9fb0c5;font-size:13px;font-weight:650}
+    .failure-guide ol{margin:0;padding-left:18px;color:#f8fafc}
+    .failure-guide li{margin:0 0 6px;font-size:14px;line-height:1.45}
+    .failure-mark-note{display:block;margin-top:8px;color:#ffb4b4;font-size:14px;font-weight:650}
+    @media(max-width:900px){.failure-guide{grid-template-columns:1fr}}
     main .page table thead th{position:sticky;top:78px;z-index:4;background:#0c1522}
   </style>
   <aside class="sidebar">

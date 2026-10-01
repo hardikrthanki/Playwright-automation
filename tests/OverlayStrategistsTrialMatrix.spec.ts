@@ -77,22 +77,22 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     sourceIds: [
       'SUB-TRIAL-005'
     ],
-    title: 'No-card trial linked-account limit requires confirmation',
+    title: 'No-card trial linked-account limit matches the plan card',
     priority: 'Critical',
-    status: 'blocked',
-    dependency:
-      'FRD says no-card trial has 5 linked accounts, but paid Overlay Strategists UI displays Account Linked (10). Confirm whether no-card trial should remain reduced at 5 or match paid-plan limit of 10 before automating enforcement. Requires connected broker fixture or backend/API support.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card'
   },
   {
     id: 'SC-05',
     sourceIds: [
       'SUB-TRIAL-006'
     ],
-    title: 'No-card trial portfolio position limit is 100',
+    title: 'No-card trial position limit matches the plan card',
     priority: 'Critical',
-    status: 'blocked',
-    dependency:
-      'FRD expected limit is 100 positions for no-card trial. Enforcement requires safely creating/importing portfolio positions through a seed fixture or backend/API support.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card'
   },
   {
     id: 'SC-06',
@@ -160,17 +160,17 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Same email cannot receive another trial',
     priority: 'Critical',
-    status: 'blocked',
-    dependency:
-      'FRD rule: trial is available once per user lifetime and eligibility should use identifiers such as email address, payment method fingerprint, and other platform-specific identifiers. Requires deterministic account that has already consumed the Overlay Strategists trial.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card'
   },
   {
     id: 'SC-12',
     title: 'Same verified mobile number cannot receive another trial',
     priority: 'Critical',
-    status: 'blocked',
-    dependency:
-      'Platform rule aligned to FRD identity controls: verified mobile is treated as a platform-specific identifier for one-time trial eligibility. Requires a safe repeat-phone fixture that already consumed the Overlay Strategists trial.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card'
   },
   {
     id: 'SC-13',
@@ -322,9 +322,9 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Trial user can subscribe before trial ends',
     priority: 'Critical',
-    status: 'future',
-    dependency:
-      'Requires active trial fixture and controlled upgrade/plan-change checkout path.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > Trial user can subscribe to a paid plan before the trial ends'
   },
   {
     id: 'SC-27',
@@ -392,9 +392,9 @@ const useCaseOneScenarios: UseCaseScenario[] = [
     ],
     title: 'Trial activation audit log is created',
     priority: 'Medium',
-    status: 'blocked',
-    dependency:
-      'Requires admin/API/DB access to audit log records.'
+    status: 'automated',
+    automation:
+      'OverlayStrategistsTrial.spec.ts > New user can start Overlay Strategists trial without card'
   },
   {
     id: 'SC-34',

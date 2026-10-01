@@ -154,8 +154,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-016'],
     title: 'Successful upgrade records subscription history entry',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires post-upgrade subscription history fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > records subscription history'
   },
   {
     id: 'SC-92',

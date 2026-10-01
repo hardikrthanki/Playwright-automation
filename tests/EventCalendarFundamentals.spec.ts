@@ -158,14 +158,20 @@ test.describe(
         await test.step(
           'Finance, options, and event calendar',
           async () => {
+            const companyUrl =
+              page.url();
+
             await fundamentals.openRelatedView(
               'Finance',
               /finance|financial|statement|income|balance/i
             );
 
-            await page.goBack({
-              waitUntil: 'domcontentloaded'
-            });
+            await page.goto(
+              companyUrl,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
 
             await fundamentals.validateLoaded(
               symbol
@@ -276,14 +282,20 @@ test.describe(
         await test.step(
           'Finance and event calendar',
           async () => {
+            const companyUrl =
+              page.url();
+
             await fundamentals.openRelatedView(
               'Finance',
               /finance|financial|statement|income|balance/i
             );
 
-            await page.goBack({
-              waitUntil: 'domcontentloaded'
-            });
+            await page.goto(
+              companyUrl,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
 
             await fundamentals.validateLoaded(
               symbol
@@ -294,9 +306,12 @@ test.describe(
               /event calendar|earnings|dividend/i
             );
 
-            await page.goBack({
-              waitUntil: 'domcontentloaded'
-            });
+            await page.goto(
+              companyUrl,
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
 
             await fundamentals.validateLoaded(
               symbol

@@ -315,12 +315,40 @@ async function searchMailbox(
   return newestUids(uids);
 }
 
+function subscriptionNoticeFound(
+  body: string
+) {
+  const text =
+    `${body}\n${decodeQuotedPrintable(body)}`;
+
+  if (
+    /verify your email|confirm your email|email verification/i.test(
+      text
+    ) &&
+    !/trial|subscription/i.test(
+      text
+    )
+  ) {
+    return false;
+  }
+
+  return /your trial|trial (has )?start|trial is (now )?active|subscription confirm|subscribed|subscription is active|welcome to ooltool/i.test(
+    text
+  );
+}
+
 async function fetchLink(
   send: (command: string) => Promise<string>,
   uid: string,
-  kind: 'verification' | 'reset'
+  kind: 'verification' | 'reset' | 'subscription'
 ) {
   const body = await send(`UID FETCH ${uid} BODY.PEEK[]`);
+
+  if (kind === 'subscription') {
+    return subscriptionNoticeFound(body)
+      ? 'subscription-notice'
+      : '';
+  }
 
   return kind === 'reset'
     ? extractPasswordResetLink(body)
@@ -329,7 +357,7 @@ async function fetchLink(
 
 async function imapRequest(
   email: string,
-  kind: 'verification' | 'reset' = 'verification'
+  kind: 'verification' | 'reset' | 'subscription' = 'verification'
 ) {
   return imapSession(async (send) => {
     for (const mailbox of MAILBOXES) {
@@ -351,6 +379,42 @@ async function imapRequest(
       `No Gmail ${kind} message found for ${email}`
     );
   });
+}
+
+export async function waitForGmailSubscriptionNotice(
+  email: string,
+  timeoutMs = 90000
+) {
+  const startedAt = Date.now();
+  let lastError: Error | undefined;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      await imapRequest(email, 'subscription');
+      console.log(
+        `Subscription confirmation email found for ${email}`
+      );
+      return;
+    } catch (error) {
+      lastError = error instanceof Error
+        ? error
+        : new Error(String(error));
+
+      const remainingMs = timeoutMs - (Date.now() - startedAt);
+
+      if (remainingMs <= 0) {
+        break;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.min(3000, remainingMs))
+      );
+    }
+  }
+
+  throw lastError ?? new Error(
+    `No subscription confirmation email found for ${email}`
+  );
 }
 
 export async function waitForGmailVerificationLink(
