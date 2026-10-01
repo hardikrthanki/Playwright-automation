@@ -3189,7 +3189,11 @@ async validateMonthlyCancellationOptions() {
   }
 }
 
-async submitMonthlyCancelAtPeriodEnd() {
+async submitMonthlyCancelAtPeriodEnd(
+  options?: {
+    keepScheduled?: boolean;
+  }
+) {
   Logger.info(
     'Submitting monthly cancel at period end'
   );
@@ -3259,8 +3263,225 @@ async submitMonthlyCancelAtPeriodEnd() {
       'Monthly cancel at period end submitted'
     );
   } finally {
+    if (
+      options?.keepScheduled
+    ) {
+      await host.page.keyboard.press(
+        'Escape'
+      );
+    } else {
+      await host.close();
+    }
+  }
+}
+
+async expectPaidAccessWhileCancellationScheduled(
+  planName: string
+) {
+  await this.validateActivePlan(
+    planName
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).toContainText(
+    /scheduled to cancel|cancellation scheduled|cancels on|access until|service will end|end of (this|the) (current )?billing period/i
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).not.toContainText(
+    /refund (issued|processed|completed)|moved to free|subscription cancelled/i
+  );
+}
+
+async resumeScheduledCancellation(
+  planName: string
+) {
+  Logger.info(
+    `Resuming scheduled cancellation for ${planName}`
+  );
+
+  const resume =
+    this.page.getByRole(
+      'button',
+      {
+        name: /don'?t cancel|resume subscription|reactivate|keep my plan/i
+      }
+    ).first();
+
+  if (
+    await resume.isVisible({
+      timeout: 5000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      resume,
+      'Resume scheduled cancellation'
+    );
+  } else {
+    const host =
+      await this.openCancelSubscriptionHost();
+
     await host.close();
   }
+
+  await this.validateActivePlan(
+    planName
+  );
+
+  await expect(
+    this.page.locator(
+      'main'
+    )
+  ).not.toContainText(
+    /scheduled to cancel|cancellation scheduled/i
+  );
+
+  Logger.success(
+    `${planName} stayed active after cancellation was resumed`
+  );
+}
+
+async showRefundAmountWithoutConfirming(
+  planName: string
+) {
+  Logger.info(
+    'Opening immediate cancellation to read the refund amount'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    const refundOption =
+      this.cancelOptionControl(
+        host.page,
+        /cancel immediately|cancel and refund|request (a )?refund/i
+      );
+
+    await expect(
+      refundOption
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await safeClick(
+      refundOption,
+      'Choose cancel and refund'
+    );
+
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    expect(
+      text,
+      'Immediate cancellation should show a refund amount before confirmation.'
+    ).toMatch(
+      /\$\s?\d|\busd\s?\d|unused (months|time)|refund/i
+    );
+  } finally {
+    await host.close();
+  }
+
+  await this.validateActivePlan(
+    planName
+  );
+}
+
+async cancelTrialWithoutPaymentMethod() {
+  Logger.info(
+    'Cancelling a trial without a payment method'
+  );
+
+  const host =
+    await this.openCancelSubscriptionHost();
+
+  try {
+    await expect(
+      host.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com/
+    );
+
+    const text =
+      await this.hostBodyText(
+        host.page
+      );
+
+    expect(
+      text
+    ).not.toMatch(
+      /card number|cvc|security code/i
+    );
+
+    await this.confirmCancelAction(
+      host.page,
+      'Cancel trial without a payment method',
+      /yes,?\s*cancel|cancel (subscription|trial|plan)|confirm|continue/i
+    );
+
+    await expect(
+      host.page
+    ).not.toHaveURL(
+      /checkout\.stripe\.com/
+    );
+  } finally {
+    await host.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  Logger.success(
+    'Trial cancellation did not ask for a card'
+  );
+}
+
+async assertDowngradeImpactWarning(
+  targetPlan: string
+) {
+  await this.openMonthlyDowngradeOrRetention({
+    targetPlan
+  });
+
+  const decline =
+    this.retentionDeclineControl();
+
+  if (
+    await decline.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    )
+  ) {
+    await safeClick(
+      decline,
+      'Decline retention to read the downgrade warning'
+    );
+  }
+
+  const dialog =
+    this.page.locator(
+      '[role="dialog"], [role="alertdialog"]'
+    ).first();
+
+  await expect(
+    dialog
+  ).toContainText(
+    /feature|limit|broker|position|lose|restrict|reduced/i
+  );
+
+  await this.page.keyboard.press(
+    'Escape'
+  );
 }
 
 async submitYearlyCancelAtExpiry() {

@@ -259,8 +259,8 @@ const dunningScenarios: DunningScenario[] = [
     sourceIds: ['SUB-DUN-028'],
     title: 'Update payment link opens Stripe portal',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires dunning email link fixture.'
+    status: 'automated',
+    automation: 'BillingSubscriptionManagement.spec.ts > Update payment link opens Stripe portal'
   },
   {
     id: 'SC-329',

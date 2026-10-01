@@ -146,8 +146,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Trial is allowed only once per verified email, verified mobile, or reused payment method',
     phase: 'Trial',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires deterministic repeat-trial user, repeat-phone fixture, and Stripe payment-method reuse observability.'
+    status: 'automated',
+    automation: 'OverlayStrategistsTrial.spec.ts > without card trial is limited to one verified email and mobile'
   },
   {
     id: 'LC-011',
@@ -272,8 +272,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Upgrade to higher plan starts immediate Stripe proration checkout',
     phase: 'Upgrade',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated lower-tier active subscription, Stripe proration visibility, and safe payment fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > immediate Stripe proration checkout'
   },
   {
     id: 'LC-025',
@@ -281,8 +281,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Upgrade payment starts a new billing cycle immediately',
     phase: 'Upgrade',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe/API validation for invoice, billing-cycle anchor, and entitlement change.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > new billing cycle immediately'
   },
   {
     id: 'LC-026',
@@ -299,8 +299,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Downgrade schedules lower plan for next renewal instead of immediate entitlement loss',
     phase: 'Downgrade',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated higher-tier account, downgrade confirmation UI, and renewal-date fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > schedules lower plan for next renewal'
   },
   {
     id: 'LC-028',
@@ -308,8 +308,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Downgrade warns about feature and data-limit impact before confirmation',
     phase: 'Downgrade',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires higher-tier data fixtures for broker integrations, linked accounts, and positions.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > warns about feature and data-limit impact'
   },
   {
     id: 'LC-029',
@@ -317,8 +317,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Monthly-to-annual billing change is immediate and uses prorated amount',
     phase: 'Billing Interval',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated monthly paid account and Stripe proration/billing-cycle visibility.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > monthly-to-annual billing change is immediate'
   },
   {
     id: 'LC-030',
@@ -326,8 +326,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Annual-to-monthly billing change is scheduled for next renewal date',
     phase: 'Billing Interval',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated annual paid account and pending-change/renewal-date fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > annual-to-monthly billing change is scheduled'
   },
   {
     id: 'LC-031',
@@ -362,8 +362,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Cancel-at-period-end schedules cancellation and keeps access until expiry',
     phase: 'Cancellation',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated destructive cancellation account and permission to submit final cancellation.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > schedules cancellation and keeps access until expiry'
   },
   {
     id: 'LC-035',
@@ -398,8 +398,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
     title: 'Eligible immediate cancellation displays refund amount before refund confirmation',
     phase: 'Refund',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires refund policy confirmation, Stripe/admin refund fixture, and safe destructive test account.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > refund amount before confirmation'
   },
   {
     id: 'LC-039',

@@ -38,6 +38,9 @@ import { StripePaymentPage }
 import {
   validateNoCardTrialFollowThrough
 } from './noCardTrialChecks';
+import {
+  continueAfterWithCardTrialCheckout
+} from './withCardTrial';
 
 /* =============================================================================
 HELPER: Stripe matrix execution
@@ -82,6 +85,13 @@ export type StripeMatrixCoverageKey =
   | 'yearly-cancel-date'
   | 'upgrade-history'
   | 'trial-to-paid'
+  | 'cancel-resume'
+  | 'refund-preview'
+  | 'trial-cancel'
+  | 'trial-cancel-card'
+  | 'downgrade-then-cancel'
+  | 'monthly-to-annual'
+  | 'annual-to-monthly'
   | 'downgrade-targets'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
@@ -295,6 +305,88 @@ export function inferStripeMatrixCoverageKey(
     )
   ) {
     return 'trial-to-paid';
+  }
+
+  if (
+    text.includes(
+      'resume cancellation'
+    ) ||
+    text.includes(
+      'does not issue immediate refund'
+    ) ||
+    text.includes(
+      'schedules cancellation and keeps access'
+    ) ||
+    text.includes(
+      'retains access until end'
+    )
+  ) {
+    return 'cancel-resume';
+  }
+
+  if (
+    text.includes(
+      'refund amount before'
+    )
+  ) {
+    return 'refund-preview';
+  }
+
+  if (
+    text.includes(
+      'card-backed trial can be cancelled'
+    )
+  ) {
+    return 'trial-cancel-card';
+  }
+
+  if (
+    text.includes(
+      'no-card trial can be cancelled'
+    )
+  ) {
+    return 'trial-cancel';
+  }
+
+  if (
+    text.includes(
+      'pending downgrade'
+    ) ||
+    text.includes(
+      'schedules lower plan'
+    ) ||
+    text.includes(
+      'warns about feature'
+    )
+  ) {
+    return 'downgrade-then-cancel';
+  }
+
+  if (
+    text.includes(
+      'immediate stripe proration'
+    ) ||
+    text.includes(
+      'new billing cycle immediately'
+    )
+  ) {
+    return 'upgrade-history';
+  }
+
+  if (
+    text.includes(
+      'monthly-to-annual billing change is immediate'
+    )
+  ) {
+    return 'monthly-to-annual';
+  }
+
+  if (
+    text.includes(
+      'annual-to-monthly billing change is scheduled'
+    )
+  ) {
+    return 'annual-to-monthly';
   }
 
   if (
@@ -1512,6 +1604,19 @@ async function executeUpgradeHistory(
       'monthly'
   });
 
+  await billing.validatePlanChangeDueAmountAndRenewal({
+    targetPlan:
+      'Overlay Strategists',
+    action:
+      'upgrade',
+    interval:
+      'monthly',
+    expectedPlanCharge:
+      PLAN_PRICES['Overlay Strategists'].monthly,
+    expectedRecurringAmount:
+      PLAN_PRICES['Overlay Strategists'].monthly
+  });
+
   await billing.submitPlanChangeCalculationPreview({
     targetPlan:
       'Overlay Strategists',
@@ -1551,6 +1656,258 @@ async function executeTrialToPaid(
 
   await startNoCardTrialAndSubscribe(
     page
+  );
+}
+
+async function executeCancelResume(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'cancel-resume',
+      'Income Builder',
+      'monthly'
+    );
+
+  await billing.submitMonthlyCancelAtPeriodEnd({
+    keepScheduled: true
+  });
+
+  await billing.expectPaidAccessWhileCancellationScheduled(
+    'Income Builder'
+  );
+
+  await billing.resumeScheduledCancellation(
+    'Income Builder'
+  );
+}
+
+async function executeRefundPreview(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'refund-preview',
+      'Income Builder',
+      'annual'
+    );
+
+  await billing.showRefundAmountWithoutConfirming(
+    'Income Builder'
+  );
+}
+
+async function executeTrialCancel(
+  page: Page
+) {
+  await registerAndReachPlanSelection(
+    page,
+    'trial-cancel'
+  );
+
+  const planPage =
+    new PlanSelectionPage(
+      page
+    );
+
+  await planPage.selectOverlayStrategistsTrialWithoutCard();
+  await planPage.validateNotRedirectedToStripeCheckout();
+
+  await new DashboardPage(
+    page
+  ).validateLoaded();
+
+  const billing =
+    new BillingPage(
+      page
+    );
+
+  await billing.validateOverlayStrategistsTrialBillingState(
+    'without-card'
+  );
+
+  await billing.cancelTrialWithoutPaymentMethod();
+}
+
+async function executeCardTrialCancel(
+  page: Page
+) {
+  const user =
+    await registerAndReachPlanSelection(
+      page,
+      'trial-cancel-card'
+    );
+
+  await new PlanSelectionPage(
+    page
+  ).selectOverlayStrategistsTrialWithCard();
+
+  await new StripePaymentPage(
+    page
+  ).completeTrialPayment();
+
+  const reached =
+    await continueAfterWithCardTrialCheckout(
+      page,
+      user.mobileNumber
+    );
+
+  if (
+    !reached
+  ) {
+    throw new Error(
+      'Card-backed trial did not leave Stripe checkout.'
+    );
+  }
+
+  await new DashboardPage(
+    page
+  ).validateLoaded({
+    acceptTrialSuccessMobileGate: true
+  });
+
+  await new BillingPage(
+    page
+  ).cancelTrialWithoutPaymentMethod();
+}
+
+async function executeDowngradeThenCancel(
+  page: Page
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      'downgrade-then-cancel',
+      'Overlay Strategists',
+      'monthly'
+    );
+
+  await billing.assertDowngradeImpactWarning(
+    'Income Builder'
+  );
+
+  await billing.declineRetentionAndPreviewOrScheduleDowngrade({
+    currentPlan:
+      'Overlay Strategists',
+    targetPlan:
+      'Income Builder',
+    schedule:
+      true
+  });
+
+  await billing.submitMonthlyCancelAtPeriodEnd({
+    keepScheduled: true
+  });
+
+  await billing.expectPaidAccessWhileCancellationScheduled(
+    'Overlay Strategists'
+  );
+}
+
+async function submitIntervalChange(
+  page: Page,
+  tag: string,
+  startingInterval: 'monthly' | 'annual',
+  targetInterval: 'monthly' | 'annual'
+) {
+  const billing =
+    await purchaseDisposablePlan(
+      page,
+      tag,
+      'Income Builder',
+      startingInterval
+    );
+
+  await billing.openPlanChangeCalculationPreview({
+    targetPlan:
+      'Income Builder',
+    action:
+      'interval',
+    interval:
+      targetInterval
+  });
+
+  await billing.validatePlanChangeDueAmountAndRenewal({
+    targetPlan:
+      'Income Builder',
+    action:
+      'interval',
+    interval:
+      targetInterval,
+    expectedBillingCopy:
+      targetInterval === 'annual'
+        ? /year|annual/i
+        : /month/i,
+    expectedPlanCharge:
+      PLAN_PRICES['Income Builder'][targetInterval],
+    expectedRecurringAmount:
+      PLAN_PRICES['Income Builder'][targetInterval]
+  });
+
+  const dialogText =
+    await page.locator(
+      '[role="dialog"], [role="alertdialog"]'
+    ).first().innerText();
+
+  if (
+    targetInterval === 'monthly'
+  ) {
+    expect(
+      dialogText
+    ).toMatch(
+      /next renewal|scheduled|takes effect|end of/i
+    );
+  } else {
+    expect(
+      dialogText
+    ).toMatch(
+      /prorat|due today|amount due|\$\s?\d/i
+    );
+  }
+
+  await billing.submitPlanChangeCalculationPreview({
+    targetPlan:
+      'Income Builder',
+    action:
+      'interval'
+  });
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    await new StripePaymentPage(
+      page
+    ).completePayment();
+  }
+
+  await billing.validateActivePlan(
+    'Income Builder'
+  );
+}
+
+async function executeMonthlyToAnnual(
+  page: Page
+) {
+  await submitIntervalChange(
+    page,
+    'monthly-to-annual',
+    'monthly',
+    'annual'
+  );
+}
+
+async function executeAnnualToMonthly(
+  page: Page
+) {
+  await submitIntervalChange(
+    page,
+    'annual-to-monthly',
+    'annual',
+    'monthly'
   );
 }
 
@@ -1604,6 +1961,20 @@ const coverageExecutors: Record<
     executeUpgradeHistory,
   'trial-to-paid':
     executeTrialToPaid,
+  'cancel-resume':
+    executeCancelResume,
+  'refund-preview':
+    executeRefundPreview,
+  'trial-cancel':
+    executeTrialCancel,
+  'trial-cancel-card':
+    executeCardTrialCancel,
+  'downgrade-then-cancel':
+    executeDowngradeThenCancel,
+  'monthly-to-annual':
+    executeMonthlyToAnnual,
+  'annual-to-monthly':
+    executeAnnualToMonthly,
   'downgrade-targets':
     executeDowngradeTargets,
   'current-plan-before-upgrade':

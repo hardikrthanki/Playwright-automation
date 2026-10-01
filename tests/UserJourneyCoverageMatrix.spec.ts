@@ -410,8 +410,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Billing',
     journey: 'Subscription Management',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires subscription lifecycle fixture, billing-cycle date control, or Stripe/API state validation.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > retains access until end of billing cycle'
   },
   {
     id: 'UJ-042',
@@ -419,8 +419,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Billing',
     journey: 'Subscription Management',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe subscription update API visibility and deterministic customer fixtures.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > immediate Stripe proration checkout and monthly-to-annual billing change is immediate'
   },
   {
     id: 'UJ-043',
@@ -609,8 +609,8 @@ const userJourneyScenarios: UserJourneyScenario[] = [
     module: 'Plan Selection',
     journey: 'Trial Eligibility',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: a new user must have verified email/mobile identity, and the free trial is allowed only once per unique user identity. Requires safe repeat-trial fixtures for already-used email and already-used mobile.'
+    status: 'automated',
+    automation: 'OverlayStrategistsTrial.spec.ts > without card trial is limited to one verified email and mobile'
   }
 ];
 

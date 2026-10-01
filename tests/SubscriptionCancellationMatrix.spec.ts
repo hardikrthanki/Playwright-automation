@@ -194,8 +194,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-020'],
     title: 'Resume cancellation keeps paid subscription active',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires safe scheduled-cancel fixture and backend reset support.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > resume cancellation keeps paid subscription active'
   },
   {
     id: 'SC-261',
@@ -218,8 +218,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-023'],
     title: 'Cancellation does not issue immediate refund unless policy allows it',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe/backend verification of refund behavior.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > does not issue immediate refund on cancel at expiry'
   },
   {
     id: 'SC-264',
@@ -306,16 +306,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-034'],
     title: 'No-card trial can be cancelled without payment method',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires active no-card trial fixture.'
+    status: 'automated',
+    automation: 'OverlayStrategistsTrial.spec.ts > no-card trial can be cancelled without payment method'
   },
   {
     id: 'SC-275',
     sourceIds: ['SUB-CAN-035'],
     title: 'Card-backed trial can be cancelled before auto-renewal',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires active card-backed trial fixture.'
+    status: 'automated',
+    automation: 'OverlayStrategistsTrial.spec.ts > card-backed trial can be cancelled before auto-renewal'
   },
   {
     id: 'SC-276',
@@ -338,8 +338,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-038'],
     title: 'Pending downgrade is handled before cancellation',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires pending downgrade fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > pending downgrade is handled before cancellation'
   },
   {
     id: 'SC-279',
