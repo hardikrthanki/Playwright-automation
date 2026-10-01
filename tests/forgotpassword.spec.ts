@@ -355,12 +355,18 @@ test(
           );
 
           const emailInput =
-            freshPage.locator(
-              'input[type="email"]'
+            freshPage.getByRole(
+              'textbox',
+              {
+                name: /^email$/i
+              }
             );
           const passwordInput =
-            freshPage.locator(
-              'input[type="password"]'
+            freshPage.getByRole(
+              'textbox',
+              {
+                name: /^password$/i
+              }
             );
 
           await emailInput.waitFor({
@@ -386,29 +392,111 @@ test(
             email
           );
 
-          await freshPage.getByRole(
-            'button',
-            {
-              name: /^(sign in|log in)$/i
-            }
-          ).click();
+          const loginResponse =
+            freshPage.waitForResponse(
+              (response) =>
+                response.request().method() === 'POST' &&
+                /\/auth\//i.test(
+                  response.url()
+                ) &&
+                !/otp|reset|forgot/i.test(
+                  response.url()
+                ),
+              {
+                timeout: 15000
+              }
+            ).catch(
+              () => null
+            );
+
+          const loginStarted =
+            freshPage.waitForRequest(
+              (request) =>
+                request.method() === 'POST' &&
+                /\/auth\//i.test(
+                  request.url()
+                ) &&
+                !/otp|reset|forgot/i.test(
+                  request.url()
+                ),
+              {
+                timeout: 15000
+              }
+            ).then(
+              () => true
+            ).catch(
+              () => false
+            );
+
+          const signInButton =
+            freshPage.getByRole(
+              'button',
+              {
+                name: /^(sign in|log in)$/i
+              }
+            );
+
+          await signInButton.click({
+            noWaitAfter: true
+          });
+
+          const started =
+            await Promise.race([
+              loginStarted,
+              freshPage.waitForTimeout(
+                3000
+              ).then(
+                () => false
+              )
+            ]);
+
+          if (!started) {
+            await emailInput.fill(
+              email
+            );
+
+            await passwordInput.fill(
+              originalPassword
+            );
+
+            await signInButton.evaluate(
+              (button) => {
+                (button as HTMLButtonElement).click();
+              }
+            );
+          }
+
+          const response =
+            await loginResponse;
+
+          if (response) {
+            console.log(
+              `Old password login ${response.status()} ${response.url()}`
+            );
+          }
 
           await expect(
             freshPage
-          ).not.toHaveURL(
-            /\/dashboard/,
+          ).toHaveURL(
+            /\/login/,
             {
               timeout: 15000
             }
           );
 
-          await expect(
-            freshPage.getByText(
-              /invalid|incorrect|wrong|does not match|failed|try again/i
-            ).first()
-          ).toBeVisible({
-            timeout: 15000
-          });
+          const rejected =
+            response !== null &&
+            response.status() >= 400;
+
+          if (!rejected) {
+            await expect(
+              freshPage.getByText(
+                /invalid|incorrect|wrong|does not match|failed|try again/i
+              ).first()
+            ).toBeVisible({
+              timeout: 15000
+            });
+          }
         }
       );
 

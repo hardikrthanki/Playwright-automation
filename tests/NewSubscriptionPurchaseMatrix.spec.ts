@@ -63,14 +63,6 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     automation: 'DirectSubscriptionPurchase.spec.ts > Portfolio Hedger annual checkout shows subscription summary before payment'
   },
   {
-    id: 'SC-39',
-    sourceIds: ['SUB-NEW-004'],
-    title: 'Marketplace monthly checkout shows selected plan before payment',
-    priority: 'Critical',
-    status: 'automated',
-    automation: 'DirectSubscriptionPurchase.spec.ts > Marketplace monthly checkout shows subscription summary before payment'
-  },
-  {
     id: 'SC-40',
     sourceIds: ['SUB-NEW-005'],
     title: 'Annual paid checkout displays selected plan and billing interval before payment',
@@ -84,7 +76,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Paid subscription can be started from onboarding plan selection',
     priority: 'Critical',
     status: 'automated',
-    automation: 'PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts, DirectSubscriptionPurchase.spec.ts, and SubscriptionLifecycleExecution.spec.ts gated Overlay/Portfolio/Marketplace paid purchases'
+    automation: 'PlanSelectionValidation.spec.ts > User can switch plan selections without launching Stripe checkout; onboarding.spec.ts, DirectSubscriptionPurchase.spec.ts, and SubscriptionLifecycleExecution.spec.ts gated Overlay and Portfolio paid purchases'
   },
   {
     id: 'SC-42',
@@ -412,8 +404,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-047'],
     title: 'User cannot access paid entitlements before successful payment confirmation',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires entitlement selectors and safe failed/pending checkout fixture.'
+    status: 'automated',
+    automation: 'DirectSubscriptionPurchase.spec.ts > checkout return leaves the subscription unpaid'
   },
   {
     id: 'SC-75H',

@@ -74,8 +74,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-005'],
     title: 'Annual switch is not shown for already annual subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires dedicated annual paid-account fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > paid plan ladder availability annual plan hides switch to annual'
   },
   {
     id: 'SC-170',

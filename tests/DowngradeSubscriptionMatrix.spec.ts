@@ -62,28 +62,20 @@ const downgradeScenarios: DowngradeScenario[] = [
     automation: 'BillingEdgeValidation.spec.ts > Billing plans expose lifecycle action summary without changing subscription'
   },
   {
-    id: 'SC-116',
-    sourceIds: ['SUB-DOWN-004'],
-    title: 'Downgrade from Marketplace to Portfolio Hedger is available',
-    priority: 'High',
-    status: 'future',
-    dependency: 'Requires Marketplace paid account fixture.'
-  },
-  {
     id: 'SC-117',
     sourceIds: ['SUB-DOWN-005'],
     title: 'Downgrade from Portfolio Hedger to Overlay Strategists is available',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires Portfolio Hedger paid account fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > paid plan ladder availability Portfolio Hedger downgrade to Overlay Strategists'
   },
   {
     id: 'SC-118',
     sourceIds: ['SUB-DOWN-006'],
     title: 'Downgrade from Overlay Strategists to Income Builder is available',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires Overlay Strategists paid account fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > paid plan ladder availability Overlay Strategists downgrade to Income Builder'
   },
   {
     id: 'SC-119',
@@ -338,16 +330,16 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-038'],
     title: 'Downgrade is not available to users without active paid subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires free/trial/cancelled account fixtures and expected UI state.'
+    status: 'automated',
+    automation: 'PlanSelectionValidation.spec.ts > unpaid plan catalog has no downgrade action'
   },
   {
     id: 'SC-151',
     sourceIds: ['SUB-DOWN-039'],
     title: 'Downgrade target excludes plans that are not lower tier',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires plan ranking rules and multi-plan account fixture.'
+    status: 'automated',
+    automation: 'BillingEdgeValidation.spec.ts > downgrade target ladder excludes higher plans'
   },
   {
     id: 'SC-152',

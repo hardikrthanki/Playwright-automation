@@ -89,8 +89,7 @@ npx playwright test tests/SubscriptionLifecycleExecution.spec.ts --headed
 type PlanName =
   | 'Income Builder'
   | 'Overlay Strategists'
-  | 'Portfolio Hedger'
-  | 'Marketplace';
+  | 'Portfolio Hedger';
 
 type BillingInterval =
   | 'monthly'
@@ -113,10 +112,6 @@ const PLAN_PRICES: Record<PlanName, PlanPrice> = {
   'Portfolio Hedger': {
     monthly: 149,
     annual: 1490
-  },
-  Marketplace: {
-    monthly: 249,
-    annual: 2490
   }
 };
 
@@ -313,8 +308,7 @@ function parsePlanName(
   const plans: PlanName[] = [
     'Income Builder',
     'Overlay Strategists',
-    'Portfolio Hedger',
-    'Marketplace'
+    'Portfolio Hedger'
   ];
 
   return plans.find(
@@ -398,8 +392,7 @@ function paidAnnualPlan() {
 const PLAN_ORDER: PlanName[] = [
   'Income Builder',
   'Overlay Strategists',
-  'Portfolio Hedger',
-  'Marketplace'
+  'Portfolio Hedger'
 ];
 
 function higherPaidPlan(
@@ -414,7 +407,7 @@ function higherPaidPlan(
     planIndex < 0 ||
     planIndex >= PLAN_ORDER.length - 1
   ) {
-    return 'Marketplace';
+    return 'Portfolio Hedger';
   }
 
   return PLAN_ORDER[
@@ -711,8 +704,7 @@ async function validateDashboardAndBilling(
 const PAID_PLAN_LADDER: PlanName[] = [
   'Income Builder',
   'Overlay Strategists',
-  'Portfolio Hedger',
-  'Marketplace'
+  'Portfolio Hedger'
 ];
 
 async function openPlanChangePreview(
@@ -973,9 +965,7 @@ async function purchaseFirstPaidPlanFromFree(
       ? /choose income( builder)?/i
       : plan === 'Overlay Strategists'
         ? /choose overlay strategists/i
-        : plan === 'Portfolio Hedger'
-          ? /choose portfolio hedger/i
-          : /choose marketplace/i;
+        : /choose portfolio hedger/i;
 
   const chooseButton =
     page
@@ -1266,74 +1256,6 @@ test.describe(
     );
 
     controlledLifecycleTest(
-      'Disposable user can purchase Marketplace monthly and reach Billing',
-      'SUB_LIFECYCLE_MARKETPLACE_MONTHLY_ENABLED',
-      'Marketplace is no longer a self-serve plan. The catalog ends with Portfolio Hedger, and Enterprise is contact sales only.',
-      async ({ page }) => {
-        await openPlanSelectionForDisposableUser(
-          page,
-          'sub-lifecycle-marketplace-monthly'
-        );
-
-        const planPage =
-          new PlanSelectionPage(
-            page
-          );
-
-        await planPage.selectMonthlyBilling();
-
-        const marketplaceOffered =
-          await planPage.isPlanOffered(
-            'Marketplace'
-          );
-
-        if (
-          marketplaceOffered
-        ) {
-          await purchasePaidPlanForDisposableUser(
-            page,
-            'sub-lifecycle-marketplace-monthly',
-            'Marketplace',
-            'monthly'
-          );
-
-          return;
-        }
-
-        await expect(
-          page.getByRole(
-            'heading',
-            {
-              name: /^enterprise$/i
-            }
-          )
-        ).toBeVisible();
-
-        await expect(
-          page.getByRole(
-            'link',
-            {
-              name: /contact sales/i
-            }
-          ).or(
-            page.getByRole(
-              'button',
-              {
-                name: /contact sales/i
-              }
-            )
-          ).first()
-        ).toBeVisible();
-
-        await expect(
-          page
-        ).not.toHaveURL(
-          /checkout\.stripe\.com/
-        );
-      }
-    );
-
-    controlledLifecycleTest(
       'Disposable user can purchase configured paid annual plan and reach Billing',
       'SUB_LIFECYCLE_PAID_ANNUAL_ENABLED',
       'Annual paid purchase creates a new disposable user and submits Stripe test payment. Set SUB_LIFECYCLE_PAID_ANNUAL_PLAN to choose the plan.',
@@ -1345,6 +1267,12 @@ test.describe(
           page,
           `sub-lifecycle-${plan.toLowerCase().replace(/\s+/g, '-')}-annual`,
           plan,
+          'annual'
+        );
+
+        await new BillingPage(
+          page
+        ).expectCurrentIntervalSwitchHidden(
           'annual'
         );
       }
@@ -1845,7 +1773,7 @@ test.describe(
               'upgrade'
             );
 
-          if (!upgraded && targetPlan !== 'Marketplace') {
+          if (!upgraded) {
             throw new Error(
               `Expected monthly upgrade control for ${targetPlan}.`
             );
@@ -1955,7 +1883,7 @@ test.describe(
     controlledLifecycleTest(
       'Purchase each paid plan and upgrade to the next',
       'SUB_LIFECYCLE_FREE_LADDER_ENABLED',
-      'Creates one disposable user, purchases Income Builder, then upgrades to Overlay Strategists, Portfolio Hedger, and Marketplace. Each upgrade validates the due amount and renewal date.',
+      'Creates one disposable user, purchases Income Builder, then upgrades to Overlay Strategists and Portfolio Hedger. Each upgrade validates the due amount and renewal date.',
       async ({ page }) => {
         test.setTimeout(
           60 * 60 * 1000
@@ -1971,19 +1899,24 @@ test.describe(
               'monthly',
               'purchase-upgrade-ladder'
             );
+
+            const billing =
+              new BillingPage(
+                page
+              );
+
+            await billing.expectPlanActionAvailable(
+              'Overlay Strategists',
+              'upgrade'
+            );
+
+            await billing.expectCurrentIntervalSwitchHidden(
+              'monthly'
+            );
           }
         );
 
-        let selfServeLadderEnded =
-          false;
-
         for (let index = 1; index < PAID_PLAN_LADDER.length; index += 1) {
-          if (
-            selfServeLadderEnded
-          ) {
-            break;
-          }
-
           const fromPlan =
             PAID_PLAN_LADDER[index - 1];
           const toPlan =
@@ -1992,6 +1925,36 @@ test.describe(
           await test.step(
             `Upgrade ${fromPlan} to ${toPlan} and validate the calculation`,
             async () => {
+              const billing =
+                new BillingPage(
+                  page
+                );
+
+              if (
+                fromPlan ===
+                'Overlay Strategists'
+              ) {
+                await billing.expectPlanActionAvailable(
+                  'Portfolio Hedger',
+                  'upgrade'
+                );
+
+                await billing.expectPlanActionAvailable(
+                  'Income Builder',
+                  'downgrade'
+                );
+              }
+
+              if (
+                fromPlan ===
+                'Portfolio Hedger'
+              ) {
+                await billing.expectPlanActionAvailable(
+                  'Overlay Strategists',
+                  'downgrade'
+                );
+              }
+
               const upgraded =
                 await submitUpgradeWithDueAndRenewal(
                   page,
@@ -2003,15 +1966,9 @@ test.describe(
               if (
                 !upgraded
               ) {
-                expect(
-                  toPlan,
+                throw new Error(
                   `Expected an upgrade from ${fromPlan} to ${toPlan}.`
-                ).toBe(
-                  'Marketplace'
                 );
-
-                selfServeLadderEnded =
-                  true;
               }
             }
           );
@@ -2054,7 +2011,7 @@ test.describe(
 
         const immediateRefund =
           refundEstimate(
-            'Marketplace',
+            'Portfolio Hedger',
             'monthly',
             10,
             30
@@ -2063,7 +2020,7 @@ test.describe(
         expect(
           immediateRefund
         ).toBe(
-          166
+          99.33
         );
       }
     );

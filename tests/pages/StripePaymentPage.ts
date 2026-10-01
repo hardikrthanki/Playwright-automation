@@ -28,9 +28,7 @@ function stripeCheckoutPlanPattern(
     'Overlay Strategists':
       'Overlay Strategists|Subscribe to Overlay|\\bOverlay\\b',
     'Portfolio Hedger':
-      'Portfolio Hedger|Portfolio Hedge|3-Advanced|Subscribe to 3-Advanced',
-    'Marketplace':
-      'Marketplace|Market Place'
+      'Portfolio Hedger|Portfolio Hedge|3-Advanced|Subscribe to 3-Advanced'
   };
 
   const mapped =

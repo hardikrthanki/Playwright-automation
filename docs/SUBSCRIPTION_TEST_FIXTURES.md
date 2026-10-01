@@ -55,10 +55,8 @@ environment variables only.
 | `INCOME_ANNUAL_ACTIVE` | `imhardikthanki+sub-income-annual@gmail.com` | Income Builder annual subscription active | Annual-to-monthly change, billing interval presentation | Yes, read-only |
 | `OVERLAY_MONTHLY_ACTIVE` | `imhardikthanki+sub-overlay-monthly@gmail.com` | Overlay Strategists monthly subscription active | Upgrade/downgrade rules and billing portal validation | Yes, read-only |
 | `OVERLAY_ANNUAL_ACTIVE` | `imhardikthanki+sub-overlay-annual@gmail.com` | Overlay Strategists annual subscription active | Annual interval behavior and downgrade scheduling | Yes, read-only |
-| `PORTFOLIO_MONTHLY_ACTIVE` | `imhardikthanki+sub-portfolio-monthly@gmail.com` | Portfolio Hedger monthly subscription active | Downgrade to lower plan, upgrade to Marketplace | Yes, read-only |
+| `PORTFOLIO_MONTHLY_ACTIVE` | `imhardikthanki+sub-portfolio-monthly@gmail.com` | Portfolio Hedger monthly subscription active | Downgrade to a lower plan | Yes, read-only |
 | `PORTFOLIO_ANNUAL_ACTIVE` | `imhardikthanki+sub-portfolio-annual@gmail.com` | Portfolio Hedger annual subscription active | Annual downgrade and annual-to-monthly scenarios | Yes, read-only |
-| `MARKETPLACE_MONTHLY_ACTIVE` | `imhardikthanki+sub-marketplace-monthly@gmail.com` | Marketplace monthly subscription active | Highest-tier downgrade validation | Yes, read-only |
-| `MARKETPLACE_ANNUAL_ACTIVE` | `imhardikthanki+sub-marketplace-annual@gmail.com` | Marketplace annual subscription active | Highest-tier annual downgrade validation | Yes, read-only |
 | `CANCEL_FORM_READY` | `imhardikthanki+sub-cancel-form@gmail.com` | Active paid subscription; cancellation form can be opened but not submitted | Cancellation reason and feedback validation | Yes |
 | `CANCEL_SCHEDULED` | `imhardikthanki+sub-cancel-scheduled@gmail.com` | Subscription already scheduled to cancel at period end | Scheduled cancellation state and access-until-expiry validation | Yes, read-only |
 | `IMMEDIATE_CANCEL_REFUND_READY` | `imhardikthanki+sub-refund-ready@gmail.com` | Disposable paid subscription approved for destructive cancellation/refund | Immediate cancel, refund amount, refund history | No |
@@ -255,7 +253,7 @@ Dedicated users allow automation to safely validate:
 - Downgrade calculation preview, terms required, and cancel-before-submit
   without changing the subscription.
 - Monthly-to-annual and annual-to-monthly interval previews without submitting.
-- Gated Overlay Strategists, Portfolio Hedger, and Marketplace paid purchases
+- Gated Overlay Strategists and Portfolio Hedger paid purchases
   with disposable users.
 - One-time upgrade submission after terms acceptance, using a dedicated
   lower-tier paid user with a saved card.
@@ -302,7 +300,7 @@ npm run test:controlled:plan-ladder -- --headed
 
 That inspect pass uses four tracks only as needed:
 
-- User A: Income monthly, upgrade Overlay then Hedger then Marketplace monthly, assert amount due / unused credit / recurring amount / renewal, inspect period-end cancel (no refund).
+- User A: Income monthly, upgrade Overlay then Hedger monthly, assert amount due / unused credit / recurring amount / renewal, inspect period-end cancel (no refund).
 - User B: Income monthly, switch to annual, upgrade remaining yearly plans with the same due/renewal checks, inspect cancel-at-expiry and cancel-and-refund options. Do not submit refund here.
 - User D inspect: Overlay monthly, open downgrade, assert 3-month retention on the current plan, decline and close without scheduling.
 

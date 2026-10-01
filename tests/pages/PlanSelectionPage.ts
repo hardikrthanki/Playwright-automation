@@ -82,17 +82,13 @@ export class PlanSelectionPage extends BasePage {
               planName
             )
               ? /portfolio hedger/i
-              : /marketplace/i.test(
-                planName
-              )
-                ? /market\s*place/i
-                : new RegExp(
-                  planName.replace(
-                    /[.*+?^${}()|[\]\\]/g,
-                    '\\$&'
-                  ),
-                  'i'
-                );
+              : new RegExp(
+                planName.replace(
+                  /[.*+?^${}()|[\]\\]/g,
+                  '\\$&'
+                ),
+                'i'
+              );
 
     const textMatch =
       this.page.getByText(
@@ -144,24 +140,12 @@ export class PlanSelectionPage extends BasePage {
   }
 
   private async catalogPlans() {
-    const plans = [
+    return [
       'Curious Explorer',
       'Income Builder',
       'Overlay Strategists',
       'Portfolio Hedger'
     ];
-
-    if (
-      await this.isPlanOffered(
-        'Marketplace'
-      )
-    ) {
-      plans.push(
-        'Marketplace'
-      );
-    }
-
-    return plans;
   }
 
   private async waitAfterCompleteSetup(
@@ -727,18 +711,6 @@ export class PlanSelectionPage extends BasePage {
       /covered calls|protective puts|portfolio analytics/i
     );
 
-    if (
-      expectedPlans.includes(
-        'Marketplace'
-      )
-    ) {
-      expect(
-        bodyText
-      ).toMatch(
-        /marketplace access/i
-      );
-    }
-
     Logger.success(
       'Plan catalog and feature summary validated'
     );
@@ -869,18 +841,6 @@ export class PlanSelectionPage extends BasePage {
       /portfolio hedger[\s\S]{0,800}account linked\s*\(20\)/i,
       /portfolio hedger[\s\S]{0,800}positions\s*\(1000\)/i
     ];
-
-    if (
-      await this.isPlanOffered(
-        'Marketplace'
-      )
-    ) {
-      expectedEntitlements.push(
-        /marketplace[\s\S]*broker integration\s*\(20\)/i,
-        /marketplace[\s\S]*account linked\s*\(100\)/i,
-        /marketplace[\s\S]*positions\s*\(10000\)/i
-      );
-    }
 
     for (const planName of await this.catalogPlans()) {
       if (
@@ -1091,22 +1051,11 @@ export class PlanSelectionPage extends BasePage {
         )
         .innerText();
 
-    const marketplaceOffered =
-      await this.isPlanOffered(
-        'Marketplace'
-      );
-
     const monthlyPrices = [
       /\$\s*29\s*\/\s*mo/i,
       /\$\s*79\s*\/\s*mo/i,
       /\$\s*149\s*\/\s*mo/i
     ];
-
-    if (marketplaceOffered) {
-      monthlyPrices.push(
-        /\$\s*249\s*\/\s*mo/i
-      );
-    }
 
     for (const price of monthlyPrices) {
       expect(
@@ -1132,12 +1081,6 @@ export class PlanSelectionPage extends BasePage {
       /\$\s*790\b/i,
       /\$\s*1,?490\b/i
     ];
-
-    if (marketplaceOffered) {
-      annualPrices.push(
-        /\$\s*2,?490\b/i
-      );
-    }
 
     for (const price of annualPrices) {
       expect(

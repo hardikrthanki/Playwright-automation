@@ -71,6 +71,7 @@ export type StripeMatrixCoverageKey =
   | 'interval-preview'
   | 'payment-negative'
   | 'checkout-decline'
+  | 'downgrade-targets'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
   | 'blocked-scenario';
@@ -113,10 +114,6 @@ const PLAN_PRICES = {
   'Portfolio Hedger': {
     monthly: 149,
     annual: 1490
-  },
-  Marketplace: {
-    monthly: 249,
-    annual: 2490
   }
 } as const;
 
@@ -282,6 +279,14 @@ export function inferStripeMatrixCoverageKey(
     }
 
     return 'payment-negative';
+  }
+
+  if (
+    text.includes(
+      'downgrade target ladder'
+    )
+  ) {
+    return 'downgrade-targets';
   }
 
   if (
@@ -586,7 +591,7 @@ async function executeCurrentPlanBeforeUpgrade(
 
   await expect(
     page.getByText(
-      /income builder|overlay strategists|portfolio hedger|marketplace|current plan|your plan/i
+      /income builder|overlay strategists|portfolio hedger|current plan|your plan/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -674,6 +679,16 @@ async function executePlanCatalog(
     );
 
   await planPage.validatePlanCatalog();
+
+  await expect(
+    page.locator(
+      'a, button'
+    ).filter({
+      hasText: /downgrade/i
+    })
+  ).toHaveCount(
+    0
+  );
   await planPage.validateBillingToggle();
   await planPage.validatePaidPlanPricingAcrossBillingPeriods();
   await planPage.validateCompleteSetupRequiresPlanSelection();
@@ -760,6 +775,20 @@ async function executeDirectCheckout(
   });
 
   await planPage.returnFromCheckoutBeforePayment();
+
+  await expect(
+    page
+  ).not.toHaveURL(
+    /checkout\.stripe\.com/i
+  );
+
+  await expect(
+    page.locator(
+      'body'
+    )
+  ).not.toContainText(
+    /payment successful|subscription activated|purchase complete/i
+  );
 }
 
 async function executeOverlayWithoutCard(
@@ -1241,6 +1270,18 @@ async function executeCheckoutDecline(
   );
 }
 
+async function executeDowngradeTargets(
+  page: Page
+) {
+  await loginPaidSubscriber(
+    page
+  );
+
+  await new BillingPage(
+    page
+  ).assertDowngradeTargetsAreLowerTier();
+}
+
 const coverageExecutors: Record<
   StripeMatrixCoverageKey,
   (page: Page) => Promise<void>
@@ -1267,6 +1308,8 @@ const coverageExecutors: Record<
     executePaymentNegative,
   'checkout-decline':
     executeCheckoutDecline,
+  'downgrade-targets':
+    executeDowngradeTargets,
   'current-plan-before-upgrade':
     executeCurrentPlanBeforeUpgrade,
   'air-traceability':
@@ -1463,6 +1506,25 @@ export async function executeStripeMatrixScenario(
       scenario.dependency ??
         options.blockedReason
     );
+  }
+
+  if (
+    (
+      scenario.automation ??
+      ''
+    ).toLowerCase().includes(
+      'paid plan ladder availability'
+    )
+  ) {
+    test.info().annotations.push(
+      {
+        type: 'coverage-key',
+        description:
+          'paid-plan-ladder'
+      }
+    );
+
+    return;
   }
 
   const coverageKey =

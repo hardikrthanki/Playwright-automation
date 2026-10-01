@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-30T13:27:52.304Z",
+  "generatedAt": "2026-10-01T08:15:05.730Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-09-30T13:27:51.887Z",
+    "generatedAt": "2026-10-01T08:15:05.397Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -13,23 +13,23 @@
     "total": 730,
     "rawTestCount": 730,
     "attempts": 730,
-    "passed": 329,
-    "failed": 8,
-    "skipped": 393,
+    "passed": 427,
+    "failed": 4,
+    "skipped": 299,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "unexpected": 8,
-      "expected": 329,
-      "skipped": 393
+      "expected": 427,
+      "skipped": 299,
+      "unexpected": 4
     }
   },
   "airExecution": {
     "total": 730,
     "attempts": 730,
-    "passed": 329,
-    "failed": 8,
-    "skipped": 393,
+    "passed": 427,
+    "failed": 4,
+    "skipped": 299,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 23,
+    "perTestEvidence": 12,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 25,
+    "totalWithRawReports": 14,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,44 +61,8 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > onboarding.spec.ts > OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
-        "testName": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
-        "testName": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
-        "testName": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User C yearly cancel and refund",
-        "testName": "Subscription Lifecycle Execution > User C yearly cancel and refund",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User D monthly retention offer accept",
-        "testName": "Subscription Lifecycle Execution > User D monthly retention offer accept",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
-        "testName": "Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Beginners lessons overview categories and a strategy detail open",
-        "testName": "Academy depth > Beginners lessons overview categories and a strategy detail open",
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
+        "testName": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -107,6 +71,18 @@
         "testName": "Disposable user resets password from the email link and signs in with the new password",
         "evidenceCount": 2,
         "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-81 - Upgrade from Portfolio Hedger to Marketplace is available",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-81 - Upgrade from Portfolio Hedger to Marketplace is available",
+        "evidenceCount": 0,
+        "status": "Evidence Missing"
+      },
+      {
+        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-116 - Downgrade from Marketplace to Portfolio Hedger is available",
+        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-116 - Downgrade from Marketplace to Portfolio Hedger is available",
+        "evidenceCount": 0,
+        "status": "Evidence Missing"
       }
     ]
   },
@@ -124,33 +100,18 @@
         "references": [
           {
             "type": "Failure",
-            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-81 - Upgrade from Portfolio Hedger to Marketplace is available",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "name": "Downgrade Subscription Use Case 4 Matrix > SC-116 - Downgrade from Marketplace to Portfolio Hedger is available",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -161,11 +122,6 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -180,33 +136,18 @@
         "references": [
           {
             "type": "Failure",
-            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-81 - Upgrade from Portfolio Hedger to Marketplace is available",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "name": "Downgrade Subscription Use Case 4 Matrix > SC-116 - Downgrade from Marketplace to Portfolio Hedger is available",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -217,11 +158,6 @@
             "type": "Business Journey",
             "name": "Payment",
             "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
           },
           {
             "type": "Module",
@@ -236,33 +172,18 @@
         "references": [
           {
             "type": "Failure",
-            "name": "OOLTool Onboarding Flow > Register -> Verify Email -> Login -> Risk -> Compliance",
+            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can purchase configured paid annual plan and reach Billing",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-81 - Upgrade from Portfolio Hedger to Marketplace is available",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can accept terms and submit upgrade payment",
+            "name": "Downgrade Subscription Use Case 4 Matrix > SC-116 - Downgrade from Marketplace to Portfolio Hedger is available",
             "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer accept",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
           },
           {
             "type": "Business Journey",
@@ -276,18 +197,13 @@
           },
           {
             "type": "Module",
-            "name": "Authentication",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
             "name": "Billing",
             "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 9,
-    "blockers": 10
+    "warnings": 7,
+    "blockers": 6
   }
 }

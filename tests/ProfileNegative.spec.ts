@@ -314,6 +314,19 @@ test.describe(
         );
 
         await test.step(
+          'Delete account dialog closes without deleting the account',
+          async () => {
+            await profile.validateDeleteAccountDialogWithoutDeleting();
+
+            await expect(
+              profile.emailInput
+            ).toHaveValue(
+              TEST_USERS.subscriber.email
+            );
+          }
+        );
+
+        await test.step(
           'Direct route survives back and forward',
           async () => {
             await page.goto(

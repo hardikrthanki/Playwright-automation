@@ -63,8 +63,7 @@ function envEnabled(
 type CheckoutPlanName =
   | 'Income Builder'
   | 'Overlay Strategists'
-  | 'Portfolio Hedger'
-  | 'Marketplace';
+  | 'Portfolio Hedger';
 
 type CheckoutBillingInterval =
   | 'monthly'
@@ -261,16 +260,6 @@ if (
     );
 
     test(
-      'Marketplace monthly checkout shows subscription summary before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
-
-    test(
       'Paid plan checkout summaries currency refresh and return use one user',
       async ({ page }) => {
         const user =
@@ -303,18 +292,6 @@ if (
             interval: 'annual',
             expectedBillingCopy:
               /1,?490|per year|annual|subscription|total|due/i
-          },
-          {
-            planName: 'Marketplace',
-            interval: 'monthly',
-            expectedBillingCopy:
-              /249|per month|monthly|subscription|total/i
-          },
-          {
-            planName: 'Marketplace',
-            interval: 'annual',
-            expectedBillingCopy:
-              /2,?490|per year|annual|subscription|total|due/i
           }
         ];
 

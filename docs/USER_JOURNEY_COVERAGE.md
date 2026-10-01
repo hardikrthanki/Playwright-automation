@@ -316,7 +316,7 @@ Stripe:
 Plan Selection:
 
 - Plan catalog visibility is automated for Curious Explorer, Income Builder,
-  Overlay Strategists, Portfolio Hedger, and Marketplace.
+  Overlay Strategists, and Portfolio Hedger.
 - Monthly/annual toggle behavior is automated.
 - Paid-plan monthly and annual pricing presentation is automated without
   activating checkout.
@@ -375,5 +375,5 @@ Billing Subscription Management:
   prorated invoice validation, and billing-cycle anchor validation should stay
   opt-in with dedicated test accounts and Stripe/admin visibility.
 - Gated non-destructive slices now include downgrade calculation preview,
-  billing-interval preview, and Overlay/Portfolio Hedger/Marketplace paid
+  billing-interval preview, and Overlay/Portfolio Hedger paid
   purchases in `SubscriptionLifecycleExecution.spec.ts`.

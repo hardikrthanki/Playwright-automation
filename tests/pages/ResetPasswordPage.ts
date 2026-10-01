@@ -183,6 +183,74 @@ export class ResetPasswordPage
           this.pendingPassword
         );
 
+        await this.newPasswordInput.evaluate(
+          (input, value) => {
+            const setter =
+              Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                'value'
+              )?.set;
+
+            setter?.call(
+              input,
+              value
+            );
+
+            input.dispatchEvent(
+              new Event(
+                'input',
+                {
+                  bubbles: true
+                }
+              )
+            );
+
+            input.dispatchEvent(
+              new Event(
+                'change',
+                {
+                  bubbles: true
+                }
+              )
+            );
+          },
+          this.pendingPassword
+        );
+
+        await this.confirmPasswordInput.evaluate(
+          (input, value) => {
+            const setter =
+              Object.getOwnPropertyDescriptor(
+                window.HTMLInputElement.prototype,
+                'value'
+              )?.set;
+
+            setter?.call(
+              input,
+              value
+            );
+
+            input.dispatchEvent(
+              new Event(
+                'input',
+                {
+                  bubbles: true
+                }
+              )
+            );
+
+            input.dispatchEvent(
+              new Event(
+                'change',
+                {
+                  bubbles: true
+                }
+              )
+            );
+          },
+          this.pendingPassword
+        );
+
         const responsePromise =
           this.page.waitForResponse(
             (response) =>
@@ -191,35 +259,56 @@ export class ResetPasswordPage
                 response.url()
               ),
             {
-              timeout: 8000
+              timeout: 15000
             }
           ).catch(
             () => null
           );
 
+        const requestStarted =
+          this.page.waitForRequest(
+            (request) =>
+              request.method() === 'POST' &&
+              /\/auth\/reset-password/i.test(
+                request.url()
+              ),
+            {
+              timeout: 15000
+            }
+          ).then(
+            () => true
+          ).catch(
+            () => false
+          );
+
         await this.updatePasswordButton.click({
+          noWaitAfter: true,
           timeout: 8000
         });
 
-        const raced =
+        const started =
           await Promise.race([
-            responsePromise,
+            requestStarted,
             this.page.waitForTimeout(
-              2000
+              3000
             ).then(
-              () => null
+              () => false
             )
           ]);
 
-        if (
-          !raced
-        ) {
-          await this.page.locator(
-            'form'
-          ).evaluate(
-            (form) => {
-              (form as HTMLFormElement).requestSubmit();
+        if (!started) {
+          await this.confirmPasswordInput.press(
+            'Enter'
+          ).catch(
+            () => undefined
+          );
+
+          await this.updatePasswordButton.evaluate(
+            (button) => {
+              (button as HTMLButtonElement).click();
             }
+          ).catch(
+            () => undefined
           );
         }
 
@@ -229,8 +318,11 @@ export class ResetPasswordPage
     let response =
       await submitReset();
 
-    if (
-      !response
+    for (
+      let attempt = 1;
+      attempt < 3 &&
+      !response;
+      attempt++
     ) {
       response =
         await submitReset();

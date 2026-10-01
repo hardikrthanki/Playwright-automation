@@ -187,8 +187,8 @@ const lifecycleScenarios: LifecycleScenario[] = [
   },
   {
     id: 'LC-015',
-    sourceIds: ['SC-37', 'SC-38', 'SC-39', 'SC-40'],
-    title: 'Paid checkout summary opens for Income Builder, Portfolio Hedger, and Marketplace plans',
+    sourceIds: ['SC-37', 'SC-38', 'SC-40'],
+    title: 'Paid checkout summary opens for Income Builder and Portfolio Hedger',
     phase: 'Paid Subscription',
     priority: 'Critical',
     status: 'automated',
@@ -277,7 +277,7 @@ const lifecycleScenarios: LifecycleScenario[] = [
   },
   {
     id: 'LC-025',
-    sourceIds: ['SC-80', 'SC-81'],
+    sourceIds: ['SC-80'],
     title: 'Upgrade payment starts a new billing cycle immediately',
     phase: 'Upgrade',
     priority: 'Critical',
@@ -295,7 +295,7 @@ const lifecycleScenarios: LifecycleScenario[] = [
   },
   {
     id: 'LC-027',
-    sourceIds: ['SC-114', 'SC-115', 'SC-116'],
+    sourceIds: ['SC-114', 'SC-115'],
     title: 'Downgrade schedules lower plan for next renewal instead of immediate entitlement loss',
     phase: 'Downgrade',
     priority: 'Critical',

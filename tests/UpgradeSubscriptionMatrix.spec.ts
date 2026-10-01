@@ -66,24 +66,16 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-004'],
     title: 'Upgrade from Income Builder to Overlay Strategists is available',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated lower-tier paid account fixture with active Income Builder subscription.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > paid plan ladder availability Income Builder upgrade to Overlay Strategists'
   },
   {
     id: 'SC-80',
     sourceIds: ['SUB-UPG-005'],
     title: 'Upgrade from Overlay Strategists to Portfolio Hedger is available',
     priority: 'High',
-    status: 'future',
-    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Overlay Strategists paid account fixture.'
-  },
-  {
-    id: 'SC-81',
-    sourceIds: ['SUB-UPG-006'],
-    title: 'Upgrade from Portfolio Hedger to Marketplace is available',
-    priority: 'High',
-    status: 'future',
-    dependency: 'Business rule confirmed: active users can upgrade to any plan at any time. Requires dedicated Portfolio Hedger paid account fixture.'
+    status: 'automated',
+    automation: 'SubscriptionLifecycleExecution.spec.ts > paid plan ladder availability Overlay Strategists upgrade to Portfolio Hedger'
   },
   {
     id: 'SC-82',

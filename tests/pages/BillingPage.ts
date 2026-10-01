@@ -711,7 +711,7 @@ async validatePlanLifecycleActionSummary() {
 
   await expect(
     this.page.getByText(
-      /curious explorer|income builder|overlay strategists|portfolio hedger|marketplace/i
+      /curious explorer|income builder|overlay strategists|portfolio hedger/i
     ).first()
   ).toBeVisible({
     timeout: 15000
@@ -1067,10 +1067,6 @@ private async findPlanActionButton(
             {
               name: 'Portfolio Hedger',
               needles: ['portfolio hedger', 'portfolio hedge']
-            },
-            {
-              name: 'Marketplace',
-              needles: ['marketplace']
             }
           ];
 
@@ -1155,14 +1151,6 @@ private planNamePattern(
     )
   ) {
     return 'Overlay Strategists|Overlay';
-  }
-
-  if (
-    /marketplace/i.test(
-      planName
-    )
-  ) {
-    return 'Marketplace';
   }
 
   if (
@@ -2253,6 +2241,188 @@ async validateYearlyCancellationOptions() {
 
   Logger.success(
     'Yearly cancel-at-expiry and refund options validated without cancelling'
+  );
+}
+
+async expectPlanActionAvailable(
+  planName: string,
+  action: 'upgrade' | 'downgrade'
+) {
+  Logger.info(
+    `Checking ${action} to ${planName} is available`
+  );
+
+  await this.openPlansView();
+
+  const actionButton =
+    await this.findPlanActionButton(
+      planName,
+      action
+    );
+
+  await expect(
+    actionButton
+  ).toBeVisible();
+
+  Logger.success(
+    `${action} to ${planName} is available`
+  );
+}
+
+async expectCurrentIntervalSwitchHidden(
+  interval: 'monthly' | 'annual'
+) {
+  Logger.info(
+    `Checking switch to ${interval} is hidden for a ${interval} subscription`
+  );
+
+  await this.openPlansView();
+
+  const switchToCurrentInterval =
+    this.page.getByRole(
+      'button',
+      {
+        name:
+          interval === 'monthly'
+            ? /switch to monthly|change to monthly/i
+            : /switch to annual|change to annual/i
+      }
+    );
+
+  await expect(
+    switchToCurrentInterval
+  ).toHaveCount(
+    0
+  );
+
+  Logger.success(
+    `Switch to ${interval} is hidden`
+  );
+}
+
+async assertDowngradeTargetsAreLowerTier() {
+  const order = [
+    'Income Builder',
+    'Overlay Strategists',
+    'Portfolio Hedger'
+  ];
+
+  Logger.info(
+    'Checking downgrade actions point only at lower plans'
+  );
+
+  await this.openPlansView();
+
+  const currentPlan =
+    await this.page.evaluate(
+      () => {
+        const plans = [
+          {
+            name: 'Portfolio Hedger',
+            needles: ['portfolio hedger']
+          },
+          {
+            name: 'Overlay Strategists',
+            needles: ['overlay strategists']
+          },
+          {
+            name: 'Income Builder',
+            needles: ['income builder']
+          }
+        ];
+
+        const nodes =
+          Array.from(
+            document.querySelectorAll(
+              'body *'
+            )
+          );
+
+        for (const node of nodes) {
+          const text =
+            (
+              node.textContent ??
+              ''
+            ).toLowerCase();
+
+          if (
+            !/current plan|current subscription/.test(
+              text
+            ) ||
+            text.length > 500
+          ) {
+            continue;
+          }
+
+          const matches =
+            plans.filter(
+              (plan) =>
+                plan.needles.some(
+                  (needle) =>
+                    text.includes(
+                      needle
+                    )
+                )
+            );
+
+          if (matches.length === 1) {
+            return matches[0].name;
+          }
+        }
+
+        return '';
+      }
+    );
+
+  expect(
+    order,
+    'Billing should show one current paid plan.'
+  ).toContain(
+    currentPlan
+  );
+
+  const currentIndex =
+    order.indexOf(
+      currentPlan
+    );
+
+  for (const planName of order) {
+    const available =
+      await this.planChangeActionAvailable(
+        planName,
+        'downgrade',
+        'monthly'
+      );
+
+    if (
+      order.indexOf(
+        planName
+      ) >= currentIndex
+    ) {
+      expect(
+        available,
+        `${planName} is not a lower plan than ${currentPlan}.`
+      ).toBe(
+        false
+      );
+    }
+  }
+
+  if (currentIndex > 0) {
+    expect(
+      await this.planChangeActionAvailable(
+        order[currentIndex - 1],
+        'downgrade',
+        'monthly'
+      ),
+      `${order[currentIndex - 1]} should be a downgrade from ${currentPlan}.`
+    ).toBe(
+      true
+    );
+  }
+
+  Logger.success(
+    `Downgrade targets stay below ${currentPlan}`
   );
 }
 
@@ -3362,7 +3532,7 @@ async validatePaidSubscriberTrialCtaIsNotOffered() {
 
   await expect(
     this.page.getByText(
-      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial|upgrade|downgrade/i
+      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|free|trial|upgrade|downgrade/i
     ).first()
   ).toBeVisible({
     timeout: 15000,
@@ -3423,7 +3593,7 @@ async validateOverviewContract() {
 
   await expect(
     this.page.getByText(
-      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|marketplace|free|trial|curious/i
+      /current plan|current subscription|billing overview|income builder|overlay strategists|portfolio hedger|free|trial|curious/i
     ).first()
   ).toBeVisible({
     timeout: 15000,
@@ -4264,7 +4434,7 @@ private async assertPortalOverview(
     expect(
       portalText
     ).toMatch(
-      /starter|income builder|overlay strategists|portfolio hedger|marketplace|advanced|pro|curious explorer/i
+      /starter|income builder|overlay strategists|portfolio hedger|advanced|pro|curious explorer/i
     );
   }
 

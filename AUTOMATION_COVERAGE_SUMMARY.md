@@ -221,7 +221,7 @@ Validated coverage:
 - Paid-plan monthly and annual pricing presentation is validated without
   activating checkout.
 - Paid-plan entitlement limits are displayed before checkout for Income
-  Builder, Overlay Strategists, Portfolio Hedger, and Marketplace.
+  Builder, Overlay Strategists, and Portfolio Hedger.
 - Users can switch between available plan selections without launching Stripe
   checkout until setup is submitted.
 - Multi-plan Stripe checkout summaries are validated before payment across

@@ -6519,17 +6519,17 @@ function renderPageFooter(pageId) {
 const primaryPages = [
   ['cover', 'Brief'],
   ['health', 'Product health'],
-  ['journey', 'User paths'],
   ['failures', 'What failed'],
-  ['evidence', 'Proof'],
+  ['validation-summary', 'What passed'],
+  ['coverage-gaps', 'Not run'],
+  ['insight', 'Next step'],
 ];
 
 const morePages = [
+  ['journey', 'User paths'],
+  ['evidence', 'Proof'],
   ['executive', 'Why'],
   ['module-dashboard', 'Each area'],
-  ['coverage-gaps', 'Not run'],
-  ['validation-summary', 'What passed'],
-  ['insight', 'Next step'],
   ['comparison', 'History'],
   ['air-core', 'About AIR'],
   ['roadmap', 'Roadmap'],
@@ -6566,7 +6566,8 @@ function renderPageNav(pageId, placement = 'top') {
     return `<a class="page-pager-${className}" href="#${page[0]}"><small>${direction}</small><strong>${label}</strong></a>`;
   };
 
-  return `<nav class="page-pager ${placement}" aria-label="Report pages">${side(previous, 'Previous')}<span class="page-pager-count">${index + 1} / ${reportPages.length}</span>${side(next, 'Next')}</nav>`;
+  const here = reportPages[index];
+  return `<nav class="page-pager ${placement}" aria-label="Report pages" title="Left and right arrow keys move between pages">${side(previous, 'Previous')}<span class="page-pager-count"><small>${index + 1} of ${reportPages.length}</small><strong>${escapeHtml(here[1])}</strong></span>${side(next, 'Next')}</nav>`;
 }
 
 function renderInnerNav(kind, options = {}) {
@@ -6609,6 +6610,26 @@ function pageHeading(iconName, title) {
 
   return `<div class="page-title-row">${icon}<h1>${escapeHtml(title)}</h1></div>`;
 }
+
+const morePageMeta = {
+  journey: ['journey', 'Can a user finish the important paths?'],
+  evidence: ['evidence', 'Pictures and records from this run.'],
+  executive: ['release', 'The release call.'],
+  'module-dashboard': ['modules', 'What each area checked.'],
+  comparison: ['analytics', 'Earlier runs.'],
+  'air-core': ['roadmap', 'How this report is built.'],
+  roadmap: ['roadmap', 'What comes next.'],
+};
+
+const moreNavHtml = morePages.map(([id, label]) => {
+  const [icon] = morePageMeta[id];
+  return `<a href="#${id}">${navIcon(icon)}<span>${escapeHtml(label)}</span></a>`;
+}).join('\n        ');
+
+const moreDetailCardsHtml = morePages.map(([id, label]) => {
+  const [icon, detail] = morePageMeta[id];
+  return `<a class="report-more-card tone-good" href="#${id}">${navIcon(icon)}<span>${escapeHtml(label)}</span><strong>${escapeHtml(detail)}</strong><em>Open</em></a>`;
+}).join('\n        ');
 
 const airGoldenDashboardHtml = `<!doctype html>
 <html lang="en">
@@ -10061,6 +10082,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     #roadmap .roadmap-card-meta span{display:inline-flex;border:1px solid rgba(57,231,95,.28);border-radius:999px;background:rgba(57,231,95,.1);color:#9affac;font-size:11px;font-weight:800;padding:6px 10px}
     #roadmap .roadmap-card ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:0!important;padding:0!important;list-style:none}
     #roadmap .roadmap-card li{border:1px solid rgba(57,231,95,.16);border-radius:12px;background:rgba(8,16,30,.72);padding:8px 10px;color:#d8e3ee;font-size:12px;line-height:1.3}
+    .page-pager.top{position:sticky;top:12px;z-index:6}
+    main .page table thead th{position:sticky;top:78px;z-index:4;background:#0c1522}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -10076,19 +10099,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     <nav class="nav">
       <a class="active" href="#cover">${navIcon('home')}<span>Brief</span></a>
       <a href="#health">${navIcon('product')}<span>Product health</span></a>
-      <a href="#journey">${navIcon('journey')}<span>User paths</span></a>
       <a href="#failures">${navIcon('failures')}<span>What failed</span></a>
-      <a href="#evidence">${navIcon('evidence')}<span>Proof</span></a>
+      <a href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
+      <a href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
+      <a href="#insight">${navIcon('insight')}<span>Next step</span></a>
       <details class="nav-more">
         <summary>More</summary>
-        <a href="#executive">${navIcon('release')}<span>Why</span></a>
-        <a href="#module-dashboard">${navIcon('modules')}<span>Each area</span></a>
-        <a href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
-        <a href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
-        <a href="#insight">${navIcon('insight')}<span>Next step</span></a>
-        <a href="#comparison">${navIcon('analytics')}<span>History</span></a>
-        <a href="#air-core">${navIcon('roadmap')}<span>About AIR</span></a>
-        <a href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span></a>
+        ${moreNavHtml}
       </details>
     </nav>
     <div class="report-search">
@@ -10363,14 +10380,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <nav class="report-more" aria-label="More detail">
       <h2>More detail</h2>
       <div class="report-more-grid">
-        <a class="report-more-card tone-good" href="#executive">${navIcon('release')}<span>Why</span><strong>The release call.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#module-dashboard">${navIcon('modules')}<span>Each area</span><strong>What each area checked.</strong><em>Open</em></a>
-        <a class="report-more-card tone-warn" href="#coverage-gaps">${navIcon('failures')}<span>Not run</span><strong>Checks that did not run.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#validation-summary">${navIcon('analytics')}<span>What passed</span><strong>What this run confirmed.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#insight">${navIcon('insight')}<span>Next step</span><strong>What to do next.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#comparison">${navIcon('journey')}<span>History</span><strong>Earlier runs.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#air-core">${navIcon('settings')}<span>About AIR</span><strong>How this report is built.</strong><em>Open</em></a>
-        <a class="report-more-card tone-good" href="#roadmap">${navIcon('roadmap')}<span>Roadmap</span><strong>What comes next.</strong><em>Open</em></a>
+        ${moreDetailCardsHtml}
       </div>
     </nav>
 
@@ -12253,7 +12263,26 @@ const airGoldenDashboardHtml = `<!doctype html>
     if (event.key === 'Escape') {
       closePanels();
       closeAllSearchResults();
+      return;
     }
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+      return;
+    }
+    const typing = document.activeElement;
+    const typingTag = typing?.tagName;
+    if (typingTag === 'INPUT' || typingTag === 'TEXTAREA' || typingTag === 'SELECT' || typing?.isContentEditable) {
+      return;
+    }
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+      return;
+    }
+    const index = reportPageIds.indexOf(currentPageId());
+    const nextIndex = event.key === 'ArrowRight' ? index + 1 : index - 1;
+    if (index < 0 || nextIndex < 0 || nextIndex >= reportPageIds.length) {
+      return;
+    }
+    event.preventDefault();
+    location.hash = reportPageIds[nextIndex];
   });
 </script>
 </body>
@@ -12285,7 +12314,17 @@ try {
 }
 
 if (!reportWritten) {
-  const navPath = path.join(outputDir, 'index-nav.html');
-  fs.writeFileSync(navPath, airGoldenDashboardHtml);
-  console.log('Execution report created:', navPath);
+  const spareNames = ['index-nav.html', 'index-spare.html'];
+  for (const name of spareNames) {
+    const sparePath = path.join(outputDir, name);
+    try {
+      fs.writeFileSync(sparePath, airGoldenDashboardHtml);
+      console.log('Execution report created:', sparePath);
+      reportWritten = true;
+      break;
+    } catch (error) {
+      console.log(`Could not replace ${sparePath} because the file is open.`);
+      console.log(error.message);
+    }
+  }
 }

@@ -78,7 +78,10 @@ extends BasePage {
   readonly confirmPasswordInput: Locator;
 
   readonly submitButton: Locator;
-  
+
+  private mobileVerifiedByApi = false;
+
+  private mobileNumberTaken = false;
 
 
 
@@ -375,17 +378,92 @@ extends BasePage {
 
     await this.dismissMarketingOverlays();
 
+    const responsePromise =
+      this.page.waitForResponse(
+        (response) =>
+          response.request().method() === 'POST' &&
+          /verify-otp/i.test(
+            response.url()
+          ),
+        {
+          timeout: 20000
+        }
+      ).catch(
+        () => null
+      );
+
+    const requestStarted =
+      this.page.waitForRequest(
+        (request) =>
+          request.method() === 'POST' &&
+          /verify-otp/i.test(
+            request.url()
+          ),
+        {
+          timeout: 20000
+        }
+      ).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
     try {
       await this.verifyOtpButton.click({
+        noWaitAfter: true,
         timeout: 8000
       });
     } catch {
       await this.dismissMarketingOverlays();
+    }
 
-      await this.verifyOtpButton.click({
-        force: true,
-        timeout: 8000
-      });
+    const started =
+      await Promise.race([
+        requestStarted,
+        this.page.waitForTimeout(
+          3000
+        ).then(
+          () => false
+        )
+      ]);
+
+    if (
+      !started &&
+      !await this.mobileVerifiedBadgeVisible()
+    ) {
+      await this.verifyOtpButton.evaluate(
+        (button) => {
+          (button as HTMLButtonElement).click();
+        }
+      ).catch(
+        () => undefined
+      );
+    }
+
+    const response =
+      await responsePromise;
+
+    if (response) {
+      const body =
+        await response.text().catch(
+          () => ''
+        );
+
+      console.log(
+        `Verify OTP ${response.status()} ${body.slice(0, 160)}`
+      );
+
+      this.mobileVerifiedByApi =
+        response.ok() &&
+        /"verified"\s*:\s*true/i.test(
+          body
+        );
+
+      this.mobileNumberTaken =
+        response.status() === 409 ||
+        /already registered/i.test(
+          body
+        );
     }
   }
 
@@ -399,6 +477,7 @@ extends BasePage {
 
   private async mobileVerificationSettled() {
     if (
+      this.mobileVerifiedByApi ||
       await this.mobileVerifiedBadgeVisible()
     ) {
       return true;
@@ -431,7 +510,10 @@ extends BasePage {
         () => false
       );
 
-    if (settled) {
+    if (
+      settled ||
+      this.mobileVerifiedByApi
+    ) {
       return;
     }
 
@@ -446,9 +528,35 @@ extends BasePage {
       return;
     }
 
-    Logger.info(
-      'Mobile code was not accepted. Verifying once more.'
-    );
+    if (
+      this.mobileNumberTaken
+    ) {
+      const replacement =
+        `201555${Date.now().toString().slice(-4)}`;
+
+      console.log(
+        `Mobile number was already registered. Trying ${replacement}`
+      );
+
+      this.mobileNumberTaken = false;
+      this.mobileVerifiedByApi = false;
+
+      await this.fillMobileNumber(
+        replacement
+      );
+
+      await this.waitForSendCodeEnabled();
+
+      await this.clickSendCode(
+        1
+      );
+
+      await this.waitForRegistrationOtpInput();
+    } else {
+      Logger.info(
+        'Mobile code was not accepted. Verifying once more.'
+      );
+    }
 
     await this.clickVerifyWhenReady();
 

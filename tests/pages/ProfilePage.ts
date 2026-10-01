@@ -34,6 +34,7 @@ FEATURES COVERED
 1. Personal Information
 2. Change Password
 3. Mobile Number
+4. Delete account dialog, closed without deleting
 
 ============================================================================= */
 
@@ -674,4 +675,208 @@ async completeMobileNumberChange(
     'Mobile Number Change Verified'
   );
 }
+
+  async validateDeleteAccountDialogWithoutDeleting() {
+
+    Logger.info(
+      'Opening delete account dialog without deleting'
+    );
+
+    const openDelete =
+      this.page.getByRole(
+        'button',
+        {
+          name: /^delete account$/i
+        }
+      );
+
+    await openDelete.scrollIntoViewIfNeeded();
+
+    await safeClick(
+      openDelete,
+      'Open Delete Account'
+    );
+
+    const dialog =
+      this.page.getByRole(
+        'dialog'
+      ).filter({
+        hasText: /delete your account/i
+      }).first();
+
+    await expect(
+      dialog
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      dialog.getByRole(
+        'heading',
+        {
+          name: /delete your account/i
+        }
+      )
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByText(
+        /deleting your ooltool account is permanent/i
+      )
+    ).toBeVisible();
+
+    for (const acknowledgement of [
+      /permanently deleted and cannot be recovered/i,
+      /broker accounts will be disconnected/i,
+      /will be cancelled and i will not be charged/i
+    ]) {
+      await expect(
+        dialog.getByText(
+          acknowledgement
+        ).first()
+      ).toBeVisible();
+    }
+
+    const acknowledgements =
+      dialog.getByRole(
+        'checkbox'
+      );
+
+    await expect(
+      acknowledgements
+    ).toHaveCount(
+      3
+    );
+
+    for (
+      let index = 0;
+      index < 3;
+      index += 1
+    ) {
+      await acknowledgements.nth(
+        index
+      ).check();
+
+      await expect(
+        acknowledgements.nth(
+          index
+        )
+      ).toBeChecked();
+    }
+
+    await expect(
+      dialog.getByRole(
+        'link',
+        {
+          name: /privacy policy/i
+        }
+      )
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByText(
+        /this action cannot be undone/i
+      )
+    ).toBeVisible();
+
+    const reason =
+      dialog.locator(
+        'textarea'
+      ).first();
+
+    await expect(
+      reason
+    ).toBeVisible();
+
+    await reason.fill(
+      'Automation check only. This account is not deleted.'
+    );
+
+    await expect(
+      reason
+    ).toHaveValue(
+      /automation check only/i
+    );
+
+    await expect(
+      dialog.getByText(
+        /^password$/i
+      ).first()
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByText(
+        /^email code$/i
+      ).first()
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByText(
+        /^mobile code$/i
+      ).first()
+    ).toBeVisible();
+
+    const accountPassword =
+      dialog.locator(
+        'input[type="password"]'
+      ).first();
+
+    await expect(
+      accountPassword
+    ).toBeVisible();
+
+    await expect(
+      accountPassword
+    ).toHaveValue(
+      ''
+    );
+
+    const permanentDelete =
+      dialog.getByRole(
+        'button',
+        {
+          name: /permanently delete my account/i
+        }
+      );
+
+    await expect(
+      permanentDelete
+    ).toBeVisible();
+
+    await safeClick(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      ),
+      'Cancel Delete Account'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 10000
+    });
+
+    await expect(
+      this.page
+    ).toHaveURL(
+      /\/dashboard\/profile/
+    );
+
+    await expect(
+      this.emailInput
+    ).not.toHaveValue(
+      ''
+    );
+
+    await expect(
+      openDelete
+    ).toBeVisible();
+
+    Logger.success(
+      'Delete account dialog closed without deleting the account'
+    );
+  }
   }
