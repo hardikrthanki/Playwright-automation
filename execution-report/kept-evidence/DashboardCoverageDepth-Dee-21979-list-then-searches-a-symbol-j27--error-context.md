@@ -7,28 +7,21 @@
 # Test info
 
 - Name: DashboardCoverageDepth.spec.ts >> Deeper dashboard controls >> News switches portfolio and watchlist, then searches a symbol
-- Location: tests\DashboardCoverageDepth.spec.ts:370:9
+- Location: tests\DashboardCoverageDepth.spec.ts:349:9
 
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
-
-Locator: getByRole('heading', { name: /^AAPL$/ })
-Expected: visible
-Timeout: 30000ms
-Error: element(s) not found
-
+TimeoutError: locator.waitFor: Timeout 15000ms exceeded.
 Call log:
-  - Expect "toBeVisible" with timeout 30000ms
-  - waiting for getByRole('heading', { name: /^AAPL$/ })
+  - waiting for getByRole('menuitem', { name: /^news$/i }).first() to be visible
 
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=e1]:
+- generic [ref=e1]:
   - generic [ref=e2]:
     - banner [ref=e3]:
       - generic [ref=e5]:
@@ -43,7 +36,7 @@ Call log:
           - button "Portfolio" [ref=e14]:
             - generic [ref=e15]: Portfolio
             - img [ref=e16]
-          - button "Research" [ref=e19]:
+          - button "Research" [active] [ref=e19]:
             - generic [ref=e20]: Research
             - img [ref=e21]
           - link "Academy" [ref=e23] [cursor=pointer]:
@@ -51,508 +44,469 @@ Call log:
           - link "Support" [ref=e24] [cursor=pointer]:
             - /url: /dashboard/support
         - generic [ref=e25]:
-          - button "Sync all" [ref=e26] [cursor=pointer]:
+          - button "Prices are delayed, not live market prices. Portfolio value and P&L come from your broker, so they can differ from your broker's dashboard." [ref=e26]: Delayed
+          - button "Sync all" [ref=e27] [cursor=pointer]:
             - img
-            - generic [ref=e27]: Sync all
-          - button "Add options" [ref=e28] [cursor=pointer]:
+            - generic [ref=e28]: Sync all
+          - button "Add options" [ref=e29] [cursor=pointer]:
             - img
-          - button "Notifications" [ref=e29] [cursor=pointer]:
-            - img [ref=e30]
-            - generic [ref=e33]: "17"
-          - button "Enter fullscreen" [ref=e34] [cursor=pointer]:
-            - img
-          - button "Switch to dark theme" [ref=e35] [cursor=pointer]:
-            - img
-          - button "HT" [ref=e36] [cursor=pointer]:
-            - generic [ref=e38]: HT
-    - main [ref=e39]:
-      - generic [ref=e40]:
-        - generic [ref=e41]:
-          - heading "News" [level=1] [ref=e42]
-          - paragraph [ref=e43]: Search any symbol on the All tab, or browse headlines for your portfolio and watchlist holdings.
-        - generic [ref=e44]:
-          - tablist [ref=e46]:
-            - tab "All" [selected] [ref=e47] [cursor=pointer]: All
-            - tab "Portfolio (8)" [ref=e48] [cursor=pointer]:
-              - text: Portfolio
-              - generic [ref=e49]: (8)
-            - tab "Watchlist" [ref=e50] [cursor=pointer]: Watchlist
-          - paragraph [ref=e51]:
-            - text: Search any symbol for headlines, or open
-            - link "Equity Research" [ref=e52] [cursor=pointer]:
-              - /url: /dashboard/equity-research
-            - text: for deeper analysis.
-          - generic [ref=e53]:
-            - generic [ref=e55]:
-              - generic [ref=e56]: Symbol
+          - button "Notifications" [ref=e30] [cursor=pointer]:
+            - img [ref=e31]
+            - generic [ref=e34]: "18"
+          - button "QU" [ref=e35] [cursor=pointer]:
+            - generic [ref=e37]: QU
+    - main [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - img [ref=e45]
+              - generic [ref=e48]:
+                - paragraph [ref=e49]: Total Portfolio Value
+                - paragraph [ref=e50]: $350,648
+                - paragraph [ref=e51]: 100% of portfolio
+            - generic [ref=e52]:
+              - img [ref=e54]
               - generic [ref=e57]:
-                - img
-                - combobox "Search symbol (e.g. AAPL)" [ref=e58]: AAPL
-                - button "Clear Symbol" [ref=e59]:
-                  - img [ref=e60]
-            - generic [ref=e63]:
-              - button "Search" [ref=e64] [cursor=pointer]:
-                - img
-                - generic [ref=e65]: Search
-              - button "Reset" [ref=e66] [cursor=pointer]:
-                - img
-                - generic [ref=e67]: Reset
-          - generic [ref=e68]:
-            - generic [ref=e69]:
-              - heading "Results for AAPL" [level=3] [ref=e70]
-              - link "Equity Research" [ref=e72] [cursor=pointer]:
-                - /url: /dashboard/equity-research?symbol=AAPL
-            - generic [ref=e74]:
-              - article [ref=e75]:
-                - generic [ref=e76]:
-                  - generic [ref=e77]: AAPL
-                  - generic [ref=e78]:
-                    - generic [ref=e79]:
-                      - heading "Apple Faces New AI Threat From Meta’s Muse - Meta Platforms (NASDAQ:META)" [level=3] [ref=e80]
-                      - generic [ref=e81]: negative
-                    - generic [ref=e82]:
-                      - generic [ref=e83]: Benzinga
-                      - generic [ref=e84]: ·
-                      - generic [ref=e85]: 7h ago
-                      - generic [ref=e86]:
-                        - link "Research" [ref=e87] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e88]
-                        - link "Read" [ref=e91] [cursor=pointer]:
-                          - /url: https://www.benzinga.com/markets/tech/26/09/62067675/apple-stock-meta-muse-siri-ai-intent-layer
-                          - text: Read
-                          - img [ref=e92]
-              - article [ref=e96]:
-                - generic [ref=e97]:
-                  - generic [ref=e98]: AAPL
-                  - generic [ref=e99]:
-                    - generic [ref=e100]:
-                      - heading "John Ternus busca transformar a Apple en una empresa más ágil y competitiva" [level=3] [ref=e101]
-                      - generic [ref=e102]: positive
-                    - generic [ref=e103]:
-                      - generic [ref=e104]: Bloomberg
-                      - generic [ref=e105]: ·
-                      - generic [ref=e106]: 11h ago
-                      - generic [ref=e107]:
-                        - link "Research" [ref=e108] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e109]
-                        - link "Read" [ref=e112] [cursor=pointer]:
-                          - /url: https://www.bloomberg.com/news/articles/2026-09-29/ternus-busca-transformar-apple-para-competir-en-era-de-ia-mumyl7t7
-                          - text: Read
-                          - img [ref=e113]
-              - article [ref=e117]:
-                - generic [ref=e118]:
-                  - generic [ref=e119]: AAPL
-                  - generic [ref=e120]:
-                    - generic [ref=e121]:
-                      - heading "Apple streamlines management as analysts urge faster AI innovation" [level=3] [ref=e122]
-                      - generic [ref=e123]: neutral
-                    - generic [ref=e124]:
-                      - generic [ref=e125]: Proactive financial news
-                      - generic [ref=e126]: ·
-                      - generic [ref=e127]: 12h ago
-                      - generic [ref=e128]:
-                        - link "Research" [ref=e129] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e130]
-                        - link "Read" [ref=e133] [cursor=pointer]:
-                          - /url: https://www.proactiveinvestors.com/companies/news/1099322/apple-streamlines-management-as-analysts-urge-faster-ai-innovation-1099322.html
-                          - text: Read
-                          - img [ref=e134]
-              - article [ref=e138]:
-                - generic [ref=e139]:
-                  - generic [ref=e140]: AAPL
-                  - generic [ref=e141]:
-                    - generic [ref=e142]:
-                      - heading "Apple streamlines management as analysts urge faster AI innovation" [level=3] [ref=e143]
-                      - generic [ref=e144]: neutral
-                    - generic [ref=e145]:
-                      - generic [ref=e146]: Yahoo! Finance Canada
-                      - generic [ref=e147]: ·
-                      - generic [ref=e148]: 12h ago
-                      - generic [ref=e149]:
-                        - link "Research" [ref=e150] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e151]
-                        - link "Read" [ref=e154] [cursor=pointer]:
-                          - /url: https://ca.finance.yahoo.com/news/apple-streamlines-management-analysts-urge-163900766.html
-                          - text: Read
-                          - img [ref=e155]
-              - article [ref=e159]:
-                - generic [ref=e160]:
-                  - generic [ref=e161]: AAPL
-                  - generic [ref=e162]:
-                    - generic [ref=e163]:
-                      - heading "How Much Do You Need to Have Netflix, Disney and the 8 Major Streaming Platforms?" [level=3] [ref=e164]
-                      - generic [ref=e165]: neutral
-                    - generic [ref=e166]:
-                      - generic [ref=e167]: Benzinga
-                      - generic [ref=e168]: ·
-                      - generic [ref=e169]: 13h ago
-                      - generic [ref=e170]:
-                        - link "Research" [ref=e171] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e172]
-                        - link "Read" [ref=e175] [cursor=pointer]:
-                          - /url: https://www.benzinga.com/news/entertainment/26/09/62054937/how-much-do-you-need-to-have-netflix-disney-and-the-8-major-streaming-platforms
-                          - text: Read
-                          - img [ref=e176]
-              - article [ref=e180]:
-                - generic [ref=e181]:
-                  - generic [ref=e182]: AAPL
-                  - generic [ref=e183]:
-                    - generic [ref=e184]:
-                      - heading "Apple Could Keep Every iPhone Sale Yet Lose Discovery Referral, BofA Warns — Says Muse Concerns Are Overdone" [level=3] [ref=e185]
-                      - generic [ref=e186]: positive
-                    - generic [ref=e187]:
-                      - generic [ref=e188]: Yahoo Finance
-                      - generic [ref=e189]: ·
-                      - generic [ref=e190]: 14h ago
-                      - generic [ref=e191]:
-                        - link "Research" [ref=e192] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e193]
-                        - link "Read" [ref=e196] [cursor=pointer]:
-                          - /url: https://finance.yahoo.com/markets/stocks/articles/apple-could-keep-every-iphone-142529154.html
-                          - text: Read
-                          - img [ref=e197]
-              - article [ref=e201]:
-                - generic [ref=e202]:
-                  - generic [ref=e203]: AAPL
-                  - generic [ref=e204]:
-                    - generic [ref=e205]:
-                      - 'heading "Form 4 Metalpha Technology Holding Ltd For: 29 September By Investing.com" [level=3] [ref=e206]'
-                      - generic [ref=e207]: neutral
-                    - generic [ref=e208]:
-                      - generic [ref=e209]: Investing.com Canada
-                      - generic [ref=e210]: ·
-                      - generic [ref=e211]: 15h ago
-                      - generic [ref=e212]:
-                        - link "Research" [ref=e213] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e214]
-                        - link "Read" [ref=e217] [cursor=pointer]:
-                          - /url: https://ca.investing.com/news/stock-market-news/form-4-metalpha-technology-holding-ltd-for-29-september-93CH-4858236
-                          - text: Read
-                          - img [ref=e218]
-              - article [ref=e222]:
-                - generic [ref=e223]:
-                  - generic [ref=e224]: AAPL
-                  - generic [ref=e225]:
-                    - generic [ref=e226]:
-                      - heading "Equity Lifestyle Properties stock hits 52-week low at 58.68 USD" [level=3] [ref=e227]
-                      - generic [ref=e228]: negative
-                    - generic [ref=e229]:
-                      - generic [ref=e230]: Investing.com Canada
-                      - generic [ref=e231]: ·
-                      - generic [ref=e232]: 15h ago
-                      - generic [ref=e233]:
-                        - link "Research" [ref=e234] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e235]
-                        - link "Read" [ref=e238] [cursor=pointer]:
-                          - /url: https://ca.investing.com/news/stock-market-news/equity-lifestyle-properties-stock-hits-52week-low-at-5868-usd-93CH-4858211
-                          - text: Read
-                          - img [ref=e239]
-              - article [ref=e243]:
-                - generic [ref=e244]:
-                  - generic [ref=e245]: AAPL
-                  - generic [ref=e246]:
-                    - generic [ref=e247]:
-                      - 'heading "KLA Corp Stock (KLAC) Opened Up by 3.73% on Sep 29: Drivers Behind the Movement" [level=3] [ref=e248]'
-                      - generic [ref=e249]: negative
-                    - generic [ref=e250]:
-                      - generic [ref=e251]: TradingKey
-                      - generic [ref=e252]: ·
-                      - generic [ref=e253]: 15h ago
-                      - generic [ref=e254]:
-                        - link "Research" [ref=e255] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e256]
-                        - link "Read" [ref=e259] [cursor=pointer]:
-                          - /url: https://www.tradingkey.com/news/market-movers/262192157-market-movers-klac-20260929
-                          - text: Read
-                          - img [ref=e260]
-              - article [ref=e264]:
-                - generic [ref=e265]:
-                  - generic [ref=e266]: AAPL
-                  - generic [ref=e267]:
-                    - generic [ref=e268]:
-                      - heading "Motorola Solutions, Inc. (MSI) stock price, news, quote and history - Yahoo Finance" [level=3] [ref=e269]
-                      - generic [ref=e270]: neutral
-                    - generic [ref=e271]:
-                      - generic [ref=e272]: Yahoo Finance Singapore
-                      - generic [ref=e273]: ·
-                      - generic [ref=e274]: 15h ago
-                      - generic [ref=e275]:
-                        - link "Research" [ref=e276] [cursor=pointer]:
-                          - /url: /dashboard/equity-research?symbol=AAPL
-                          - text: Research
-                          - img [ref=e277]
-                        - link "Read" [ref=e280] [cursor=pointer]:
-                          - /url: https://sg.finance.yahoo.com/quote/MSI/latest-news/
-                          - text: Read
-                          - img [ref=e281]
-            - generic [ref=e285]:
-              - paragraph [ref=e286]:
-                - text: Showing
-                - generic [ref=e287]: 1–10
-                - text: of 50
-              - navigation "Pagination" [ref=e288]:
-                - button "First page" [disabled]:
-                  - img
-                - button "Previous page" [disabled]:
-                  - img
-                - button "Page 1" [ref=e289] [cursor=pointer]: "1"
-                - button "Page 2" [ref=e290] [cursor=pointer]: "2"
-                - generic [ref=e291]: …
-                - button "Page 4" [ref=e292] [cursor=pointer]: "4"
-                - button "Page 5" [ref=e293] [cursor=pointer]: "5"
-                - button "Next page" [ref=e294] [cursor=pointer]:
-                  - img
-                - button "Last page" [ref=e295] [cursor=pointer]:
-                  - img
-    - contentinfo [ref=e296]:
-      - generic [ref=e297]:
-        - generic [ref=e298]:
-          - paragraph [ref=e299]: © 2026 Ools Inc. All rights reserved.
-          - navigation "Legal and support" [ref=e300]:
-            - link "Privacy Policy" [ref=e302] [cursor=pointer]:
-              - /url: /privacy-policy
-            - generic [ref=e303]:
-              - generic [ref=e304]: ·
-              - link "Terms of Service" [ref=e305] [cursor=pointer]:
-                - /url: /terms-of-services
-            - generic [ref=e306]:
-              - generic [ref=e307]: ·
-              - link "Disclosures" [ref=e308] [cursor=pointer]:
-                - /url: /disclosures
+                - paragraph [ref=e58]: Invested Value
+                - paragraph [ref=e59]: $349,648
+                - paragraph [ref=e60]: 99.7% of portfolio
+            - generic [ref=e61]:
+              - img [ref=e63]
+              - generic [ref=e65]:
+                - paragraph [ref=e66]: Cash & Buying Power
+                - paragraph [ref=e67]: $1,000
+                - paragraph [ref=e68]: 0.3% of portfolio
+          - generic [ref=e69]:
+            - generic [ref=e70]:
+              - paragraph [ref=e71]: Ools Score (Portfolio)
+              - button "Learn more about Ools Score" [ref=e72]:
+                - img [ref=e73]
+            - generic [ref=e76]:
+              - img "Ools Score 47 out of 100" [ref=e77]:
+                - generic [ref=e84]: "47"
+              - generic [ref=e85]:
+                - generic [ref=e86]: "0"
+                - generic [ref=e87]: Diversified
+                - generic [ref=e88]: Overlayed
+                - generic [ref=e89]: Hedged
+                - generic [ref=e90]: DeRisked
+                - generic [ref=e91]: "100"
+            - list [ref=e92]:
+              - listitem [ref=e93]: Covered-call utilization below your profile target.
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - img [ref=e97]
+              - generic [ref=e99]:
+                - heading "Upcoming Events" [level=3] [ref=e100]
+                - paragraph [ref=e101]: Top 3 from your portfolio symbols
+            - list [ref=e102]:
+              - listitem [ref=e103]:
+                - generic [ref=e104]:
+                  - paragraph [ref=e105]: CB
+                  - paragraph [ref=e106]: Earnings
+                - paragraph [ref=e107]: Oct 20
+              - listitem [ref=e108]:
+                - generic [ref=e109]:
+                  - paragraph [ref=e110]: CCI
+                  - paragraph [ref=e111]: Earnings
+                - paragraph [ref=e112]: Oct 21
+              - listitem [ref=e113]:
+                - generic [ref=e114]:
+                  - paragraph [ref=e115]: AAPL
+                  - paragraph [ref=e116]: Earnings
+                - paragraph [ref=e117]: Oct 29
+            - link "View more" [ref=e119] [cursor=pointer]:
+              - /url: /dashboard/event-calendar
+              - text: View more
+              - img [ref=e120]
+        - generic [ref=e122]:
+          - generic [ref=e123]:
+            - heading "Asset Allocation" [level=3] [ref=e124]
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - application [ref=e129]
+                - generic:
+                  - generic: $350.6K
+                  - generic: Total
+              - list [ref=e142]:
+                - listitem [ref=e143]:
+                  - generic [ref=e146]: Equity
+                  - generic [ref=e147]:
+                    - generic [ref=e148]: $86,744
+                    - generic [ref=e149]: 24.74%
+                - listitem [ref=e150]:
+                  - generic [ref=e153]: Cash
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: $1,000
+                    - generic [ref=e156]: 0.29%
+                - listitem [ref=e157]:
+                  - generic [ref=e160]: Options (Net)
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: $7,964
+                    - generic [ref=e163]: 2.27%
+          - generic [ref=e164]:
+            - heading "Option Strategy Breakdown" [level=3] [ref=e165]
+            - paragraph [ref=e166]: Total Options (Net)
+            - paragraph [ref=e167]: $7,964
+            - generic [ref=e168]:
+              - generic [ref=e169]: Strategy
+              - generic [ref=e170]: Market Value
+              - generic [ref=e171]: "% of Portfolio"
+            - list [ref=e172]:
+              - listitem [ref=e173]:
+                - generic [ref=e174]: Covered Calls
+                - generic [ref=e176]: $0.00
+                - generic [ref=e177]: 0.00%
+              - listitem [ref=e178]:
+                - generic [ref=e179]: Cash Secured Puts
+                - generic [ref=e181]: $0.00
+                - generic [ref=e182]: 0.00%
+              - listitem [ref=e183]:
+                - generic [ref=e184]: Protective Puts
+                - generic [ref=e188]: +$7,177.50
+                - generic [ref=e189]: +2.05%
+              - listitem [ref=e190]:
+                - generic [ref=e191]: Long Calls
+                - generic [ref=e195]: +$692.19
+                - generic [ref=e196]: +0.20%
+              - listitem [ref=e197]:
+                - generic [ref=e198]: Other Strategies
+                - generic [ref=e202]: +$94.47
+                - generic [ref=e203]: +0.03%
+            - link "View option exposure" [ref=e205] [cursor=pointer]:
+              - /url: /dashboard/options-research
+              - text: View option exposure
+              - img [ref=e206]
+          - generic [ref=e208]:
+            - heading "Broker Accounts" [level=3] [ref=e209]
+            - generic [ref=e210]:
+              - generic [ref=e211]:
+                - generic [ref=e212]: Broker
+                - generic [ref=e213]: Last Refresh
+                - generic [ref=e214]: Market Value
+                - generic [ref=e215]: "% of Total"
+              - list [ref=e216]:
+                - listitem [ref=e217]:
+                  - generic [ref=e218]:
+                    - generic [ref=e219]: ME
+                    - generic [ref=e220]: Manual entry
+                  - generic [ref=e221]: —
+                  - generic [ref=e222]: $350,648
+                  - generic [ref=e223]: 100.0%
+              - generic [ref=e224]:
+                - generic [ref=e225]: Total (1 Broker)
+                - generic [ref=e226]: $350,648
+                - generic [ref=e227]: 100%
+            - link "Manage Accounts" [ref=e229] [cursor=pointer]:
+              - /url: /dashboard/accounts
+              - text: Manage Accounts
+              - img [ref=e230]
+        - generic [ref=e232]:
+          - generic [ref=e234]:
+            - heading "Top 10 Opportunities" [level=3] [ref=e235]
+            - paragraph [ref=e236]: AI-powered option overlay strategies for your portfolio.
+            - table [ref=e238]:
+              - rowgroup [ref=e239]:
+                - row "# Symbol Strategy Expiry (DTE) Strike Premium Yield% Assign. %" [ref=e240]:
+                  - columnheader "#" [ref=e241]
+                  - columnheader "Symbol" [ref=e242]
+                  - columnheader "Strategy" [ref=e243]
+                  - columnheader "Expiry (DTE)" [ref=e244]
+                  - columnheader "Strike" [ref=e245]
+                  - columnheader "Premium" [ref=e246]
+                  - columnheader "Yield%" [ref=e247]
+                  - columnheader "Assign. %" [ref=e248]
+              - rowgroup [ref=e249]:
+                - row "1 CB CSP Oct 16, 2026 (11 DTE) $330 $4.85 12.5% 44%" [ref=e250]:
+                  - cell "1" [ref=e251]
+                  - cell "CB" [ref=e252]
+                  - cell "CSP" [ref=e253]:
+                    - generic [ref=e254]: CSP
+                  - cell "Oct 16, 2026 (11 DTE)" [ref=e255]:
+                    - text: Oct 16, 2026
+                    - generic [ref=e256]: (11 DTE)
+                  - cell "$330" [ref=e257]
+                  - cell "$4.85" [ref=e258]
+                  - cell "12.5%" [ref=e259]
+                  - cell "44%" [ref=e260]
+                - row "2 FICO CSP Oct 16, 2026 (11 DTE) $1,040 $44.30 36.2% 97%" [ref=e261]:
+                  - cell "2" [ref=e262]
+                  - cell "FICO" [ref=e263]
+                  - cell "CSP" [ref=e264]:
+                    - generic [ref=e265]: CSP
+                  - cell "Oct 16, 2026 (11 DTE)" [ref=e266]:
+                    - text: Oct 16, 2026
+                    - generic [ref=e267]: (11 DTE)
+                  - cell "$1,040" [ref=e268]
+                  - cell "$44.30" [ref=e269]
+                  - cell "36.2%" [ref=e270]
+                  - cell "97%" [ref=e271]
+                - row "3 CB CC Nov 20, 2026 (46 DTE) $345 $5.55 12.5% 33%" [ref=e272]:
+                  - cell "3" [ref=e273]
+                  - cell "CB" [ref=e274]
+                  - cell "CC" [ref=e275]:
+                    - generic [ref=e276]: CC
+                  - cell "Nov 20, 2026 (46 DTE)" [ref=e277]:
+                    - text: Nov 20, 2026
+                    - generic [ref=e278]: (46 DTE)
+                  - cell "$345" [ref=e279]
+                  - cell "$5.55" [ref=e280]
+                  - cell "12.5%" [ref=e281]
+                  - cell "33%" [ref=e282]
+                - row "4 FICO CSP Nov 20, 2026 (46 DTE) $500 $10.00 14.9% 12%" [ref=e283]:
+                  - cell "4" [ref=e284]
+                  - cell "FICO" [ref=e285]
+                  - cell "CSP" [ref=e286]:
+                    - generic [ref=e287]: CSP
+                  - cell "Nov 20, 2026 (46 DTE)" [ref=e288]:
+                    - text: Nov 20, 2026
+                    - generic [ref=e289]: (46 DTE)
+                  - cell "$500" [ref=e290]
+                  - cell "$10.00" [ref=e291]
+                  - cell "14.9%" [ref=e292]
+                  - cell "12%" [ref=e293]
+            - generic [ref=e294]:
+              - generic [ref=e295]:
+                - generic [ref=e296]: CC
+                - text: Covered Call
+              - generic [ref=e297]:
+                - generic [ref=e298]: CSP
+                - text: Cash Secured Put
+              - generic [ref=e299]:
+                - generic [ref=e300]: PP
+                - text: Protective Put
+              - generic [ref=e301]:
+                - generic [ref=e302]: LC
+                - text: Long Call
+            - link "View all opportunities" [ref=e304] [cursor=pointer]:
+              - /url: /dashboard/opportunities
+              - text: View all opportunities
+              - img [ref=e305]
+          - generic [ref=e308]:
             - generic [ref=e309]:
-              - generic [ref=e310]: ·
-              - link "Risk Warning" [ref=e311] [cursor=pointer]:
+              - generic [ref=e310]:
+                - heading "Option Expiry Overview" [level=3] [ref=e311]
+                - paragraph [ref=e312]: Open contracts expiring in the next 6 weeks
+              - generic [ref=e313]:
+                - generic [ref=e314]: OTM
+                - generic [ref=e316]: NTM
+                - generic [ref=e318]: ATM
+                - generic [ref=e320]: ITM
+            - generic [ref=e322]:
+              - generic [ref=e323]:
+                - button "Short Options" [ref=e324]
+                - button "Long Options" [ref=e325]
+              - generic [ref=e326]:
+                - button "Call" [pressed] [ref=e327]
+                - button "Put" [ref=e328]
+            - paragraph [ref=e329]: No short call options expiring in the next 6 weeks
+        - generic [ref=e331]:
+          - generic [ref=e332]:
+            - paragraph [ref=e333]: OolTool Performance
+            - img [ref=e334]
+          - paragraph [ref=e338]: How much value OolTool's suggestions have generated — separate from your portfolio's own gains.
+          - generic [ref=e339]:
+            - generic [ref=e340]:
+              - generic [ref=e341]:
+                - img [ref=e342]
+                - paragraph [ref=e346]: Opportunities Executed
+              - paragraph [ref=e347]: 0 / 0
+              - paragraph [ref=e348]: No scenarios yet
+            - generic [ref=e349]:
+              - generic [ref=e350]:
+                - img [ref=e351]
+                - paragraph [ref=e353]: Premium Generated
+              - paragraph [ref=e354]: $0
+              - paragraph [ref=e355]: From executed scenarios
+            - generic [ref=e356]:
+              - generic [ref=e357]:
+                - img [ref=e358]
+                - paragraph [ref=e361]: Successful Opportunities
+              - paragraph [ref=e362]: 0 / 0
+              - paragraph [ref=e363]: None settled yet
+          - generic [ref=e364]:
+            - generic [ref=e365]: "Covered Calls: 0"
+            - generic [ref=e366]: "Cash-Secured Puts: 0"
+            - generic [ref=e367]: "Other: 0"
+    - contentinfo [ref=e368]:
+      - generic [ref=e369]:
+        - generic [ref=e370]:
+          - paragraph [ref=e371]: © 2026 Ools Inc. All rights reserved.
+          - navigation "Legal and support" [ref=e372]:
+            - link "Privacy Policy" [ref=e374] [cursor=pointer]:
+              - /url: /privacy-policy
+            - generic [ref=e375]:
+              - generic [ref=e376]: ·
+              - link "Terms of Service" [ref=e377] [cursor=pointer]:
+                - /url: /terms-of-services
+            - generic [ref=e378]:
+              - generic [ref=e379]: ·
+              - link "Disclosures" [ref=e380] [cursor=pointer]:
+                - /url: /disclosures
+            - generic [ref=e381]:
+              - generic [ref=e382]: ·
+              - link "Risk Warning" [ref=e383] [cursor=pointer]:
                 - /url: /risk-warning
-            - generic [ref=e312]:
-              - generic [ref=e313]: ·
-              - link "Contact" [ref=e314] [cursor=pointer]:
+            - generic [ref=e384]:
+              - generic [ref=e385]: ·
+              - link "Contact" [ref=e386] [cursor=pointer]:
                 - /url: /contact
-        - paragraph [ref=e315]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
+        - paragraph [ref=e387]: Options trading involves substantial risk and is not suitable for all investors. Past performance does not guarantee future results.
   - region "Notifications alt+T"
-  - alert [ref=e316]: News | OolTool
+  - alert [ref=e388]
 ```
 
 # Test source
 
 ```ts
-  96  |             name: /^portfolio$/i
-  97  |           }
-  98  |         ).first(),
-  99  |         'Portfolio menu'
-  100 |       );
-  101 | 
-  102 |       await safeClick(
-  103 |         page.getByRole(
-  104 |           'menuitem',
-  105 |           {
-  106 |             name
-  107 |           }
-  108 |         ),
-  109 |         label
-  110 |       );
-  111 |     }
-  112 | 
-  113 |     async function searchSymbol(
-  114 |       page: Page,
-  115 |       symbol: string
-  116 |     ) {
-  117 |       const input =
-  118 |         page.locator(
-  119 |           'main'
-  120 |         ).getByRole(
-  121 |           'combobox'
-  122 |         ).or(
-  123 |           page.getByPlaceholder(
-  124 |             /symbol/i
-  125 |           )
-  126 |         ).first();
-  127 | 
-  128 |       await input.fill(
-  129 |         symbol
-  130 |       );
-  131 | 
-  132 |       const choice =
-  133 |         page.getByRole(
-  134 |           'option',
-  135 |           {
-  136 |             name: new RegExp(
-  137 |               symbol,
-  138 |               'i'
-  139 |             )
-  140 |           }
-  141 |         ).first();
-  142 | 
-  143 |       if (
-  144 |         await choice.waitFor({
-  145 |           state: 'visible',
-  146 |           timeout: 5000
-  147 |         }).then(
-  148 |           () => true
-  149 |         ).catch(
-  150 |           () => false
-  151 |         )
-  152 |       ) {
-  153 |         await safeClick(
-  154 |           choice,
-  155 |           `Select ${symbol}`
-  156 |         );
-  157 |       }
-  158 | 
-  159 |       const search =
-  160 |         page.getByRole(
-  161 |           'button',
-  162 |           {
-  163 |             name: /^search$/i
-  164 |           }
-  165 |         );
-  166 | 
-  167 |       const searchReady =
-  168 |         await expect(
-  169 |           search
-  170 |         ).toBeEnabled({
-  171 |           timeout: 12000
-  172 |         }).then(
-  173 |           () => true
-  174 |         ).catch(
-  175 |           () => false
-  176 |         );
-  177 | 
-  178 |       if (
-  179 |         searchReady
-  180 |       ) {
-  181 |         await safeClick(
-  182 |           search,
-  183 |           `Search ${symbol}`
-  184 |         );
-  185 |       }
-  186 | 
-  187 |       await expect(
-  188 |         page.getByRole(
-  189 |           'heading',
-  190 |           {
-  191 |             name: new RegExp(
-  192 |               `^${symbol}$`
-  193 |             )
-  194 |           }
-  195 |         )
-> 196 |       ).toBeVisible({
-      |         ^ Error: expect(locator).toBeVisible() failed
-  197 |         timeout: 30000
-  198 |       });
-  199 |     }
-  200 | 
-  201 |     function rangeButton(
-  202 |       page: Page,
-  203 |       name: string
-  204 |     ) {
-  205 |       return page.locator(
-  206 |         'main'
-  207 |       ).getByRole(
-  208 |         'button',
-  209 |         {
-  210 |           name: new RegExp(
-  211 |             `^${name}$`
-  212 |           )
-  213 |         }
-  214 |       );
-  215 |     }
-  216 | 
-  217 |     async function expectChosen(
-  218 |       button: Locator
-  219 |     ) {
-  220 |       await expect(
-  221 |         button
-  222 |       ).toHaveClass(
-  223 |         /bg-primary/
-  224 |       );
-  225 |     }
-  226 | 
-  227 |     test(
-  228 |       'Company Finance switches statements and period, then resets',
-  229 |       async ({ page }) => {
-  230 |         await openDashboard(
-  231 |           page
-  232 |         );
-  233 | 
-  234 |         await openResearchItem(
-  235 |           page,
-  236 |           /company finance/i,
-  237 |           'Company Finance'
-  238 |         );
-  239 | 
-  240 |         await searchSymbol(
-  241 |           page,
-  242 |           'AAPL'
-  243 |         );
-  244 | 
-  245 |         await expect(
-  246 |           page.getByRole(
-  247 |             'tab',
-  248 |             {
-  249 |               name: /^income statement$/i
-  250 |             }
-  251 |           )
-  252 |         ).toBeVisible({
-  253 |           timeout: 20000
-  254 |         });
-  255 | 
-  256 |         await expect(
-  257 |           page.locator(
-  258 |             'main'
-  259 |           )
-  260 |         ).toContainText(
-  261 |           /total revenue/i
-  262 |         );
-  263 | 
-  264 |         await safeClick(
-  265 |           rangeButton(
-  266 |             page,
-  267 |             'Quarterly'
-  268 |           ),
-  269 |           'Quarterly'
-  270 |         );
-  271 | 
-  272 |         await expectChosen(
-  273 |           rangeButton(
-  274 |             page,
-  275 |             'Quarterly'
-  276 |           )
-  277 |         );
-  278 | 
-  279 |         await safeClick(
-  280 |           rangeButton(
-  281 |             page,
-  282 |             'Annual'
-  283 |           ),
-  284 |           'Annual'
-  285 |         );
-  286 | 
-  287 |         await expectChosen(
-  288 |           rangeButton(
-  289 |             page,
-  290 |             'Annual'
-  291 |           )
-  292 |         );
-  293 | 
-  294 |         for (const statement of [
-  295 |           {
-  296 |             name: /^balance sheet$/i,
+  1   | import {
+  2   |   Locator,
+  3   |   Page
+  4   | } from '@playwright/test';
+  5   | 
+  6   | import {
+  7   |   dismissOverlays
+  8   | } from './dismissOverlays';
+  9   | import {
+  10  |   watchDelayMs
+  11  | } from '../config/watchMode';
+  12  | 
+  13  | /* =============================================================================
+  14  | HELPER: safeClick
+  15  | 
+  16  | PURPOSE
+  17  | -------
+  18  | Waits for a locator to become visible, scrolls it into view, then clicks it.
+  19  | Overlays are dismissed first. Real clicks are used so cookie/announcement
+  20  | layers cannot swallow Create Account, Sign up, profile, or Plans actions.
+  21  | ============================================================================= */
+  22  | 
+  23  | export async function safeClick(
+  24  |   locator: Locator,
+  25  |   label: string
+  26  | ) {
+  27  |   console.log(`[CLICK] ${label}`);
+  28  | 
+  29  |   const page =
+  30  |     locator.page();
+  31  | 
+  32  |   await dismissOverlays(
+  33  |     page
+  34  |   );
+  35  | 
+  36  |   try {
+  37  |     await locator.waitFor({
+  38  |       state: 'visible',
+  39  |       timeout: 15000,
+  40  |     });
+  41  |   } catch {
+  42  |     // A survey or cookie layer often appears a moment after the first
+  43  |     // dismiss during a long run. Clear it and wait for the target again.
+  44  |     await dismissOverlays(
+  45  |       page
+  46  |     );
+  47  | 
+> 48  |     await locator.waitFor({
+      |                   ^ TimeoutError: locator.waitFor: Timeout 15000ms exceeded.
+  49  |       state: 'visible',
+  50  |       timeout: 15000,
+  51  |     });
+  52  |   }
+  53  | 
+  54  |   await locator.scrollIntoViewIfNeeded({
+  55  |     timeout: 5000,
+  56  |   }).catch(
+  57  |     () => undefined
+  58  |   );
+  59  | 
+  60  |   try {
+  61  |     await locator.click({
+  62  |       timeout: 8000,
+  63  |     });
+  64  |   } catch {
+  65  |     await dismissOverlays(
+  66  |       page
+  67  |     );
+  68  | 
+  69  |     await locator.scrollIntoViewIfNeeded({
+  70  |       timeout: 5000,
+  71  |     }).catch(
+  72  |       () => undefined
+  73  |     );
+  74  | 
+  75  |     await locator.click({
+  76  |       timeout: 8000,
+  77  |     }).catch(
+  78  |       async () => {
+  79  |         await locator.click({
+  80  |           force: true,
+  81  |           timeout: 8000
+  82  |         });
+  83  |       }
+  84  |     );
+  85  |   }
+  86  | 
+  87  |   const watchDelay =
+  88  |     watchDelayMs();
+  89  | 
+  90  |   if (watchDelay > 0) {
+  91  |     await locator.page().waitForTimeout(
+  92  |       watchDelay
+  93  |     );
+  94  |   }
+  95  | }
+  96  | 
+  97  | export async function openHeaderMenuItem(
+  98  |   page: Page,
+  99  |   menuName: RegExp,
+  100 |   itemName: RegExp,
+  101 |   label: string
+  102 | ) {
+  103 |   const menuButton =
+  104 |     page.getByRole(
+  105 |       'button',
+  106 |       {
+  107 |         name: menuName
+  108 |       }
+  109 |     ).first();
+  110 | 
+  111 |   const choices =
+  112 |     () => [
+  113 |       page.getByRole(
+  114 |         'menuitem',
+  115 |         {
+  116 |           name: itemName
+  117 |         }
+  118 |       ).first(),
+  119 |       page.getByRole(
+  120 |         'option',
+  121 |         {
+  122 |           name: itemName
+  123 |         }
+  124 |       ).first(),
+  125 |       page.getByRole(
+  126 |         'link',
+  127 |         {
+  128 |           name: itemName
+  129 |         }
+  130 |       ).first()
+  131 |     ];
+  132 | 
+  133 |   let visibleChoice: Locator | undefined;
+  134 | 
+  135 |   for (
+  136 |     let attempt = 1;
+  137 |     attempt <= 2 && !visibleChoice;
+  138 |     attempt += 1
+  139 |   ) {
+  140 |     await safeClick(
+  141 |       menuButton,
+  142 |       `${label} menu`
+  143 |     );
+  144 | 
+  145 |     for (const candidate of choices()) {
+  146 |       if (
+  147 |         await candidate.isVisible({
+  148 |           timeout: 2000
 ```

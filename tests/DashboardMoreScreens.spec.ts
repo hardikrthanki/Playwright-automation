@@ -18,8 +18,10 @@ import { OptionsResearchPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
-  from './helpers/safeClick';
+import {
+  openHeaderMenu,
+  safeClick
+} from './helpers/safeClick';
 
 /* =============================================================================
 TEST SUITE: More dashboard screens
@@ -62,14 +64,9 @@ test.describe(
     test(
       'Research menu opens equity research for a symbol',
       async ({ page }) => {
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
+        await openHeaderMenu(
+          page,
+          /^research$/i
         );
 
         for (const item of [

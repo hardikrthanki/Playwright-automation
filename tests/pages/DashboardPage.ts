@@ -181,36 +181,70 @@ export class DashboardPage
 
     const menuTrigger =
       this.page.getByRole(
+        'banner'
+      ).getByRole(
         'button',
         {
-          name: /^ht$/i
+          name: /^[A-Z]{2}$/
         }
-      ).or(
-        this.page.getByText(
-          'HT',
-          {
-            exact: true
-          }
-        )
-      ).or(
-        this.page.locator(
-          'header button'
-        ).filter({
-          hasText: /^[A-Z]{1,2}$/
-        })
+      ).first();
+
+    const accountMenu =
+      this.profileMenuItem(
+        'Billing'
       ).or(
         this.page.getByRole(
-          'button',
+          'menuitem',
           {
-            name: /account|profile menu|user menu/i
+            name: /sign out|billing/i
           }
         )
       ).first();
 
-    await safeClick(
-      menuTrigger,
-      'Open Profile Menu'
-    );
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      await menuTrigger.hover();
+
+      const openedByHover =
+        await accountMenu.waitFor({
+          state: 'visible',
+          timeout: 1500
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (openedByHover) {
+        break;
+      }
+
+      const expanded =
+        await menuTrigger.getAttribute(
+          'aria-expanded'
+        ).catch(
+          () => null
+        );
+
+      if (expanded !== 'true') {
+        await menuTrigger.click({
+          timeout: 8000
+        });
+      }
+
+      const opened =
+        await accountMenu.waitFor({
+          state: 'visible',
+          timeout: 5000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (opened || expanded === 'true') {
+        break;
+      }
+    }
 
     await expect(
       this.profileMenuItem(

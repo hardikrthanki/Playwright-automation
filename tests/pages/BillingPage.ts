@@ -1190,8 +1190,8 @@ private billingIntervalButton(
 ) {
   const name =
     interval === 'monthly'
-      ? /^(monthly)$/i
-      : /^(annual)$/i;
+      ? /^monthly\b/i
+      : /^(annual|yearly)\b/i;
 
   return this.page
     .getByRole(
@@ -1251,10 +1251,27 @@ private async selectBillingIntervalIfAvailable(
     () => undefined
   );
 
-  await safeClick(
-    intervalButton,
-    `Select ${interval} billing`
-  );
+  const pressed =
+    await intervalButton.getAttribute(
+      'aria-pressed'
+    );
+
+  const dataState =
+    await intervalButton.getAttribute(
+      'data-state'
+    );
+
+  if (
+    pressed === 'true' ||
+    dataState === 'active' ||
+    dataState === 'on'
+  ) {
+    return;
+  }
+
+  await intervalButton.click({
+    timeout: 8000
+  });
 }
 
 private planActionButtonPattern(
@@ -1623,13 +1640,57 @@ async openPlanChangeCalculationPreview(
     `${options.action} ${options.targetPlan}`
   );
 
-  await expect(
+  const dialog =
     this.planChangeDialog(
       options
-    )
+    );
+
+  await expect(
+    dialog
   ).toBeVisible({
     timeout: 15000
   });
+
+  const dialogText =
+    await dialog.innerText();
+
+  const showsMonthly =
+    /\/month|per month/i.test(
+      dialogText
+    );
+
+  const showsAnnual =
+    /\/year|per year/i.test(
+      dialogText
+    );
+
+  const wrongInterval =
+    options.interval === 'annual'
+      ? showsMonthly && !showsAnnual
+      : showsAnnual && !showsMonthly;
+
+  if (wrongInterval) {
+    await this.closePlanChangeCalculationPreview(
+      options
+    );
+
+    await this.billingIntervalButton(
+      options.interval
+    ).click({
+      timeout: 8000
+    });
+
+    await safeClick(
+      actionButton,
+      `${options.action} ${options.targetPlan} ${options.interval}`
+    );
+
+    await expect(
+      dialog
+    ).toBeVisible({
+      timeout: 15000
+    });
+  }
 
   Logger.success(
     `${options.action} calculation preview opened for ${options.targetPlan} ${options.interval}`
@@ -1842,15 +1903,23 @@ async validatePlanChangeCalculationPreview(
         planCharge ??
         0
       ) + 0.02 < comparableListPrice &&
-      amountDueToday !== undefined &&
-      Math.abs(
+      recurringMatchesList &&
+      (
         (
-          planCharge ??
-          0
-        ) -
-          amountDueToday
-      ) <= 1 &&
-      recurringMatchesList;
+          amountDueToday !== undefined &&
+          Math.abs(
+            (
+              planCharge ??
+              0
+            ) -
+              amountDueToday
+          ) <= 1
+        ) ||
+        (
+          amountDueToday !== undefined &&
+          amountDueToday < 0
+        )
+      );
 
     const listPriceShown =
       priceAppears(
@@ -2067,6 +2136,52 @@ async submitPlanChangeCalculationPreview(
         }
       )
       .first();
+
+  const scheduledChange =
+    dialog.getByRole(
+      'button',
+      {
+        name: /schedule (downgrade|change|switch)|switch to (monthly|annual)|^confirm$|confirm (change|switch)|yes,?\s*(switch|change|confirm)/i
+      }
+    ).first();
+
+  if (
+    !await termsCheckbox.isVisible({
+      timeout: 3000
+    }).catch(
+      () => false
+    )
+  ) {
+    await expect(
+      scheduledChange,
+      'Scheduled plan change should have a confirm button when there is no pay checkbox.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      scheduledChange,
+      'Confirm scheduled plan change'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 60000
+    });
+
+    await this.page.waitForLoadState(
+      'domcontentloaded'
+    ).catch(
+      () => undefined
+    );
+
+    Logger.success(
+      `${options.action} scheduled for ${options.targetPlan}`
+    );
+
+    return;
+  }
 
   await expect(
     termsCheckbox

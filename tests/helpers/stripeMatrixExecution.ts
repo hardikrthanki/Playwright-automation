@@ -2222,17 +2222,9 @@ export async function executeStripeMatrixScenario(
     scenario.status ===
     'known-bug'
   ) {
-    const bug =
-      scenario.dependency ??
-      'Known product bug';
-
-    test.fail(
-      true,
-      bug
-    );
-
     throw new Error(
-      bug
+      scenario.dependency ??
+        'Known product bug'
     );
   }
 

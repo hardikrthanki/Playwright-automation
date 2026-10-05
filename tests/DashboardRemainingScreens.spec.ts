@@ -13,8 +13,10 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
-  from './helpers/safeClick';
+import {
+  openHeaderMenu,
+  safeClick
+} from './helpers/safeClick';
 
 /* =============================================================================
 TEST SUITE: Remaining dashboard screens
@@ -288,14 +290,9 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^portfolio$/i
-            }
-          ).first(),
-          'Portfolio menu'
+        await openHeaderMenu(
+          page,
+          /^portfolio$/i
         );
 
         await safeClick(
@@ -349,14 +346,9 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^portfolio$/i
-            }
-          ).first(),
-          'Portfolio menu'
+        await openHeaderMenu(
+          page,
+          /^portfolio$/i
         );
 
         await safeClick(

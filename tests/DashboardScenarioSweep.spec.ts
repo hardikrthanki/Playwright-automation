@@ -13,8 +13,10 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
-  from './helpers/safeClick';
+import {
+  openHeaderMenu,
+  safeClick
+} from './helpers/safeClick';
 
 /* =============================================================================
 TEST SUITE: Remaining choices on academy, finance, support, and the header
@@ -334,14 +336,9 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
+        await openHeaderMenu(
+          page,
+          /^research$/i
         );
 
         await safeClick(
@@ -615,14 +612,9 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
+        await openHeaderMenu(
+          page,
+          /^research$/i
         );
 
         await safeClick(
@@ -771,14 +763,9 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^portfolio$/i
-            }
-          ).first(),
-          'Portfolio menu'
+        await openHeaderMenu(
+          page,
+          /^portfolio$/i
         );
 
         await safeClick(

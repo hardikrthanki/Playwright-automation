@@ -13,8 +13,10 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
-  from './helpers/safeClick';
+import {
+  openHeaderMenu,
+  safeClick
+} from './helpers/safeClick';
 
 /* =============================================================================
 TEST SUITE: Each main menu, one at a time
@@ -62,14 +64,9 @@ test.describe(
       item: RegExp,
       label: string
     ) {
-      await safeClick(
-        page.getByRole(
-          'button',
-          {
-            name: menu
-          }
-        ).first(),
-        label
+      await openHeaderMenu(
+        page,
+        menu
       );
 
       await safeClick(

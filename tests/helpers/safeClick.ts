@@ -94,11 +94,9 @@ export async function safeClick(
   }
 }
 
-export async function openHeaderMenuItem(
+export async function openHeaderMenu(
   page: Page,
-  menuName: RegExp,
-  itemName: RegExp,
-  label: string
+  menuName: RegExp
 ) {
   const menuButton =
     page.getByRole(
@@ -108,62 +106,109 @@ export async function openHeaderMenuItem(
       }
     ).first();
 
-  const choices =
-    () => [
-      page.getByRole(
-        'menuitem',
-        {
-          name: itemName
-        }
-      ).first(),
+  const anyItem =
+    page.getByRole(
+      'menuitem'
+    ).first();
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    await menuButton.hover();
+
+    const openedByHover =
+      await anyItem.waitFor({
+        state: 'visible',
+        timeout: 1500
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (openedByHover) {
+      return;
+    }
+
+    const expanded =
+      await menuButton.getAttribute(
+        'aria-expanded'
+      ).catch(
+        () => null
+      );
+
+    if (expanded !== 'true') {
+      await menuButton.click({
+        timeout: 8000
+      });
+    }
+
+    const opened =
+      await anyItem.waitFor({
+        state: 'visible',
+        timeout: 5000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      );
+
+    if (opened) {
+      return;
+    }
+
+    await page.keyboard.press(
+      'Escape'
+    ).catch(
+      () => undefined
+    );
+  }
+
+  await anyItem.waitFor({
+    state: 'visible',
+    timeout: 15000
+  });
+}
+
+export async function openHeaderMenuItem(
+  page: Page,
+  menuName: RegExp,
+  itemName: RegExp,
+  label: string
+) {
+  const menuItem =
+    page.getByRole(
+      'menuitem',
+      {
+        name: itemName
+      }
+    ).or(
       page.getByRole(
         'option',
         {
           name: itemName
         }
-      ).first(),
+      )
+    ).or(
       page.getByRole(
         'link',
         {
           name: itemName
         }
-      ).first()
-    ];
+      )
+    ).first();
 
-  let visibleChoice: Locator | undefined;
-
-  for (
-    let attempt = 1;
-    attempt <= 2 && !visibleChoice;
-    attempt += 1
-  ) {
-    await safeClick(
-      menuButton,
-      `${label} menu`
-    );
-
-    for (const candidate of choices()) {
-      if (
-        await candidate.isVisible({
-          timeout: 2000
-        }).catch(
-          () => false
-        )
-      ) {
-        visibleChoice = candidate;
-        break;
-      }
-    }
-  }
-
-  await safeClick(
-    visibleChoice ??
-      page.getByRole(
-        'menuitem',
-        {
-          name: itemName
-        }
-      ).first(),
-    label
+  await openHeaderMenu(
+    page,
+    menuName
   );
+
+  await menuItem.waitFor({
+    state: 'visible',
+    timeout: 8000
+  });
+
+  await menuItem.click({
+    timeout: 8000
+  });
+
+  void label;
 }

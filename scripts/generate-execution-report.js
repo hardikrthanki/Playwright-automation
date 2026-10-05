@@ -67,15 +67,15 @@ function tooltipAttr(value) {
 
 function readPngSize(filePath) {
   try {
-    const buffer = fs.readFileSync(filePath);
+    const buffer = Buffer.alloc(24);
+    const fd = fs.openSync(filePath, 'r');
+    try {
+      fs.readSync(fd, buffer, 0, 24, 0);
+    } finally {
+      fs.closeSync(fd);
+    }
 
-    if (
-      buffer.length >= 24 &&
-      buffer[0] === 0x89 &&
-      buffer[1] === 0x50 &&
-      buffer[2] === 0x4e &&
-      buffer[3] === 0x47
-    ) {
+    if (buffer[0] === 0x89 && buffer.toString('ascii', 1, 4) === 'PNG') {
       return {
         width: buffer.readUInt32BE(16),
         height: buffer.readUInt32BE(20),
@@ -86,6 +86,490 @@ function readPngSize(filePath) {
   }
 
   return null;
+}
+
+const decodedPngCache = new Map();
+
+function decodePng(filePath) {
+  if (decodedPngCache.has(filePath)) {
+    return decodedPngCache.get(filePath);
+  }
+
+  const decoded = decodePngBody(filePath);
+  decodedPngCache.set(filePath, decoded);
+  return decoded;
+}
+
+function decodePngBody(filePath) {
+  try {
+    const buffer = fs.readFileSync(filePath);
+    if (buffer.length < 24 || buffer[0] !== 0x89 || buffer.toString('ascii', 1, 4) !== 'PNG') {
+      return null;
+    }
+
+    let offset = 8;
+    const idat = [];
+    let width = 0;
+    let height = 0;
+    let colorType = 6;
+
+    while (offset + 8 < buffer.length) {
+      const length = buffer.readUInt32BE(offset);
+      const type = buffer.toString('ascii', offset + 4, offset + 8);
+      const data = buffer.subarray(offset + 8, offset + 8 + length);
+      if (type === 'IHDR') {
+        width = data.readUInt32BE(0);
+        height = data.readUInt32BE(4);
+        colorType = data[9];
+      } else if (type === 'IDAT') {
+        idat.push(data);
+      } else if (type === 'IEND') {
+        break;
+      }
+      offset += 12 + length;
+    }
+
+    if (!width || !height || !idat.length || (colorType !== 2 && colorType !== 6)) {
+      return null;
+    }
+
+    const inflated = zlib.inflateSync(Buffer.concat(idat));
+    const channels = colorType === 6 ? 4 : 3;
+    const stride = width * channels;
+    const pixels = Buffer.alloc(width * height * 4);
+    let src = 0;
+    let previous = Buffer.alloc(stride);
+
+    for (let y = 0; y < height; y += 1) {
+      const filter = inflated[src];
+      src += 1;
+      const row = Buffer.from(inflated.subarray(src, src + stride));
+      src += stride;
+
+      for (let index = 0; index < stride; index += 1) {
+        const left = index >= channels ? row[index - channels] : 0;
+        const up = previous[index];
+        const upLeft = index >= channels ? previous[index - channels] : 0;
+        let value = row[index];
+        if (filter === 1) value = (value + left) & 255;
+        else if (filter === 2) value = (value + up) & 255;
+        else if (filter === 3) value = (value + Math.floor((left + up) / 2)) & 255;
+        else if (filter === 4) {
+          const estimate = left + up - upLeft;
+          const leftDistance = Math.abs(estimate - left);
+          const upDistance = Math.abs(estimate - up);
+          const diagonalDistance = Math.abs(estimate - upLeft);
+          const predictor = leftDistance <= upDistance && leftDistance <= diagonalDistance
+            ? left
+            : upDistance <= diagonalDistance
+              ? up
+              : upLeft;
+          value = (value + predictor) & 255;
+        }
+        row[index] = value;
+      }
+
+      previous = row;
+      for (let x = 0; x < width; x += 1) {
+        const source = x * channels;
+        const target = (y * width + x) * 4;
+        pixels[target] = row[source];
+        pixels[target + 1] = row[source + 1];
+        pixels[target + 2] = row[source + 2];
+        pixels[target + 3] = channels === 4 ? row[source + 3] : 255;
+      }
+    }
+
+    return { width, height, pixels };
+  } catch {
+    return null;
+  }
+}
+
+function greenControlBoxes(decoded) {
+  const { width, height, pixels } = decoded;
+  const mask = new Uint8Array(width * height);
+
+  for (let index = 0; index < width * height; index += 1) {
+    const red = pixels[index * 4];
+    const green = pixels[index * 4 + 1];
+    const blue = pixels[index * 4 + 2];
+    const ring = green > 120 && green > red + 25 && green > blue + 15 && red < 190;
+    const fill = green > 90 && red < 90 && blue < 130 && green > red + 30;
+    if (ring || fill) mask[index] = 1;
+  }
+
+  const seen = new Uint8Array(width * height);
+  const found = [];
+
+  for (let y = 0; y < height; y += 3) {
+    for (let x = 0; x < width; x += 3) {
+      const start = y * width + x;
+      if (!mask[start] || seen[start]) continue;
+      let minX = x;
+      let maxX = x;
+      let minY = y;
+      let maxY = y;
+      let count = 0;
+      const stack = [start];
+      seen[start] = 1;
+
+      while (stack.length) {
+        const index = stack.pop();
+        count += 1;
+        const currentX = index % width;
+        const currentY = (index / width) | 0;
+        if (currentX < minX) minX = currentX;
+        if (currentX > maxX) maxX = currentX;
+        if (currentY < minY) minY = currentY;
+        if (currentY > maxY) maxY = currentY;
+        [index - 1, index + 1, index - width, index + width].forEach(next => {
+          if (next < 0 || next >= mask.length || seen[next] || !mask[next]) return;
+          seen[next] = 1;
+          stack.push(next);
+        });
+      }
+
+      const boxWidth = maxX - minX;
+      const boxHeight = maxY - minY;
+      const cookieButton = minX > width * 0.75 && minY > height * 0.82;
+      if (
+        !cookieButton &&
+        boxWidth > 48 &&
+        boxHeight > 18 &&
+        boxWidth < width * 0.85 &&
+        boxHeight < height * 0.45 &&
+        count > 80
+      ) {
+        found.push({
+          x: minX,
+          y: minY,
+          width: boxWidth,
+          height: boxHeight,
+          count,
+          density: count / Math.max(1, boxWidth * boxHeight),
+        });
+      }
+    }
+  }
+
+  return found.sort((left, right) => right.count - left.count);
+}
+
+function darkTextBox(decoded, maxY) {
+  const { width, height, pixels } = decoded;
+  let minX = width;
+  let minY = height;
+  let maxX = 0;
+  let maxYSeen = 0;
+  let count = 0;
+  const limit = Math.min(height, maxY);
+
+  for (let y = 0; y < limit; y += 1) {
+    for (let x = 0; x < Math.min(width, 520); x += 1) {
+      const index = (y * width + x) * 4;
+      const red = pixels[index];
+      const green = pixels[index + 1];
+      const blue = pixels[index + 2];
+      if (red < 80 && green < 80 && blue < 80) {
+        count += 1;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxYSeen) maxYSeen = y;
+      }
+    }
+  }
+
+  if (count < 20) return null;
+  return {
+    x: Math.max(0, minX - 8),
+    y: Math.max(0, minY - 8),
+    width: Math.max(24, maxX - minX + 16),
+    height: Math.max(24, maxYSeen - minY + 16),
+  };
+}
+
+function headerAvatarBox(decoded) {
+  const { width, height, pixels } = decoded;
+  let minX = width;
+  let minY = height;
+  let maxX = 0;
+  let maxY = 0;
+  let count = 0;
+  const top = Math.min(height, 72);
+  const left = Math.max(0, width - 150);
+
+  for (let y = 4; y < top; y += 1) {
+    for (let x = left; x < width - 8; x += 1) {
+      const index = (y * width + x) * 4;
+      const red = pixels[index];
+      const green = pixels[index + 1];
+      const blue = pixels[index + 2];
+      const light = red > 225 && green > 225 && blue > 225;
+      if (!light) {
+        count += 1;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  if (count < 30) return null;
+  return {
+    x: Math.max(0, minX - 6),
+    y: Math.max(0, minY - 6),
+    width: Math.min(width - minX, maxX - minX + 12),
+    height: Math.min(height - minY, maxY - minY + 12),
+  };
+}
+
+function whiteDialogBox(decoded) {
+  const { width, height, pixels } = decoded;
+  const rows = [];
+
+  for (let y = 24; y < height - 8; y += 2) {
+    let runStart = -1;
+    let bestStart = 0;
+    let bestEnd = 0;
+
+    for (let x = 0; x <= width; x += 2) {
+      let white = false;
+      if (x < width) {
+        const index = (y * width + x) * 4;
+        white = pixels[index] > 236 && pixels[index + 1] > 236 && pixels[index + 2] > 236;
+      }
+      if (white && runStart < 0) runStart = x;
+      if ((!white || x >= width) && runStart >= 0) {
+        if (x - runStart > bestEnd - bestStart) {
+          bestStart = runStart;
+          bestEnd = x;
+        }
+        runStart = -1;
+      }
+    }
+
+    const run = bestEnd - bestStart;
+    if (run > width * 0.22 && run < width * 0.72) {
+      rows.push({ y, start: bestStart, end: bestEnd });
+    }
+  }
+
+  if (rows.length < 30) return null;
+
+  const minX = Math.min(...rows.map(row => row.start));
+  const maxX = Math.max(...rows.map(row => row.end));
+  const minY = rows[0].y;
+  const maxY = rows[rows.length - 1].y;
+  const boxWidth = maxX - minX;
+  const boxHeight = maxY - minY;
+
+  if (boxWidth < width * 0.22 || boxWidth > width * 0.75 || boxHeight < 100) {
+    return null;
+  }
+
+  return { x: minX, y: minY, width: boxWidth, height: boxHeight };
+}
+
+function dialogSlice(dialog, from, to) {
+  const top = dialog.y + Math.round(dialog.height * from);
+  const bottom = dialog.y + Math.round(dialog.height * to);
+
+  return {
+    x: dialog.x + 16,
+    y: top,
+    width: Math.max(48, dialog.width - 32),
+    height: Math.max(40, bottom - top),
+  };
+}
+
+function redControlBoxes(decoded) {
+  const { width, height, pixels } = decoded;
+  const mask = new Uint8Array(width * height);
+
+  for (let index = 0; index < width * height; index += 1) {
+    const red = pixels[index * 4];
+    const green = pixels[index * 4 + 1];
+    const blue = pixels[index * 4 + 2];
+    if (red > 150 && red > green + 45 && red > blue + 45 && green < 130) {
+      mask[index] = 1;
+    }
+  }
+
+  const seen = new Uint8Array(width * height);
+  const found = [];
+
+  for (let y = 0; y < height; y += 3) {
+    for (let x = 0; x < width; x += 3) {
+      const start = y * width + x;
+      if (!mask[start] || seen[start]) continue;
+      let minX = x;
+      let maxX = x;
+      let minY = y;
+      let maxY = y;
+      let count = 0;
+      const stack = [start];
+      seen[start] = 1;
+
+      while (stack.length) {
+        const index = stack.pop();
+        count += 1;
+        const currentX = index % width;
+        const currentY = (index / width) | 0;
+        if (currentX < minX) minX = currentX;
+        if (currentX > maxX) maxX = currentX;
+        if (currentY < minY) minY = currentY;
+        if (currentY > maxY) maxY = currentY;
+        [index - 1, index + 1, index - width, index + width].forEach(next => {
+          if (next < 0 || next >= mask.length || seen[next] || !mask[next]) return;
+          seen[next] = 1;
+          stack.push(next);
+        });
+      }
+
+      const boxWidth = maxX - minX;
+      const boxHeight = maxY - minY;
+      if (boxWidth > 50 && boxHeight > 16 && boxWidth < 280 && boxHeight < 70 && count > 80) {
+        found.push({
+          x: minX,
+          y: minY,
+          width: boxWidth,
+          height: boxHeight,
+          count,
+          density: count / Math.max(1, boxWidth * boxHeight),
+        });
+      }
+    }
+  }
+
+  return found.sort((left, right) => right.count - left.count);
+}
+
+function dialogAroundButton(decoded, button) {
+  const left = Math.max(0, button.x - 240);
+  const top = Math.max(0, button.y - 170);
+  const right = Math.min(decoded.width, button.x + button.width + 80);
+  const bottom = Math.min(decoded.height, button.y + button.height + 28);
+
+  return {
+    x: left,
+    y: top,
+    width: Math.max(48, right - left),
+    height: Math.max(40, bottom - top),
+  };
+}
+
+function closestControl(boxes, width, height) {
+  return [...boxes].sort((left, right) => {
+    const distance = box => {
+      const centerX = box.x + box.width / 2 - width / 2;
+      const centerY = box.y + box.height / 2 - height / 2;
+      return centerX * centerX + centerY * centerY;
+    };
+    return distance(left) - distance(right);
+  })[0] || null;
+}
+
+function sparseErrorLine(decoded) {
+  const line = darkTextBox(decoded, 80);
+  if (!line || line.width > 360 || line.height > 48 || line.y > 36) {
+    return null;
+  }
+
+  let below = 0;
+  const startY = line.y + line.height + 12;
+
+  for (let y = startY; y < decoded.height; y += 4) {
+    for (let x = 0; x < decoded.width; x += 4) {
+      const index = (y * decoded.width + x) * 4;
+      if (decoded.pixels[index] < 80 && decoded.pixels[index + 1] < 80 && decoded.pixels[index + 2] < 80) {
+        below += 1;
+      }
+    }
+  }
+
+  return below < 40 ? line : null;
+}
+
+function findFailureFieldRegion(filePath, test) {
+  const decoded = decodePng(filePath);
+  if (!decoded) return null;
+
+  const errorLine = sparseErrorLine(decoded);
+  if (errorLine) return errorLine;
+
+  const hint = [
+    test?.title,
+    test?.error,
+    test?.errorMessage,
+    test?.technicalError,
+    test?.productBug?.actual,
+    test?.productBug?.expected,
+    test?.productBug?.name,
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  if (/internal server error/.test(hint)) {
+    return darkTextBox(decoded, 90);
+  }
+
+  if (/logout|sign out|avatar|initials/.test(hint)) {
+    return headerAvatarBox(decoded);
+  }
+
+  const dialog = whiteDialogBox(decoded);
+  const boxes = greenControlBoxes(decoded);
+  const filled = boxes.filter(box => box.density > 0.45 && box.height < 90 && box.width < 460);
+  const outlined = boxes.filter(box => box.density <= 0.45 && box.width > 180 && box.height < 80);
+
+  if (/verify button|verify turns on|enabled only for six|tobedisabled/.test(hint)) {
+    return closestControl(filled, decoded.width, decoded.height)
+      || closestControl(outlined, decoded.width, decoded.height)
+      || null;
+  }
+
+  if (/otp|six digit|pasted|verification field|enter otp/.test(hint)) {
+    return closestControl(outlined, decoded.width, decoded.height)
+      || boxes.find(box => box.width > 200 && box.height < 80)
+      || null;
+  }
+
+  if (dialog && /outside of the viewport|confirm\s*&?\s*pay|confirm and pay/.test(hint)) {
+    return dialogSlice(dialog, 0.78, 1);
+  }
+
+  if (dialog && /charge|prorat|amount due|recurring|renewal|next billing|1490|list price/.test(hint)) {
+    return dialogSlice(dialog, 0.4, 0.78);
+  }
+
+  if (/cancel at expiry|yearly cancel|keep my plan|keep access|cancel subscription/.test(hint)) {
+    if (dialog) {
+      return {
+        x: dialog.x,
+        y: dialog.y,
+        width: dialog.width,
+        height: dialog.height,
+      };
+    }
+
+    const cancelButton = closestControl(
+      redControlBoxes(decoded).filter(box => box.density > 0.35),
+      decoded.width,
+      decoded.height,
+    );
+    if (cancelButton) {
+      return dialogAroundButton(decoded, cancelButton);
+    }
+  }
+
+  if (/textbox|gmail|trial with card/.test(hint)) {
+    return closestControl(filled, decoded.width, decoded.height) || null;
+  }
+
+  return closestControl(filled, decoded.width, decoded.height)
+    || closestControl(outlined, decoded.width, decoded.height)
+    || null;
 }
 
 function normalizeEvidenceRegion(candidate) {
@@ -387,9 +871,209 @@ const tests =
     : Array.isArray(results.files)
     ? collectHtmlReportTests(results.files)
     : collectTests(results.suites);
+
+const knownDefectCopy = [
+  {
+    match: /otp input limits entry to six digits/i,
+    group: 'Signup',
+    name: 'Signup code accepts a seventh digit',
+    expected: 'The verification field should stop at six digits.',
+    actual: 'Typing a seventh digit is accepted. The field keeps seven digits.',
+    next: 'Stop the signup code field at six digits, then rerun this check.',
+  },
+  {
+    match: /trims pasted value to six digits/i,
+    group: 'Signup',
+    name: 'Pasting a longer signup code keeps the extra digits',
+    expected: 'A pasted code should keep only the first six digits.',
+    actual: 'Pasting a longer code keeps eight digits. The field allows eight.',
+    next: 'Keep only the first six digits when a longer code is pasted, then rerun this check.',
+  },
+  {
+    match: /verify button is enabled only for six digits/i,
+    group: 'Signup',
+    name: 'Verify turns on before six digits',
+    expected: 'Verify should stay off until the code is exactly six digits.',
+    actual: 'Verify turns on after five digits.',
+    next: 'Keep Verify off until the code is exactly six digits, then rerun this check.',
+  },
+  {
+    match: /SC-03|broker account limit is one/i,
+    group: 'Billing',
+    name: 'SC-03 Broker account limit is one',
+    expected: 'A position added by hand should not use the one-broker limit.',
+    actual: 'Manual entry is counted as a connected broker.',
+    next: 'Stop counting a hand-added position as a broker connection, then rerun SC-03.',
+  },
+  {
+    match: /LC-011|without counting manual entry/i,
+    group: 'Billing',
+    name: 'LC-011 Manual entry and the broker limit',
+    expected: 'The no-card trial should enforce the broker limit without counting a position added by hand.',
+    actual: 'Manual entry is counted as a broker connection. This is the same product bug as SC-03.',
+    next: 'Stop counting a hand-added position as a broker connection, then rerun LC-011.',
+  },
+  {
+    match: /SC-07|start trial with valid card/i,
+    group: 'Billing',
+    name: 'SC-07 Start trial with a valid card',
+    expected: 'After a valid card is saved, Billing should show an active free trial and that card.',
+    actual: 'Billing still shows the Free plan and does not show the saved card.',
+    next: 'Show the active trial and the saved card on Billing, then rerun SC-07.',
+  },
+  {
+    match: /SC-09|card information is securely saved/i,
+    group: 'Billing',
+    name: 'SC-09 Saved card on Billing',
+    expected: 'The card used to start the trial should appear on Billing.',
+    actual: 'The saved card is not shown after the trial starts. This is the same product bug as SC-07.',
+    next: 'Show the saved card on Billing after the trial starts, then rerun SC-09.',
+  },
+  {
+    match: /LC-007|saved payment method/i,
+    group: 'Billing',
+    name: 'LC-007 Active trial and saved card',
+    expected: 'Billing should show the active trial and the saved payment method.',
+    actual: 'Billing shows the Free plan and no saved card. This is the same product bug as SC-07 and SC-09.',
+    next: 'Show the active trial and the saved card on Billing, then rerun LC-007.',
+  },
+];
+
+function failureGroupKey(test, index = 0) {
+  const note = knownDefectNote(test);
+  const title = `${getFailureFullTitle(test, index)} ${test?.title ?? ''} ${test?.testName ?? ''} ${note?.name ?? ''}`.toLowerCase();
+
+  if (/six digit|seventh digit|pasted value|pasting a longer|verify button is enabled only|verify turns on/.test(title)) {
+    return { key: 'signup-code', label: 'The signup code does not stop at six digits' };
+  }
+  if (/sc-03|lc-011|broker account limit|manual entry/.test(title)) {
+    return { key: 'manual-broker', label: 'A hand-added position is counted as a connected broker' };
+  }
+  if (/sc-07|sc-09|lc-007|saved card|start trial with a valid card|saved payment method/.test(title)) {
+    return { key: 'trial-card', label: 'A trial started with a card still shows the Free plan and no saved card' };
+  }
+  if (/company fundamentals|company research/.test(title)) {
+    return { key: 'company-page', label: 'The company page shows Internal Server Error' };
+  }
+  if (/logout/.test(title)) {
+    return { key: 'logout', label: 'Logout looked for the wrong initials in the header' };
+  }
+  if (/before the trial ends|before trial ends/.test(title)) {
+    return { key: 'confirm-pay', label: 'Confirm & pay sits below the visible confirm box' };
+  }
+  if (/authorization failure|rate limit/.test(title)) {
+    return { key: 'otp-wait', label: 'The text-message code was rate limited' };
+  }
+  if (/trial with card/.test(title)) {
+    return { key: 'gmail-trial', label: 'The new account email was not confirmed' };
+  }
+  if (/upgrade calculation/.test(title)) {
+    return { key: 'upgrade-charge', label: 'The upgrade box showed a smaller charge than the full plan price' };
+  }
+  if (/annual-to-monthly|renewal date|billing interval/.test(title)) {
+    return { key: 'annual-monthly', label: 'Switching to monthly is scheduled for the current annual renewal' };
+  }
+  if (/cancel|refund|resume cancellation/.test(title)) {
+    return { key: 'cancel-box', label: 'The cancel box did not show the option this check expected' };
+  }
+
+  const story = plainFailureStory(test, index);
+  return { key: `story-${moduleSlug(story.happened)}`, label: story.happened };
+}
+
+function knownDefectNote(test) {
+  const title = `${test?.title ?? ''} ${test?.validation?.scenario ?? ''} ${test?.testName ?? ''}`;
+  const copy = knownDefectCopy.find(item => item.match.test(title));
+
+  if (!copy) {
+    return null;
+  }
+
+  const error = [
+    test?.error,
+    test?.errorMessage,
+    ...(Array.isArray(test?.annotations) ? test.annotations.map(item => item?.description) : []),
+    ...(Array.isArray(test?.attempts)
+      ? test.attempts.flatMap(attempt => [
+        attempt?.error,
+        ...(attempt?.annotations ?? []).map(item => item?.description),
+      ])
+      : []),
+  ].filter(Boolean).join(' ');
+  const marked = /known defect|confirmed product (bug|issue)/i.test(error)
+    || [...(test?.annotations ?? []), ...(test?.attempts ?? []).flatMap(attempt => attempt?.annotations ?? [])]
+      .some(item => String(item?.type ?? '').toLowerCase() === 'fail');
+  const status = String(test?.status ?? '').toLowerCase();
+
+  if (!marked && status !== 'failed' && status !== 'timedout') {
+    return null;
+  }
+
+  return copy;
+}
+
+function knownDefectScreenshot(test) {
+  const scenario = String(test?.validation?.scenario || test?.title || '')
+    .split('>')
+    .pop()
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+  const needle = scenario.split('-').filter(Boolean).slice(-5).join('-');
+  const root = path.join(projectRoot, 'test-results');
+
+  if (!needle || !fs.existsSync(root)) {
+    return '';
+  }
+
+  const folders = fs.readdirSync(root, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && entry.name.toLowerCase().includes(needle))
+    .map(entry => path.join(root, entry.name));
+  const pictures = folders.flatMap(folder => fs.readdirSync(folder)
+    .filter(name => /^test-failed.*\.png$/i.test(name))
+    .map(name => path.join(folder, name)));
+
+  return pictures
+    .sort((left, right) => fs.statSync(right).mtimeMs - fs.statSync(left).mtimeMs)[0] || '';
+}
+
+function knownDefectFailure(test) {
+  const note = knownDefectNote(test);
+  const shot = knownDefectScreenshot(test);
+
+  return {
+    ...test,
+    status: 'failed',
+    title: note.name,
+    testName: note.name,
+    module: test.module || note.group,
+    severity: 'High',
+    category: 'Product bug',
+    error: note.actual,
+    errorMessage: note.actual,
+    productBug: note,
+    evidence: shot
+      ? [{
+        name: 'screenshot',
+        type: 'screenshot',
+        path: shot,
+        attempt: 1,
+        attemptStatus: 'failed',
+        contentType: 'image/png',
+      }]
+      : [],
+  };
+}
+
+const knownDefectSourceTests = (Array.isArray(airResults?.tests) ? airResults.tests : [])
+  .filter(test => knownDefectNote(test) && String(test.status).toLowerCase() === 'passed');
 const total = airResults?.summary?.total ?? tests.length;
-const passed = airResults?.summary?.passed ?? tests.filter(test => test.status === 'passed').length;
-const failed = airResults?.summary?.failed ?? tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length;
+const passed = Math.max(
+  0,
+  (airResults?.summary?.passed ?? tests.filter(test => test.status === 'passed').length) - knownDefectSourceTests.length
+);
+const failed = (airResults?.summary?.failed ?? tests.filter(test => test.status === 'failed' || test.status === 'timedOut').length) + knownDefectSourceTests.length;
 const skipped = airResults?.summary?.skipped ?? tests.filter(test => test.status === 'skipped').length;
 const interrupted = airResults?.summary?.interrupted ?? tests.filter(test => test.status === 'interrupted').length;
 const executed = airResults?.summary?.executed ?? (passed + failed + interrupted);
@@ -401,15 +1085,9 @@ const projectName = airResults?.project?.name ?? airConfig.projectName ?? 'OOLTo
 const environment = airResults?.project?.environment ?? airConfig.environment ?? 'UAT';
 const buildVersion = airResults?.project?.buildVersion ?? airConfig.buildVersion ?? 'Playwright JSON';
 const productName = airConfig.productName || 'AIR';
-const executedPassRate =
-  airResults?.summary?.executedPassRate ??
-  (executed === 0 ? 0 : Math.round((passed / executed) * 100));
-const inventoryPassRate =
-  airResults?.summary?.inventoryPassRate ??
-  (total === 0 ? 0 : Math.round((passed / total) * 100));
-const passRate =
-  airResults?.summary?.passRate ??
-  executedPassRate;
+const executedPassRate = executed === 0 ? 0 : Math.round((passed / executed) * 100);
+const inventoryPassRate = total === 0 ? 0 : Math.round((passed / total) * 100);
+const passRate = executedPassRate;
 const businessHealth =
   airResults?.summary?.businessHealth ??
   (
@@ -2066,7 +2744,7 @@ function renderModuleHealthCard(module) {
     : `${module.passed} passed. ${failedCount} failed. ${notRun} did not run.`;
 
   return `
-    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
+    <a class="module-health-card module-status-card ${tone} interactive-card" href="#module-dashboard-${moduleSlug(module.name)}" id="card-${moduleSlug(module.name)}" data-inner-item data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatusTooltip(module))}>
       <div class="module-card-head">
         <div class="module-title">
           <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2118,7 +2796,8 @@ const moduleDashboardCards =
         getModuleBusinessScenarios(module.name).length;
 
       return `
-        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}">
+        <div class="module-dashboard-card module-selector-card ${tone} interactive-card" id="module-dashboard-${moduleSlug(module.name)}" data-inner-item data-step-item data-step-label="${escapeHtml(module.name)}" data-module="${escapeHtml(module.name)}" data-module-status="${filterTone}" data-module-status-group="${getModuleStatusGroup(module)}" data-module-search="${escapeHtml(`${module.name} ${module.status} ${module.risk}`.toLowerCase())}" data-module-risk="${escapeHtml(module.risk)}">
+          <a class="module-back" href="#module-dashboard">All areas</a>
           <div class="module-card-head">
             <div class="module-title">
               <span class="module-icon">${escapeHtml(getModuleIcon(module.name))}</span>
@@ -2276,7 +2955,7 @@ const journeyHealthRows = (demoMode ? [
         : '';
 
     return `
-    <div class="journey-node ${statusTone(state)} interactive-card" id="journey-${moduleSlug(name)}" data-step-item data-step-label="${escapeHtml(name)}" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
+    <div class="journey-node ${statusTone(state)} interactive-card" id="journey-${moduleSlug(name)}" data-inner-item data-step-item data-step-label="${escapeHtml(name)}" data-journey="${escapeHtml(name)}"${moduleAttribute} role="button" tabindex="0" aria-label="Open ${escapeHtml(name)} journey details">
       <div class="node-icon">${state === 'Healthy' ? 'OK' : state === 'Partial' || state === 'Warning' ? '!' : 'NA'}</div>
       <strong>${escapeHtml(name)}</strong>
       <span>${score}%</span>
@@ -2348,7 +3027,10 @@ const failedSourceItems = demoMode
       evidence: [],
     },
   ]
-  : failedTests;
+  : [
+    ...failedTests,
+    ...knownDefectSourceTests.map(knownDefectFailure),
+  ];
 
 const FAILED_TESTS_INITIAL_VISIBLE = 6;
 const FAILURE_LIST_PREVIEW = 4;
@@ -2514,11 +3196,21 @@ function getFailureClientDescription(test, index = 0) {
 }
 
 function plainFailureStory(test, index = 0) {
+  if (test?.productBug) {
+    return {
+      happened: test.productBug.actual,
+      wanted: test.productBug.expected,
+      next: test.productBug.next,
+    };
+  }
+
   const title = getFailureFullTitle(test, index);
   const raw = String(getFailureTechnicalError(test) || '')
     .replace(/\u001b\[[0-9;]*m/g, ' ')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
+    .split(/Call log:/i)[0]
+    .slice(0, 700);
   const lower = `${title} ${raw}`.toLowerCase();
 
   let happened = 'This check did not finish the way we expected.';
@@ -2533,6 +3225,10 @@ function plainFailureStory(test, index = 0) {
     happened = 'Sign up did not open the create-account page.';
     wanted = 'Sign up on the login page should open the create-account form.';
     next = 'On the login page, close the cookie banner and click Sign up. The create-account form should open.';
+  } else if (lower.includes('outside of the viewport') || /confirm\s*&?\s*pay|confirm and pay/.test(lower)) {
+    happened = 'Confirm & pay was below the visible part of the confirm box.';
+    wanted = 'Confirm & pay should be on screen so the subscription can be confirmed.';
+    next = 'Scroll the confirm box until Confirm & pay is visible, then click it.';
   } else if (lower.includes('keep my plan') || lower.includes('disabled:pointer')) {
     happened = 'Keep my plan was on the cancel box, but it was turned off.';
     wanted = 'The cancel box should close without clicking a turned-off Keep my plan button.';
@@ -2988,7 +3684,9 @@ function selectPrimaryFailureScreenshot(test) {
       available: false,
       multiple: false,
       label: 'No primary screenshot available',
-      reason: 'No screenshot evidence is attached to this failed test.',
+      reason: test?.productBug
+        ? 'This run has no picture. The check reported the product bug before a screen was saved.'
+        : 'No screenshot evidence is attached to this failed test.',
     };
   }
 
@@ -3097,10 +3795,15 @@ function screenshotLooksBlank(item = {}) {
   }
 
   try {
-    return fs.statSync(absolutePath).size < 12000;
+    if (fs.statSync(absolutePath).size >= 12000) {
+      return false;
+    }
   } catch {
     return false;
   }
+
+  const decoded = decodePng(absolutePath);
+  return !decoded || !darkTextBox(decoded, 140);
 }
 
 function readFailurePageNotes(test) {
@@ -3378,8 +4081,10 @@ function failureLookedFor(test) {
   const pattern = raw.match(/name:\s*\/([^/\n]{3,80})\//);
   if (pattern) {
     const label = pattern[1]
+      .replace(/\\s\*/g, ' ')
+      .replace(/\\s/g, ' ')
       .replace(/\\[bBdDsSwW]/g, ' ')
-      .replace(/[\\^$|]+/g, ' or ')
+      .replace(/[\\^$|?*]+/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
     return label ? `The screen did not show ${label}.` : '';
@@ -3458,15 +4163,24 @@ function renderFailureGuide(test, story) {
   </div>`;
 }
 
-function renderFailureScreen(test, title) {
-  const primary = selectPrimaryFailureScreenshot(test);
+function renderMarkedFailureImage(imageHref, region, size, alt) {
+  const canMark = region && size?.width && size?.height;
+  const box = canMark
+    ? `<span class="field-box" style="left:${(100 * region.x / size.width).toFixed(2)}%;top:${(100 * region.y / size.height).toFixed(2)}%;width:${(100 * region.width / size.width).toFixed(2)}%;height:${(100 * region.height / size.height).toFixed(2)}%"></span>`
+    : '';
+
+  return `<div class="marked-shot${box ? ' field-marked' : ''}"><img src="${escapeHtml(imageHref)}" alt="${escapeHtml(alt)}">${box}</div>`;
+}
+
+function renderFailureScreen(test, title, index = 0, options = {}) {
+  const primary = attachFailureFieldRegion(test);
   const notes = readFailurePageNotes(test);
-  const story = plainFailureStory(test);
+  const story = plainFailureStory(test, index);
   const clue = screenClue(test);
   const pageList = notes.highlights
     .map(item => `<li>${escapeHtml(item)}</li>`)
     .join('');
-  const guide = renderFailureGuide(test, story);
+  const guide = options.guide === false ? '' : renderFailureGuide(test, story);
 
   if (!primary.available || primary.blank) {
     return `<div class="failure-screen-fallback">
@@ -3476,13 +4190,16 @@ function renderFailureScreen(test, title) {
     </div>${guide}`;
   }
 
+  const region = primary.item ? getReliableFailureRegion(primary.item) : null;
+  const absolutePath = primary.item ? getEvidenceAbsolutePath(primary.item) : '';
+  const size = absolutePath ? readPngSize(absolutePath) : null;
   const caption = clue || story.happened;
+  const markNote = region
+    ? 'The red box marks the control this check was looking at.'
+    : 'This screen was saved. The failing control is not one box on the picture.';
 
-  return `<div class="marked-shot">
-      <img src="${escapeHtml(primary.href)}" alt="Screen when ${escapeHtml(title)} failed">
-      <div class="marked-banner"><b>Failed</b><span>${escapeHtml(caption)}</span></div>
-    </div>
-    <span class="failure-mark-note">${escapeHtml(caption)}</span>
+  return `${renderMarkedFailureImage(primary.href, region, size, `Screen when ${title} failed. ${markNote}`)}
+    <span class="failure-mark-note">${escapeHtml(caption)} ${escapeHtml(markNote)}</span>
     ${guide}`;
 }
 
@@ -3503,12 +4220,14 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   }
 
   const size = readPngSize(originalPath) || { width: 1440, height: 900 };
-  const region = getReliableFailureRegion(screenshot) || {
-    x: Math.round(size.width * 0.27),
-    y: Math.round(size.height * 0.14),
-    width: Math.round(size.width * 0.46),
-    height: Math.round(size.height * 0.7),
-  };
+  const region = getReliableFailureRegion(screenshot);
+
+  if (!region) {
+    return {
+      available: false,
+      reason: 'No single control on this screenshot matched the failure.',
+    };
+  }
   const safeRegion = {
     x: Math.max(0, Math.min(region.x, size.width)),
     y: Math.max(0, Math.min(region.y, size.height)),
@@ -3544,25 +4263,20 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   const shownLines = (captionLines.length ? captionLines : ['This check failed.']).slice(0, 2);
   const bannerHeight = 40 + shownLines.length * 24;
   const labelWidth = Math.min(size.width - 32, Math.max(520, 36 + Math.max(...shownLines.map(item => item.length), 8) * 8));
-  const hasPreciseRegion = Boolean(getReliableFailureRegion(screenshot));
-  const frame = hasPreciseRegion
-    ? safeRegion
-    : {
-      x: 10,
-      y: bannerHeight + 18,
-      width: Math.max(1, size.width - 20),
-      height: Math.max(1, size.height - bannerHeight - 28),
-    };
+  const frame = safeRegion;
+  const bannerY = safeRegion.y < bannerHeight + 24
+    ? Math.min(size.height - bannerHeight - 12, safeRegion.y + safeRegion.height + 12)
+    : 12;
   const captionSvg = shownLines.map((item, lineIndex) =>
-    `<text x="28" y="${54 + lineIndex * 24}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(item)}</text>`
+    `<text x="28" y="${bannerY + 42 + lineIndex * 24}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(item)}</text>`
   ).join('');
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${size.width} ${size.height}">
   <image href="${escapeHtml(originalHrefForSvg)}" x="0" y="0" width="${size.width}" height="${size.height}" preserveAspectRatio="xMidYMid meet"/>
   <rect x="${frame.x}" y="${frame.y}" width="${frame.width}" height="${frame.height}" rx="8" fill="rgba(220,38,38,0.16)" stroke="#dc2626" stroke-width="8"/>
-  <rect x="12" y="12" width="${labelWidth}" height="${bannerHeight}" rx="10" fill="#dc2626"/>
-  <text x="28" y="32" fill="#ffffff" font-family="Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="0.08em">FAILED</text>
+  <rect x="12" y="${bannerY}" width="${labelWidth}" height="${bannerHeight}" rx="10" fill="#dc2626"/>
+  <text x="28" y="${bannerY + 22}" fill="#ffffff" font-family="Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="0.08em">FAILED</text>
   ${captionSvg}
 </svg>`;
 
@@ -3578,27 +4292,54 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   };
 }
 
-function renderFailureScreenshotEvidence(test, index = 0) {
+function attachFailureFieldRegion(test) {
   const primary = selectPrimaryFailureScreenshot(test);
+
+  if (!primary?.item || primary.item.failureRegionChecked) {
+    return primary;
+  }
+
+  primary.item.failureRegionChecked = true;
+
+  if (!primary.available || primary.blank) {
+    return primary;
+  }
+
+  const absolutePath = getEvidenceAbsolutePath(primary.item);
+  let region = null;
+  try {
+    region = absolutePath ? findFailureFieldRegion(absolutePath, test) : null;
+  } catch {
+    region = null;
+  }
+
+  if (region) {
+    primary.item.failureRegion = region;
+  }
+
+  return primary;
+}
+
+function renderFailureScreenshotEvidence(test, index = 0) {
+  const primary = attachFailureFieldRegion(test);
   const story = plainFailureStory(test, index);
 
   if (!primary.available || primary.blank) {
     return `
       <div class="failure-screenshot-context">
-        ${renderFailureScreen(test, getFailureShortTitle(test, index))}
+        ${renderFailureScreen(test, getFailureShortTitle(test, index), index)}
       </div>`;
   }
 
-  const annotated = createAnnotatedFailurePreview(test, primary.item, index);
+  const region = primary.item ? getReliableFailureRegion(primary.item) : null;
+  const absolutePath = primary.item ? getEvidenceAbsolutePath(primary.item) : '';
+  const size = absolutePath ? readPngSize(absolutePath) : null;
 
   return `
     <div class="failure-screenshot-context">
-      <div class="failure-shot-panel ${annotated.available ? 'annotated' : 'unavailable'}">
+      <div class="failure-shot-panel">
         <span>Screen when this failed</span>
-        <div class="marked-shot">
-          <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
-          <div class="marked-banner"><b>Failed</b><span>${escapeHtml(story.happened)}</span></div>
-        </div>
+        ${renderMarkedFailureImage(primary.href, region, size, `${story.happened} The red box marks the control this check was looking at.`)}
       </div>
       <div class="failure-shot-panel original">
         <span>Full screenshot</span>
@@ -3643,7 +4384,14 @@ function keepEvidenceCopy(item = {}) {
   const parent = path.basename(path.dirname(absolutePath)).replace(/[^\w.-]+/g, '-').slice(0, 80);
   const base = path.basename(absolutePath).replace(/[^\w.-]+/g, '-');
   const fileName = `${parent}--${base}`;
-  fs.copyFileSync(absolutePath, path.join(keptEvidenceDir, fileName));
+  const destination = path.join(keptEvidenceDir, fileName);
+  if (!fs.existsSync(destination)) {
+    try {
+      fs.copyFileSync(absolutePath, destination);
+    } catch (error) {
+      return '';
+    }
+  }
   const href = `kept-evidence/${fileName}`;
   keptEvidenceCopies.set(absolutePath, href);
   return href;
@@ -3823,10 +4571,10 @@ const failedRows = (failedSourceItems.length > 0
 
     return `
     <tr${hiddenClass} data-failure-row data-failure-index="${index}">
-      <td title="${escapeHtml(fullTitle)}"><strong>${escapeHtml(title)}</strong></td>
+      <td title="${escapeHtml(fullTitle)}"><a class="table-evidence-link" href="${failedSourceItems.length ? `#failure-group-${failureGroupKey(test, index).key}` : '#failures'}"><strong>${escapeHtml(title)}</strong></a></td>
       <td>${escapeHtml(moduleName)}</td>
       <td><strong>${escapeHtml(reason)}</strong><small>What to do: ${escapeHtml(nextAction)}</small></td>
-      <td>${shot.available && !shot.blank ? `<a class="table-evidence-link" href="${escapeHtml(shot.href)}">Open picture</a>` : `<span>${shot.blank ? 'Blank screen' : 'No picture'}</span>`}</td>
+      <td><a class="table-evidence-link" href="${failedSourceItems.length ? `#failure-group-${failureGroupKey(test, index).key}` : '#failures'}">Open this group</a></td>
     </tr>`;
   })
   .join('');
@@ -3875,7 +4623,7 @@ const failureInvestigationCards = failedSourceItems
             <strong>${escapeHtml(title)}</strong>
             <small title="${escapeHtml(fullTitle)}">${escapeHtml(moduleName)} &bull; ${escapeHtml(category)}</small>
           </div>
-          <span class="failure-flag">Failed</span>
+          <span class="failure-flag">${test.productBug ? 'Product bug' : 'Failed'}</span>
         </div>
         <div class="failure-reason-block">
           <span>What we checked</span>
@@ -3936,6 +4684,7 @@ const failurePreviewLoadMoreHtml = failedSourceItems.length > FAILURE_LIST_PREVI
 
 const failureGroups = failedSourceItems.reduce((groups, test, index) => {
   const story = plainFailureStory(test, index);
+  const grouped = failureGroupKey(test, index);
   const title = getFailureShortTitle(test, index);
   const entry = {
     test,
@@ -3944,12 +4693,12 @@ const failureGroups = failedSourceItems.reduce((groups, test, index) => {
     title,
     moduleName: test.module ?? getModuleName(title),
   };
-  const existing = groups.find(group => group.happened === story.happened);
+  const existing = groups.find(group => group.key === grouped.key);
 
   if (existing) {
     existing.items.push(entry);
   } else {
-    groups.push({ happened: story.happened, items: [entry] });
+    groups.push({ key: grouped.key, happened: grouped.label, items: [entry] });
   }
 
   return groups;
@@ -3963,7 +4712,7 @@ const nextStepListHtml = failureGroups.length === 0
         ? group.items[0].story.next
         : 'Open the checks in this group. Each one has its own next step.';
 
-      return `<a class="next-step-card" href="#failures">
+      return `<a class="next-step-card" data-inner-item href="#failure-group-${group.key}">
       <span>${String(index + 1).padStart(2, '0')}</span>
       <div>
         <strong>${escapeHtml(group.happened)}</strong>
@@ -3978,30 +4727,80 @@ const nextStepListHtml = failureGroups.length === 0
     return `<div class="next-step-list">${visible}</div>${rest.length ? `<details class="fold"><summary><b>${rest.length} more next steps</b><span>Open when you need them</span></summary><div class="next-step-list">${rest.join('')}</div></details>` : ''}`;
   })();
 
+function renderInnerBoard(label, cardsHtml, itemCount, gridClass = 'failure-card-grid', pageSize = 3) {
+  const pages = Math.max(1, Math.ceil(Number(itemCount) / pageSize));
+  const bar = pages < 2
+    ? ''
+    : `<nav class="page-pager inner" aria-label="${escapeHtml(label)}">
+        <div class="page-pager-row">
+          <button type="button" data-inner-prev class="page-pager-prev"><small>Previous</small><strong data-inner-prev-name></strong></button>
+          <span class="page-pager-count"><small data-inner-count>1 of ${pages}</small><strong>${escapeHtml(label)}</strong></span>
+          <button type="button" data-inner-next class="page-pager-next"><small>Next</small><strong data-inner-next-name></strong></button>
+        </div>
+      </nav>`;
+  return `<div class="inner-board" data-inner-pager data-inner-size="${pageSize}" data-inner-label="${escapeHtml(label)}">${bar}<div class="${gridClass}">${cardsHtml}</div>${bar}</div>`;
+}
+
 const failureEvidenceBoard = failureGroups.length === 0
   ? ''
-  : `<div class="failure-groups">${failureGroups.map((group, groupIndex) => {
-    const checks = group.items.map(entry => {
-      const shot = renderFailureScreen(entry.test, entry.title);
+  : renderInnerBoard('Stories', failureGroups.map(group => {
+    const preview = group.items.slice(0, 3).map(entry => `<li>${escapeHtml(entry.title)}</li>`).join('');
+    const extra = group.items.length - 3;
+    const more = extra > 0 ? `<li class="failure-more">and ${extra} more</li>` : '';
+    const productBug = group.items.every(entry => entry.test.productBug);
 
-      return `<article class="failure-shot-card" data-failure-preview data-failure-index="${entry.index}">
-        <header><div><strong>${escapeHtml(entry.title)}</strong><small>${escapeHtml(entry.moduleName)}</small></div><span class="failure-flag">Failed</span></header>
-        ${shot}
-        <p class="failure-next-line">What to do: ${escapeHtml(entry.story.next)}</p>
-      </article>`;
-    }).join('');
+    return `<a class="failure-shot-card" data-inner-item href="#failure-group-${group.key}">
+        <header><div><strong>${escapeHtml(group.happened)}</strong><small>${group.items.length} check${group.items.length === 1 ? '' : 's'}</small></div><span class="failure-flag">${productBug ? 'Product bug' : 'Failed'}</span></header>
+        <ul class="failure-check-list">${preview}${more}</ul>
+        <span class="module-button">Open this group</span>
+      </a>`;
+  }).join(''), failureGroups.length);
 
-    return `<details class="failure-group" id="failure-story-${groupIndex}" data-step-item data-step-label="${escapeHtml(group.happened)}"${groupIndex === 0 ? ' open' : ''}>
-      <summary>
-        <b>${group.items.length}</b>
-        <span>
-          <strong>${escapeHtml(group.happened)}</strong>
-          <small>${group.items.length === 1 ? '1 check' : `${group.items.length} checks`}. Open to see each one.</small>
-        </span>
-      </summary>
-      <div class="failure-group-body">${checks}</div>
-    </details>`;
-  }).join('')}</div>`;
+const failureDetailArticles = failureGroups.map(group => {
+  const productBug = group.items.every(entry => entry.test.productBug);
+  const sharedNext = group.items.every(entry => entry.story.next === group.items[0].story.next)
+    ? group.items[0].story.next
+    : 'Each check below has its own next step.';
+  const checks = group.items.map(entry => `<section class="failure-group-check" data-inner-item>
+      <h3>${escapeHtml(entry.title)}</h3>
+      <p class="failure-plain">${escapeHtml(entry.story.happened)}</p>
+      <p class="failure-next-line">What to do: ${escapeHtml(entry.story.next)}</p>
+      ${renderFailureScreen(entry.test, entry.title, entry.index, { guide: false })}
+    </section>`).join('');
+
+  return `<article class="failure-detail" id="failure-group-${group.key}" data-step-item data-step-label="${escapeHtml(group.happened)}">
+    <a class="back-checks" href="#failures">All failed groups</a>
+    <header class="failure-detail-head"><div><strong>${escapeHtml(group.happened)}</strong><small>${group.items.length} check${group.items.length === 1 ? '' : 's'}</small></div><span class="failure-flag">${productBug ? 'Product bug' : 'Failed'}</span></header>
+    <p class="failure-next-line">What to do: ${escapeHtml(sharedNext)}</p>
+    ${renderInnerBoard('Checks', checks, group.items.length, 'failure-group-stack', 2)}
+  </article>`;
+}).join('');
+
+const failedAreaEntries = [...failedSourceItems.reduce((areas, test, index) => {
+  const name = test.module ?? getModuleName(getFailureShortTitle(test, index));
+  const group = failureGroupKey(test, index);
+  const checks = areas.get(name) ?? [];
+  checks.push({
+    title: getFailureShortTitle(test, index),
+    href: `#failure-group-${group.key}`,
+  });
+  areas.set(name, checks);
+  return areas;
+}, new Map())];
+
+const failedAreaCards = failedAreaEntries.map(([name, checks]) => `
+  <a class="failure-shot-card" href="#failure-area-${moduleSlug(name)}">
+    <header><div><strong>${escapeHtml(name)}</strong><small>${checks.length} check${checks.length === 1 ? '' : 's'}</small></div></header>
+    <span class="module-button">Open this area</span>
+  </a>`).join('');
+
+const failedAreaPanels = failedAreaEntries.map(([name, checks]) => `
+  <div id="failure-area-${moduleSlug(name)}" data-failure-panel hidden>
+    <a class="back-checks" href="#failure-areas">All areas</a>
+    <h2>${escapeHtml(name)}</h2>
+    <p>${checks.length} failed check${checks.length === 1 ? '' : 's'} in this area.</p>
+    ${renderInnerBoard('Checks', checks.map(check => `<li data-inner-item><a href="${check.href}">${escapeHtml(check.title)}</a></li>`).join(''), checks.length, 'failure-area-checks', 6)}
+  </div>`).join('');
 
 const failedTestsContent =
   !demoMode && failedTests.length === 0
@@ -4018,40 +4817,48 @@ const failedTestsContent =
       ],
     })
     : `
-      <div class="failure-command-center">
-        <div class="failure-summary-card primary">
-          <span>Stories</span>
-          <strong>${failureGroups.length}</strong>
-          <p>Open a story to see the screenshot.</p>
-        </div>
-        <div class="failure-summary-card">
-          <span>Failed checks</span>
-          <strong>${failedSourceItems.length}</strong>
-          <p>These did not pass</p>
-        </div>
-        <div class="failure-summary-card">
-          <span>Areas touched</span>
-          <strong>${failedModuleCount}</strong>
-          <p>Parts of the product in this list</p>
-        </div>
-        <div class="failure-summary-card">
-          <span>Pictures you can open</span>
-          <strong>${openableFailurePictures}/${failedSourceItems.length}</strong>
-          <p>${openableFailurePictures > 0 ? 'Saved with this report' : blankFailurePictures > 0 ? 'Saved pictures are blank. Page text is shown instead.' : 'Cleared by a later test run'}</p>
+      <div id="failure-home" data-failure-panel>
+        <div class="failure-command-center">
+          <a class="failure-summary-card primary" href="#failure-story-board">
+            <span>Stories</span>
+            <strong>${failureGroups.length}</strong>
+            <p>Open the ${failureGroups.length} shared failures.</p>
+          </a>
+          <a class="failure-summary-card" href="#failure-full-list">
+            <span>Failed checks</span>
+            <strong>${failedSourceItems.length}</strong>
+            <p>Open all ${failedSourceItems.length} checks.</p>
+          </a>
+          <a class="failure-summary-card" href="#failure-areas">
+            <span>Areas</span>
+            <strong>${failedModuleCount}</strong>
+            <p>Open the ${failedModuleCount} areas, one at a time.</p>
+          </a>
+          <a class="failure-summary-card" href="#evidence">
+            <span>Pictures</span>
+            <strong>${openableFailurePictures}/${failedSourceItems.length}</strong>
+            <p>${openableFailurePictures > 0 ? 'Open the saved screenshots.' : blankFailurePictures > 0 ? 'Saved pictures are blank. Page text is shown instead.' : 'Cleared by a later test run'}</p>
+          </a>
         </div>
       </div>
-      <h2>What failed</h2>
-      <p>Open a story to see the screenshot and what to do next.</p>
-      ${failureEvidenceBoard}
-      <details class="report-fold">
-        <summary>Open the full list (${failedSourceItems.length})</summary>
+      <div id="failure-story-board" data-failure-panel hidden>
+        <a class="back-checks" href="#failures">All failure cards</a>
+        <h2>What failed</h2>
+        <p>Checks that failed for the same reason share one card. Open it to see each screen. The red box marks the control that failed.</p>
+        ${failureEvidenceBoard}
+      </div>
+      <div id="failure-full-list" data-failure-panel hidden>
+        <a class="back-checks" href="#failures">All failure cards</a>
+        <h2>Every failed check</h2>
         <div class="table-wrap"><table class="data failure-detail-table"><thead><tr><th>Check</th><th>Area</th><th>What happened</th><th>Picture</th></tr></thead><tbody data-long-list="${FAILED_TESTS_INITIAL_VISIBLE}" data-long-item="tr" data-long-label="failed checks">${failedRows}</tbody></table></div>
-      </details>
-      <details class="report-fold">
-        <summary>Open extra detail</summary>
-        <p>The raw error is inside each card.</p>
-        <div class="failure-investigation-grid" data-long-list="${FAILED_TESTS_INITIAL_VISIBLE}" data-long-item="[data-failure-card]" data-long-label="failed checks">${failureInvestigationCards}</div>
-      </details>
+      </div>
+      <div id="failure-areas" data-failure-panel hidden>
+        <a class="back-checks" href="#failures">All failure cards</a>
+        <h2>Areas</h2>
+        <p>Open one area. Only that area’s checks are shown.</p>
+        ${failedAreaEntries.length ? renderInnerBoard('Areas', failedAreaCards.replaceAll('<a class="failure-shot-card"', '<a class="failure-shot-card" data-inner-item'), failedAreaEntries.length) : ''}
+      </div>
+      ${failedAreaPanels}
       `;
 
 const warningInvestigationCards = warningSourceItems
@@ -4323,7 +5130,7 @@ const planModuleCards = planModuleGroups.map(group => {
 
 const planModuleDetails = planModuleGroups.map(group => {
   const rows = group.checks.map(item => `
-    <div class="passed-check">
+    <div class="passed-check" data-inner-item>
       <strong>${escapeHtml(clientCheckTitle(item.title || item.fullTitle || 'Check'))}</strong>
       <span>${escapeHtml(onceSentence(item.reason || item.nextAction || group.meaning))}</span>
     </div>`).join('');
@@ -4338,7 +5145,7 @@ const planModuleDetails = planModuleGroups.map(group => {
         </div>
       </div>
       <p>${escapeHtml(group.meaning)}</p>
-      <div class="passed-checks" data-long-list="8" data-long-item=".passed-check" data-long-label="checks">${rows}</div>
+      ${renderInnerBoard('Checks', rows, group.checks.length, 'passed-checks', 4)}
     </article>`;
 }).join('');
 
@@ -4668,10 +5475,16 @@ const evidenceThumbnails =
         }
 
         const failedShot = String(item.attemptStatus || '').toLowerCase() === 'failed' || Boolean(caption);
+        const failureIndex = matchedFailure ? failedSourceItems.indexOf(matchedFailure) : -1;
+        const openHref = failureIndex >= 0 ? `#failure-group-${failureGroupKey(matchedFailure, failureIndex).key}` : href;
+        const imageHref = href;
+        const previewAttrs = failureIndex >= 0
+          ? ''
+          : ` data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"`;
 
         return `
-        <a class="thumb${failedShot ? ' thumb-failed' : ''}" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(caption || label)}>
-          <img src="${escapeHtml(href)}" alt="${escapeHtml(caption || label)}">
+        <a class="thumb${failedShot ? ' thumb-failed' : ''}" href="${escapeHtml(openHref)}"${previewAttrs}${tooltipAttr(caption || label)}>
+          <img src="${escapeHtml(imageHref)}" alt="${escapeHtml(caption || label)}">
           ${failedShot ? '<b class="thumb-failed-flag">Failed</b>' : ''}
           <span class="thumb-copy"><b>${escapeHtml(compactText(label, 72))}</b>${caption ? `<small>${escapeHtml(caption)}</small>` : ''}</span>
         </a>`;
@@ -5899,7 +6712,9 @@ const engineStatusItems = [
 ];
 
 const validationTests = Array.isArray(airResults?.tests) ? airResults.tests : [];
-const passedValidationTests = validationTests.filter(test => String(test.status).toLowerCase() === 'passed');
+const passedValidationTests = validationTests.filter(test => (
+  String(test.status).toLowerCase() === 'passed' && !knownDefectNote(test)
+));
 
 function passedSentence(test) {
   const raw = String(test.validation?.scenario || test.title || 'Passed check')
@@ -6076,7 +6891,7 @@ const validationAreaCards = passedTopicEntries
     const purpose = passedTopicPurpose[topic] || 'Checks in this part of the product that passed in this run.';
     const searchText = `${topic} ${purpose}`.toLowerCase();
     return `
-    <a class="passed-card" href="#${passedTopicSlug(topic)}" data-passed-card data-passed-search="${escapeHtml(searchText)}">
+    <a class="passed-card" href="#${passedTopicSlug(topic)}" data-inner-item data-passed-card data-passed-search="${escapeHtml(searchText)}">
       <div class="passed-card-top">
         <span class="module-icon">${escapeHtml(passedTopicMark(topic))}</span>
         <strong>${escapeHtml(topic)}</strong>
@@ -6096,12 +6911,23 @@ const validationGroupCards = passedTopicEntries
     const purpose = passedTopicPurpose[topic] || 'Checks in this part of the product that passed in this run.';
     const items = testsInTopic
       .map(test => {
+        const note = knownDefectNote(test);
+        if (note) {
+          return `
+          <div class="passed-check known-defect">
+            <strong>${escapeHtml(note.name)}</strong>
+            <span>Known defect · counted with the passes</span>
+            <p><b>Expected.</b> ${escapeHtml(note.expected)}</p>
+            <p><b>Product today.</b> ${escapeHtml(note.actual)}</p>
+          </div>`;
+        }
+
         const play = scenarioPlaybook(test);
         const steps = play.steps
           .map(step => `<li>${escapeHtml(step)}</li>`)
           .join('');
         return `
-          <div class="passed-check">
+          <div class="passed-check" data-inner-item>
             <strong>${escapeHtml(play.name)}</strong>
             <span>What this scenario validated</span>
             <ol class="scenario-steps">${steps}</ol>
@@ -6120,7 +6946,7 @@ const validationGroupCards = passedTopicEntries
           <a class="btn" href="#validation-summary">All areas</a>
         </div>
         <p>${escapeHtml(purpose)}</p>
-        <div class="passed-checks">${items}</div>
+        ${renderInnerBoard('Checks', items, testsInTopic.length, 'passed-checks', 4)}
       </article>`;
   })
   .join('') || '<div class="empty-note">No passed checks were found in this run.</div>';
@@ -6806,7 +7632,7 @@ function renderRoadmapPlanCard(item, index) {
     .join('');
 
   return `
-        <article class="roadmap-card ${tone} interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for ${escapeHtml(item.version)}" data-roadmap-index="${index}">
+        <article class="roadmap-card ${tone} interactive-card" role="button" tabindex="0" aria-label="Open roadmap details for ${escapeHtml(item.version)}" data-inner-item data-roadmap-index="${index}">
           <div class="roadmap-card-head">
             <div>
               <span>${escapeHtml(item.version)}</span>
@@ -6978,14 +7804,17 @@ function renderPageNav(pageId, placement = 'top') {
   };
 
   const here = reportPages[index];
-  const jump = placement === 'top'
-    ? `<div class="page-jump" aria-label="All pages">${reportPages.map(([id, label]) => (
-      id === pageId
-        ? `<span aria-current="page">${escapeHtml(label)}</span>`
-        : `<a href="#${id}">${escapeHtml(label)}</a>`
-    )).join('')}</div>`
-    : '';
-  return `<nav class="page-pager ${placement}" aria-label="Report pages" title="Left and right arrow keys move between pages"><div class="page-pager-row">${side(previous, 'Previous')}<span class="page-pager-count"><small>${index + 1} of ${reportPages.length}</small><strong>${escapeHtml(here[1])}</strong></span>${side(next, 'Next')}</div>${jump}</nav>`;
+  return `<nav class="page-pager ${placement}" aria-label="Report pages" title="Left and right arrow keys move between pages"><div class="page-pager-row">${side(previous, 'Previous')}<span class="page-pager-count"><small>${index + 1} of ${reportPages.length}</small><strong>${escapeHtml(here[1])}</strong></span>${side(next, 'Next')}</div></nav>`;
+}
+
+function renderFailureCardNav() {
+  return `<nav class="page-pager failure-card-nav" data-failure-card-nav aria-label="Move across the failure cards">
+    <div class="page-pager-row">
+      <a class="page-pager-prev" data-failure-card-prev href="#failures"><small>Previous</small><strong data-failure-card-prev-name></strong></a>
+      <span class="page-pager-count"><small data-failure-card-count></small><strong data-failure-card-here>Cards</strong></span>
+      <a class="page-pager-next" data-failure-card-next href="#failure-story-board"><small>Next</small><strong data-failure-card-next-name></strong></a>
+    </div>
+  </nav>`;
 }
 
 function renderInnerNav(kind, options = {}) {
@@ -8417,6 +9246,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     #failures>.panel{border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;overflow:visible!important}
     #failures .failure-command-center{display:grid;grid-template-columns:minmax(320px,1.35fr) repeat(3,minmax(170px,.55fr));gap:18px;margin-bottom:22px}
     #failures .failure-summary-card{min-width:0;border:1px solid rgba(57,231,95,.16);border-radius:26px;background:linear-gradient(180deg,rgba(13,25,41,.86),rgba(6,15,27,.78));padding:22px;box-shadow:0 22px 70px rgba(0,0,0,.18)}
+    a.failure-summary-card{display:block;color:inherit;text-decoration:none;cursor:pointer}
+    a.failure-summary-card:hover{border-color:#ff7b72!important;transform:translateY(-2px)}
+    .failure-area-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .failure-area h3{margin:0 0 8px;font-size:18px}
+    .failure-area h3 small{color:#9fb0c5;font-size:13px;font-weight:700}
+    .failure-area ul{margin:0;padding-left:18px}
+    .failure-area a{color:#f8fafc}
     #failures .failure-summary-card.primary{border-color:rgba(255,107,107,.35);background:radial-gradient(circle at 10% 0,rgba(255,107,107,.16),transparent 38%),linear-gradient(180deg,rgba(35,18,23,.74),rgba(6,15,27,.86))}
     #failures .failure-summary-card span{display:block;color:#8fa4bb;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-bottom:10px}
     #failures .failure-summary-card strong{display:block;color:#f8fafc;font-size:clamp(28px,2.9vw,48px);line-height:.98;letter-spacing:-.06em;white-space:normal;overflow-wrap:anywhere}
@@ -9208,8 +10044,23 @@ const airGoldenDashboardHtml = `<!doctype html>
     .failure-shot-card header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
     .failure-shot-card header > div{min-width:0;flex:1}
     .failure-flag{flex:0 0 auto;white-space:nowrap;display:inline-flex;align-items:center;height:auto;width:auto;min-width:max-content;border-radius:999px;background:#dc2626;color:#fff;font-size:12px;font-weight:800;letter-spacing:.04em;line-height:1;padding:8px 12px;text-transform:uppercase}
-    .marked-shot{position:relative;border:4px solid #dc2626;border-radius:12px;overflow:hidden;background:#fff}
-    .marked-shot img{display:block;width:100%;max-height:520px;object-fit:contain;object-position:top center;background:#fff}
+    .marked-shot{position:relative;width:100%;border-radius:12px;overflow:hidden;background:#fff;line-height:0}
+    .marked-shot .field-box{position:absolute;box-sizing:border-box;border:4px solid #dc2626;background:rgba(220,38,38,.18);border-radius:8px;pointer-events:none}
+    .marked-shot.field-marked{border:0}
+    a.failure-shot-card{text-decoration:none;color:inherit;cursor:pointer}
+    .failure-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}@media(max-width:760px){.failure-card-grid{grid-template-columns:1fr}}
+    .failure-check-list{margin:0;padding-left:18px;color:#d7fbe0}
+    .failure-check-list li{margin:4px 0;line-height:1.4}
+    .failure-group-check{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,59,59,.28)}
+    .failure-group-check h3{margin:0 0 8px;font-size:18px;line-height:1.35}
+    .failure-group-label{margin:8px 0 10px;color:#f8fafc;font-size:18px;line-height:1.4}
+    .failure-detail{margin-top:12px;border:1px solid rgba(255,59,59,.45);border-radius:16px;background:#120910;padding:18px}
+    .failure-detail-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+    .failure-detail-head strong{display:block;color:#f8fafc;font-size:24px;line-height:1.3}
+    .failure-detail-head small{display:block;color:#9fb0c5;margin-top:4px}
+    .back-checks{display:inline-flex;margin-bottom:12px;color:#ffb4b4;font-weight:800;text-decoration:none}
+    #failures .marked-shot.field-marked img{border:0}
+    .marked-shot img{display:block;width:100%;height:auto;max-height:none;object-fit:fill;background:#fff}
     .marked-banner{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:10px;align-items:flex-start;max-width:calc(100% - 24px);border-radius:10px;background:#dc2626;color:#fff;padding:8px 12px}
     .marked-banner b{flex:0 0 auto;white-space:nowrap;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
     .marked-banner span{font-size:14px;font-weight:700;line-height:1.35}
@@ -9218,7 +10069,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     .failure-shot-card header small{display:block;color:#9fb0c5;font-size:14px;margin-top:2px}
     .failure-shot-card .failure-plain{margin:0;color:#f8fafc;font-size:17px;line-height:1.5}
     .failure-shot-card .failure-next-line{margin:0;color:#cbd5e1;font-size:14px;line-height:1.45}
-    .failure-shot-card img{width:100%;max-height:480px;object-fit:contain;object-position:top center;border:2px solid #ff3b3b;border-radius:12px;background:#fff}
+    .failure-shot-card img{width:100%;max-height:480px;object-fit:contain;object-position:top center;border-radius:12px;background:#fff}
     .failure-shot-missing{border:1px dashed rgba(255,59,59,.45);border-radius:12px;padding:16px;background:rgba(255,59,59,.06)}
     .failure-shot-missing span{display:block;color:#ffb4b4;font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
     .failure-shot-missing p{margin:0;color:#e2e8f0;font-size:15px;line-height:1.5}
@@ -10313,8 +11164,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     body[data-air-page="cover"] .freshness-strip{display:grid!important}
     body[data-air-page="cover"] .air-provenance-warning{display:block!important}
     body[data-air-page="cover"] nav.report-more{display:block!important}
-    #validation-summary [data-step-item],#coverage-gaps [data-step-item]{display:none!important}
-    #validation-summary [data-step-item].is-step-current,#coverage-gaps [data-step-item].is-step-current{display:block!important}
+    #validation-summary [data-step-item],#coverage-gaps [data-step-item],#failures [data-step-item],#known-defects [data-step-item]{display:none!important}
+    #validation-summary [data-step-item].is-step-current,#coverage-gaps [data-step-item].is-step-current,#failures [data-step-item].is-step-current,#known-defects [data-step-item].is-step-current{display:block!important}
+    #failures [data-passed-index][hidden]{display:none!important}
     #coverage-gaps .passed-card[hidden],#coverage-gaps .passed-card-grid[hidden],#coverage-gaps [data-plan-notes][hidden],#coverage-gaps [data-plan-reset][hidden],#coverage-gaps [data-passed-index][hidden],#coverage-gaps [data-plan-count][hidden],#coverage-gaps .plan-nav[hidden],#coverage-gaps .plan-nav [hidden]{display:none!important}
     #coverage-gaps .plan-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;padding:10px 14px;background:#101826;border:1px solid rgba(148,163,184,.22);border-radius:12px}
     #coverage-gaps .plan-nav button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;margin:0;padding:4px 2px;background:transparent;border:0;color:#f8fafc;cursor:pointer;font:inherit}
@@ -10355,6 +11207,14 @@ const airGoldenDashboardHtml = `<!doctype html>
     #validation-summary .passed-check span{display:block;margin-top:6px;color:#7ee787;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
     #validation-summary .passed-check ol.scenario-steps{margin:10px 0 0;padding-left:18px;color:#f8fafc}
     #validation-summary .passed-check ol.scenario-steps li{margin:0 0 6px;font-size:14px;line-height:1.45}
+    #validation-summary .passed-check.known-defect{border-color:rgba(245,197,66,.45);border-left-color:#f5c542}
+    #validation-summary .passed-check.known-defect span{color:#f5c542}
+    #validation-summary .passed-check.known-defect p{margin:8px 0 0;color:#f8fafc;font-size:14px;line-height:1.45}
+    #validation-summary .passed-check.known-defect b{color:#f5c542}
+    .known-defect-banner{margin:0 0 16px}
+    .known-defect-banner a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 16px;border:1px solid rgba(245,197,66,.45);border-radius:14px;background:#1a170e;color:#f8fafc;text-decoration:none}
+    .known-defect-banner b{color:#f5c542;font-size:16px}
+    .known-defect-banner span{color:#d5e0ec;font-size:14px;text-align:right}
     #cover .passed-card-grid,#coverage-gaps .passed-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
     #cover .passed-card,#coverage-gaps .passed-card{display:flex;flex-direction:column;gap:14px;min-height:220px;border:1px solid rgba(57,231,95,.34);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;color:#f8fafc;text-decoration:none;box-shadow:0 14px 34px rgba(0,0,0,.22)}
     #cover .passed-card:hover,#coverage-gaps .passed-card:hover{transform:translateY(-3px);border-color:#39e75f;box-shadow:0 18px 42px rgba(57,231,95,.14)}
@@ -10560,8 +11420,81 @@ const airGoldenDashboardHtml = `<!doctype html>
     .failure-guide ol{margin:0;padding-left:18px;color:#f8fafc}
     .failure-guide li{margin:0 0 6px;font-size:14px;line-height:1.45}
     .failure-mark-note{display:block;margin-top:8px;color:#ffb4b4;font-size:14px;font-weight:650}
-    @media(max-width:900px){.failure-guide{grid-template-columns:1fr}}
-    main .page table thead th{position:sticky;top:78px;z-index:4;background:#0c1522}
+    #known-defects .passed-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    #known-defects .passed-card{display:flex;flex-direction:column;gap:14px;min-height:220px;border:1px solid rgba(245,197,66,.45);border-radius:16px;background:linear-gradient(145deg,rgba(11,23,40,.96),rgba(7,16,31,.96));padding:18px;color:#f8fafc;text-decoration:none;box-shadow:0 14px 34px rgba(0,0,0,.22)}
+    #known-defects .passed-card:hover{transform:translateY(-3px);border-color:#f5c542;box-shadow:0 18px 42px rgba(245,197,66,.14)}
+    #known-defects .passed-card-top{display:flex;align-items:center;gap:12px}
+    #known-defects .passed-card-top strong{font-size:18px;line-height:1.25}
+    #known-defects .module-icon{background:rgba(245,197,66,.16);border-color:rgba(245,197,66,.48);color:#f5c542}
+    #known-defects .passed-card-count b{display:block;color:#f5c542;font-size:28px;line-height:1;font-weight:800}
+    #known-defects .passed-card-count span{display:block;margin-top:6px;color:#7f8ea3;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    #known-defects .passed-card p{margin:0;color:#d7fbe0;line-height:1.45;flex:1}
+    #known-defects .passed-board-head h2{margin:0;font-size:28px;letter-spacing:-.03em}
+    #known-defects .passed-board-head p{margin:8px 0 0;color:#91a4b8}
+    #known-defects .passed-detail{border:1px solid rgba(245,197,66,.4);border-radius:16px;background:linear-gradient(180deg,rgba(17,24,39,.96),rgba(8,16,30,.96));padding:22px}
+    #known-defects .passed-detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    #known-defects .passed-detail-head h2{margin:4px 0 0;font-size:32px;letter-spacing:-.03em}
+    #known-defects .passed-detail>p{margin:8px 0 18px;color:#9fb0c5;line-height:1.5}
+    #known-defects .passed-checks{display:grid;gap:10px}
+    #known-defects .passed-check{border:1px solid rgba(245,197,66,.35);border-left:3px solid #f5c542;border-radius:12px;background:rgba(8,16,30,.72);padding:14px 16px}
+    #known-defects .passed-check strong{display:block;font-size:15px;line-height:1.35}
+    #known-defects .passed-check span{display:block;margin-top:6px;color:#f5c542;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+    #known-defects .passed-check p{margin:8px 0 0;color:#f8fafc;font-size:14px;line-height:1.45}
+    #known-defects .passed-check b{color:#f5c542}
+    .scan-now.known a{border-color:rgba(245,197,66,.45);background:#1a170e}
+    .scan-now.known a:hover{border-color:#f5c542}
+    .scan-now.known b{color:#f5c542}
+    @media(max-width:900px){.failure-guide{grid-template-columns:1fr}#known-defects .passed-card-grid{grid-template-columns:1fr}}
+    main .page table thead th{position:sticky;top:12px;z-index:4;background:#0c1522}
+    .page-jump{display:none!important}
+    .page-pager strong,.step-nav strong,.step-nav-here strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+    #failures .failure-command-center{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+    #failures .failure-summary-card{min-width:0}
+    #failures .failure-summary-card span,#failures .failure-summary-card p{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;letter-spacing:.04em;line-height:1.35}
+    #failures .failure-summary-card strong{overflow-wrap:normal;word-break:normal}
+    #failures [data-failure-panel][hidden]{display:none!important}
+    #failures .failure-shot-card header{flex-wrap:wrap}
+    #failures .failure-shot-card header strong,#failures .failure-detail-head strong,#failures .failure-check-list li{overflow-wrap:anywhere;white-space:normal}
+    #failures .failure-flag{min-width:0!important}
+    #failures .failure-area-checks{display:grid;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+    #failures .failure-area-checks li{border:1px solid rgba(255,107,107,.28);border-radius:12px;background:#120910;padding:12px 14px}
+    #failures .failure-area-checks a{display:block;color:#f8fafc;line-height:1.4;overflow-wrap:anywhere;text-decoration:none}
+    #failures #failure-areas .failure-card-grid,#failures #failure-story-board .failure-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch}
+    #failures .failure-shot-card{display:flex!important;flex-direction:column;height:100%;min-height:240px}
+    #failures .failure-check-list{flex:1;margin:0}
+    #failures .failure-more{color:#9fb0c5;list-style:none;margin-left:-18px}
+    #failures .failure-shot-card .module-button{margin-top:16px;align-self:flex-start}
+    #failures [data-inner-item][hidden]{display:none!important}
+    [data-inner-item].is-hidden,[data-inner-item][hidden]{display:none!important}
+    .page-pager.inner{margin:0 0 16px}
+    .inner-board>.page-pager.inner:last-child{margin:16px 0 0}
+    .page-pager.inner button{display:flex!important;flex-direction:column;justify-content:center;gap:1px;flex:1 1 0;min-width:0;padding:4px 2px;background:transparent!important;border:0!important;color:#f8fafc!important;font:inherit;text-align:left;cursor:pointer}
+    .page-pager.inner .page-pager-next{align-items:flex-end;text-align:right}
+    .page-pager.inner button:disabled{visibility:hidden}
+    .step-nav{position:sticky;top:78px;z-index:5}
+    .next-step-stack,.failure-group-stack{display:block}
+    #failures .failure-area-checks li{list-style:none}
+    .failure-card-nav[hidden]{display:none!important}
+    .failure-card-nav{margin:0 0 16px}
+    .failure-card-nav a.is-pager-empty{visibility:hidden;pointer-events:none}
+    #failures .failure-summary-card.is-card-current{border-color:#ff7b72!important;box-shadow:inset 0 0 0 1px #ff7b72}
+    #failures .page-pager.inner{margin:0 0 16px}
+    #failures .inner-board>.page-pager.inner:last-child{margin:16px 0 0}
+    #failures .page-pager.inner button{display:flex!important;flex-direction:column;justify-content:center;gap:1px;flex:1 1 0;min-width:0;padding:4px 2px;background:transparent!important;border:0!important;color:#f8fafc!important;font:inherit;text-align:left;cursor:pointer}
+    #failures .page-pager.inner .page-pager-next{align-items:flex-end;text-align:right}
+    #failures .page-pager.inner button:disabled{visibility:hidden}
+    #failures .step-nav{position:sticky;top:78px;z-index:5}
+    @media(max-width:900px){#failures #failure-areas .failure-card-grid,#failures #failure-story-board .failure-card-grid{grid-template-columns:1fr!important}}
+    #module-dashboard .module-back{display:none;margin-bottom:12px;color:#7ee787;font-weight:800;text-decoration:none}
+    #module-dashboard.is-area-open .module-back{display:inline-flex}
+    #module-dashboard.is-area-open [data-step-item]{display:none!important}
+    #module-dashboard.is-area-open [data-step-item].is-step-current{display:block!important}
+    #module-dashboard .module-jump[hidden],#module-dashboard .module-dashboard-intro[hidden]{display:none!important}
+    #module-dashboard .module-selector-summary{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}
+    #module-dashboard .module-selector-summary span,#module-dashboard .module-selector-summary b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.25!important}
+    #health .module-card-stats small,#health .module-title strong,#coverage-gaps .plan-nav strong,#validation-summary .passed-card-top strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
+    @media(max-width:1100px){#failures .failure-command-center{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+    @media(max-width:700px){#failures .failure-command-center{grid-template-columns:1fr!important}}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -10719,8 +11652,7 @@ const airGoldenDashboardHtml = `<!doctype html>
           </label>
         </div>
         <div class="module-filter-count" aria-live="polite" data-module-filter-count>Showing ${displayModules.length} of ${displayModules.length} areas</div>
-        ${renderInnerNav('area')}
-        <div class="module-card-grid" data-long-list="6" data-long-label="areas">${moduleHealthCards}</div>
+        ${renderInnerBoard('Modules', moduleHealthCards, displayModules.length, 'module-card-grid')}
         <div class="empty-note module-filter-empty" data-module-filter-empty hidden>No matching areas found in this run.</div>
       </div>
       <br>
@@ -10755,8 +11687,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <section class="page" id="journey">
       ${renderPageNav('journey')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('journey', 'User paths')}<p>Can a user complete the important paths?</p></div><span class="pill demo">${demoMode ? 'Sample data' : escapeHtml(environment)}</span></div>
-      ${renderInnerNav('path')}
-      <div class="panel journey-flow-panel"><div class="journey">${journeyHealthRows}</div></div>
+      <div class="panel journey-flow-panel">${renderInnerBoard('Paths', journeyHealthRows, (journeyHealthRows.match(/data-inner-item/g) || []).length, 'journey')}</div>
       <br>
       <div class="grid two journey-support-grid">
         <div class="panel"><h2>How much of each path ran</h2><p class="chart-explainer">Bar height is the share of that path that ran in this execution.</p><div class="chart journey-coverage-chart">${journeyCoverageChartHtml}</div></div>
@@ -10773,16 +11704,20 @@ const airGoldenDashboardHtml = `<!doctype html>
         <p>Stay on this page. Pick an area below.</p>
       </div>
       ${renderModuleJump('module-dashboard-')}
-      ${renderInnerNav('area')}
-      <div class="module-dashboard-grid" data-long-list="6" data-long-label="areas">${moduleDashboardCards}</div>
+      ${renderInnerNav('area', { requireSelection: true })}
+      ${renderInnerBoard('Modules', moduleDashboardCards, displayModules.length, 'module-dashboard-grid')}
       ${renderPageFooter('module-dashboard')}
     </section>
 
     <section class="page${executiveData.failed > 0 ? '' : ' report-extra'}" id="failures">
       ${renderPageNav('failures')}
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>Open a card to see the screen and what went wrong.</p></div><span class="pill">${executiveData.failed} failed</span></div>
-      ${renderInnerNav('story')}
-      <div class="panel">${failedTestsContent}${warningTestsContent}</div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>Checks that failed for the same reason share one card. Open it to see each screen.</p></div><span class="pill">${executiveData.failed} failed</span></div>
+      ${renderFailureCardNav()}
+      ${renderInnerNav('story', { requireSelection: true })}
+      <div data-passed-index>
+        <div class="panel">${failedTestsContent}</div>
+      </div>
+      ${failureDetailArticles}
       ${renderPageFooter('failures')}
     </section>
 
@@ -10827,7 +11762,7 @@ const airGoldenDashboardHtml = `<!doctype html>
             </label>
           </div>
           <div class="validation-group-count" data-passed-count>Showing ${passedTopicEntries.length} of ${passedTopicEntries.length} areas</div>
-          <div class="passed-card-grid">${validationAreaCards}</div>
+          ${renderInnerBoard('Areas', validationAreaCards, passedTopicEntries.length, 'passed-card-grid')}
           <div class="empty-note" data-passed-empty hidden>No area matches that search.</div>
         </div>
       </div>
@@ -10839,6 +11774,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <section class="page" id="evidence">
       ${renderPageNav('evidence')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Proof')}<p>Screenshots from the checks that failed. Each picture says what went wrong.</p></div></div>
+      ${renderFailureCardNav()}
       ${evidenceHeroHtml}
       ${String(evidenceThumbnails).includes('<a') ? `
       <div class="panel">
@@ -10872,7 +11808,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     <section class="page report-extra" id="insight">
       ${renderPageNav('insight')}
       <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('insight', 'What to do next')}<p>Fix the failed checks, then run them again.</p></div></div>
-      ${nextStepListHtml}
+      ${renderInnerBoard('Steps', nextStepListHtml, failureGroups.length, 'next-step-stack')}
       <details class="report-fold">
         <summary>Release write-up</summary>
       <div class="ai-command-hero">
@@ -11202,7 +12138,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <p>AIR v1.0 and AIR v1.1 are complete. AIR v1.2 is now focused on historical analytics, build comparison, and trend intelligence.</p>
       </div>
       <br>
-      <div class="roadmap-grid">${airRoadmapCards}</div>
+      ${renderInnerBoard('Versions', airRoadmapCards, (airRoadmapCards.match(/data-roadmap-index/g) || []).length, 'roadmap-grid')}
       <details class="fold">
         <summary><b>Version table</b><span>The same versions, in one list</span></summary>
       <div class="panel">
@@ -11460,6 +12396,9 @@ const airGoldenDashboardHtml = `<!doctype html>
     if (more) {
       more.open = Boolean(more.querySelector('a[href="#' + pageId + '"]'));
     }
+    updateFailurePanels();
+    updateFailureCardNav();
+    updateModuleFocus();
     const focus = document.getElementById(hashId);
     if (focus && focus.tagName === 'DETAILS') {
       focus.open = true;
@@ -11472,6 +12411,76 @@ const airGoldenDashboardHtml = `<!doctype html>
     }
     updateStepNav();
     updatePlanBrowser({ scroll: true });
+  }
+  function updateFailurePanels() {
+    const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    const panels = Array.from(document.querySelectorAll('#failures [data-failure-panel]'));
+    if (!panels.length) {
+      return;
+    }
+    const match = panels.find((panel) => panel.id === hashId) || null;
+    const home = document.getElementById('failure-home');
+    const groupOpen = hashId.startsWith('failure-group-');
+    panels.forEach((panel) => {
+      const show = groupOpen ? false : (match ? panel === match : panel === home);
+      panel.hidden = !show;
+    });
+  }
+  function updateFailureCardNav() {
+    const steps = [
+      { id: 'failure-story-board', label: 'Stories' },
+      { id: 'failure-full-list', label: 'Failed checks' },
+      { id: 'failure-areas', label: 'Areas' },
+      { id: 'evidence', label: 'Pictures' },
+    ];
+    const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    let index = steps.findIndex((step) => step.id === hashId);
+    if (index < 0 && hashId.startsWith('failure-group-')) index = 0;
+    if (index < 0 && hashId.startsWith('failure-area-')) index = 2;
+    const previous = index > 0 ? steps[index - 1] : (index === 0 ? { id: 'failures', label: 'All cards' } : null);
+    const next = index >= 0 ? (steps[index + 1] || null) : steps[0];
+    const here = index >= 0 ? steps[index] : null;
+    document.querySelectorAll('[data-failure-card-nav]').forEach((nav) => {
+      const page = nav.closest('section.page');
+      nav.hidden = !page || page.id !== document.body.dataset.airPage;
+      const prevLink = nav.querySelector('[data-failure-card-prev]');
+      const nextLink = nav.querySelector('[data-failure-card-next]');
+      const count = nav.querySelector('[data-failure-card-count]');
+      const label = nav.querySelector('[data-failure-card-here]');
+      if (prevLink) {
+        prevLink.classList.toggle('is-pager-empty', !previous);
+        if (previous) prevLink.setAttribute('href', '#' + previous.id);
+        const name = prevLink.querySelector('strong');
+        if (name) name.textContent = previous ? '← ' + previous.label : '';
+      }
+      if (nextLink) {
+        nextLink.classList.toggle('is-pager-empty', !next);
+        if (next) nextLink.setAttribute('href', '#' + next.id);
+        const name = nextLink.querySelector('strong');
+        if (name) name.textContent = next ? next.label + ' →' : '';
+      }
+      if (count) count.textContent = here ? (index + 1) + ' of ' + steps.length : steps.length + ' cards';
+      if (label) label.textContent = here ? here.label : 'Choose a card';
+    });
+    document.querySelectorAll('#failure-home .failure-summary-card').forEach((card) => {
+      const href = card.getAttribute('href') || '';
+      card.classList.toggle('is-card-current', Boolean(here) && href === '#' + here.id);
+    });
+  }
+  function updateModuleFocus() {
+    const page = document.getElementById('module-dashboard');
+    if (!page) {
+      return;
+    }
+    const hashId = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+    const items = Array.from(page.querySelectorAll('[data-step-item]'));
+    const selected = items.find((item) => item.id === hashId) || null;
+    page.classList.toggle('is-area-open', Boolean(selected));
+    const intro = page.querySelector('.module-dashboard-intro');
+    const jump = page.querySelector('.module-jump');
+    if (intro) intro.hidden = Boolean(selected);
+    if (jump) jump.hidden = Boolean(selected);
+    document.dispatchEvent(new Event('air-inner-sync'));
   }
   function visibleStepItems(page) {
     return Array.from(page.querySelectorAll('[data-step-item]')).filter((item) => (
@@ -11494,6 +12503,10 @@ const airGoldenDashboardHtml = `<!doctype html>
       }
       if (items.length < 2) {
         nav.hidden = true;
+        if (requireSelection && selectedIndex >= 0) {
+          items.forEach((item) => item.classList.toggle('is-step-current', item.id === hashId));
+          if (indexPanel) indexPanel.hidden = true;
+        }
         return;
       }
       nav.hidden = false;
@@ -12094,7 +13107,6 @@ const airGoldenDashboardHtml = `<!doctype html>
       const matchesStatus = activeFilter === 'all' || statusGroup === activeFilter;
       const matchesSearch = !query || searchText.includes(query);
       const matches = matchesStatus && matchesSearch;
-      card.hidden = !matches;
       card.classList.toggle('is-hidden', !matches);
       card.setAttribute('aria-hidden', String(!matches));
       if (matches) {
@@ -12114,6 +13126,7 @@ const airGoldenDashboardHtml = `<!doctype html>
       moduleFilterEmpty.textContent = 'No ' + (activeFilter === 'all' ? '' : activeFilter.replace('-', ' ') + ' ') + 'areas found in this run.';
     }
     updateStepNav();
+    document.dispatchEvent(new Event('air-inner-sync'));
   }
 
   moduleFilterButtons.forEach(button => {
@@ -12143,7 +13156,7 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     cards.forEach(card => {
       const matches = !query || String(card.dataset.passedSearch || card.textContent || '').toLowerCase().includes(query);
-      card.hidden = !matches;
+      card.classList.toggle('is-hidden', !matches);
       if (matches) visibleCards += 1;
     });
 
@@ -12153,6 +13166,7 @@ const airGoldenDashboardHtml = `<!doctype html>
     if (passedEmpty) {
       passedEmpty.hidden = visibleCards !== 0;
     }
+    document.dispatchEvent(new Event('air-inner-sync'));
   }
 
   passedCheckSearch?.addEventListener('input', updatePassedSearch);
@@ -12452,6 +13466,67 @@ const airGoldenDashboardHtml = `<!doctype html>
     showShotPage();
   });
 
+  document.querySelectorAll('[data-inner-pager]').forEach((pager) => {
+    const items = Array.from(pager.querySelectorAll('[data-inner-item]'));
+    const size = Number(pager.getAttribute('data-inner-size')) || 3;
+    const label = pager.getAttribute('data-inner-label') || 'Items';
+    let pageIndex = 0;
+    let pageCount = 1;
+
+    const showInnerPage = () => {
+      const modulePage = pager.closest('#module-dashboard');
+      if (modulePage && modulePage.classList.contains('is-area-open')) {
+        items.forEach((item) => { item.hidden = false; });
+        pager.querySelectorAll('.page-pager.inner').forEach((bar) => { bar.hidden = true; });
+        return;
+      }
+      const pool = items.filter((item) => !item.classList.contains('is-hidden'));
+      pageCount = Math.max(1, Math.ceil(pool.length / size));
+      if (pageIndex > pageCount - 1) pageIndex = Math.max(0, pageCount - 1);
+      items.forEach((item) => {
+        if (item.classList.contains('is-hidden')) {
+          item.hidden = true;
+          return;
+        }
+        const index = pool.indexOf(item);
+        item.hidden = index < pageIndex * size || index >= (pageIndex + 1) * size;
+      });
+      pager.querySelectorAll('[data-inner-count]').forEach((count) => {
+        count.textContent = (pageIndex + 1) + ' of ' + pageCount;
+      });
+      pager.querySelectorAll('[data-inner-prev]').forEach((button) => {
+        button.disabled = pageIndex === 0;
+      });
+      pager.querySelectorAll('[data-inner-next]').forEach((button) => {
+        button.disabled = pageIndex >= pageCount - 1;
+      });
+      pager.querySelectorAll('[data-inner-prev-name]').forEach((name) => {
+        name.textContent = pageIndex === 0 ? '' : '← ' + label;
+      });
+      pager.querySelectorAll('[data-inner-next-name]').forEach((name) => {
+        name.textContent = pageIndex >= pageCount - 1 ? '' : label + ' →';
+      });
+      pager.querySelectorAll('.page-pager.inner').forEach((bar) => {
+        bar.hidden = pageCount < 2;
+      });
+    };
+
+    pager.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-inner-prev], [data-inner-next]');
+      if (!button || button.disabled) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      pageIndex = button.hasAttribute('data-inner-prev')
+        ? Math.max(0, pageIndex - 1)
+        : Math.min(pageCount - 1, pageIndex + 1);
+      showInnerPage();
+    });
+    document.addEventListener('air-inner-sync', showInnerPage);
+    showInnerPage();
+  });
+
   document.querySelectorAll('[data-long-list]').forEach(list => {
     const limit = Number(list.getAttribute('data-long-list')) || 6;
     const itemSelector = list.getAttribute('data-long-item');
@@ -12730,8 +13805,10 @@ const airGoldenDashboardHtml = `<!doctype html>
       const target = document.getElementById(id);
       const opensArea = target && (target.hasAttribute('data-step-item') || target.id === 'validation-summary');
       const opensPlan = id.startsWith('plan-');
+      const opensFailurePanel = id === 'failures' || id.startsWith('failure-');
+      const opensModule = id === 'module-dashboard' || id.startsWith('module-dashboard-');
       const destination = pageForTarget(id);
-      if (opensArea || opensPlan || (destination && destination.id !== currentPageId())) {
+      if (opensArea || opensPlan || opensFailurePanel || opensModule || (destination && destination.id !== currentPageId())) {
         event.preventDefault();
         if (location.hash === '#' + id) {
           showCurrentPage();
@@ -12739,6 +13816,9 @@ const airGoldenDashboardHtml = `<!doctype html>
         }
         location.hash = id;
         return;
+      }
+      if (target && target.tagName === 'DETAILS') {
+        target.open = true;
       }
       if (!id || !scrollToReportTarget(id)) {
         return;
@@ -12830,7 +13910,7 @@ try {
 }
 
 if (!reportWritten) {
-  const spareNames = ['index-nav.html', 'index-spare.html'];
+  const spareNames = ['index-nav.html', 'index-spare.html', 'index-current.html'];
   for (const name of spareNames) {
     const sparePath = path.join(outputDir, name);
     try {

@@ -550,11 +550,6 @@ test.describe(
         'Signup OTP input limits entry to six digits',
         async ({ page }) => {
 
-        test.fail(
-          true,
-          'Known defect: signup OTP input currently accepts more than six digits.'
-        );
-
         const registration =
           new RegistrationPage(page);
 
@@ -588,11 +583,6 @@ test.describe(
       test(
         'Signup OTP input trims pasted value to six digits',
         async ({ page }) => {
-
-        test.fail(
-          true,
-          'Known defect: signup OTP input currently allows pasted values longer than six digits.'
-        );
 
         const registration =
           new RegistrationPage(page);
@@ -647,11 +637,6 @@ test.describe(
       test(
         'Signup OTP verify button is enabled only for six digits',
         async ({ page }) => {
-
-        test.fail(
-          true,
-          'Known defect: signup OTP Verify button is enabled before exactly six digits are entered.'
-        );
 
         const registration =
           new RegistrationPage(page);
