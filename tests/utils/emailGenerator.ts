@@ -144,7 +144,7 @@ export function generateMobileNumber(): string {
         );
 
     number =
-      `201555${suffix}`;
+      `${TEST_USERS.onboarding.mobilePrefix}${suffix}`;
   }
 
   used.add(number);

@@ -273,25 +273,25 @@ if (
             planName: 'Income Builder',
             interval: 'monthly',
             expectedBillingCopy:
-              /29|per month|monthly|subscription|total/i
+              /2\.90|2\.9|per month|monthly|subscription|total/i
           },
           {
             planName: 'Income Builder',
             interval: 'annual',
             expectedBillingCopy:
-              /290|per year|annual|subscription|total|due/i
+              /\$\s*29(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
           },
           {
             planName: 'Portfolio Hedger',
             interval: 'monthly',
             expectedBillingCopy:
-              /149|per month|monthly|subscription|total/i
+              /14\.90|14\.9|per month|monthly|subscription|total/i
           },
           {
             planName: 'Portfolio Hedger',
             interval: 'annual',
             expectedBillingCopy:
-              /1,?490|per year|annual|subscription|total|due/i
+              /\$\s*149(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
           }
         ];
 
@@ -343,7 +343,7 @@ if (
               expectedPlan:
                 'Income Builder',
               expectedBillingCopy:
-                /29|per month|monthly|subscription|total/i
+                /2\.90|2\.9|per month|monthly|subscription|total/i
             });
           }
         );

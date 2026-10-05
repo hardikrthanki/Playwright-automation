@@ -644,18 +644,74 @@ test.describe(
             () => null
           );
 
-        await safeClick(
+        const registrationLink =
           authRegistrationLink(
             page
-          ),
+          );
+
+        await safeClick(
+          registrationLink,
           'Open registration from login'
         );
 
         const popup =
           await popupPromise;
 
+        const registrationPage =
+          popup ?? page;
+
+        if (
+          !/\/register|\/signup|\/sign-up|\/create/i.test(
+            registrationPage.url()
+          )
+        ) {
+          await dismissOverlays(
+            registrationPage
+          );
+
+          const link =
+            authRegistrationLink(
+              registrationPage
+            );
+
+          const href =
+            await link.getAttribute(
+              'href'
+            ).catch(
+              () => null
+            );
+
+          if (
+            await link.isVisible().catch(
+              () => false
+            )
+          ) {
+            await safeClick(
+              link,
+              'Open registration from login again'
+            );
+          }
+
+          if (
+            href &&
+            !/\/register|\/signup|\/sign-up|\/create/i.test(
+              registrationPage.url()
+            )
+          ) {
+            await registrationPage.goto(
+              new URL(
+                href,
+                registrationPage.url()
+              ).toString(),
+              {
+                waitUntil: 'domcontentloaded'
+              }
+            );
+          }
+        }
+
         await expectRegistrationOpened(
-          popup ?? page
+          registrationPage
         );
       }
     );

@@ -7,6 +7,12 @@ import {
 
 import {
   BASE_URL,
+  CARDHOLDER_NAME,
+  PLAN_PRICES,
+  STRIPE_CVC,
+  STRIPE_DECLINED_CARD,
+  STRIPE_EXPIRY,
+  STRIPE_INCOMPLETE_CARD,
   STRIPE_PROCESSING_ERROR_CARD,
   STRIPE_STOLEN_CARD,
   TEST_USERS
@@ -92,6 +98,7 @@ export type StripeMatrixCoverageKey =
   | 'downgrade-then-cancel'
   | 'monthly-to-annual'
   | 'annual-to-monthly'
+  | 'paid-no-second-trial'
   | 'downgrade-targets'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
@@ -122,21 +129,6 @@ class CoverageSkip extends Error {
 
 const coverageCache =
   new Map<StripeMatrixCoverageKey, CoverageOutcome>();
-
-const PLAN_PRICES = {
-  'Income Builder': {
-    monthly: 29,
-    annual: 290
-  },
-  'Overlay Strategists': {
-    monthly: 79,
-    annual: 790
-  },
-  'Portfolio Hedger': {
-    monthly: 149,
-    annual: 1490
-  }
-} as const;
 
 type PaidPlanName =
   keyof typeof PLAN_PRICES;
@@ -387,6 +379,14 @@ export function inferStripeMatrixCoverageKey(
     )
   ) {
     return 'annual-to-monthly';
+  }
+
+  if (
+    text.includes(
+      'cannot start another'
+    )
+  ) {
+    return 'paid-no-second-trial';
   }
 
   if (
@@ -1340,17 +1340,17 @@ async function executePaymentNegative(
   ).toBeVisible();
 
   await cardNumber.fill(
-    '4242'
+    STRIPE_INCOMPLETE_CARD
   );
   await page.locator(
     '#cardExpiry'
   ).fill(
-    '12/34'
+    STRIPE_EXPIRY
   );
   await page.locator(
     '#cardCvc'
   ).fill(
-    '123'
+    STRIPE_CVC
   );
 
   const payButton =
@@ -1472,12 +1472,12 @@ async function submitCheckoutCard(
   await page.locator(
     '#cardExpiry'
   ).fill(
-    '12/34'
+    STRIPE_EXPIRY
   );
   await page.locator(
     '#cardCvc'
   ).fill(
-    '123'
+    STRIPE_CVC
   );
 
   const cardholder =
@@ -1491,7 +1491,7 @@ async function submitCheckoutCard(
     )
   ) {
     await cardholder.fill(
-      'Hardik Thanki'
+      CARDHOLDER_NAME
     );
   }
 
@@ -1523,7 +1523,7 @@ async function executeCheckoutDecline(
   await submitCheckoutCard(
     page,
     'checkout-decline',
-    '4000000000000002',
+    STRIPE_DECLINED_CARD,
     /declin|insufficient|do not honor|card was declined|try another|not successful/i
   );
 }
@@ -1806,6 +1806,29 @@ async function executeDowngradeThenCancel(
   );
 }
 
+async function executePaidNoSecondTrial(
+  page: Page
+) {
+  await Promise.race([
+    loginPaidSubscriber(
+      page
+    ),
+    page.waitForTimeout(
+      90000
+    ).then(
+      () => {
+        throw new Error(
+          'Paid subscriber login did not finish within 90s.'
+        );
+      }
+    )
+  ]);
+
+  await new BillingPage(
+    page
+  ).validatePaidSubscriberTrialCtaIsNotOffered();
+}
+
 async function submitIntervalChange(
   page: Page,
   tag: string,
@@ -1820,14 +1843,28 @@ async function submitIntervalChange(
       startingInterval
     );
 
-  await billing.openPlanChangeCalculationPreview({
-    targetPlan:
-      'Income Builder',
-    action:
-      'interval',
-    interval:
-      targetInterval
-  });
+  try {
+    await billing.openPlanChangeCalculationPreview({
+      targetPlan:
+        'Income Builder',
+      action:
+        'interval',
+      interval:
+        targetInterval
+    });
+  } catch (error) {
+    if (
+      isMissingPlanAction(
+        error
+      )
+    ) {
+      throw new CoverageSkip(
+        `Income Builder has no monthly/annual switch on the plans screen. ${error instanceof Error ? error.message : ''}`
+      );
+    }
+
+    throw error;
+  }
 
   await billing.validatePlanChangeDueAmountAndRenewal({
     targetPlan:
@@ -1975,6 +2012,8 @@ const coverageExecutors: Record<
     executeMonthlyToAnnual,
   'annual-to-monthly':
     executeAnnualToMonthly,
+  'paid-no-second-trial':
+    executePaidNoSecondTrial,
   'downgrade-targets':
     executeDowngradeTargets,
   'current-plan-before-upgrade':

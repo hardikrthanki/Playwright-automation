@@ -6,7 +6,35 @@ import {
 
 import { BasePage } from './BasePage';
 import { safeClick } from '../helpers/safeClick';
+import { PLAN_PRICES } from '../config/testData';
 import { Logger } from '../utils/logger';
+
+function shownPricePattern(
+  amount: number
+) {
+  const amounts = [
+    amount.toFixed(2),
+    String(amount)
+  ].filter(
+    (
+      value,
+      index,
+      list
+    ) => list.indexOf(
+      value
+    ) === index
+  );
+
+  return new RegExp(
+    `\\$\\s*(?:${amounts.map(
+      value => value.replace(
+        '.',
+        '\\.'
+      )
+    ).join('|')})(?!\\d)`,
+    'i'
+  );
+}
 
 /* =============================================================================
 PAGE OBJECT: PlanSelectionPage
@@ -1052,9 +1080,9 @@ export class PlanSelectionPage extends BasePage {
         .innerText();
 
     const monthlyPrices = [
-      /\$\s*29\s*\/\s*mo/i,
-      /\$\s*79\s*\/\s*mo/i,
-      /\$\s*149\s*\/\s*mo/i
+      shownPricePattern(PLAN_PRICES['Income Builder'].monthly),
+      shownPricePattern(PLAN_PRICES['Overlay Strategists'].monthly),
+      shownPricePattern(PLAN_PRICES['Portfolio Hedger'].monthly)
     ];
 
     for (const price of monthlyPrices) {
@@ -1077,9 +1105,9 @@ export class PlanSelectionPage extends BasePage {
         .innerText();
 
     const annualPrices = [
-      /\$\s*290\b/i,
-      /\$\s*790\b/i,
-      /\$\s*1,?490\b/i
+      shownPricePattern(PLAN_PRICES['Income Builder'].annual),
+      shownPricePattern(PLAN_PRICES['Overlay Strategists'].annual),
+      shownPricePattern(PLAN_PRICES['Portfolio Hedger'].annual)
     ];
 
     for (const price of annualPrices) {
@@ -1221,7 +1249,7 @@ export class PlanSelectionPage extends BasePage {
           /securely save your card|payment details|card/i,
           /30-?day|30 days/i,
           /no charge today|free trial/i,
-          /after the trial|\$79|auto-renews|automatically/i,
+          /after the trial|\$7\.90|\$79|auto-renews|automatically/i,
           /unless you cancel|cancel/i
         ]
         : [

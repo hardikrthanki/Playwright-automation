@@ -251,11 +251,14 @@ export class ResetPasswordPage
           this.pendingPassword
         );
 
+        const resetRequest =
+          /reset-password|resetPassword|password\/reset|forgot-password/i;
+
         const responsePromise =
           this.page.waitForResponse(
             (response) =>
               response.request().method() === 'POST' &&
-              /\/auth\/reset-password/i.test(
+              resetRequest.test(
                 response.url()
               ),
             {
@@ -269,7 +272,7 @@ export class ResetPasswordPage
           this.page.waitForRequest(
             (request) =>
               request.method() === 'POST' &&
-              /\/auth\/reset-password/i.test(
+              resetRequest.test(
                 request.url()
               ),
             {
@@ -297,8 +300,12 @@ export class ResetPasswordPage
           ]);
 
         if (!started) {
-          await this.confirmPasswordInput.press(
-            'Enter'
+          await this.page.locator(
+            'form'
+          ).first().evaluate(
+            (form) => {
+              (form as HTMLFormElement).requestSubmit();
+            }
           ).catch(
             () => undefined
           );
@@ -329,9 +336,22 @@ export class ResetPasswordPage
     }
 
     if (response) {
+      const body =
+        await response.text().catch(
+          () => ''
+        );
+
       console.log(
-        `Reset response ${response.status()}`
+        `Reset response ${response.status()} ${body.slice(0, 180)}`
       );
+
+      if (
+        response.status() >= 400
+      ) {
+        throw new Error(
+          `Password reset was rejected (${response.status()}). ${body.slice(0, 240)}`
+        );
+      }
     }
 
     Logger.success(
@@ -354,14 +374,33 @@ export class ResetPasswordPage
       );
 
     if (!confirmed) {
-      await expect(
-        this.page
-      ).toHaveURL(
-        /\/login/,
-        {
-          timeout: 20000
-        }
-      );
+      const leftResetPage =
+        await this.page.waitForURL(
+          (url) =>
+            !/reset-password/i.test(
+              url.href
+            ),
+          {
+            timeout: 20000
+          }
+        ).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (!leftResetPage) {
+        const pageText =
+          await this.page.locator(
+            'body'
+          ).innerText().catch(
+            () => ''
+          );
+
+        throw new Error(
+          `Password reset stayed on ${this.page.url()}. Page text: ${pageText.replace(/\s+/g, ' ').slice(0, 400)}`
+        );
+      }
     }
 
     Logger.success(

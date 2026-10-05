@@ -8,12 +8,206 @@ TEST DATA CONFIGURATION
 
 PURPOSE
 -------
-Stores reusable test data used across Playwright tests.
+Reads tests/config/test-data.json. Edit that file, or set TEST_DATA_FILE to
+another JSON file, to run the same tests with different users, cards, and
+plan prices. An environment variable still overrides the matching field.
 
 ============================================================================= */
 
+type PlanPrice = {
+  monthly: number;
+  annual: number;
+};
+
+type TestDataFile = {
+  baseUrl?: string;
+  users?: {
+    onboarding?: {
+      firstName?: string;
+      lastName?: string;
+      emailBase?: string;
+      emailBases?: string[];
+      mobile?: string;
+      mobilePrefix?: string;
+      password?: string;
+    };
+    subscriber?: {
+      email?: string;
+      password?: string;
+    };
+  };
+  auth?: {
+    otpCode?: string;
+    emailVerificationLinkExpiryMinutes?: number;
+    passwordResetLinkExpiryMinutes?: number;
+    emailVerificationResendsPerWindow?: number;
+    emailVerificationResendWindowSeconds?: number;
+    registrationMobileOtpEnabled?: boolean;
+    postLoginMobileVerificationEnabled?: boolean;
+    emailVerificationRequired?: boolean;
+    maxFailedLoginAttempts?: number;
+    lockoutDurationMinutes?: number;
+    failureCountingWindowMinutes?: number;
+  };
+  passwordPolicy?: {
+    minimumLength?: number;
+    requireUppercase?: boolean;
+    requireLowercase?: boolean;
+    requireDigit?: boolean;
+    requireSymbol?: boolean;
+    bannedPasswords?: string[];
+    expiryDays?: number;
+  };
+  mfa?: {
+    userFlowEnabled?: boolean;
+    allowDestructiveUserFlow?: boolean;
+    allowGoogleUserFlow?: boolean;
+    manualOtpFlowEnabled?: boolean;
+    manualExpectTrustedDevice?: boolean;
+    availableToUsers?: boolean;
+    requireForAdminRoles?: boolean;
+    requireForAllUsers?: boolean;
+    allowTotp?: boolean;
+    allowSmsSecondFactor?: boolean;
+    recoveryCodesPerUser?: number;
+    maxFailedAttempts?: number;
+    lockoutDurationMinutes?: number;
+    trustedDevicesEnabled?: boolean;
+    trustedDeviceLifetimeDays?: number;
+    forceAfterFailedLogins?: number;
+    forceAfterPasswordChange?: boolean;
+    forceAfterSensitiveProfileChanges?: boolean;
+    forceFromUnusualLocation?: boolean;
+  };
+  rateLimits?: {
+    authEmailsPerWindow?: number;
+    authEmailsWindowSeconds?: number;
+    authSmsPerWindow?: number;
+    authSmsWindowSeconds?: number;
+    tokenVerificationsPerWindow?: number;
+    tokenVerificationsWindowSeconds?: number;
+    signupsAndSigninsPerWindow?: number;
+    signupsAndSigninsWindowSeconds?: number;
+    passwordResetsPerWindow?: number;
+    passwordResetsWindowSeconds?: number;
+    apiAuthRequestsPerWindow?: number;
+    apiAuthWindowSeconds?: number;
+    apiReadRequestsPerWindow?: number;
+    apiReadWindowSeconds?: number;
+    apiWriteRequestsPerWindow?: number;
+    apiWriteWindowSeconds?: number;
+    apiPublicRequestsPerWindow?: number;
+    apiPublicWindowSeconds?: number;
+    otpPerPhoneMaxPerWindow?: number;
+    otpPerPhoneWindowSeconds?: number;
+    otpPerUserMaxPerWindow?: number;
+    otpPerUserWindowSeconds?: number;
+  };
+  stripe?: {
+    card?: string;
+    declinedCard?: string;
+    insufficientFundsCard?: string;
+    stolenCard?: string;
+    processingErrorCard?: string;
+    authenticationRequiredCard?: string;
+    incompleteCard?: string;
+    expiry?: string;
+    expiredExpiry?: string;
+    cvc?: string;
+    invalidCvc?: string;
+    country?: string;
+    cardholderName?: string;
+    trialCards?: string[];
+  };
+  plans?: {
+    'Income Builder'?: PlanPrice;
+    'Overlay Strategists'?: PlanPrice;
+    'Portfolio Hedger'?: PlanPrice;
+  };
+  positions?: {
+    cash?: {
+      amount?: string;
+      currencyOption?: string;
+    };
+    equity?: {
+      search?: string;
+      symbol?: string;
+      quantity?: string;
+      price?: string;
+    };
+    option?: {
+      search?: string;
+      symbol?: string;
+      right?: string;
+      quantity?: string;
+      price?: string;
+    };
+  };
+};
+
+function testDataFilePath() {
+  const configured =
+    process.env.TEST_DATA_FILE;
+
+  if (!configured) {
+    return path.join(
+      __dirname,
+      'test-data.json'
+    );
+  }
+
+  return path.isAbsolute(
+    configured
+  )
+    ? configured
+    : path.join(
+      process.cwd(),
+      configured
+    );
+}
+
+function loadTestDataFile(): TestDataFile {
+  const filePath =
+    testDataFilePath();
+
+  return JSON.parse(
+    fs.readFileSync(
+      filePath,
+      'utf8'
+    )
+  ) as TestDataFile;
+}
+
+const data =
+  loadTestDataFile();
+
+const onboarding =
+  data.users?.onboarding ?? {};
+
+const subscriber =
+  data.users?.subscriber ?? {};
+
+const auth =
+  data.auth ?? {};
+
+const passwordPolicy =
+  data.passwordPolicy ?? {};
+
+const mfa =
+  data.mfa ?? {};
+
+const rates =
+  data.rateLimits ?? {};
+
+const stripe =
+  data.stripe ?? {};
+
+const positions =
+  data.positions ?? {};
+
 export const BASE_URL =
   process.env.BASE_URL ??
+  data.baseUrl ??
   'https://uat.ooltool.com';
 
 function getBooleanEnv(
@@ -74,10 +268,12 @@ export const TEST_USERS = {
 
     firstName:
       process.env.ONBOARDING_FIRST_NAME ??
+      onboarding.firstName ??
       'Hardik',
 
     lastName:
       process.env.ONBOARDING_LAST_NAME ??
+      onboarding.lastName ??
       'Thanki',
 
     email:
@@ -85,12 +281,15 @@ export const TEST_USERS = {
 
     emailBase:
       process.env.ONBOARDING_EMAIL_BASE ??
+      onboarding.emailBase ??
       'imhardikthanki@gmail.com',
 
     emailBases:
       (
         process.env.ONBOARDING_EMAIL_BASES ??
         process.env.ONBOARDING_EMAIL_BASE ??
+        onboarding.emailBases?.join(',') ??
+        onboarding.emailBase ??
         'imhardikthanki@gmail.com'
       )
         .split(',')
@@ -102,10 +301,17 @@ export const TEST_USERS = {
 
     mobile:
       process.env.ONBOARDING_MOBILE ??
+      onboarding.mobile ??
       '2015550123',
+
+    mobilePrefix:
+      process.env.ONBOARDING_MOBILE_PREFIX ??
+      onboarding.mobilePrefix ??
+      '201555',
 
     password:
       process.env.ONBOARDING_PASSWORD ??
+      onboarding.password ??
       'Test@123456'
   },
 
@@ -113,10 +319,12 @@ export const TEST_USERS = {
 
     email:
       process.env.SUBSCRIBER_EMAIL ??
+      subscriber.email ??
       'imhardikthanki+plantest@gmail.com',
 
     password:
       process.env.SUBSCRIBER_PASSWORD ??
+      subscriber.password ??
       'H@rdik9944'
   },
 
@@ -162,48 +370,56 @@ export const AUTH_SETTINGS = {
 
   otpCode:
     process.env.AUTH_OTP_CODE ??
+    auth.otpCode ??
     '111111',
 
   emailVerificationLinkExpiryMinutes:
     getNumberEnv(
       'AUTH_EMAIL_VERIFICATION_LINK_EXPIRY_MINUTES',
-      5
+      auth.emailVerificationLinkExpiryMinutes ??
+        5
     ),
 
   passwordResetLinkExpiryMinutes:
     getNumberEnv(
       'AUTH_PASSWORD_RESET_LINK_EXPIRY_MINUTES',
-      5
+      auth.passwordResetLinkExpiryMinutes ??
+        5
     ),
 
   emailVerificationResendsPerWindow:
     getNumberEnv(
       'AUTH_EMAIL_VERIFICATION_RESENDS_PER_WINDOW',
-      5
+      auth.emailVerificationResendsPerWindow ??
+        5
     ),
 
   emailVerificationResendWindowSeconds:
     getNumberEnv(
       'AUTH_EMAIL_VERIFICATION_RESEND_WINDOW_SECONDS',
-      3600
+      auth.emailVerificationResendWindowSeconds ??
+        3600
     ),
 
   registrationMobileOtpEnabled:
     getBooleanEnv(
       'AUTH_REGISTRATION_MOBILE_OTP_ENABLED',
-      true
+      auth.registrationMobileOtpEnabled ??
+        true
     ),
 
   postLoginMobileVerificationEnabled:
     getBooleanEnv(
       'AUTH_POST_LOGIN_MOBILE_VERIFICATION_ENABLED',
-      true
+      auth.postLoginMobileVerificationEnabled ??
+        true
     ),
 
   emailVerificationRequired:
     getBooleanEnv(
       'AUTH_EMAIL_VERIFICATION_REQUIRED',
-      true
+      auth.emailVerificationRequired ??
+        true
     )
 };
 
@@ -216,19 +432,22 @@ export const AUTH_LOCKOUT_SETTINGS = {
   maxFailedLoginAttempts:
     getNumberEnv(
       'AUTH_MAX_FAILED_LOGIN_ATTEMPTS',
-      5
+      auth.maxFailedLoginAttempts ??
+        5
     ),
 
   lockoutDurationMinutes:
     getNumberEnv(
       'AUTH_LOCKOUT_DURATION_MINUTES',
-      15
+      auth.lockoutDurationMinutes ??
+        15
     ),
 
   failureCountingWindowMinutes:
     getNumberEnv(
       'AUTH_FAILURE_COUNTING_WINDOW_MINUTES',
-      15
+      auth.failureCountingWindowMinutes ??
+        15
     )
 };
 
@@ -241,36 +460,42 @@ export const PASSWORD_POLICY = {
   minimumLength:
     getNumberEnv(
       'PASSWORD_MINIMUM_LENGTH',
-      8
+      passwordPolicy.minimumLength ??
+        8
     ),
 
   requireUppercase:
     getBooleanEnv(
       'PASSWORD_REQUIRE_UPPERCASE',
-      false
+      passwordPolicy.requireUppercase ??
+        false
     ),
 
   requireLowercase:
     getBooleanEnv(
       'PASSWORD_REQUIRE_LOWERCASE',
-      false
+      passwordPolicy.requireLowercase ??
+        false
     ),
 
   requireDigit:
     getBooleanEnv(
       'PASSWORD_REQUIRE_DIGIT',
-      false
+      passwordPolicy.requireDigit ??
+        false
     ),
 
   requireSymbol:
     getBooleanEnv(
       'PASSWORD_REQUIRE_SYMBOL',
-      false
+      passwordPolicy.requireSymbol ??
+        false
     ),
 
   bannedPasswords:
     (
       process.env.PASSWORD_BANNED_PASSWORDS ??
+      passwordPolicy.bannedPasswords?.join(',') ??
       'password,123456,qwerty,letmein,admin'
     )
       .split(',')
@@ -283,7 +508,8 @@ export const PASSWORD_POLICY = {
   expiryDays:
     getNumberEnv(
       'PASSWORD_EXPIRY_DAYS',
-      0
+      passwordPolicy.expiryDays ??
+        0
     )
 };
 
@@ -296,115 +522,134 @@ export const MFA_SETTINGS = {
   userFlowEnabled:
     getBooleanEnv(
       'MFA_USER_FLOW_ENABLED',
-      false
+      mfa.userFlowEnabled ??
+        false
     ),
 
   allowDestructiveUserFlow:
     getBooleanEnv(
       'MFA_ALLOW_DESTRUCTIVE_USER_FLOW',
-      false
+      mfa.allowDestructiveUserFlow ??
+        false
     ),
 
   allowGoogleUserFlow:
     getBooleanEnv(
       'MFA_ALLOW_GOOGLE_USER_FLOW',
-      false
+      mfa.allowGoogleUserFlow ??
+        false
     ),
 
   manualOtpFlowEnabled:
     getBooleanEnv(
       'MFA_MANUAL_OTP_FLOW_ENABLED',
-      false
+      mfa.manualOtpFlowEnabled ??
+        false
     ),
 
   manualExpectTrustedDevice:
     getBooleanEnv(
       'MFA_MANUAL_EXPECT_TRUSTED_DEVICE',
-      false
+      mfa.manualExpectTrustedDevice ??
+        false
     ),
 
   availableToUsers:
     getBooleanEnv(
       'MFA_AVAILABLE_TO_USERS',
-      true
+      mfa.availableToUsers ??
+        true
     ),
 
   requireForAdminRoles:
     getBooleanEnv(
       'MFA_REQUIRE_FOR_ADMIN_ROLES',
-      false
+      mfa.requireForAdminRoles ??
+        false
     ),
 
   requireForAllUsers:
     getBooleanEnv(
       'MFA_REQUIRE_FOR_ALL_USERS',
-      false
+      mfa.requireForAllUsers ??
+        false
     ),
 
   allowTotp:
     getBooleanEnv(
       'MFA_ALLOW_TOTP',
-      true
+      mfa.allowTotp ??
+        true
     ),
 
   allowSmsSecondFactor:
     getBooleanEnv(
       'MFA_ALLOW_SMS_SECOND_FACTOR',
-      false
+      mfa.allowSmsSecondFactor ??
+        false
     ),
 
   recoveryCodesPerUser:
     getNumberEnv(
       'MFA_RECOVERY_CODES_PER_USER',
-      5
+      mfa.recoveryCodesPerUser ??
+        5
     ),
 
   maxFailedAttempts:
     getNumberEnv(
       'MFA_MAX_FAILED_ATTEMPTS',
-      5
+      mfa.maxFailedAttempts ??
+        5
     ),
 
   lockoutDurationMinutes:
     getNumberEnv(
       'MFA_LOCKOUT_DURATION_MINUTES',
-      30
+      mfa.lockoutDurationMinutes ??
+        30
     ),
 
   trustedDevicesEnabled:
     getBooleanEnv(
       'MFA_TRUSTED_DEVICES_ENABLED',
-      true
+      mfa.trustedDevicesEnabled ??
+        true
     ),
 
   trustedDeviceLifetimeDays:
     getNumberEnv(
       'MFA_TRUSTED_DEVICE_LIFETIME_DAYS',
-      15
+      mfa.trustedDeviceLifetimeDays ??
+        15
     ),
 
   forceAfterFailedLogins:
     getNumberEnv(
       'MFA_FORCE_AFTER_FAILED_LOGINS',
-      3
+      mfa.forceAfterFailedLogins ??
+        3
     ),
 
   forceAfterPasswordChange:
     getBooleanEnv(
       'MFA_FORCE_AFTER_PASSWORD_CHANGE',
-      true
+      mfa.forceAfterPasswordChange ??
+        true
     ),
 
   forceAfterSensitiveProfileChanges:
     getBooleanEnv(
       'MFA_FORCE_AFTER_SENSITIVE_PROFILE_CHANGES',
-      true
+      mfa.forceAfterSensitiveProfileChanges ??
+        true
     ),
 
   forceFromUnusualLocation:
     getBooleanEnv(
       'MFA_FORCE_FROM_UNUSUAL_LOCATION',
-      false
+      mfa.forceFromUnusualLocation ??
+        false
     )
 };
 
@@ -417,61 +662,71 @@ export const AUTH_RATE_LIMITS = {
   authEmailsPerWindow:
     getNumberEnv(
       'RATE_AUTH_EMAILS_PER_WINDOW',
-      30
+      rates.authEmailsPerWindow ??
+        30
     ),
 
   authEmailsWindowSeconds:
     getNumberEnv(
       'RATE_AUTH_EMAILS_WINDOW_SECONDS',
-      3600
+      rates.authEmailsWindowSeconds ??
+        3600
     ),
 
   authSmsPerWindow:
     getNumberEnv(
       'RATE_AUTH_SMS_PER_WINDOW',
-      30
+      rates.authSmsPerWindow ??
+        30
     ),
 
   authSmsWindowSeconds:
     getNumberEnv(
       'RATE_AUTH_SMS_WINDOW_SECONDS',
-      3600
+      rates.authSmsWindowSeconds ??
+        3600
     ),
 
   tokenVerificationsPerWindow:
     getNumberEnv(
       'RATE_TOKEN_VERIFICATIONS_PER_WINDOW',
-      30
+      rates.tokenVerificationsPerWindow ??
+        30
     ),
 
   tokenVerificationsWindowSeconds:
     getNumberEnv(
       'RATE_TOKEN_VERIFICATIONS_WINDOW_SECONDS',
-      300
+      rates.tokenVerificationsWindowSeconds ??
+        300
     ),
 
   signupsAndSigninsPerWindow:
     getNumberEnv(
       'RATE_SIGNUPS_SIGNINS_PER_WINDOW',
-      30
+      rates.signupsAndSigninsPerWindow ??
+        30
     ),
 
   signupsAndSigninsWindowSeconds:
     getNumberEnv(
       'RATE_SIGNUPS_SIGNINS_WINDOW_SECONDS',
-      300
+      rates.signupsAndSigninsWindowSeconds ??
+        300
     ),
 
   passwordResetsPerWindow:
     getNumberEnv(
       'RATE_PASSWORD_RESETS_PER_WINDOW',
-      5
+      rates.passwordResetsPerWindow ??
+        5
     ),
 
   passwordResetsWindowSeconds:
     getNumberEnv(
       'RATE_PASSWORD_RESETS_WINDOW_SECONDS',
-      3600
+      rates.passwordResetsWindowSeconds ??
+        3600
     )
 };
 
@@ -480,49 +735,57 @@ export const API_RATE_LIMITS = {
   authRequestsPerWindow:
     getNumberEnv(
       'RATE_API_AUTH_REQUESTS_PER_WINDOW',
-      5
+      rates.apiAuthRequestsPerWindow ??
+        5
     ),
 
   authWindowSeconds:
     getNumberEnv(
       'RATE_API_AUTH_WINDOW_SECONDS',
-      60
+      rates.apiAuthWindowSeconds ??
+        60
     ),
 
   readRequestsPerWindow:
     getNumberEnv(
       'RATE_API_READ_REQUESTS_PER_WINDOW',
-      60
+      rates.apiReadRequestsPerWindow ??
+        60
     ),
 
   readWindowSeconds:
     getNumberEnv(
       'RATE_API_READ_WINDOW_SECONDS',
-      60
+      rates.apiReadWindowSeconds ??
+        60
     ),
 
   writeRequestsPerWindow:
     getNumberEnv(
       'RATE_API_WRITE_REQUESTS_PER_WINDOW',
-      20
+      rates.apiWriteRequestsPerWindow ??
+        20
     ),
 
   writeWindowSeconds:
     getNumberEnv(
       'RATE_API_WRITE_WINDOW_SECONDS',
-      60
+      rates.apiWriteWindowSeconds ??
+        60
     ),
 
   publicRequestsPerWindow:
     getNumberEnv(
       'RATE_API_PUBLIC_REQUESTS_PER_WINDOW',
-      30
+      rates.apiPublicRequestsPerWindow ??
+        30
     ),
 
   publicWindowSeconds:
     getNumberEnv(
       'RATE_API_PUBLIC_WINDOW_SECONDS',
-      60
+      rates.apiPublicWindowSeconds ??
+        60
     )
 };
 
@@ -531,25 +794,29 @@ export const OTP_RATE_LIMITS = {
   perPhoneMaxOtpsPerWindow:
     getNumberEnv(
       'RATE_OTP_PER_PHONE_MAX_PER_WINDOW',
-      5
+      rates.otpPerPhoneMaxPerWindow ??
+        5
     ),
 
   perPhoneWindowSeconds:
     getNumberEnv(
       'RATE_OTP_PER_PHONE_WINDOW_SECONDS',
-      600
+      rates.otpPerPhoneWindowSeconds ??
+        600
     ),
 
   perUserMaxOtpsPerWindow:
     getNumberEnv(
       'RATE_OTP_PER_USER_MAX_PER_WINDOW',
-      10
+      rates.otpPerUserMaxPerWindow ??
+        10
     ),
 
   perUserWindowSeconds:
     getNumberEnv(
       'RATE_OTP_PER_USER_WINDOW_SECONDS',
-      600
+      rates.otpPerUserWindowSeconds ??
+        600
     )
 };
 
@@ -621,46 +888,14 @@ export function validatePasswordPolicy(
 
 export const STRIPE_CARD =
   process.env.STRIPE_CARD ??
+  stripe.card ??
   '4242424242424242';
 
-export const STRIPE_TRIAL_CARDS = [
-  '4000003560000008',
-  '4000000400000008',
-  '4000000560000004',
-  '4000000760000002',
-  '4000001240000000',
-  '4000001520000001',
-  '4000001700000003',
-  '4000001880000005',
-  '4000002080000001',
-  '4000002460000001',
-  '4000002500000003',
-  '4000002760000016',
-  '4000003440000004',
-  '4000003720000005',
-  '4000003800000008',
-  '4000003920000003',
-  '4000004580000002',
-  '4000005540000008',
-  '4000007020000003',
-  '4000007240000007',
-  '4000007520000008',
-  '4000007560000009',
-  '4000008260000000',
-  '4000056655665556',
-  '5555555555554444',
-  '2223003122003222',
-  '5200828282828210',
-  '5105105105105100',
-  '4000000000000077',
-  '378282246310005',
-  '371449635398431',
-  '6011111111111117',
-  '6011000990139424',
-  '3056930009020004',
-  '3566002020360505',
-  '6200000000000005'
-];
+export const STRIPE_TRIAL_CARDS =
+  stripe.trialCards ??
+  [
+    '4000003560000008'
+  ];
 
 let stripeTrialCardIndex =
   Math.floor(
@@ -786,81 +1021,150 @@ export function uniqueStripeTrialCard(
 
 export const STRIPE_DECLINED_CARD =
   process.env.STRIPE_DECLINED_CARD ??
+  stripe.declinedCard ??
   '4000000000000002';
 
 export const STRIPE_INSUFFICIENT_FUNDS_CARD =
   process.env.STRIPE_INSUFFICIENT_FUNDS_CARD ??
+  stripe.insufficientFundsCard ??
   '4000000000009995';
 
 export const STRIPE_STOLEN_CARD =
   process.env.STRIPE_STOLEN_CARD ??
+  stripe.stolenCard ??
   '4000000000009979';
 
 export const STRIPE_PROCESSING_ERROR_CARD =
   process.env.STRIPE_PROCESSING_ERROR_CARD ??
+  stripe.processingErrorCard ??
   '4000000000000119';
 
 export const STRIPE_3DS_REQUIRED_CARD =
   process.env.STRIPE_3DS_REQUIRED_CARD ??
+  stripe.authenticationRequiredCard ??
   '4000000000003220';
+
+export const STRIPE_INCOMPLETE_CARD =
+  process.env.STRIPE_INCOMPLETE_CARD ??
+  stripe.incompleteCard ??
+  '4242';
 
 export const STRIPE_EXPIRY =
   process.env.STRIPE_EXPIRY ??
+  stripe.expiry ??
   '12/34';
+
+export const STRIPE_EXPIRED_EXPIRY =
+  process.env.STRIPE_EXPIRED_EXPIRY ??
+  stripe.expiredExpiry ??
+  '01/20';
 
 export const STRIPE_CVC =
   process.env.STRIPE_CVC ??
+  stripe.cvc ??
   '123';
+
+export const STRIPE_INVALID_CVC =
+  process.env.STRIPE_INVALID_CVC ??
+  stripe.invalidCvc ??
+  '1';
 
 export const COUNTRY =
   process.env.COUNTRY ??
+  stripe.country ??
   'IN';
+
+export const CARDHOLDER_NAME =
+  process.env.CARDHOLDER_NAME ??
+  stripe.cardholderName ??
+  'Hardik Thanki';
+
+export const PLAN_PRICES = {
+  'Income Builder': {
+    monthly:
+      data.plans?.['Income Builder']?.monthly ??
+      2.9,
+    annual:
+      data.plans?.['Income Builder']?.annual ??
+      29
+  },
+  'Overlay Strategists': {
+    monthly:
+      data.plans?.['Overlay Strategists']?.monthly ??
+      7.9,
+    annual:
+      data.plans?.['Overlay Strategists']?.annual ??
+      79
+  },
+  'Portfolio Hedger': {
+    monthly:
+      data.plans?.['Portfolio Hedger']?.monthly ??
+      14.9,
+    annual:
+      data.plans?.['Portfolio Hedger']?.annual ??
+      149
+  }
+} as const;
 
 export const ADD_POSITION_CASH = {
   amount:
     process.env.ADD_POSITION_AMOUNT ??
+    positions.cash?.amount ??
     '1000',
 
   currencyOption:
-    /united states dollar|\(usd\)/i
+    new RegExp(
+      positions.cash?.currencyOption ??
+        'united states dollar|\\(usd\\)',
+      'i'
+    )
 };
 
 export const ADD_POSITION_EQUITY = {
   search:
     process.env.ADD_POSITION_EQUITY_SEARCH ??
+    positions.equity?.search ??
     'FICO',
 
   symbol:
     process.env.ADD_POSITION_EQUITY_SYMBOL ??
+    positions.equity?.symbol ??
     'FICO',
 
   quantity:
     process.env.ADD_POSITION_EQUITY_QUANTITY ??
+    positions.equity?.quantity ??
     '2',
 
   price:
     process.env.ADD_POSITION_EQUITY_PRICE ??
+    positions.equity?.price ??
     '10'
 };
 
 export const ADD_POSITION_OPTION = {
   search:
     process.env.ADD_POSITION_OPTION_SEARCH ??
+    positions.option?.search ??
     'MSFT',
 
   symbol:
     process.env.ADD_POSITION_OPTION_SYMBOL ??
+    positions.option?.symbol ??
     'MSFT',
 
   right:
     process.env.ADD_POSITION_OPTION_RIGHT ??
+    positions.option?.right ??
     'Call',
 
   quantity:
     process.env.ADD_POSITION_OPTION_QUANTITY ??
+    positions.option?.quantity ??
     '1',
 
   price:
     process.env.ADD_POSITION_OPTION_PRICE ??
+    positions.option?.price ??
     '1.50'
 };

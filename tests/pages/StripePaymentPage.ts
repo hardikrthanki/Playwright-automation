@@ -6,6 +6,8 @@ import {
 import { safeClick } from '../helpers/safeClick';
 
 import {
+  CARDHOLDER_NAME,
+  COUNTRY,
   STRIPE_CARD,
   STRIPE_DECLINED_CARD,
   STRIPE_EXPIRY,
@@ -125,7 +127,7 @@ export class StripePaymentPage
       await name.count()
     ) {
       await name.fill(
-        'Hardik Thanki'
+        CARDHOLDER_NAME
       );
 
       Logger.success(
@@ -142,7 +144,7 @@ export class StripePaymentPage
       await country.count()
     ) {
       await country.selectOption(
-        'IN'
+        COUNTRY
       );
 
       Logger.success(

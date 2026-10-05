@@ -6,7 +6,11 @@ import {
 
 import {
   BASE_URL,
-  COUNTRY
+  COUNTRY,
+  STRIPE_CARD,
+  STRIPE_CVC,
+  STRIPE_DECLINED_CARD,
+  STRIPE_EXPIRY
 } from './config/testData';
 
 /* =============================================================================
@@ -92,7 +96,7 @@ async function fillCardOnly(
   ).first();
 
   if (await expiryInput.isVisible().catch(() => false)) {
-    await expiryInput.fill('12/34');
+    await expiryInput.fill(STRIPE_EXPIRY);
   }
 
   const cvcInput = page.locator(
@@ -100,7 +104,7 @@ async function fillCardOnly(
   ).first();
 
   if (await cvcInput.isVisible().catch(() => false)) {
-    await cvcInput.fill('123');
+    await cvcInput.fill(STRIPE_CVC);
   }
 
   const countrySelect = page.locator(
@@ -166,7 +170,7 @@ test.describe('Blocked Scenario Execution', () => {
     });
 
     await openCheckout(page);
-    await fillCardOnly(page, '4242424242424242');
+    await fillCardOnly(page, STRIPE_CARD);
 
     const nameInput = page.locator(
       'input[name="billingName"], #billingName, input[name="name"]'
@@ -210,7 +214,7 @@ test.describe('Blocked Scenario Execution', () => {
     });
 
     await openCheckout(page);
-    await fillCardOnly(page, '4000000000000002');
+    await fillCardOnly(page, STRIPE_DECLINED_CARD);
     await submitCheckout(page);
 
     await expect

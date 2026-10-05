@@ -645,20 +645,26 @@ extends BasePage {
       await Promise.race([
         requestStarted,
         this.page.waitForTimeout(
-          3000
+          8000
         ).then(
           () => false
         )
       ]);
 
     if (!started) {
-      await this.sendCodeButton.evaluate(
-        (button) => {
-          (button as HTMLButtonElement).click();
-        }
-      ).catch(
-        () => undefined
-      );
+      const stillEnabled =
+        await this.sendCodeButton.isEnabled().catch(
+          () => false
+        );
+
+      if (stillEnabled) {
+        await this.sendCodeButton.click({
+          force: true,
+          timeout: 5000
+        }).catch(
+          () => undefined
+        );
+      }
     }
 
     const response =
@@ -753,7 +759,7 @@ extends BasePage {
         }
 
         throw new Error(
-          `Registration OTP input did not appear after requesting SMS code. Visible diagnostics: ${diagnostics}`
+          `Registration OTP input did not appear after requesting SMS code. Send status ${this.lastSendOtpStatus}. ${this.lastSendOtpBody.slice(0, 180)} Visible diagnostics: ${diagnostics}`
         );
       }
 

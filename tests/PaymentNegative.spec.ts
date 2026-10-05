@@ -5,10 +5,16 @@ import {
 } from '@playwright/test';
 
 import {
+  CARDHOLDER_NAME,
+  COUNTRY,
   STRIPE_3DS_REQUIRED_CARD,
   STRIPE_CVC,
+  STRIPE_CARD,
   STRIPE_DECLINED_CARD,
+  STRIPE_EXPIRED_EXPIRY,
   STRIPE_EXPIRY,
+  STRIPE_INCOMPLETE_CARD,
+  STRIPE_INVALID_CVC,
   STRIPE_INSUFFICIENT_FUNDS_CARD,
   STRIPE_PROCESSING_ERROR_CARD,
   STRIPE_STOLEN_CARD
@@ -76,7 +82,7 @@ async function fillBasicBilling(
     await name.count()
   ) {
     await name.fill(
-      'Hardik Thanki'
+      CARDHOLDER_NAME
     );
   }
 
@@ -89,7 +95,7 @@ async function fillBasicBilling(
     await country.count()
   ) {
     await country.selectOption(
-      'IN'
+      COUNTRY
     );
   }
 }
@@ -195,19 +201,19 @@ if (STRIPE_CHECKOUT_URL) {
         await page.locator(
           '#cardNumber'
         ).fill(
-          '4242'
+          STRIPE_INCOMPLETE_CARD
         );
 
         await page.locator(
           '#cardExpiry'
         ).fill(
-          '12/34'
+          STRIPE_EXPIRY
         );
 
         await page.locator(
           '#cardCvc'
         ).fill(
-          '123'
+          STRIPE_CVC
         );
 
         await fillBasicBilling(
@@ -235,19 +241,19 @@ if (STRIPE_CHECKOUT_URL) {
         await page.locator(
           '#cardNumber'
         ).fill(
-          '4242424242424242'
+          STRIPE_CARD
         );
 
         await page.locator(
           '#cardExpiry'
         ).fill(
-          '01/20'
+          STRIPE_EXPIRED_EXPIRY
         );
 
         await page.locator(
           '#cardCvc'
         ).fill(
-          '123'
+          STRIPE_CVC
         );
 
         await fillBasicBilling(
@@ -275,19 +281,19 @@ if (STRIPE_CHECKOUT_URL) {
         await page.locator(
           '#cardNumber'
         ).fill(
-          '4242424242424242'
+          STRIPE_CARD
         );
 
         await page.locator(
           '#cardExpiry'
         ).fill(
-          '12/34'
+          STRIPE_EXPIRY
         );
 
         await page.locator(
           '#cardCvc'
         ).fill(
-          '1'
+          STRIPE_INVALID_CVC
         );
 
         await fillBasicBilling(

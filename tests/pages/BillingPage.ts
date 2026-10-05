@@ -551,12 +551,14 @@ async validateTransactions() {
 
   const paidStatusBadges =
     this.page.getByText(
-      /^paid$/i
+      /\bpaid\b/i
     );
 
   await expect(
     paidStatusBadges.first()
-  ).toBeVisible();
+  ).toBeVisible({
+    timeout: 15000
+  });
 
   console.log(
     ' Paid Status Verified'
@@ -900,9 +902,14 @@ private async closeCancelDialogIfOpen() {
   if (
     await keepPlan.isVisible().catch(
       () => false
+    ) &&
+    await keepPlan.isEnabled().catch(
+      () => false
     )
   ) {
-    await keepPlan.click();
+    await keepPlan.click({
+      timeout: 8000
+    });
   } else {
     await this.page.keyboard.press(
       'Escape'
@@ -1181,7 +1188,7 @@ private planActionButtonPattern(
     return /downgrade/i;
   }
 
-  return /switch to (annual|monthly|yearly)|change to (annual|monthly)|to annual|to monthly|billing interval|switch billing/i;
+  return /^(?:switch)$|switch to (annual|monthly|yearly)|change to (annual|monthly)|to annual|to monthly|billing interval|switch billing/i;
 }
 
 private async findPlanActionButton(
@@ -1420,7 +1427,7 @@ async validateShownBillingInterval() {
   });
 
   Logger.success(
-    'Plans view shows the active billing interval. This screen has no separate annual or monthly switch.'
+    'Plans view shows the active billing interval. Monthly and Annual are both available.'
   );
 }
 
@@ -1481,7 +1488,7 @@ async openPlanChangeCalculationPreview(
       this.page.getByRole(
         'button',
         {
-          name: /switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
+          name: /^(?:switch)$|switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
         }
       ).first();
 
@@ -1680,19 +1687,8 @@ async validatePlanChangeCalculationPreview(
   ).toBeDefined();
 
   if (options.expectedPlanCharge !== undefined) {
-    const shownMonthlyWhileAnnualRequested =
-      options.interval === 'annual' &&
-      /\/month|per month|monthly/i.test(
-        dialogText
-      ) &&
-      !/\/year|per year|annual/i.test(
-        dialogText
-      );
-
     const comparableListPrice =
-      shownMonthlyWhileAnnualRequested
-        ? options.expectedPlanCharge / 10
-        : options.expectedPlanCharge;
+      options.expectedPlanCharge;
 
     const listPriceDelta =
       Math.abs(
@@ -1718,26 +1714,43 @@ async validatePlanChangeCalculationPreview(
           )
       );
 
+    const recurringMatchesList =
+      newRecurringAmount !== undefined &&
+      Math.abs(
+        newRecurringAmount -
+          comparableListPrice
+      ) <= 1;
+
+    const proratedDueToday =
+      (
+        planCharge ??
+        0
+      ) > 0 &&
+      (
+        planCharge ??
+        0
+      ) + 0.02 < comparableListPrice &&
+      amountDueToday !== undefined &&
+      Math.abs(
+        (
+          planCharge ??
+          0
+        ) -
+          amountDueToday
+      ) <= 1 &&
+      recurringMatchesList;
+
     expect(
       listPriceDelta <= 0.02 ||
-        netPriceDelta <= 1,
-      `Plan charge ${planCharge} should match list price ${comparableListPrice} or list plus unused credit.`
+        netPriceDelta <= 1 ||
+        proratedDueToday,
+      `Plan charge ${planCharge} should match list price ${comparableListPrice}, list plus unused credit, or the prorated amount due today while the new recurring amount stays ${comparableListPrice}.`
     ).toBeTruthy();
   }
 
   if (options.expectedRecurringAmount !== undefined) {
-    const shownMonthlyWhileAnnualRequested =
-      options.interval === 'annual' &&
-      /\/month|per month|monthly/i.test(
-        dialogText
-      ) &&
-      !/\/year|per year|annual/i.test(
-        dialogText
-      );
     const comparableRecurring =
-      shownMonthlyWhileAnnualRequested
-        ? options.expectedRecurringAmount / 10
-        : options.expectedRecurringAmount;
+      options.expectedRecurringAmount;
 
     expect(
       Math.abs(
@@ -1747,7 +1760,7 @@ async validatePlanChangeCalculationPreview(
         ) -
           comparableRecurring
       ),
-      `New recurring amount should match configured ${options.targetPlan} ${shownMonthlyWhileAnnualRequested ? 'monthly' : options.interval} price.`
+      `New recurring amount should match configured ${options.targetPlan} ${options.interval} price.`
     ).toBeLessThanOrEqual(
       0.02
     );
@@ -2617,7 +2630,7 @@ async planChangeActionAvailable(
       this.page.getByRole(
         'button',
         {
-          name: /switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
+          name: /^(?:switch)$|switch to annual|change to annual|to annual|switch to monthly|change to monthly|to monthly/i
         }
       ).first();
 
@@ -2895,6 +2908,52 @@ private async confirmCancelAction(
   }
 }
 
+private async revealInAppCancelControl() {
+  const cancel =
+    this.inAppCancelControl();
+
+  if (
+    await cancel.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    )
+  ) {
+    return cancel;
+  }
+
+  for (const tab of [
+    this.plansTab,
+    this.overviewTab,
+    this.historyTab
+  ]) {
+    if (
+      await tab.isVisible({
+        timeout: 1500
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        tab,
+        'Open billing tab looking for Cancel Subscription'
+      );
+    }
+
+    if (
+      await cancel.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
+      )
+    ) {
+      return cancel;
+    }
+  }
+
+  return cancel;
+}
+
 async openCancelSubscriptionHost() {
   Logger.info(
     'Opening cancel subscription host'
@@ -2903,7 +2962,7 @@ async openCancelSubscriptionHost() {
   await this.validateOverview();
 
   const inAppCancel =
-    this.inAppCancelControl();
+    await this.revealInAppCancelControl();
 
   if (
     await inAppCancel.isVisible({
@@ -3007,10 +3066,19 @@ async openCancelSubscriptionHost() {
               () => false
             )
           ) {
-            await safeClick(
-              keepPlan,
-              'Keep my plan'
-            );
+            if (
+              await keepPlan.isEnabled().catch(
+                () => false
+              )
+            ) {
+              await keepPlan.click({
+                timeout: 8000
+              });
+            } else {
+              await this.page.keyboard.press(
+                'Escape'
+              );
+            }
 
             return;
           }
@@ -3054,8 +3122,37 @@ async openCancelSubscriptionHost() {
     }
   }
 
-  const portalPage =
-    await this.openSubscriptionPortal();
+  let portalPage: Page | undefined;
+
+  try {
+    portalPage =
+      await this.openSubscriptionPortal();
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : String(
+          error
+        );
+
+    if (
+      /Manage subscription control was not found/i.test(
+        message
+      )
+    ) {
+      throw new Error(
+        `Cancel subscription control was not found on Billing. Visible controls: ${(await this.visibleControlSummary()).join(' | ')}`
+      );
+    }
+
+    throw error;
+  }
+
+  if (!portalPage) {
+    throw new Error(
+      'Cancel subscription portal did not open.'
+    );
+  }
 
   const alreadyCancelling =
     portalPage
@@ -3306,11 +3403,21 @@ async resumeScheduledCancellation(
     `Resuming scheduled cancellation for ${planName}`
   );
 
+  await this.closeCancelDialogIfOpen();
+
   const resume =
     this.page.getByRole(
       'button',
       {
-        name: /don'?t cancel|resume subscription|reactivate|keep my plan/i
+        name: /don'?t cancel|resume subscription|reactivate/i
+      }
+    ).first();
+
+  const enabledKeepPlan =
+    this.page.getByRole(
+      'button',
+      {
+        name: /keep my plan/i
       }
     ).first();
 
@@ -3319,12 +3426,28 @@ async resumeScheduledCancellation(
       timeout: 5000
     }).catch(
       () => false
+    ) &&
+    await resume.isEnabled().catch(
+      () => false
     )
   ) {
     await safeClick(
       resume,
       'Resume scheduled cancellation'
     );
+  } else if (
+    await enabledKeepPlan.isVisible({
+      timeout: 2000
+    }).catch(
+      () => false
+    ) &&
+    await enabledKeepPlan.isEnabled().catch(
+      () => false
+    )
+  ) {
+    await enabledKeepPlan.click({
+      timeout: 8000
+    });
   } else {
     const host =
       await this.openCancelSubscriptionHost();

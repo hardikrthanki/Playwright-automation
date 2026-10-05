@@ -8,6 +8,7 @@ import {
 } from '@playwright/test';
 
 import {
+  PLAN_PRICES,
   TEST_USERS
 } from './config/testData';
 import {
@@ -94,26 +95,6 @@ type PlanName =
 type BillingInterval =
   | 'monthly'
   | 'annual';
-
-type PlanPrice = {
-  monthly: number;
-  annual: number;
-};
-
-const PLAN_PRICES: Record<PlanName, PlanPrice> = {
-  'Income Builder': {
-    monthly: 29,
-    annual: 290
-  },
-  'Overlay Strategists': {
-    monthly: 79,
-    annual: 790
-  },
-  'Portfolio Hedger': {
-    monthly: 149,
-    annual: 1490
-  }
-};
 
 function envEnabled(
   name: string

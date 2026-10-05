@@ -1,0 +1,179 @@
+{
+  "baseUrl": "https://uat.ooltool.com",
+  "users": {
+    "onboarding": {
+      "firstName": "Hardik",
+      "lastName": "Thanki",
+      "emailBase": "imhardikthanki@gmail.com",
+      "emailBases": [
+        "imhardikthanki@gmail.com"
+      ],
+      "mobile": "2015550123",
+      "mobilePrefix": "201555",
+      "password": "Test@123456"
+    },
+    "subscriber": {
+      "email": "imhardikthanki+plantest@gmail.com",
+      "password": "H@rdik9944"
+    }
+  },
+  "auth": {
+    "otpCode": "111111",
+    "emailVerificationLinkExpiryMinutes": 5,
+    "passwordResetLinkExpiryMinutes": 5,
+    "emailVerificationResendsPerWindow": 5,
+    "emailVerificationResendWindowSeconds": 3600,
+    "registrationMobileOtpEnabled": true,
+    "postLoginMobileVerificationEnabled": true,
+    "emailVerificationRequired": true,
+    "maxFailedLoginAttempts": 5,
+    "lockoutDurationMinutes": 15,
+    "failureCountingWindowMinutes": 15
+  },
+  "passwordPolicy": {
+    "minimumLength": 8,
+    "requireUppercase": false,
+    "requireLowercase": false,
+    "requireDigit": false,
+    "requireSymbol": false,
+    "bannedPasswords": [
+      "password",
+      "123456",
+      "qwerty",
+      "letmein",
+      "admin"
+    ],
+    "expiryDays": 0
+  },
+  "mfa": {
+    "userFlowEnabled": false,
+    "allowDestructiveUserFlow": false,
+    "allowGoogleUserFlow": false,
+    "manualOtpFlowEnabled": false,
+    "manualExpectTrustedDevice": false,
+    "availableToUsers": true,
+    "requireForAdminRoles": false,
+    "requireForAllUsers": false,
+    "allowTotp": true,
+    "allowSmsSecondFactor": false,
+    "recoveryCodesPerUser": 5,
+    "maxFailedAttempts": 5,
+    "lockoutDurationMinutes": 30,
+    "trustedDevicesEnabled": true,
+    "trustedDeviceLifetimeDays": 15,
+    "forceAfterFailedLogins": 3,
+    "forceAfterPasswordChange": true,
+    "forceAfterSensitiveProfileChanges": true,
+    "forceFromUnusualLocation": false
+  },
+  "rateLimits": {
+    "authEmailsPerWindow": 30,
+    "authEmailsWindowSeconds": 3600,
+    "authSmsPerWindow": 30,
+    "authSmsWindowSeconds": 3600,
+    "tokenVerificationsPerWindow": 30,
+    "tokenVerificationsWindowSeconds": 300,
+    "signupsAndSigninsPerWindow": 30,
+    "signupsAndSigninsWindowSeconds": 300,
+    "passwordResetsPerWindow": 5,
+    "passwordResetsWindowSeconds": 3600,
+    "apiAuthRequestsPerWindow": 5,
+    "apiAuthWindowSeconds": 60,
+    "apiReadRequestsPerWindow": 60,
+    "apiReadWindowSeconds": 60,
+    "apiWriteRequestsPerWindow": 20,
+    "apiWriteWindowSeconds": 60,
+    "apiPublicRequestsPerWindow": 30,
+    "apiPublicWindowSeconds": 60,
+    "otpPerPhoneMaxPerWindow": 5,
+    "otpPerPhoneWindowSeconds": 600,
+    "otpPerUserMaxPerWindow": 10,
+    "otpPerUserWindowSeconds": 600
+  },
+  "stripe": {
+    "card": "4242424242424242",
+    "declinedCard": "4000000000000002",
+    "insufficientFundsCard": "4000000000009995",
+    "stolenCard": "4000000000009979",
+    "processingErrorCard": "4000000000000119",
+    "authenticationRequiredCard": "4000000000003220",
+    "incompleteCard": "4242",
+    "expiry": "12/34",
+    "expiredExpiry": "01/20",
+    "cvc": "123",
+    "invalidCvc": "1",
+    "country": "IN",
+    "cardholderName": "Hardik Thanki",
+    "trialCards": [
+      "4000003560000008",
+      "4000000400000008",
+      "4000000560000004",
+      "4000000760000002",
+      "4000001240000000",
+      "4000001520000001",
+      "4000001700000003",
+      "4000001880000005",
+      "4000002080000001",
+      "4000002460000001",
+      "4000002500000003",
+      "4000002760000016",
+      "4000003440000004",
+      "4000003720000005",
+      "4000003800000008",
+      "4000003920000003",
+      "4000004580000002",
+      "4000005540000008",
+      "4000007020000003",
+      "4000007240000007",
+      "4000007520000008",
+      "4000007560000009",
+      "4000008260000000",
+      "4000056655665556",
+      "5555555555554444",
+      "2223003122003222",
+      "5200828282828210",
+      "5105105105105100",
+      "4000000000000077",
+      "378282246310005",
+      "371449635398431",
+      "6011111111111117",
+      "6011000990139424",
+      "3056930009020004",
+      "3566002020360505",
+      "6200000000000005"
+    ]
+  },
+  "plans": {
+    "Income Builder": {
+      "monthly": 2.9,
+      "annual": 29
+    },
+    "Overlay Strategists": {
+      "monthly": 7.9,
+      "annual": 79
+    },
+    "Portfolio Hedger": {
+      "monthly": 14.9,
+      "annual": 149
+    }
+  },
+  "positions": {
+    "cash": {
+      "amount": "1000",
+      "currencyOption": "united states dollar|\\(usd\\)"
+    },
+    "equity": {
+      "search": "FICO",
+      "symbol": "FICO",
+      "quantity": "2",
+      "price": "10"
+    },
+    "option": {
+      "search": "MSFT",
+      "symbol": "MSFT",
+      "right": "Call",
+      "quantity": "1",
+      "price": "1.50"
+    }
+  }
+}

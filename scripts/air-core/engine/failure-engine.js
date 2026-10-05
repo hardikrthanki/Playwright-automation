@@ -1,5 +1,7 @@
 function getFailureText(test = {}) {
-  return `${test.title ?? ''}\n${test.error ?? ''}`.toLowerCase();
+  return `${test.title ?? ''}\n${test.error ?? ''}`
+    .replace(/\u001b\[[0-9;]*m/g, '')
+    .toLowerCase();
 }
 
 function hasAny(value, patterns) {
@@ -236,10 +238,8 @@ function getFailureSummary(test = {}) {
   }
 
   if (
-    rawText.includes('mfa') ||
-    rawText.includes('two-factor') ||
-    rawText.includes('backup code') ||
-    rawText.includes('verification code')
+    /\bmfa\b|two-factor|backup code/.test(rawText) ||
+    (String(test.title ?? test.testName ?? '').toLowerCase().includes('mfa') && rawText.includes('verification code'))
   ) {
     return 'MFA verification did not complete with the current code, device trust, or account state.';
   }
@@ -352,11 +352,30 @@ function getPlainFailureExplanation(test = {}) {
     };
   }
 
+  if (title.includes('navigates to create account')) {
+    return {
+      whatFailed: 'Sign up did not open the create-account page.',
+      whyFailed: 'The login page stayed on Welcome back after Sign up was clicked.',
+    };
+  }
+
+  if (rawText.includes('reset-password') && (rawText.includes('tohaveurl') || rawText.includes('/login'))) {
+    return {
+      whatFailed: 'The new password stayed on the reset page.',
+      whyFailed: 'Update Password did not open the sign-in page.',
+    };
+  }
+
+  if (rawText.includes('keep my plan')) {
+    return {
+      whatFailed: 'Keep my plan was turned off.',
+      whyFailed: 'The cancel box was still open, and the turned-off Keep my plan button could not be clicked.',
+    };
+  }
+
   if (
-    rawText.includes('mfa') ||
-    rawText.includes('two-factor') ||
-    rawText.includes('backup code') ||
-    rawText.includes('verification code')
+    /\bmfa\b|two-factor|backup code/.test(rawText) ||
+    (title.includes('mfa') && rawText.includes('verification code'))
   ) {
     return {
       whatFailed: 'MFA verification did not complete successfully.',
