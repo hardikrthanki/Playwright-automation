@@ -6,13 +6,13 @@
 
 # Test info
 
-- Name: DirectSubscriptionPurchase.spec.ts >> Direct Subscription Purchase >> Paid plan checkout summaries currency refresh and return use one user
-- Location: tests\DirectSubscriptionPurchase.spec.ts:262:9
+- Name: SubscriptionLifecycleExecution.spec.ts >> Subscription Lifecycle Execution >> Disposable user can start Overlay Strategists trial without card
+- Location: tests\SubscriptionLifecycleExecution.spec.ts:158:9
 
 # Error details
 
 ```
-Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015559986", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
+Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015552730", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
 ```
 
 # Page snapshot
@@ -44,7 +44,7 @@ Error: Registration OTP input did not appear after requesting SMS code. Visible 
             - textbox "Last name" [ref=e25]: Thanki
         - generic [ref=e26]:
           - generic [ref=e27]: Email
-          - textbox "Email" [ref=e28]: imhardikthanki+direct-paid--mupj3cln@gmail.com
+          - textbox "Email" [ref=e28]: imhardikthanki+sub-lifecycl-mupj4zzm@gmail.com
         - generic [ref=e29]:
           - generic [ref=e30]:
             - generic [ref=e31]: Mobile number
@@ -53,7 +53,7 @@ Error: Registration OTP input did not appear after requesting SMS code. Visible 
               - text: Not verified
           - generic [ref=e33]:
             - generic [ref=e34]: "+1"
-            - textbox "2015550123" [ref=e35]: "2015559188"
+            - textbox "2015550123" [ref=e35]: "2015559302"
           - paragraph [ref=e36]: US mobile numbers only. We’ll text you a one-time code.
           - button "Send code via SMS" [ref=e38] [cursor=pointer]:
             - img
@@ -183,7 +183,7 @@ Error: Registration OTP input did not appear after requesting SMS code. Visible 
   753 |         }
   754 | 
 > 755 |         throw new Error(
-      |               ^ Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015559986", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
+      |               ^ Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015552730", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
   756 |           `Registration OTP input did not appear after requesting SMS code. Visible diagnostics: ${diagnostics}`
   757 |         );
   758 |       }

@@ -2525,7 +2525,43 @@ function plainFailureStory(test, index = 0) {
   let wanted = 'The screen should show the expected result and let the check finish.';
   let next = 'Fix the screen this check was waiting for, then rerun it.';
 
-  if (lower.includes('combobox')) {
+  if (lower.includes('reset-password') && (lower.includes('tohaveurl') || lower.includes('/login'))) {
+    happened = 'Update Password stayed on the reset page. Sign-in did not open.';
+    wanted = 'Update Password should save the new password and open the sign-in page.';
+    next = 'Open the reset link from the email, enter the new password twice, click Update Password, and confirm sign-in opens.';
+  } else if (lower.includes('navigates to create account') || (lower.includes('tobetruthy') && lower.includes('create account'))) {
+    happened = 'Sign up did not open the create-account page.';
+    wanted = 'Sign up on the login page should open the create-account form.';
+    next = 'On the login page, close the cookie banner and click Sign up. The create-account form should open.';
+  } else if (lower.includes('keep my plan') || lower.includes('disabled:pointer')) {
+    happened = 'Keep my plan was on the cancel box, but it was turned off.';
+    wanted = 'The cancel box should close without clicking a turned-off Keep my plan button.';
+    next = 'Close the cancel box when Keep my plan is turned off, then rerun this check.';
+  } else if (lower.includes('could not find interval')) {
+    happened = 'The plans page has no switch between monthly and yearly.';
+    wanted = 'A paid plan should offer a monthly or yearly switch when that change is supported.';
+    next = 'This stays not run until the plans page shows a monthly or yearly switch.';
+  } else if (lower.includes('plan charge') || lower.includes('list price')) {
+    happened = 'The upgrade box showed a smaller charge than the full plan price.';
+    wanted = 'The charge due today can be a prorated amount. The next bill should still be the full plan price.';
+    next = 'Open the upgrade box and compare the amount due today with the next recurring price, then rerun this check.';
+  } else if (lower.includes('manage subscription control was not found') || lower.includes('cancel subscription control was not found')) {
+    happened = 'Cancel subscription was not on the billing page.';
+    wanted = 'A trial without a card should still offer Cancel subscription, without asking for a card.';
+    next = 'Open Billing for the no-card trial and look for Cancel subscription on Overview, Plans, and History.';
+  } else if (lower.includes('paid') && (lower.includes('getbytext') || lower.includes('tobevisible'))) {
+    happened = 'Billing history did not show a Paid status.';
+    wanted = 'A paid subscriber should see Paid on the billing history.';
+    next = 'Open Billing, then History, and confirm a Paid status is on the page.';
+  } else if (lower.includes('registration otp') || lower.includes('send code via sms')) {
+    happened = 'The text-message code box did not appear after Send code.';
+    wanted = 'A box for the text-message code should appear so the check can continue.';
+    next = 'Click Send code and confirm the text-message box appears before the check moves on.';
+  } else if (lower.includes('test timeout of')) {
+    happened = 'This check ran until the time limit and did not finish.';
+    wanted = 'The check should finish as soon as the page shows the expected result.';
+    next = 'Open the page this check starts on and confirm it becomes ready, then rerun it.';
+  } else if (lower.includes('combobox')) {
     happened = 'The check looked for an experience menu, but Choose Your Plan was already open.';
     wanted = 'When the plan page is already open, the check should start the trial from that page.';
     next = 'On Choose Your Plan, start the Overlay Strategists 30-day trial with card.';
@@ -2533,7 +2569,7 @@ function plainFailureStory(test, index = 0) {
     happened = 'Create Account stayed off after the signup fields were filled.';
     wanted = 'Create Account should turn on once the name, email, mobile code, and both passwords are accepted.';
     next = 'On signup, confirm the text-message code is accepted and both passwords match, then wait for Create Account to turn on.';
-  } else if (lower.includes('/login') && (lower.includes('timeout') || lower.includes('domcontentloaded'))) {
+  } else if (!lower.includes('reset-password') && lower.includes('/login') && (lower.includes('timeout') || lower.includes('domcontentloaded'))) {
     happened = 'The login page took too long to open.';
     wanted = 'The login page should show the email field before the time limit.';
     next = 'Open the login page and wait until the email field is visible, then rerun this check.';
@@ -3015,6 +3051,20 @@ function renderPrimaryFailureScreenshot(test) {
     </a>`;
 }
 
+function keptEvidenceFileFor(item = {}) {
+  const rawPath = String(item?.path ?? '');
+
+  if (!rawPath) {
+    return '';
+  }
+
+  const parent = path.basename(path.dirname(rawPath)).replace(/[^\w.-]+/g, '-').slice(0, 80);
+  const base = path.basename(rawPath).replace(/[^\w.-]+/g, '-');
+  const candidate = path.join(outputDir, 'kept-evidence', `${parent}--${base}`);
+
+  return fs.existsSync(candidate) ? candidate : '';
+}
+
 function getEvidenceAbsolutePath(item = {}) {
   const rawPath = String(item?.path ?? '');
 
@@ -3022,9 +3072,15 @@ function getEvidenceAbsolutePath(item = {}) {
     return '';
   }
 
-  return path.isAbsolute(rawPath)
+  const absolute = path.isAbsolute(rawPath)
     ? rawPath
     : path.join(projectRoot, rawPath);
+
+  if (fs.existsSync(absolute)) {
+    return absolute;
+  }
+
+  return keptEvidenceFileFor(item);
 }
 
 function screenshotLooksBlank(item = {}) {
@@ -3420,11 +3476,13 @@ function renderFailureScreen(test, title) {
     </div>${guide}`;
   }
 
-  const annotated = createAnnotatedFailurePreview(test, primary.item, 0);
-  const src = annotated.available ? annotated.href : primary.href;
+  const caption = clue || story.happened;
 
-  return `<a class="failure-screen-link" href="${escapeHtml(src)}"><img src="${escapeHtml(src)}" alt="Marked screen when ${escapeHtml(title)} failed"></a>
-    <span class="failure-mark-note">${escapeHtml(clue || story.happened)}</span>
+  return `<div class="marked-shot">
+      <img src="${escapeHtml(primary.href)}" alt="Screen when ${escapeHtml(title)} failed">
+      <div class="marked-banner"><b>Failed</b><span>${escapeHtml(caption)}</span></div>
+    </div>
+    <span class="failure-mark-note">${escapeHtml(caption)}</span>
     ${guide}`;
 }
 
@@ -3466,17 +3524,46 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
     .relative(annotationDir, originalPath)
     .replaceAll('\\', '/');
   const story = plainFailureStory(test, index);
-  const caption = compactText(screenClue(test) || story.happened, 78);
-  const labelWidth = Math.min(760, Math.max(420, size.width - 36));
+  const caption = compactText(screenClue(test) || story.happened, 150);
+  const captionLines = [];
+  const words = caption.split(' ');
+  let line = '';
+
+  words.forEach(word => {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > 72 && line) {
+      captionLines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  });
+
+  if (line) captionLines.push(line);
+
+  const shownLines = (captionLines.length ? captionLines : ['This check failed.']).slice(0, 2);
+  const bannerHeight = 40 + shownLines.length * 24;
+  const labelWidth = Math.min(size.width - 32, Math.max(520, 36 + Math.max(...shownLines.map(item => item.length), 8) * 8));
+  const hasPreciseRegion = Boolean(getReliableFailureRegion(screenshot));
+  const frame = hasPreciseRegion
+    ? safeRegion
+    : {
+      x: 10,
+      y: bannerHeight + 18,
+      width: Math.max(1, size.width - 20),
+      height: Math.max(1, size.height - bannerHeight - 28),
+    };
+  const captionSvg = shownLines.map((item, lineIndex) =>
+    `<text x="28" y="${54 + lineIndex * 24}" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="700">${escapeHtml(item)}</text>`
+  ).join('');
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${size.width}" height="${size.height}" viewBox="0 0 ${size.width} ${size.height}">
   <image href="${escapeHtml(originalHrefForSvg)}" x="0" y="0" width="${size.width}" height="${size.height}" preserveAspectRatio="xMidYMid meet"/>
-  <rect x="0" y="0" width="${size.width}" height="${size.height}" fill="rgba(0,0,0,0.18)"/>
-  <rect x="${safeRegion.x}" y="${safeRegion.y}" width="${safeRegion.width}" height="${safeRegion.height}" rx="8" fill="rgba(255,59,59,0.08)" stroke="#ff3b3b" stroke-width="6"/>
-  <rect x="16" y="16" width="${labelWidth}" height="64" rx="12" fill="rgba(42,21,24,0.94)" stroke="#ff7b72" stroke-width="2"/>
-  <text x="32" y="42" fill="#ffb4b4" font-family="Arial, sans-serif" font-size="16" font-weight="800">Stopped here</text>
-  <text x="32" y="64" fill="#ffffff" font-family="Arial, sans-serif" font-size="15">${escapeHtml(caption)}</text>
+  <rect x="${frame.x}" y="${frame.y}" width="${frame.width}" height="${frame.height}" rx="8" fill="rgba(220,38,38,0.16)" stroke="#dc2626" stroke-width="8"/>
+  <rect x="12" y="12" width="${labelWidth}" height="${bannerHeight}" rx="10" fill="#dc2626"/>
+  <text x="28" y="32" fill="#ffffff" font-family="Arial, sans-serif" font-size="13" font-weight="800" letter-spacing="0.08em">FAILED</text>
+  ${captionSvg}
 </svg>`;
 
   fs.writeFileSync(filePath, svg, 'utf8');
@@ -3507,17 +3594,14 @@ function renderFailureScreenshotEvidence(test, index = 0) {
   return `
     <div class="failure-screenshot-context">
       <div class="failure-shot-panel ${annotated.available ? 'annotated' : 'unavailable'}">
-        <span>Picture with a mark</span>
-        ${annotated.available
-          ? `<a href="${escapeHtml(annotated.href)}" data-evidence-preview data-evidence-kind="Annotated Failure View" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(annotated.href)}"${tooltipAttr(annotated.reason)}>
-              <img src="${escapeHtml(annotated.href)}" alt="Annotated failure view">
-              <small>${escapeHtml(annotated.reason)}</small>
-            </a>`
-          : `<strong>No mark</strong>
-             <small>We could not point to one spot on the screen. The picture is still the screen at failure.</small>`}
+        <span>Screen when this failed</span>
+        <div class="marked-shot">
+          <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
+          <div class="marked-banner"><b>Failed</b><span>${escapeHtml(story.happened)}</span></div>
+        </div>
       </div>
       <div class="failure-shot-panel original">
-        <span>Screen at failure</span>
+        <span>Full screenshot</span>
         <a href="${escapeHtml(primary.href)}" data-evidence-preview data-evidence-kind="Original Screenshot" data-evidence-status="${escapeHtml(primary.label)}" data-evidence-href="${escapeHtml(primary.href)}"${tooltipAttr('Original Playwright screenshot. This file is never modified by AIR.')}>
           <img src="${escapeHtml(primary.href)}" alt="${escapeHtml(primary.label)}">
           <small>${escapeHtml(primary.label)}</small>
@@ -3547,6 +3631,12 @@ function keepEvidenceCopy(item = {}) {
 
   if (keptEvidenceCopies.has(absolutePath)) {
     return keptEvidenceCopies.get(absolutePath);
+  }
+
+  if (path.resolve(absolutePath).startsWith(path.resolve(keptEvidenceDir))) {
+    const href = `kept-evidence/${path.basename(absolutePath)}`;
+    keptEvidenceCopies.set(absolutePath, href);
+    return href;
   }
 
   fs.mkdirSync(keptEvidenceDir, { recursive: true });
@@ -3774,11 +3864,7 @@ const failureInvestigationCards = failedSourceItems
     const nextAction = getFailureNextAction(test, index);
     const evidenceInfo = getFailureEvidenceInfo(test);
     const sourceLabel = getFailureSourceLabel(test);
-    const tone = ['Critical', 'High'].includes(severity)
-      ? 'red'
-        : severity === 'Medium'
-          ? 'amber'
-          : 'green';
+    const tone = 'red';
     const hiddenClass = index >= FAILED_TESTS_INITIAL_VISIBLE ? ' is-hidden' : '';
 
     return `
@@ -3789,11 +3875,11 @@ const failureInvestigationCards = failedSourceItems
             <strong>${escapeHtml(title)}</strong>
             <small title="${escapeHtml(fullTitle)}">${escapeHtml(moduleName)} &bull; ${escapeHtml(category)}</small>
           </div>
-          <span class="badge ${tone}">${escapeHtml(severity)}</span>
+          <span class="failure-flag">Failed</span>
         </div>
         <div class="failure-reason-block">
           <span>What we checked</span>
-          <p>${escapeHtml(whatFailed)}</p>
+          <p>${escapeHtml(title)}</p>
           <span>What happened</span>
           <p>${escapeHtml(plainFailureStory(test, index).happened)}</p>
           <span>What we wanted</span>
@@ -3899,13 +3985,13 @@ const failureEvidenceBoard = failureGroups.length === 0
       const shot = renderFailureScreen(entry.test, entry.title);
 
       return `<article class="failure-shot-card" data-failure-preview data-failure-index="${entry.index}">
-        <header><div><strong>${escapeHtml(entry.title)}</strong><small>${escapeHtml(entry.moduleName)}</small></div></header>
+        <header><div><strong>${escapeHtml(entry.title)}</strong><small>${escapeHtml(entry.moduleName)}</small></div><span class="failure-flag">Failed</span></header>
         ${shot}
         <p class="failure-next-line">What to do: ${escapeHtml(entry.story.next)}</p>
       </article>`;
     }).join('');
 
-    return `<details class="failure-group" id="failure-story-${groupIndex}" data-step-item data-step-label="${escapeHtml(group.happened)}">
+    return `<details class="failure-group" id="failure-story-${groupIndex}" data-step-item data-step-label="${escapeHtml(group.happened)}"${groupIndex === 0 ? ' open' : ''}>
       <summary>
         <b>${group.items.length}</b>
         <span>
@@ -3936,7 +4022,7 @@ const failedTestsContent =
         <div class="failure-summary-card primary">
           <span>Stories</span>
           <strong>${failureGroups.length}</strong>
-          <p>${failedSourceItems.length} checks sit inside these stories. Open a story to see each check.</p>
+          <p>Open a story to see the screenshot.</p>
         </div>
         <div class="failure-summary-card">
           <span>Failed checks</span>
@@ -3955,7 +4041,7 @@ const failedTestsContent =
         </div>
       </div>
       <h2>What failed</h2>
-      <p>${failureGroups.length} stories cover ${failedSourceItems.length} checks. Open a story for the picture and the next step. The full table stays below.</p>
+      <p>Open a story to see the screenshot and what to do next.</p>
       ${failureEvidenceBoard}
       <details class="report-fold">
         <summary>Open the full list (${failedSourceItems.length})</summary>
@@ -4516,28 +4602,18 @@ const evidencePackageNote = openableFailurePictures > 0
   ? 'These pictures are saved beside the report, so a later test run will not remove them.'
   : 'The next full run will keep a copy of each picture with this report.';
 const resultsFileExists = fs.existsSync(resultsPath);
-const evidencePlaywrightCta = hasPlaywrightReport
-  ? `<a class="btn primary" href="../playwright-report/index.html" target="_blank" rel="noopener">Open the full test log</a>`
-  : `<span class="btn ghost" title="Run tests to create playwright-report/index.html">Full test log was not saved</span>`;
-const resultsFileCta = resultsFileExists
-  ? `<a class="btn" href="../test-results/results.json" target="_blank" rel="noopener">Open the run file</a>`
-  : `<span class="btn ghost">Run file was cleared</span>`;
 const evidenceHeroHtml = `
   <div class="evidence-hero">
     <div>
       <span class="mission-label">Proof</span>
-      <strong>${openableFailurePictures > 0 ? 'Pictures you can open' : blankFailurePictures > 0 ? 'Pictures are blank' : evidenceCounts.screenshots > 0 ? 'Pictures were cleared' : hasPlaywrightReport ? 'Test log available' : 'No proof saved'}</strong>
+      <strong>${openableFailurePictures > 0 ? 'Screenshots you can open' : blankFailurePictures > 0 ? 'Screenshots are blank' : evidenceCounts.screenshots > 0 ? 'Screenshots were cleared' : 'No screenshots saved'}</strong>
       <p>${escapeHtml(evidenceSummaryText)}</p>
-      <p class="evidence-path-note">${escapeHtml(evidencePackageNote)}</p>
-      <div class="evidence-cta-row">
-        ${evidencePlaywrightCta}
-        ${resultsFileCta}
-      </div>
+      <p class="evidence-path-note">These pictures travel with this report. The full test log stays on the computer that ran the tests.</p>
     </div>
     <div class="evidence-score-card ${openableFailurePictures > 0 ? '' : 'muted'}">
-      <span>Can open</span>
+      <span>Screenshots</span>
       <strong>${openableFailurePictures}</strong>
-      <small>${evidenceCounts.screenshots} pictures were saved in the run</small>
+      <small>Saved with this report</small>
     </div>
   </div>
   ${evidenceProofStripHtml}`;
@@ -4564,7 +4640,6 @@ const businessHealthCards =
 const airEvidenceThumbnails = Array.isArray(evidenceData.screenshots)
   ? evidenceData.screenshots
     .filter(item => item?.path && item?.previewable !== false)
-    .slice(0, 4)
   : [];
 
 const evidenceThumbnailFiles =
@@ -4572,7 +4647,6 @@ const evidenceThumbnailFiles =
     ? fs
       .readdirSync(path.join(projectRoot, 'playwright-report', 'data'))
       .filter(file => file.toLowerCase().endsWith('.png'))
-      .slice(0, 4)
     : [];
 
 const evidenceThumbnails =
@@ -4581,15 +4655,25 @@ const evidenceThumbnails =
       .map((item, index) => {
         const href = getEvidenceHref(item);
         const label = item.testTitle || item.name || `Screenshot ${index + 1}`;
+        const matchedFailure = failedSourceItems.find(test => {
+          const full = getFailureFullTitle(test);
+          return full && (full === label || label.includes(full) || full.includes(label));
+        });
+        const caption = matchedFailure
+          ? plainFailureStory(matchedFailure).happened
+          : '';
 
         if (!href || screenshotLooksBlank(item)) {
           return '';
         }
 
+        const failedShot = String(item.attemptStatus || '').toLowerCase() === 'failed' || Boolean(caption);
+
         return `
-        <a class="thumb" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(label)}>
-          <img src="${escapeHtml(href)}" alt="${escapeHtml(label)}">
-          <span>${escapeHtml(compactText(label, 52))}</span>
+        <a class="thumb${failedShot ? ' thumb-failed' : ''}" href="${escapeHtml(href)}" data-evidence-preview data-evidence-kind="Screenshot ${index + 1}" data-evidence-status="${escapeHtml(item.attemptStatus || 'Available')}" data-evidence-href="${escapeHtml(href)}"${tooltipAttr(caption || label)}>
+          <img src="${escapeHtml(href)}" alt="${escapeHtml(caption || label)}">
+          ${failedShot ? '<b class="thumb-failed-flag">Failed</b>' : ''}
+          <span class="thumb-copy"><b>${escapeHtml(compactText(label, 72))}</b>${caption ? `<small>${escapeHtml(caption)}</small>` : ''}</span>
         </a>`;
       })
       .join('')
@@ -4625,9 +4709,9 @@ const failureEvidenceMapHtml =
         <div class="evidence-map-head">
           <div>
             <h2>Pictures for failed checks</h2>
-            <p>${openableFailurePictures > 0 ? 'Open a story on the failure page to see the screen.' : blankFailurePictures > 0 ? 'The picture file is blank. The page text is on each failed check.' : 'The pictures from this run are no longer on disk.'}</p>
+            <p>${openableFailurePictures > 0 ? 'Open What failed to see the full screen and what to do next.' : blankFailurePictures > 0 ? 'The picture file is blank. The page text is on each failed check.' : 'The pictures from this run are no longer on disk.'}</p>
           </div>
-          <button class="issue-detail-button" type="button" data-open-failure-details>Open Failed Evidence Details</button>
+          <button class="issue-detail-button" type="button" data-open-failure-details>See each failed screen</button>
         </div>
         <div class="evidence-map-summary">
           <div><span>Failed Tests</span><strong>${failedSourceItems.length}</strong><small>Open details for full investigation</small></div>
@@ -5360,7 +5444,7 @@ const aiWhyItems =
     .map(item => `<li>${escapeHtml(item)}</li>`)
     .join('');
 
-const footerHtml = 'Prepared by AIR';
+const footerHtml = 'Prepared by AIR · Developed By Hardik Thanki';
 
 const executiveConfidence =
   airResults?.releaseDecision?.confidence ??
@@ -6413,8 +6497,8 @@ const executiveModeShellHtml = `
   <div class="executive-mode-header">
     <div>
       <div class="eyebrow">${escapeHtml(projectName)} · ${escapeHtml(environment)}</div>
-      <h1>Release Brief</h1>
-      <p>Click a count to open that page.</p>
+      <h1>This run</h1>
+      <p>Use the menu on the left, or the page names at the top, to open any part of this report.</p>
     </div>
     <div class="executive-toolbar">
       <span>${escapeHtml(generatedAt)}</span>
@@ -6466,7 +6550,7 @@ const aiDecisionSummary =
     ? 'AIR recommends GO because the current execution has strong pass stability, no blocker failures, healthy business journeys, and enough regression confidence for release monitoring.'
     : executiveData.releaseDecision === 'CONDITIONAL GO'
       ? 'AIR recommends CONDITIONAL GO because the main journeys are mostly stable, but warning signals still need evidence review and targeted rerun before final approval.'
-      : 'AIR recommends NO GO because blocking failures or release-threshold gaps were detected and must be resolved before approval.';
+      : 'Do not ship yet. The failed checks need a fix before this can go out.';
 
 const aiRecommendationItems =
   executiveData.failed > 0
@@ -6839,6 +6923,7 @@ function renderPageFooter(pageId) {
         <span>${escapeHtml(environment)}</span>
         <span>${escapeHtml(generatedAt)}</span>
         <span>Prepared by AIR</span>
+        <span>Developed By Hardik Thanki</span>
       </div>`;
 }
 
@@ -6893,7 +6978,14 @@ function renderPageNav(pageId, placement = 'top') {
   };
 
   const here = reportPages[index];
-  return `<nav class="page-pager ${placement}" aria-label="Report pages" title="Left and right arrow keys move between pages">${side(previous, 'Previous')}<span class="page-pager-count"><small>${index + 1} of ${reportPages.length}</small><strong>${escapeHtml(here[1])}</strong></span>${side(next, 'Next')}</nav>`;
+  const jump = placement === 'top'
+    ? `<div class="page-jump" aria-label="All pages">${reportPages.map(([id, label]) => (
+      id === pageId
+        ? `<span aria-current="page">${escapeHtml(label)}</span>`
+        : `<a href="#${id}">${escapeHtml(label)}</a>`
+    )).join('')}</div>`
+    : '';
+  return `<nav class="page-pager ${placement}" aria-label="Report pages" title="Left and right arrow keys move between pages"><div class="page-pager-row">${side(previous, 'Previous')}<span class="page-pager-count"><small>${index + 1} of ${reportPages.length}</small><strong>${escapeHtml(here[1])}</strong></span>${side(next, 'Next')}</div>${jump}</nav>`;
 }
 
 function renderInnerNav(kind, options = {}) {
@@ -9113,7 +9205,14 @@ const airGoldenDashboardHtml = `<!doctype html>
     .long-list-bar span{color:#9fb0c5;font-size:13px;font-weight:800}
     .long-list-bar button{border:1px solid rgba(57,231,95,.36);border-radius:999px;background:rgba(57,231,95,.10);color:#39e75f;font-size:13px;font-weight:800;padding:10px 16px;cursor:pointer}
     .failure-shot-card{display:grid;gap:12px;min-width:0;border:1px solid rgba(255,59,59,.45);border-radius:16px;background:#120910;padding:18px}
-    .failure-shot-card header{display:flex;gap:12px;align-items:flex-start}
+    .failure-shot-card header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+    .failure-shot-card header > div{min-width:0;flex:1}
+    .failure-flag{flex:0 0 auto;white-space:nowrap;display:inline-flex;align-items:center;height:auto;width:auto;min-width:max-content;border-radius:999px;background:#dc2626;color:#fff;font-size:12px;font-weight:800;letter-spacing:.04em;line-height:1;padding:8px 12px;text-transform:uppercase}
+    .marked-shot{position:relative;border:4px solid #dc2626;border-radius:12px;overflow:hidden;background:#fff}
+    .marked-shot img{display:block;width:100%;max-height:520px;object-fit:contain;object-position:top center;background:#fff}
+    .marked-banner{position:absolute;top:12px;left:12px;right:12px;display:flex;gap:10px;align-items:flex-start;max-width:calc(100% - 24px);border-radius:10px;background:#dc2626;color:#fff;padding:8px 12px}
+    .marked-banner b{flex:0 0 auto;white-space:nowrap;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    .marked-banner span{font-size:14px;font-weight:700;line-height:1.35}
     .failure-shot-card header b{display:grid;place-items:center;min-width:36px;height:36px;border-radius:999px;background:rgba(255,59,59,.18);color:#ffb4b4;font-size:16px}
     .failure-shot-card header strong{display:block;color:#f8fafc;font-size:20px;line-height:1.35}
     .failure-shot-card header small{display:block;color:#9fb0c5;font-size:14px;margin-top:2px}
@@ -9758,9 +9857,46 @@ const airGoldenDashboardHtml = `<!doctype html>
     #health .module-health-card.red,
     #journey .journey-node.red,
     #failures .failure-summary-card.primary,
+    #failures .failure-shot-card,
     #failures .failure-group{
-      border-left:4px solid #ff7b72!important;
+      background:#1a0d10!important;
+      border:1px solid #dc2626!important;
+      border-left:6px solid #dc2626!important;
     }
+    #failures .failure-group summary b,
+    #failures .failure-flag{
+      background:#dc2626!important;
+      color:#ffffff!important;
+      white-space:nowrap!important;
+      height:auto!important;
+      width:auto!important;
+      min-width:max-content!important;
+      display:inline-flex!important;
+    }
+    #evidence .thumb[hidden]{display:none!important}
+    #evidence .thumb img{height:168px!important}
+    #evidence .thumb-copy{display:grid;gap:4px;margin-top:8px}
+    #evidence .thumb-copy b{color:#f8fafc;font-size:13px;font-weight:700;line-height:1.35;white-space:normal}
+    #evidence .thumb-copy small{color:#fecaca;font-size:12px;font-weight:650;line-height:1.4}
+    #evidence .thumb.thumb-failed{border:2px solid #dc2626!important;position:relative}
+    #evidence .thumb-failed-flag{position:absolute;top:18px;left:18px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;line-height:1;padding:6px 8px;text-transform:uppercase;white-space:nowrap}
+    .shot-pager-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+    .shot-pager-bar button{border:1px solid #dc2626;border-radius:999px;background:#dc2626;color:#fff;font-size:13px;font-weight:800;padding:8px 14px;cursor:pointer}
+    .shot-pager-bar button:disabled{opacity:.35;cursor:default}
+    .shot-pager-bar span{color:#fecaca;font-size:13px;font-weight:800}
+    #failures .failure-group summary strong,
+    #failures .failure-shot-card header strong,
+    #failures .failure-mark-note{
+      color:#fecaca!important;
+    }
+    #failures .failure-mark-note{
+      display:block;
+      margin-top:8px;
+      font-weight:800;
+      font-size:16px;
+      line-height:1.4;
+    }
+    #failures .failure-screen-fallback span{color:#fecaca!important}
     #cover .status-card.warn,
     #cover .reader-step.warn,
     #health .module-health-card.amber,
@@ -10318,6 +10454,13 @@ const airGoldenDashboardHtml = `<!doctype html>
     }
     .step-nav-here strong{font-size:13px!important}
     .page-pager-end{visibility:hidden}
+    .page-pager{flex-direction:column!important;align-items:stretch!important}
+    .page-pager-row{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%}
+    .page-jump{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .page-jump a,.page-jump span{flex:0 0 auto!important;display:inline-flex!important;flex-direction:row!important;align-items:center;min-height:0!important;border:1px solid rgba(148,163,184,.28)!important;border-radius:999px!important;background:#0c1522!important;color:#dbe5ef!important;font-size:12px!important;font-weight:700;line-height:1.2;padding:6px 10px!important;text-decoration:none}
+    .page-jump span{border-color:#39e75f!important;background:rgba(57,231,95,.14)!important;color:#d7fbe0!important}
+    .page-jump a:hover{border-color:#39e75f!important;color:#f8fafc!important}
+    .nav-label{margin:14px 8px 6px;color:#9fb0c5;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
     .step-nav button:disabled{visibility:hidden}
     .is-step-current{outline:2px solid #7ee787;outline-offset:3px}
     .step-nav[hidden]{display:none!important}
@@ -10432,16 +10575,15 @@ const airGoldenDashboardHtml = `<!doctype html>
     </div>
     <div class="brand-sub">Automation Intelligence<br><span>Report</span></div>
     <nav class="nav">
+      <p class="nav-label">Start here</p>
       <a class="active" href="#cover">${navIcon('home')}<span>Brief</span></a>
       <a href="#health">${navIcon('product')}<span>Product health</span></a>
       <a href="#failures">${navIcon('failures')}<span>What failed</span></a>
       <a href="#validation-summary">${navIcon('analytics')}<span>What passed</span></a>
       <a href="#coverage-gaps">${navIcon('analytics')}<span>Not run</span></a>
       <a href="#insight">${navIcon('insight')}<span>Next step</span></a>
-      <details class="nav-more">
-        <summary>More</summary>
-        ${moreNavHtml}
-      </details>
+      <p class="nav-label">More pages</p>
+      ${moreNavHtml}
     </nav>
     <div class="report-search">
       <label for="airSearch">Search Report</label>
@@ -10638,7 +10780,7 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     <section class="page${executiveData.failed > 0 ? '' : ' report-extra'}" id="failures">
       ${renderPageNav('failures')}
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>${failureGroups.length} stories cover the checks that did not pass. Open a story for the picture and the next step.</p></div><span class="pill">${executiveData.failed} failed</span></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('failures', 'What failed')}<p>Open a card to see the screen and what went wrong.</p></div><span class="pill">${executiveData.failed} failed</span></div>
       ${renderInnerNav('story')}
       <div class="panel">${failedTestsContent}${warningTestsContent}</div>
       ${renderPageFooter('failures')}
@@ -10655,7 +10797,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('analytics', 'Checks we did not run')}
-          <p>${coverageGapSummary.total ?? coverageGapItems.length} of the planned checks did not run. Open one reason, then one group. Back goes up one step. Previous and Next stay inside that reason. Reset returns to the start.</p>
+          <p>These checks did not run. Pick a reason, then open a group. Back goes up one step.</p>
         </div>
         <span class="pill">${coverageGapSummary.total ?? coverageGapItems.length} Items</span>
       </div>
@@ -10669,7 +10811,7 @@ const airGoldenDashboardHtml = `<!doctype html>
         <div>
           <div class="eyebrow">${escapeHtml(projectName)}</div>
           ${pageHeading('analytics', 'What passed')}
-          <p>Choose an area. Only that area opens, and previous and next move through the areas.</p>
+          <p>Pick an area to see what this run confirmed.</p>
         </div>
         <span class="pill">${passedValidationTests.length} passed</span>
       </div>
@@ -10696,19 +10838,27 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     <section class="page" id="evidence">
       ${renderPageNav('evidence')}
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Proof')}<p>Pictures and the full test log from this run.</p></div>${evidencePlaywrightCta}</div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('evidence', 'Proof')}<p>Screenshots from the checks that failed. Each picture says what went wrong.</p></div></div>
       ${evidenceHeroHtml}
+      ${String(evidenceThumbnails).includes('<a') ? `
+      <div class="panel">
+        <h2>Screenshots</h2>
+        <p class="evidence-path-note">A red frame means that check failed. The line under the picture says what stopped.</p>
+        <div class="shot-pager" data-shot-pager data-shot-page-size="4">
+          <div class="thumb-grid">${evidenceThumbnails}</div>
+          <div class="shot-pager-bar">
+            <button type="button" data-shot-prev>Previous</button>
+            <span data-shot-count></span>
+            <button type="button" data-shot-next>Next</button>
+          </div>
+        </div>
+      </div>` : ''}
       <div class="panel">
         <h2>Where the files are</h2>
         <p class="evidence-path-note">${escapeHtml(evidencePackageNote)}</p>
       </div>
       <div class="evidence-grid">${evidenceCards}</div>
       ${failureEvidenceMapHtml}
-      ${String(evidenceThumbnails).includes('<a') ? `
-      <div class="panel">
-        <h2>Latest screenshots</h2>
-        <div class="thumb-grid">${evidenceThumbnails}</div>
-      </div>` : ''}
       ${renderPageFooter('evidence')}
     </section>
 
@@ -10721,7 +10871,7 @@ const airGoldenDashboardHtml = `<!doctype html>
 
     <section class="page report-extra" id="insight">
       ${renderPageNav('insight')}
-      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('insight', 'What to do next')}<p>The work behind this release call. Open a step to see the checks.</p></div></div>
+      <div class="topbar"><div><div class="eyebrow">${escapeHtml(projectName)}</div>${pageHeading('insight', 'What to do next')}<p>Fix the failed checks, then run them again.</p></div></div>
       ${nextStepListHtml}
       <details class="report-fold">
         <summary>Release write-up</summary>
@@ -10774,13 +10924,13 @@ const airGoldenDashboardHtml = `<!doctype html>
           ${pageHeading('analytics', 'Past runs')}
           <p>How this run compares with earlier ones.</p>
         </div>
-        <span class="pill demo">${hasPreviousComparison ? 'Historical Comparison' : 'First Recorded Execution'}</span>
+        <span class="pill demo">${hasPreviousComparison ? 'Compared with the last run' : 'First saved run'}</span>
       </div>
       ${hasPreviousComparison ? `
         <div class="history-command-hero">
           <div class="history-hero-grid">
             <div class="history-narrative">
-              <span class="mission-label">Executive What Changed</span>
+              <span class="mission-label">What changed</span>
               <h2>What changed since the previous build?</h2>
               <p>${escapeHtml(executiveWhatChangedSummary)}</p>
               <ul class="history-change-list">
@@ -12269,6 +12419,37 @@ const airGoldenDashboardHtml = `<!doctype html>
     });
 
     updateCoverageGapVisibility();
+  });
+
+  document.querySelectorAll('[data-shot-pager]').forEach(pager => {
+    const items = Array.from(pager.querySelectorAll('.thumb'));
+    const size = Number(pager.getAttribute('data-shot-page-size')) || 4;
+    const pages = Math.max(1, Math.ceil(items.length / size));
+    const prev = pager.querySelector('[data-shot-prev]');
+    const next = pager.querySelector('[data-shot-next]');
+    const count = pager.querySelector('[data-shot-count]');
+    const bar = pager.querySelector('.shot-pager-bar');
+    let page = 0;
+
+    const showShotPage = () => {
+      items.forEach((item, index) => {
+        item.hidden = index < page * size || index >= (page + 1) * size;
+      });
+      if (count) count.textContent = (page + 1) + ' of ' + pages;
+      if (prev) prev.disabled = page === 0;
+      if (next) next.disabled = page >= pages - 1;
+      if (bar) bar.hidden = pages <= 1;
+    };
+
+    if (prev) prev.addEventListener('click', () => {
+      page = Math.max(0, page - 1);
+      showShotPage();
+    });
+    if (next) next.addEventListener('click', () => {
+      page = Math.min(pages - 1, page + 1);
+      showShotPage();
+    });
+    showShotPage();
   });
 
   document.querySelectorAll('[data-long-list]').forEach(list => {

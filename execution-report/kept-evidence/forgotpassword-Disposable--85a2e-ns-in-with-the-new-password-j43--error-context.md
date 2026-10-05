@@ -15,12 +15,12 @@
 Error: expect(page).toHaveURL(expected) failed
 
 Expected pattern: /\/login/
-Received string:  "https://uat.ooltool.com/reset-password/UGuJlQwj_1oEx7OHmR30JnadbRjhO35yNdsvp8x5Hcs"
+Received string:  "https://uat.ooltool.com/reset-password/oW8vRcDFmXXa2sMCc-8-6ZheGBbyAYXJOEoP7siqTSE"
 Timeout: 20000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 20000ms
-    23 × unexpected value "https://uat.ooltool.com/reset-password/UGuJlQwj_1oEx7OHmR30JnadbRjhO35yNdsvp8x5Hcs"
+    23 × unexpected value "https://uat.ooltool.com/reset-password/oW8vRcDFmXXa2sMCc-8-6ZheGBbyAYXJOEoP7siqTSE"
 
 ```
 
@@ -49,11 +49,11 @@ Call log:
           - generic [ref=e19]:
             - text: Confirm Password
             - generic [ref=e20]:
-              - textbox "Confirm Password" [ref=e21]: ResetFlow#26aA
+              - textbox "Confirm Password" [active] [ref=e21]: ResetFlow#26aA
               - button "Show password" [ref=e22] [cursor=pointer]:
                 - img [ref=e23]
         - generic [ref=e26]:
-          - button "Update Password" [active] [ref=e27] [cursor=pointer]
+          - button "Update Password" [ref=e27] [cursor=pointer]
           - link "Back to login" [ref=e28] [cursor=pointer]:
             - /url: /login
   - region "Notifications alt+T"
@@ -63,131 +63,131 @@ Call log:
 # Test source
 
 ```ts
-  167 | 
-  168 |         await this.page.waitForTimeout(
-  169 |           1000
-  170 |         );
-  171 | 
-  172 |         await this.newPasswordInput.fill(
-  173 |           this.pendingPassword
-  174 |         );
-  175 | 
-  176 |         await this.confirmPasswordInput.fill(
-  177 |           this.pendingPassword
-  178 |         );
-  179 | 
-  180 |         await expect(
-  181 |           this.newPasswordInput
-  182 |         ).toHaveValue(
-  183 |           this.pendingPassword
-  184 |         );
-  185 | 
-  186 |         const responsePromise =
-  187 |           this.page.waitForResponse(
-  188 |             (response) =>
-  189 |               response.request().method() === 'POST' &&
-  190 |               /\/auth\/reset-password/i.test(
-  191 |                 response.url()
-  192 |               ),
-  193 |             {
-  194 |               timeout: 8000
-  195 |             }
-  196 |           ).catch(
-  197 |             () => null
-  198 |           );
-  199 | 
-  200 |         await this.updatePasswordButton.click({
-  201 |           timeout: 8000
-  202 |         });
-  203 | 
-  204 |         const raced =
-  205 |           await Promise.race([
-  206 |             responsePromise,
-  207 |             this.page.waitForTimeout(
-  208 |               2000
-  209 |             ).then(
-  210 |               () => null
-  211 |             )
-  212 |           ]);
-  213 | 
-  214 |         if (
-  215 |           !raced
-  216 |         ) {
-  217 |           await this.page.locator(
-  218 |             'form'
-  219 |           ).evaluate(
-  220 |             (form) => {
-  221 |               (form as HTMLFormElement).requestSubmit();
-  222 |             }
-  223 |           );
-  224 |         }
-  225 | 
-  226 |         return responsePromise;
-  227 |       };
-  228 | 
-  229 |     let response =
-  230 |       await submitReset();
-  231 | 
-  232 |     if (
-  233 |       !response
-  234 |     ) {
-  235 |       response =
-  236 |         await submitReset();
-  237 |     }
-  238 | 
-  239 |     if (response) {
-  240 |       console.log(
-  241 |         `Reset response ${response.status()}`
-  242 |       );
-  243 |     }
-  244 | 
-  245 |     Logger.success(
-  246 |       'Update Password Clicked'
-  247 |     );
-  248 |   }
-  249 | 
-  250 |   async validateSuccess() {
-  251 | 
-  252 |     const confirmed =
-  253 |       await this.page.getByText(
-  254 |         /password (has been )?(updated|reset|changed)|successfully/i
-  255 |       ).first().waitFor({
-  256 |         state: 'visible',
-  257 |         timeout: 15000
-  258 |       }).then(
-  259 |         () => true
-  260 |       ).catch(
-  261 |         () => false
-  262 |       );
-  263 | 
-  264 |     if (!confirmed) {
-  265 |       await expect(
-  266 |         this.page
-> 267 |       ).toHaveURL(
+  259 |                 response.url()
+  260 |               ),
+  261 |             {
+  262 |               timeout: 15000
+  263 |             }
+  264 |           ).catch(
+  265 |             () => null
+  266 |           );
+  267 | 
+  268 |         const requestStarted =
+  269 |           this.page.waitForRequest(
+  270 |             (request) =>
+  271 |               request.method() === 'POST' &&
+  272 |               /\/auth\/reset-password/i.test(
+  273 |                 request.url()
+  274 |               ),
+  275 |             {
+  276 |               timeout: 15000
+  277 |             }
+  278 |           ).then(
+  279 |             () => true
+  280 |           ).catch(
+  281 |             () => false
+  282 |           );
+  283 | 
+  284 |         await this.updatePasswordButton.click({
+  285 |           noWaitAfter: true,
+  286 |           timeout: 8000
+  287 |         });
+  288 | 
+  289 |         const started =
+  290 |           await Promise.race([
+  291 |             requestStarted,
+  292 |             this.page.waitForTimeout(
+  293 |               3000
+  294 |             ).then(
+  295 |               () => false
+  296 |             )
+  297 |           ]);
+  298 | 
+  299 |         if (!started) {
+  300 |           await this.confirmPasswordInput.press(
+  301 |             'Enter'
+  302 |           ).catch(
+  303 |             () => undefined
+  304 |           );
+  305 | 
+  306 |           await this.updatePasswordButton.evaluate(
+  307 |             (button) => {
+  308 |               (button as HTMLButtonElement).click();
+  309 |             }
+  310 |           ).catch(
+  311 |             () => undefined
+  312 |           );
+  313 |         }
+  314 | 
+  315 |         return responsePromise;
+  316 |       };
+  317 | 
+  318 |     let response =
+  319 |       await submitReset();
+  320 | 
+  321 |     for (
+  322 |       let attempt = 1;
+  323 |       attempt < 3 &&
+  324 |       !response;
+  325 |       attempt++
+  326 |     ) {
+  327 |       response =
+  328 |         await submitReset();
+  329 |     }
+  330 | 
+  331 |     if (response) {
+  332 |       console.log(
+  333 |         `Reset response ${response.status()}`
+  334 |       );
+  335 |     }
+  336 | 
+  337 |     Logger.success(
+  338 |       'Update Password Clicked'
+  339 |     );
+  340 |   }
+  341 | 
+  342 |   async validateSuccess() {
+  343 | 
+  344 |     const confirmed =
+  345 |       await this.page.getByText(
+  346 |         /password (has been )?(updated|reset|changed)|successfully/i
+  347 |       ).first().waitFor({
+  348 |         state: 'visible',
+  349 |         timeout: 15000
+  350 |       }).then(
+  351 |         () => true
+  352 |       ).catch(
+  353 |         () => false
+  354 |       );
+  355 | 
+  356 |     if (!confirmed) {
+  357 |       await expect(
+  358 |         this.page
+> 359 |       ).toHaveURL(
       |         ^ Error: expect(page).toHaveURL(expected) failed
-  268 |         /\/login/,
-  269 |         {
-  270 |           timeout: 20000
-  271 |         }
-  272 |       );
-  273 |     }
-  274 | 
-  275 |     Logger.success(
-  276 |       'Password Updated Successfully'
-  277 |     );
-  278 |   }
-  279 | 
-  280 |   async backToLogin() {
-  281 | 
-  282 |     await safeClick(
-  283 |       this.backToLoginLink,
-  284 |       'Back To Login'
-  285 |     );
-  286 | 
-  287 |     Logger.success(
-  288 |       'Returned To Login'
-  289 |     );
-  290 |   }
-  291 | }
-  292 | 
+  360 |         /\/login/,
+  361 |         {
+  362 |           timeout: 20000
+  363 |         }
+  364 |       );
+  365 |     }
+  366 | 
+  367 |     Logger.success(
+  368 |       'Password Updated Successfully'
+  369 |     );
+  370 |   }
+  371 | 
+  372 |   async backToLogin() {
+  373 | 
+  374 |     await safeClick(
+  375 |       this.backToLoginLink,
+  376 |       'Back To Login'
+  377 |     );
+  378 | 
+  379 |     Logger.success(
+  380 |       'Returned To Login'
+  381 |     );
+  382 |   }
+  383 | }
+  384 | 
 ```

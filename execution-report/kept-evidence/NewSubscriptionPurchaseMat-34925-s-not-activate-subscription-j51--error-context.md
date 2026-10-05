@@ -6,77 +6,13 @@
 
 # Test info
 
-- Name: DirectSubscriptionPurchase.spec.ts >> Direct Subscription Purchase >> Paid plan checkout summaries currency refresh and return use one user
-- Location: tests\DirectSubscriptionPurchase.spec.ts:262:9
+- Name: NewSubscriptionPurchaseMatrix.spec.ts >> New Subscription Purchase Use Case 2 Matrix >> SC-60 - Declined card does not activate subscription
+- Location: tests\NewSubscriptionPurchaseMatrix.spec.ts:483:13
 
 # Error details
 
 ```
-Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015559986", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
-```
-
-# Page snapshot
-
-```yaml
-- generic [active] [ref=e1]:
-  - generic [ref=e4]:
-    - generic [ref=e5]:
-      - link "OolTool" [ref=e6] [cursor=pointer]:
-        - /url: /
-        - img "OolTool" [ref=e7]
-      - heading "Create Account" [level=1] [ref=e8]
-      - paragraph [ref=e9]: Start your OolTool journey
-    - generic [ref=e10]:
-      - button "Continue with Google" [ref=e11] [cursor=pointer]:
-        - img
-        - text: Continue with Google
-      - button "Continue with Apple" [ref=e12] [cursor=pointer]:
-        - img
-        - text: Continue with Apple
-      - generic [ref=e17]: Or sign up with email & mobile
-      - generic [ref=e18]:
-        - generic [ref=e19]:
-          - generic [ref=e20]:
-            - generic [ref=e21]: First name
-            - textbox "First name" [ref=e22]: Hardik
-          - generic [ref=e23]:
-            - generic [ref=e24]: Last name
-            - textbox "Last name" [ref=e25]: Thanki
-        - generic [ref=e26]:
-          - generic [ref=e27]: Email
-          - textbox "Email" [ref=e28]: imhardikthanki+direct-paid--mupj3cln@gmail.com
-        - generic [ref=e29]:
-          - generic [ref=e30]:
-            - generic [ref=e31]: Mobile number
-            - generic [ref=e32]:
-              - img
-              - text: Not verified
-          - generic [ref=e33]:
-            - generic [ref=e34]: "+1"
-            - textbox "2015550123" [ref=e35]: "2015559188"
-          - paragraph [ref=e36]: US mobile numbers only. We’ll text you a one-time code.
-          - button "Send code via SMS" [ref=e38] [cursor=pointer]:
-            - img
-            - text: Send code via SMS
-        - generic [ref=e39]:
-          - generic [ref=e40]: Password
-          - generic [ref=e41]:
-            - textbox [ref=e42]
-            - button "Show" [ref=e43]:
-              - img [ref=e44]
-        - generic [ref=e47]:
-          - generic [ref=e48]: Confirm password
-          - generic [ref=e49]:
-            - textbox [ref=e50]
-            - button "Show" [ref=e51]:
-              - img [ref=e52]
-        - button "Create Account" [disabled]
-      - paragraph [ref=e55]:
-        - text: Already have an account?
-        - link "Sign in" [ref=e56] [cursor=pointer]:
-          - /url: /login
-  - region "Notifications alt+T"
-  - alert [ref=e57]
+Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015554425", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
 ```
 
 # Test source
@@ -183,7 +119,7 @@ Error: Registration OTP input did not appear after requesting SMS code. Visible 
   753 |         }
   754 | 
 > 755 |         throw new Error(
-      |               ^ Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015559986", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
+      |               ^ Error: Registration OTP input did not appear after requesting SMS code. Visible diagnostics: mobile="2015554425", sendCodeEnabled=true; OR SIGN UP WITH EMAIL & MOBILE | Mobile number | US mobile numbers only. We’ll text you a one-time code. | Send code via SMS
   756 |           `Registration OTP input did not appear after requesting SMS code. Visible diagnostics: ${diagnostics}`
   757 |         );
   758 |       }
