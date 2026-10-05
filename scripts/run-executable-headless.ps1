@@ -89,11 +89,17 @@ $env:AIR_RESTORE_HISTORY = 'true'
 Write-Host 'Clean executable headless run: journey order, Stripe FRD matrix included, SLOW_MO=0.' -ForegroundColor Cyan
 node -e "require('./scripts/execution-order').assertAllSpecsAreListed(); require('./scripts/execution-order').printOrder(require('./scripts/execution-order').executableJourneyOrder)"
 
+$runStarted = Get-Date
 node scripts\run-ordered-tests.js executable
 $playwrightExit = $LASTEXITCODE
 
-$env:AIR_REPORT_SCOPE = 'latest'
-npm run report:execution
+$stamp = Join-Path (Get-Location) 'test-results\.air-report-opened'
+if ((Test-Path $stamp) -and ((Get-Item $stamp).LastWriteTime) -ge $runStarted.AddSeconds(-5)) {
+  Write-Host 'AIR report was generated and opened in the browser.' -ForegroundColor Green
+} else {
+  $env:AIR_REPORT_SCOPE = 'latest'
+  npm run report:execution
+}
 
 if ($playwrightExit -ne 0) {
   Write-Host "Executable headless run finished with exit code $playwrightExit. AIR was still generated." -ForegroundColor Yellow

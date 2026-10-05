@@ -640,10 +640,12 @@ export class LoginPage
     );
 
     await safeClick(
-      this.page.getByText(
-        'HT',
+      this.page.getByRole(
+        'banner'
+      ).getByRole(
+        'button',
         {
-          exact: true
+          name: /^[A-Z]{2}$/
         }
       ),
       'Open Profile Menu'

@@ -1086,7 +1086,7 @@ export const PLAN_PRICES = {
       2.9,
     annual:
       data.plans?.['Income Builder']?.annual ??
-      29
+      290
   },
   'Overlay Strategists': {
     monthly:
@@ -1094,7 +1094,7 @@ export const PLAN_PRICES = {
       7.9,
     annual:
       data.plans?.['Overlay Strategists']?.annual ??
-      79
+      790
   },
   'Portfolio Hedger': {
     monthly:
@@ -1102,7 +1102,7 @@ export const PLAN_PRICES = {
       14.9,
     annual:
       data.plans?.['Portfolio Hedger']?.annual ??
-      149
+      1490
   }
 } as const;
 

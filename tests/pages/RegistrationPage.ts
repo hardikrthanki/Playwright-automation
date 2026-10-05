@@ -691,6 +691,8 @@ extends BasePage {
         'REGISTRATION_OTP_MANUAL_FALLBACK'
       );
 
+    let waitedForRateLimit = false;
+
     for (
       let attempt = 1;
       attempt <= 4;
@@ -717,6 +719,60 @@ extends BasePage {
       Logger.info(
         `OTP input not visible after SMS request. Attempt ${attempt}/4. Send status ${this.lastSendOtpStatus}. Visible diagnostics: ${diagnostics}`
       );
+
+      const waitSeconds =
+        Number(
+          this.lastSendOtpBody.match(
+            /try again in (\d+)\s*s/i
+          )?.[1] ?? 0
+        );
+
+      if (
+        this.lastSendOtpStatus === 429 &&
+        waitSeconds > 0 &&
+        !waitedForRateLimit
+      ) {
+        waitedForRateLimit = true;
+
+        const pauseMs =
+          Math.min(
+            waitSeconds + 5,
+            90
+          ) * 1000;
+
+        Logger.info(
+          `OTP rate limit. Waiting ${Math.round(pauseMs / 1000)}s, then sending once more on the same mobile.`
+        );
+
+        await this.page.waitForTimeout(
+          pauseMs
+        );
+
+        await this.clickSendCode(
+          attempt + 1
+        );
+
+        await this.visibleOtpInput()
+          .waitFor({
+            state: 'visible',
+            timeout: 15000
+          })
+          .catch(
+            () => undefined
+          );
+
+        if (
+          await this.otpFieldIsVisible()
+        ) {
+          return;
+        }
+
+        if (
+          attempt < 4
+        ) {
+          continue;
+        }
+      }
 
       const sendRejected =
         this.lastSendOtpStatus === 0 ||

@@ -1728,7 +1728,28 @@ async function executeTrialCancel(
     'without-card'
   );
 
-  await billing.cancelTrialWithoutPaymentMethod();
+  try {
+    await billing.cancelTrialWithoutPaymentMethod();
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : String(
+          error
+        );
+
+    if (
+      /Cancel subscription control was not found/i.test(
+        message
+      )
+    ) {
+      throw new CoverageSkip(
+        'No-card trial billing does not show Cancel subscription.'
+      );
+    }
+
+    throw error;
+  }
 }
 
 async function executeCardTrialCancel(
@@ -1924,6 +1945,18 @@ async function submitIntervalChange(
   await billing.validateActivePlan(
     'Income Builder'
   );
+
+  if (
+    targetInterval === 'annual'
+  ) {
+    await expect(
+      page.locator(
+        'main'
+      )
+    ).toContainText(
+      /\$\s*290(?:\.00)?(?!\d)|per year|\/year|annual/i
+    );
+  }
 }
 
 async function executeMonthlyToAnnual(

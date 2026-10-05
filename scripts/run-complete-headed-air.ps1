@@ -89,6 +89,7 @@ if ($watch) {
 }
 Write-Host 'Stripe FRD matrix automated rows execute; user-journey matrix stays skip-only AIR.' -ForegroundColor Cyan
 
+$runStarted = Get-Date
 if ($watch) {
   & .\node_modules\.bin\playwright.cmd test --headed
 } else {
@@ -96,8 +97,13 @@ if ($watch) {
 }
 $playwrightExit = $LASTEXITCODE
 
-$env:AIR_REPORT_SCOPE = 'latest'
-npm run report:execution
+$stamp = Join-Path (Get-Location) 'test-results\.air-report-opened'
+if ((Test-Path $stamp) -and ((Get-Item $stamp).LastWriteTime) -ge $runStarted.AddSeconds(-5)) {
+  Write-Host 'AIR report was generated and opened in the browser.' -ForegroundColor Green
+} else {
+  $env:AIR_REPORT_SCOPE = 'latest'
+  npm run report:execution
+}
 
 if ($playwrightExit -ne 0) {
   Write-Host "Playwright finished with exit code $playwrightExit. AIR was still generated." -ForegroundColor Yellow

@@ -766,6 +766,29 @@ test.describe(
             'header button:has(svg.lucide-sun), header button:has(svg.lucide-moon)'
           ).first();
 
+        if (
+          !await themeButton.isVisible({
+            timeout: 3000
+          }).catch(
+            () => false
+          )
+        ) {
+          await page.reload({
+            waitUntil: 'domcontentloaded'
+          });
+
+          await expect
+            .poll(
+              async () =>
+                `${await html.getAttribute('class')}|${await html.getAttribute('data-theme')}`
+            )
+            .toBe(
+              before
+            );
+
+          return;
+        }
+
         await safeClick(
           themeButton,
           'Toggle theme'

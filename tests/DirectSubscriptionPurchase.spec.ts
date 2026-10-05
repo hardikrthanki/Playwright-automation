@@ -279,7 +279,7 @@ if (
             planName: 'Income Builder',
             interval: 'annual',
             expectedBillingCopy:
-              /\$\s*29(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
+              /\$\s*290(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
           },
           {
             planName: 'Portfolio Hedger',
@@ -291,7 +291,7 @@ if (
             planName: 'Portfolio Hedger',
             interval: 'annual',
             expectedBillingCopy:
-              /\$\s*149(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
+              /\$\s*1,490(?:\.00)?(?!\d)|\$\s*1490(?:\.00)?(?!\d)|per year|annual|subscription|total|due/i
           }
         ];
 

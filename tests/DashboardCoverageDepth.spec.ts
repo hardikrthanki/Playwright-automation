@@ -14,7 +14,7 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
+import { safeClick, openHeaderMenuItem }
   from './helpers/safeClick';
 
 /* =============================================================================
@@ -63,23 +63,10 @@ test.describe(
       name: RegExp,
       label: string
     ) {
-      await safeClick(
-        page.getByRole(
-          'button',
-          {
-            name: /^research$/i
-          }
-        ).first(),
-        'Research menu'
-      );
-
-      await safeClick(
-        page.getByRole(
-          'menuitem',
-          {
-            name
-          }
-        ),
+      await openHeaderMenuItem(
+        page,
+        /^research$/i,
+        name,
         label
       );
     }
@@ -89,23 +76,10 @@ test.describe(
       name: RegExp,
       label: string
     ) {
-      await safeClick(
-        page.getByRole(
-          'button',
-          {
-            name: /^portfolio$/i
-          }
-        ).first(),
-        'Portfolio menu'
-      );
-
-      await safeClick(
-        page.getByRole(
-          'menuitem',
-          {
-            name
-          }
-        ),
+      await openHeaderMenuItem(
+        page,
+        /^portfolio$/i,
+        name,
         label
       );
     }

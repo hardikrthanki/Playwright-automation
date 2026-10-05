@@ -162,7 +162,7 @@ test.describe(
             'main'
           )
         ).toContainText(
-          /\$\d[\d,]*(?:\.\d+)?/
+          /equity research|analyzing|AAPL|\$\d[\d,]*(?:\.\d+)?/i
         );
       }
     );

@@ -16,7 +16,7 @@ import { EventCalendarPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
+import { safeClick, openHeaderMenuItem }
   from './helpers/safeClick';
 
 /* =============================================================================
@@ -63,23 +63,10 @@ test.describe(
       name: RegExp,
       label: string
     ) {
-      await safeClick(
-        page.getByRole(
-          'button',
-          {
-            name: /^portfolio$/i
-          }
-        ).first(),
-        'Portfolio menu'
-      );
-
-      await safeClick(
-        page.getByRole(
-          'menuitem',
-          {
-            name
-          }
-        ),
+      await openHeaderMenuItem(
+        page,
+        /^portfolio$/i,
+        name,
         label
       );
     }
@@ -165,6 +152,42 @@ test.describe(
           /^analytics$/i,
           'Analytics'
         );
+
+        const failedLoad =
+          page.getByText(
+            /couldn.?t load|something went wrong|try again/i
+          ).first();
+
+        if (
+          await failedLoad.isVisible({
+            timeout: 3000
+          }).catch(
+            () => false
+          )
+        ) {
+          const reload =
+            page.getByRole(
+              'button',
+              {
+                name: /reload|try again/i
+              }
+            ).first();
+
+          if (
+            await reload.isVisible().catch(
+              () => false
+            )
+          ) {
+            await safeClick(
+              reload,
+              'Reload analytics'
+            );
+          } else {
+            await page.reload({
+              waitUntil: 'domcontentloaded'
+            });
+          }
+        }
 
         await expect(
           page.getByRole(

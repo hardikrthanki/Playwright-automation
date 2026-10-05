@@ -12,235 +12,218 @@
 # Error details
 
 ```
-TimeoutError: locator.click: Timeout 30000ms exceeded.
-Call log:
-  - waiting for locator('[role="dialog"], [role="alertdialog"]').filter({ hasText: /cancel subscription/i }).getByRole('button', { name: /keep my plan/i })
-    - locator resolved to <button disabled class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">Keep my plan</button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-      - waiting 100ms
-    - waiting for element to be visible, enabled and stable
-    - element is not enabled
-  - retrying click action
-    - waiting 500ms
-    - waiting for element to be visible, enabled and stable
-    - element is not stable
-  - retrying click action
-    - waiting 500ms
-    - waiting for element to be visible, enabled and stable
-  - element was detached from the DOM, retrying
+Error: expect(received).toBe(expected) // Object.is equality
 
+Expected: true
+Received: false
+
+Call Log:
+- Timeout 90000ms exceeded while waiting on the predicate
 ```
 
 # Test source
 
 ```ts
-  805  |   console.log(
-  806  |     `Plan lifecycle controls: upgrade=${upgradeCount}, downgrade=${downgradeCount}, current/status=${currentOrStatusCount}, subscribe/manage=${subscribeOrChooseCount}`
-  807  |   );
-  808  | 
-  809  |   Logger.success(
-  810  |     'Billing Plan Lifecycle Action Summary Validated'
-  811  |   );
-  812  | }
-  813  | 
-  814  | async validateBillingIntervalPresentationSummary() {
-  815  | 
-  816  |   Logger.info(
-  817  |     'Validating Billing Interval Presentation Summary'
-  818  |   );
-  819  | 
-  820  |   await this.validateOverview();
-  821  | 
-  822  |   if (
-  823  |     await this.plansTab.isVisible({
-  824  |       timeout: 5000
-  825  |     }).catch(
-  826  |       () => false
-  827  |     )
-  828  |   ) {
-  829  |     await safeClick(
-  830  |       this.plansTab,
-  831  |       'Open Plans Tab'
-  832  |     );
-  833  |   }
-  834  | 
-  835  |   await this.validateBillingUrl();
-  836  | 
-  837  |   const pageText =
-  838  |     await this.page
-  839  |       .locator(
-  840  |         'body'
-  841  |       )
-  842  |       .innerText();
-  843  | 
-  844  |   expect(
-  845  |     pageText
-  846  |   ).toMatch(
-  847  |     /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year|billing period|no plan changes|paid plan|current plan/i
-  848  |   );
-  849  | 
-  850  |   const monthlyMarkerCount =
-  851  |     (
-  852  |       pageText.match(
-  853  |         /monthly|per month|\/mo|month/gi
-  854  |       ) ?? []
-  855  |     ).length;
-  856  | 
-  857  |   const annualMarkerCount =
-  858  |     (
-  859  |       pageText.match(
-  860  |         /annual|per year|\/yr|\/year|year/gi
-  861  |       ) ?? []
-  862  |     ).length;
-  863  | 
-  864  |   console.log(
-  865  |     `Billing interval markers: monthly=${monthlyMarkerCount}, annual=${annualMarkerCount}`
-  866  |   );
-  867  | 
-  868  |   Logger.success(
-  869  |     'Billing Interval Presentation Summary Validated'
-  870  |   );
-  871  | }
-  872  | 
-  873  | private async closeCancelDialogIfOpen() {
-  874  |   const dialog =
-  875  |     this.page.locator(
-  876  |       '[role="dialog"], [role="alertdialog"]'
-  877  |     ).filter({
-  878  |       hasText: /cancel subscription/i
-  879  |     });
-  880  | 
-  881  |   const open =
-  882  |     await dialog.isVisible({
-  883  |       timeout: 1000
-  884  |     }).catch(
-  885  |       () => false
-  886  |     );
-  887  | 
-  888  |   if (!open) {
-  889  |     return;
-  890  |   }
-  891  | 
-  892  |   const keepPlan =
-  893  |     dialog.getByRole(
-  894  |       'button',
-  895  |       {
-  896  |         name: /keep my plan/i
-  897  |       }
-  898  |     );
-  899  | 
-  900  |   if (
-  901  |     await keepPlan.isVisible().catch(
-  902  |       () => false
-  903  |     )
-  904  |   ) {
-> 905  |     await keepPlan.click();
-       |                    ^ TimeoutError: locator.click: Timeout 30000ms exceeded.
-  906  |   } else {
-  907  |     await this.page.keyboard.press(
-  908  |       'Escape'
-  909  |     );
-  910  |   }
-  911  | 
-  912  |   await expect(
-  913  |     dialog
-  914  |   ).toBeHidden({
-  915  |     timeout: 10000
-  916  |   });
-  917  | }
-  918  | 
-  919  | private async cardShowsCurrentPlan(
-  920  |   planName: string
-  921  | ) {
-  922  |   return this.page.evaluate(
-  923  |     (targetPlan) => {
-  924  |       const plans = [
-  925  |         {
-  926  |           name: 'Income Builder',
-  927  |           needles: ['income builder', 'income']
-  928  |         },
-  929  |         {
-  930  |           name: 'Overlay Strategists',
-  931  |           needles: ['overlay strategists', 'overlay']
-  932  |         },
-  933  |         {
-  934  |           name: 'Portfolio Hedger',
-  935  |           needles: ['portfolio hedger', 'portfolio hedge']
-  936  |         },
-  937  |         {
-  938  |           name: 'Curious Explorer',
-  939  |           needles: ['curious explorer', 'curious']
-  940  |         }
-  941  |       ];
-  942  | 
-  943  |       const matchedPlans = (text: string) =>
-  944  |         plans.filter(
-  945  |           (plan) =>
-  946  |             plan.needles.some(
-  947  |               (needle) =>
-  948  |                 text.includes(needle)
-  949  |             )
-  950  |         );
-  951  | 
-  952  |       const buttons =
-  953  |         Array.from(
-  954  |           document.querySelectorAll(
-  955  |             'button, a'
-  956  |           )
-  957  |         );
-  958  | 
-  959  |       for (const element of buttons) {
-  960  |         if (
-  961  |           !/current plan/i.test(
-  962  |             element.textContent ?? ''
-  963  |           )
-  964  |         ) {
-  965  |           continue;
-  966  |         }
-  967  | 
-  968  |         let current =
-  969  |           element.parentElement;
-  970  | 
-  971  |         for (
-  972  |           let depth = 0;
-  973  |           current && depth < 12;
-  974  |           depth += 1
-  975  |         ) {
-  976  |           const matches =
-  977  |             matchedPlans(
-  978  |               (
-  979  |                 current.textContent ?? ''
-  980  |               ).toLowerCase()
-  981  |             );
-  982  | 
-  983  |           if (matches.length === 1) {
-  984  |             return matches[0].name === targetPlan;
-  985  |           }
-  986  | 
-  987  |           current =
-  988  |             current.parentElement;
-  989  |         }
-  990  |       }
-  991  | 
-  992  |       return false;
-  993  |     },
-  994  |     planName
-  995  |   );
-  996  | }
-  997  | 
-  998  | private async openPlansView() {
-  999  | 
-  1000 |   await this.dismissMarketingOverlays();
-  1001 | 
-  1002 |   await this.closeCancelDialogIfOpen();
-  1003 | 
-  1004 |   await this.validateOverview();
-  1005 | 
+  1983 |     );
+  1984 | 
+  1985 |   await expect(
+  1986 |     dialog
+  1987 |   ).toBeVisible({
+  1988 |     timeout: 15000
+  1989 |   });
+  1990 | 
+  1991 |   const termsCheckbox =
+  1992 |     dialog
+  1993 |       .locator(
+  1994 |         '[role="checkbox"], input[type="checkbox"]'
+  1995 |       )
+  1996 |       .first();
+  1997 | 
+  1998 |   const confirmButton =
+  1999 |     dialog
+  2000 |       .getByRole(
+  2001 |         'button',
+  2002 |         {
+  2003 |           name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+  2004 |         }
+  2005 |       )
+  2006 |       .first();
+  2007 | 
+  2008 |   await expect(
+  2009 |     termsCheckbox
+  2010 |   ).toBeVisible({
+  2011 |     timeout: 10000
+  2012 |   });
+  2013 | 
+  2014 |   await expect(
+  2015 |     confirmButton
+  2016 |   ).toBeDisabled({
+  2017 |     timeout: 10000
+  2018 |   });
+  2019 | 
+  2020 |   if (
+  2021 |     !(await checkboxIsChecked(
+  2022 |       termsCheckbox
+  2023 |     ))
+  2024 |   ) {
+  2025 |     await safeClick(
+  2026 |       termsCheckbox,
+  2027 |       'Accept Plan Change Terms'
+  2028 |     );
+  2029 |   }
+  2030 | 
+  2031 |   await expect
+  2032 |     .poll(
+  2033 |       async () =>
+  2034 |         checkboxIsChecked(
+  2035 |           termsCheckbox
+  2036 |         ),
+  2037 |       {
+  2038 |         timeout: 10000,
+  2039 |         message: 'Waiting for plan-change terms checkbox to be checked'
+  2040 |       }
+  2041 |     )
+  2042 |     .toBe(
+  2043 |       true
+  2044 |     );
+  2045 | 
+  2046 |   await expect(
+  2047 |     confirmButton
+  2048 |   ).toBeEnabled({
+  2049 |     timeout: 15000
+  2050 |   });
+  2051 | 
+  2052 |   await safeClick(
+  2053 |     confirmButton,
+  2054 |     'Confirm and pay plan change'
+  2055 |   );
+  2056 | 
+  2057 |   await expect(
+  2058 |     dialog
+  2059 |   ).toBeHidden({
+  2060 |     timeout: 60000
+  2061 |   });
+  2062 | 
+  2063 |   await this.page.waitForLoadState(
+  2064 |     'domcontentloaded'
+  2065 |   ).catch(
+  2066 |     () => undefined
+  2067 |   );
+  2068 | 
+  2069 |   Logger.success(
+  2070 |     `${options.action} submitted for ${options.targetPlan}`
+  2071 |   );
+  2072 | }
+  2073 | 
+  2074 | async validateActivePlan(
+  2075 |   expectedPlan: string
+  2076 | ) {
+  2077 |   Logger.info(
+  2078 |     `Validating active Billing plan: ${expectedPlan}`
+  2079 |   );
+  2080 | 
+  2081 |   let attempt = 0;
+  2082 | 
+> 2083 |   await expect.poll(
+       |   ^ Error: expect(received).toBe(expected) // Object.is equality
+  2084 |     async () => {
+  2085 |       attempt += 1;
+  2086 | 
+  2087 |       if (
+  2088 |         attempt > 1 &&
+  2089 |         attempt % 3 === 0
+  2090 |       ) {
+  2091 |         await this.page.reload({
+  2092 |           waitUntil: 'domcontentloaded'
+  2093 |         }).catch(
+  2094 |           () => undefined
+  2095 |         );
+  2096 |       }
+  2097 | 
+  2098 |       await this.openPlansView();
+  2099 | 
+  2100 |       return this.cardShowsCurrentPlan(
+  2101 |         expectedPlan
+  2102 |       );
+  2103 |     },
+  2104 |     {
+  2105 |       timeout: 90000,
+  2106 |       intervals: [2000, 3000, 5000]
+  2107 |     }
+  2108 |   ).toBe(
+  2109 |     true
+  2110 |   );
+  2111 | 
+  2112 |   Logger.success(
+  2113 |     `Active Billing plan validated: ${expectedPlan}`
+  2114 |   );
+  2115 | }
+  2116 | 
+  2117 | async closePlanChangeCalculationPreview(
+  2118 |   options: {
+  2119 |     targetPlan: string;
+  2120 |     action: 'upgrade' | 'downgrade' | 'interval';
+  2121 |   }
+  2122 | ) {
+  2123 |   const dialog =
+  2124 |     this.planChangeDialog(
+  2125 |       options
+  2126 |     );
+  2127 | 
+  2128 |   const cancelButton =
+  2129 |     dialog.getByRole(
+  2130 |       'button',
+  2131 |       {
+  2132 |         name: /^(cancel|close)$/i
+  2133 |       }
+  2134 |     ).first();
+  2135 | 
+  2136 |   if (
+  2137 |     await cancelButton.isVisible({
+  2138 |       timeout: 3000
+  2139 |     }).catch(
+  2140 |       () => false
+  2141 |     )
+  2142 |   ) {
+  2143 |     await safeClick(
+  2144 |       cancelButton,
+  2145 |       'Cancel Plan Change Preview'
+  2146 |     );
+  2147 |   } else {
+  2148 |     await this.page.keyboard.press(
+  2149 |       'Escape'
+  2150 |     );
+  2151 |   }
+  2152 | 
+  2153 |   await expect(
+  2154 |     dialog
+  2155 |   ).toBeHidden({
+  2156 |     timeout: 10000
+  2157 |   });
+  2158 | }
+  2159 | 
+  2160 | async validatePlanChangeTermsRequired(
+  2161 |   options: {
+  2162 |     targetPlan: string;
+  2163 |     action: 'upgrade' | 'downgrade' | 'interval';
+  2164 |   }
+  2165 | ) {
+  2166 |   Logger.info(
+  2167 |     `Validating ${options.action} terms are required before confirmation`
+  2168 |   );
+  2169 | 
+  2170 |   const dialog =
+  2171 |     this.planChangeDialog(
+  2172 |       options
+  2173 |     );
+  2174 | 
+  2175 |   await expect(
+  2176 |     dialog
+  2177 |   ).toBeVisible({
+  2178 |     timeout: 15000
+  2179 |   });
+  2180 | 
+  2181 |   const termsCheckbox =
+  2182 |     dialog
+  2183 |       .locator(
 ```

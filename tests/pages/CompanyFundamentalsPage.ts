@@ -56,10 +56,35 @@ export class CompanyFundamentalsPage
         }
       );
 
-    await expect(
+    const companyHeading =
       fundamentals.or(
         equityResearch
+      );
+
+    const headingVisible =
+      await companyHeading.isVisible({
+        timeout: 8000
+      }).catch(
+        () => false
+      );
+
+    if (
+      !headingVisible &&
+      /internal server error/i.test(
+        await this.page.locator(
+          'body'
+        ).innerText().catch(
+          () => ''
+        )
       )
+    ) {
+      await this.page.reload({
+        waitUntil: 'domcontentloaded'
+      });
+    }
+
+    await expect(
+      companyHeading
     ).toBeVisible({
       timeout: 20000
     });

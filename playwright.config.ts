@@ -22,6 +22,11 @@ const recordVideo =
 const watchDelay =
   watchDelayMs();
 
+const listingTests =
+  process.argv.includes(
+    '--list'
+  );
+
 if (watchDelay > 0) {
   console.log(
     `Watch mode: slowing each Playwright action by ${watchDelay}ms. Unset WATCH/SLOW_MO for full speed.`
@@ -30,6 +35,7 @@ if (watchDelay > 0) {
 
 export default defineConfig({
   testDir: './tests',
+  globalTeardown: './scripts/open-air-report.js',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -39,18 +45,21 @@ export default defineConfig({
   // expires before the screen is ready.
   timeout: 90000,
 
-  reporter: [
-    ['dot'],
-    ['html', {
-      open: 'never',
-      title: 'OOLTool UAT Automation Report',
-    }],
-    ['json', {
-      outputFile:
-        process.env.PLAYWRIGHT_JSON_OUTPUT_NAME ??
-        'test-results/results.json',
-    }],
-  ],
+  reporter: listingTests
+    ? [['list']]
+    : [
+      ['./scripts/run-progress-reporter.js'],
+      ['dot'],
+      ['html', {
+        open: 'never',
+        title: 'OOLTool UAT Automation Report',
+      }],
+      ['json', {
+        outputFile:
+          process.env.PLAYWRIGHT_JSON_OUTPUT_NAME ??
+          'test-results/results.json',
+      }],
+    ],
 
   use: {
     trace: recordAllArtifacts ? 'on' : 'on-first-retry',

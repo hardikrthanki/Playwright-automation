@@ -408,7 +408,7 @@ test.describe(
           page.getByRole(
             'button',
             {
-              name: /about cta data freshness/i
+              name: /about cta data freshness|data freshness|delayed prices|prices are delayed|^delayed$/i
             }
           ),
           'About CTA data freshness'

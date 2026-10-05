@@ -33,8 +33,16 @@ export class AddPositionPage
 
   private plusButton() {
     return this.page
-      .locator(
-        'header button:has(svg.lucide-plus), nav button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
+      .getByRole(
+        'button',
+        {
+          name: /add options|add position/i
+        }
+      )
+      .or(
+        this.page.locator(
+          'header button:has(svg.lucide-plus), nav button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
+        )
       )
       .first();
   }
@@ -52,6 +60,14 @@ export class AddPositionPage
           'option',
           {
             name: /enter manually/i
+          }
+        )
+      )
+      .or(
+        this.page.getByRole(
+          'link',
+          {
+            name: /enter manually|add position/i
           }
         )
       )

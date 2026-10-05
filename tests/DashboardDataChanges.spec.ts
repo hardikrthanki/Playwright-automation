@@ -19,7 +19,7 @@ import { RiskCompliancePage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
+import { safeClick, openHeaderMenuItem }
   from './helpers/safeClick';
 
 async function openDashboard(
@@ -86,23 +86,10 @@ test.describe(
           page
         ).validateLoaded();
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^portfolio$/i
-            }
-          ).first(),
-          'Portfolio menu'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /^watchlist$/i
-            }
-          ),
+        await openHeaderMenuItem(
+          page,
+          /^portfolio$/i,
+          /^watchlist$/i,
           'Watchlist'
         );
 

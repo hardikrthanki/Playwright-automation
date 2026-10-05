@@ -113,10 +113,14 @@ if ($Headed) {
 Write-Host 'Running all currently executable tests in one Playwright process.' -ForegroundColor Cyan
 Write-Host 'Use run-safe-batched-tests.ps1 for safer multi-batch execution and AIR merge.' -ForegroundColor Cyan
 Write-Host 'Running executable automation suite with safe controlled gates enabled...' -ForegroundColor Green
+$runStarted = Get-Date
 & .\node_modules\.bin\playwright.cmd @playwrightArgs
 
-if ($GenerateAir) {
+$stamp = Join-Path (Get-Location) 'test-results\.air-report-opened'
+$alreadyOpened = (Test-Path $stamp) -and ((Get-Item $stamp).LastWriteTime) -ge $runStarted.AddSeconds(-5)
+if ($GenerateAir -and -not $alreadyOpened) {
   Write-Host 'Generating AIR execution report...' -ForegroundColor Green
   node scripts\generate-air-results.js
   node scripts\generate-execution-report.js
+  Start-Process (Join-Path (Get-Location) 'execution-report\index.html')
 }

@@ -13,7 +13,7 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
+import { safeClick, openHeaderMenuItem }
   from './helpers/safeClick';
 
 async function openPath(
@@ -158,23 +158,10 @@ test.describe(
           page
         ).validateLoaded();
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /^equity$/i
-            }
-          ),
+        await openHeaderMenuItem(
+          page,
+          /^research$/i,
+          /^equity$/i,
           'Equity research'
         );
 
@@ -320,23 +307,10 @@ test.describe(
           page
         ).validateLoaded();
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /^equity$/i
-            }
-          ),
+        await openHeaderMenuItem(
+          page,
+          /^research$/i,
+          /^equity$/i,
           'Equity research'
         );
 
@@ -531,23 +505,10 @@ test.describe(
           page
         ).validateLoaded();
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /^equity$/i
-            }
-          ),
+        await openHeaderMenuItem(
+          page,
+          /^research$/i,
+          /^equity$/i,
           'Equity research'
         );
 
@@ -624,23 +585,10 @@ test.describe(
           page
         ).validateLoaded();
 
-        await safeClick(
-          page.getByRole(
-            'button',
-            {
-              name: /^research$/i
-            }
-          ).first(),
-          'Research menu'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /^equity$/i
-            }
-          ),
+        await openHeaderMenuItem(
+          page,
+          /^research$/i,
+          /^equity$/i,
           'Equity research'
         );
 

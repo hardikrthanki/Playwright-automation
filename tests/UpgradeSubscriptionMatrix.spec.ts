@@ -114,8 +114,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-011'],
     title: 'Upgrade starts a new billing cycle and displays next renewal date',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: upgrade starts a new billing cycle. Requires stable billing-cycle fixture or Stripe subscription API access.'
+    status: 'automated',
+    automation: 'Upgrade payment starts a new billing cycle immediately'
   },
   {
     id: 'SC-87',
@@ -130,8 +130,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-013'],
     title: 'Successful upgrade immediately updates active plan',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated upgrade account and approval to submit upgrade payment/update.'
+    status: 'automated',
+    automation: 'Successful upgrade records subscription history entry and shows the new plan'
   },
   {
     id: 'SC-89',

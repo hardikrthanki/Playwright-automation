@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-05T04:47:10.522Z",
+  "generatedAt": "2026-10-05T12:29:04.964Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-10-05T04:47:09.999Z",
+    "generatedAt": "2026-10-05T12:29:04.623Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -13,23 +13,23 @@
     "total": 726,
     "rawTestCount": 726,
     "attempts": 726,
-    "passed": 436,
-    "failed": 21,
-    "skipped": 269,
+    "passed": 447,
+    "failed": 16,
+    "skipped": 263,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 436,
-      "unexpected": 21,
-      "skipped": 269
+      "expected": 447,
+      "skipped": 263,
+      "unexpected": 16
     }
   },
   "airExecution": {
     "total": 726,
     "attempts": 726,
-    "passed": 436,
-    "failed": 21,
-    "skipped": 269,
+    "passed": 447,
+    "failed": 16,
+    "skipped": 263,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 35,
+    "perTestEvidence": 33,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 37,
+    "totalWithRawReports": 35,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,50 +61,74 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Login screen navigates to create account",
-        "testName": "Auth UI Validation > Login screen navigates to create account",
+        "testId": "chromium > OverlayStrategistsTrial.spec.ts > Overlay Strategists Trial Experience > Trial user can subscribe to a paid plan before the trial ends",
+        "testName": "Overlay Strategists Trial Experience > Trial user can subscribe to a paid plan before the trial ends",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DirectSubscriptionPurchase.spec.ts > Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
-        "testName": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial with card",
+        "testName": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial with card",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial without card",
-        "testName": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial without card",
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+        "testName": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
-        "testName": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+        "testName": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User C yearly cancel and refund",
-        "testName": "Subscription Lifecycle Execution > User C yearly cancel and refund",
+        "testId": "chromium > EventCalendarFundamentals.spec.ts > Event Calendar and Company Fundamentals > View more opens event filters and a company fundamentals page",
+        "testName": "Event Calendar and Company Fundamentals > View more opens event filters and a company fundamentals page",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > forgotpassword.spec.ts > Disposable user resets password from the email link and signs in with the new password",
-        "testName": "Disposable user resets password from the email link and signs in with the new password",
+        "testId": "chromium > EventCalendarFundamentals.spec.ts > Event Calendar and Company Fundamentals > A day filters by symbol and opens company research pages",
+        "testName": "Event Calendar and Company Fundamentals > A day filters by symbol and opens company research pages",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-60 - Declined card does not activate subscription",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-60 - Declined card does not activate subscription",
+        "testId": "chromium > Subscriber.spec.ts > Subscriber expiry overview logout and login",
+        "testName": "Subscriber expiry overview logout and login",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SessionSecurity.spec.ts > Session Security > Login once then logout blocks back refresh tabs and protected routes",
+        "testName": "Session Security > Login once then logout blocks back refresh tabs and protected routes",
+        "evidenceCount": 3,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-26 - Trial user can subscribe before trial ends",
+        "testName": "Overlay Strategists Trial FRD Matrix > SC-26 - Trial user can subscribe before trial ends",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-77 - Eligible higher-tier plans show upgrade action",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-77 - Eligible higher-tier plans show upgrade action",
+        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
+        "testName": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-211 - Successful annual-to-monthly change updates billing interval when effective",
+        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-211 - Successful annual-to-monthly change updates billing interval when effective",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-212 - Successful annual-to-monthly change preserves same plan tier",
+        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-212 - Successful annual-to-monthly change preserves same plan tier",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
@@ -121,54 +145,6 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-274 - No-card trial can be cancelled without payment method",
-        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-274 - No-card trial can be cancelled without payment method",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-278 - Pending downgrade is handled before cancellation",
-        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-278 - Pending downgrade is handled before cancellation",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-025 - Upgrade payment starts a new billing cycle immediately",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-025 - Upgrade payment starts a new billing cycle immediately",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-027 - Downgrade schedules lower plan for next renewal instead of immediate entitlement loss",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-027 - Downgrade schedules lower plan for next renewal instead of immediate entitlement loss",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-028 - Downgrade warns about feature and data-limit impact before confirmation",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-028 - Downgrade warns about feature and data-limit impact before confirmation",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
         "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-030 - Annual-to-monthly billing change is scheduled for next renewal date",
         "testName": "Subscription Lifecycle E2E Matrix > LC-030 - Annual-to-monthly billing change is scheduled for next renewal date",
         "evidenceCount": 1,
@@ -177,12 +153,6 @@
       {
         "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-034 - Cancel-at-period-end schedules cancellation and keeps access until expiry",
         "testName": "Subscription Lifecycle E2E Matrix > LC-034 - Cancel-at-period-end schedules cancellation and keeps access until expiry",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-038 - Eligible immediate cancellation displays refund amount before refund confirmation",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-038 - Eligible immediate cancellation displays refund amount before refund confirmation",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -202,52 +172,37 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Login screen navigates to create account",
+            "name": "Overlay Strategists Trial Experience > Trial user can subscribe to a paid plan before the trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial without card",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-26 - Trial user can subscribe before trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-60 - Declined card does not activate subscription",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-211 - Successful annual-to-monthly change updates billing interval when effective",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-025 - Upgrade payment starts a new billing cycle immediately",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-212 - Successful annual-to-monthly change preserves same plan tier",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -288,52 +243,37 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Login screen navigates to create account",
+            "name": "Overlay Strategists Trial Experience > Trial user can subscribe to a paid plan before the trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial without card",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-26 - Trial user can subscribe before trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-60 - Declined card does not activate subscription",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-211 - Successful annual-to-monthly change updates billing interval when effective",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-025 - Upgrade payment starts a new billing cycle immediately",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-212 - Successful annual-to-monthly change preserves same plan tier",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -374,52 +314,37 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Auth UI Validation > Login screen navigates to create account",
+            "name": "Overlay Strategists Trial Experience > Trial user can subscribe to a paid plan before the trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Direct Subscription Purchase > Paid plan checkout summaries currency refresh and return use one user",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Disposable user can start Overlay Strategists trial without card",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User A monthly plan ladder then period-end cancel",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-26 - Trial user can subscribe before trial ends",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User C yearly cancel and refund",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-36 - With-card authorization failure does not start trial",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-60 - Declined card does not activate subscription",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-211 - Successful annual-to-monthly change updates billing interval when effective",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-009 - Existing paid subscriber cannot start another Overlay Strategists trial",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-025 - Upgrade payment starts a new billing cycle immediately",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-029 - Monthly-to-annual billing change is immediate and uses prorated amount",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-212 - Successful annual-to-monthly change preserves same plan tier",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -455,7 +380,7 @@
         ]
       }
     ],
-    "warnings": 15,
-    "blockers": 16
+    "warnings": 13,
+    "blockers": 13
   }
 }

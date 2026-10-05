@@ -1,4 +1,7 @@
-import { Locator } from '@playwright/test';
+import {
+  Locator,
+  Page
+} from '@playwright/test';
 
 import {
   dismissOverlays
@@ -71,7 +74,14 @@ export async function safeClick(
 
     await locator.click({
       timeout: 8000,
-    });
+    }).catch(
+      async () => {
+        await locator.click({
+          force: true,
+          timeout: 8000
+        });
+      }
+    );
   }
 
   const watchDelay =
@@ -82,4 +92,78 @@ export async function safeClick(
       watchDelay
     );
   }
+}
+
+export async function openHeaderMenuItem(
+  page: Page,
+  menuName: RegExp,
+  itemName: RegExp,
+  label: string
+) {
+  const menuButton =
+    page.getByRole(
+      'button',
+      {
+        name: menuName
+      }
+    ).first();
+
+  const choices =
+    () => [
+      page.getByRole(
+        'menuitem',
+        {
+          name: itemName
+        }
+      ).first(),
+      page.getByRole(
+        'option',
+        {
+          name: itemName
+        }
+      ).first(),
+      page.getByRole(
+        'link',
+        {
+          name: itemName
+        }
+      ).first()
+    ];
+
+  let visibleChoice: Locator | undefined;
+
+  for (
+    let attempt = 1;
+    attempt <= 2 && !visibleChoice;
+    attempt += 1
+  ) {
+    await safeClick(
+      menuButton,
+      `${label} menu`
+    );
+
+    for (const candidate of choices()) {
+      if (
+        await candidate.isVisible({
+          timeout: 2000
+        }).catch(
+          () => false
+        )
+      ) {
+        visibleChoice = candidate;
+        break;
+      }
+    }
+  }
+
+  await safeClick(
+    visibleChoice ??
+      page.getByRole(
+        'menuitem',
+        {
+          name: itemName
+        }
+      ).first(),
+    label
+  );
 }

@@ -122,16 +122,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-011'],
     title: 'Successful annual-to-monthly change updates billing interval when effective',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated annual account and approval to submit interval change.'
+    status: 'automated',
+    automation: 'annual-to-monthly billing change is scheduled for Income Builder'
   },
   {
     id: 'SC-212',
     sourceIds: ['SUB-A2M-012'],
     title: 'Successful annual-to-monthly change preserves same plan tier',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires post-change billing state validation through UI/API.'
+    status: 'automated',
+    automation: 'annual-to-monthly billing change is scheduled and keeps Income Builder'
   },
   {
     id: 'SC-213',

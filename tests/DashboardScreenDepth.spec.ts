@@ -13,7 +13,7 @@ import { DashboardPage }
 import { test }
   from './fixtures/subscriberAuth';
 
-import { safeClick }
+import { safeClick, openHeaderMenuItem }
   from './helpers/safeClick';
 
 /* =============================================================================
@@ -61,23 +61,10 @@ test.describe(
       name: RegExp,
       label: string
     ) {
-      await safeClick(
-        page.getByRole(
-          'button',
-          {
-            name: /^research$/i
-          }
-        ).first(),
-        'Research menu'
-      );
-
-      await safeClick(
-        page.getByRole(
-          'menuitem',
-          {
-            name
-          }
-        ),
+      await openHeaderMenuItem(
+        page,
+        /^research$/i,
+        name,
         label
       );
     }
@@ -244,22 +231,14 @@ test.describe(
         );
 
         await expect(
-          page.getByRole(
-            'heading',
-            {
-              name: /simulator/i
-            }
-          ).first()
-        ).toBeVisible({
-          timeout: 20000
-        });
-
-        await expect(
           page.locator(
             'main'
           )
         ).toContainText(
-          /simulator|simulation|scenario|strategy|symbol/i
+          /simulator|simulation|scenario/i,
+          {
+            timeout: 20000
+          }
         );
 
         await analyzeSymbol(

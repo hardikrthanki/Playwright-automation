@@ -94,12 +94,97 @@ export class MfaPage
       );
     }
 
+    await openAuthenticatedPath(
+      this.page,
+      '/dashboard',
+      /\/dashboard/
+    ).catch(
+      async () => {
+        await this.page.goto(
+          `${BASE_URL}/dashboard`,
+          {
+            waitUntil: 'domcontentloaded'
+          }
+        );
+      }
+    );
+
+    const accountMenu =
+      this.page.getByRole(
+        'button',
+        {
+          name: /^HT$/i
+        }
+      ).first();
+
+    if (
+      await accountMenu.isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        accountMenu,
+        'Open account menu'
+      );
+
+      const profileItem =
+        this.page.getByRole(
+          'menuitem',
+          {
+            name: /profile|security|settings|account/i
+          }
+        ).or(
+          this.page.getByRole(
+            'link',
+            {
+              name: /profile|security|settings|account/i
+            }
+          )
+        ).first();
+
+      if (
+        await profileItem.isVisible({
+          timeout: 3000
+        }).catch(
+          () => false
+        )
+      ) {
+        await safeClick(
+          profileItem,
+          'Open profile from account menu'
+        );
+      }
+    }
+
+    const securitySignal =
+      () =>
+        this.page.getByText(
+          /two-factor authentication|two-factor|mfa|2fa|multi-factor|authenticator|backup codes|trusted devices/i
+        ).first();
+
+    if (
+      await securitySignal().isVisible({
+        timeout: 5000
+      }).catch(
+        () => false
+      )
+    ) {
+      Logger.success(
+        'Security settings opened from the account menu'
+      );
+
+      return;
+    }
+
     const routes =
       [
         '/dashboard/profile',
         '/dashboard/settings',
+        '/dashboard/account',
         '/dashboard/profile/security',
-        '/dashboard/settings/security'
+        '/dashboard/account/security'
       ];
 
     for (const route of routes) {

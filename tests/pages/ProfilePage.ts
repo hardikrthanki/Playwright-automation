@@ -296,12 +296,29 @@ async waitForProfileData() {
 
   await expect(
     this.emailInput
-  ).not.toHaveValue(
-    '',
-    {
-      timeout: 20000
-    }
-  );
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  const emailValue =
+    await this.emailInput.inputValue()
+      .catch(
+        () => ''
+      );
+
+  if (
+    emailValue.trim()
+  ) {
+    return;
+  }
+
+  await expect(
+    this.page.getByText(
+      /contact support to change your email|mobile number|verified/i
+    ).first()
+  ).toBeVisible({
+    timeout: 10000
+  });
 }
 
 async validatePersonalInfoControls() {

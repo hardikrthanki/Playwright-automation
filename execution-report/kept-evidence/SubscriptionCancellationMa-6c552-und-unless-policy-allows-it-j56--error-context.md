@@ -12,235 +12,224 @@
 # Error details
 
 ```
-TimeoutError: locator.click: Timeout 30000ms exceeded.
+Error: expect(locator).toContainText(expected) failed
+
+Locator: locator('main')
+Expected pattern: /Income Builder/i
+Received string:  "Billing & SubscriptionManage your plan, payment methods, and billing history.OverviewPlansHistoryFounding Team's Beta PricingSave while helping us build OolTool — Beta pricing for the first 1,000 users.Note: OolTool is iteratively adding new features, new brokers and additional symbols.Change PlanMonthlyAnnualCuriousExplore your PortfolioFreeManual Upload OnlyPositions (10)Simulations (10)CTAs RefreshCovered CallsOOLS ScoreSwitch to FreeIncomeBuild your PortfolioWas $29/monthNow $2.90/monthBetaBroker Integration (1)Account Linked (1)Positions (100)CTAs UnlimitedSimulations UnlimitedCovered Calls/Puts CTAsEarnings NotificationsDividend NotificationsOOLS ScoreKeep my planOverlay StrategistsOptimize your PortfolioWas $79/monthNow $7.90/monthBetaBroker Integration (5)Account Linked (10)Positions (500)CTAs & Simulations UnlimitedCovered Calls/Puts CTAsEarnings & Dividends NotificationsITM/ATM resolve suggestionsPortfolio AnalyticsBulk Portfolio LoadOOLS ScoreUpgradePortfolio HedgerOptimize your PortfolioWas $149/monthNow $14.90/monthBetaBroker Integration (10)Account Linked (20)Positions (1000)CTAs & Simulations UnlimitedCovered Calls/Puts CTAsProtective PutsOption roll suggestionsEarnings & Dividends NotificationsITM/ATM resolve suggestionsPortfolio AnalyticsBulk Portfolio LoadOOLS ScoreUpgradeUpgrades and switching to annual take effect immediately - the prorated difference is charged to your card on file. Downgrades and switching to monthly are scheduled for your next renewal. Switching to the Free plan takes effect at the end of the period you have already paid for - you keep full access until then."
+Timeout: 5000ms
+
 Call log:
-  - waiting for locator('[role="dialog"], [role="alertdialog"]').filter({ hasText: /cancel subscription/i }).getByRole('button', { name: /keep my plan/i })
-    - locator resolved to <button disabled class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">Keep my plan</button>
-  - attempting click action
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-    - waiting 20ms
-    2 × waiting for element to be visible, enabled and stable
-      - element is not enabled
-    - retrying click action
-      - waiting 100ms
-    - waiting for element to be visible, enabled and stable
-    - element is not enabled
-  - retrying click action
-    - waiting 500ms
-    - waiting for element to be visible, enabled and stable
-    - element is not stable
-  - retrying click action
-    - waiting 500ms
-    - waiting for element to be visible, enabled and stable
-  - element was detached from the DOM, retrying
+  - Expect "toContainText" with timeout 5000ms
+  - waiting for locator('main')
+    9 × locator resolved to <main class="container flex-1 px-4 py-8">…</main>
+      - unexpected value "Billing & SubscriptionManage your plan, payment methods, and billing history.OverviewPlansHistoryFounding Team's Beta PricingSave while helping us build OolTool — Beta pricing for the first 1,000 users.Note: OolTool is iteratively adding new features, new brokers and additional symbols.Change PlanMonthlyAnnualCuriousExplore your PortfolioFreeManual Upload OnlyPositions (10)Simulations (10)CTAs RefreshCovered CallsOOLS ScoreSwitch to FreeIncomeBuild your PortfolioWas $29/monthNow $2.90/monthBetaBroker Integration (1)Account Linked (1)Positions (100)CTAs UnlimitedSimulations UnlimitedCovered Calls/Puts CTAsEarnings NotificationsDividend NotificationsOOLS ScoreKeep my planOverlay StrategistsOptimize your PortfolioWas $79/monthNow $7.90/monthBetaBroker Integration (5)Account Linked (10)Positions (500)CTAs & Simulations UnlimitedCovered Calls/Puts CTAsEarnings & Dividends NotificationsITM/ATM resolve suggestionsPortfolio AnalyticsBulk Portfolio LoadOOLS ScoreUpgradePortfolio HedgerOptimize your PortfolioWas $149/monthNow $14.90/monthBetaBroker Integration (10)Account Linked (20)Positions (1000)CTAs & Simulations UnlimitedCovered Calls/Puts CTAsProtective PutsOption roll suggestionsEarnings & Dividends NotificationsITM/ATM resolve suggestionsPortfolio AnalyticsBulk Portfolio LoadOOLS ScoreUpgradeUpgrades and switching to annual take effect immediately - the prorated difference is charged to your card on file. Downgrades and switching to monthly are scheduled for your next renewal. Switching to the Free plan takes effect at the end of the period you have already paid for - you keep full access until then."
 
 ```
 
 # Test source
 
 ```ts
-  805  |   console.log(
-  806  |     `Plan lifecycle controls: upgrade=${upgradeCount}, downgrade=${downgradeCount}, current/status=${currentOrStatusCount}, subscribe/manage=${subscribeOrChooseCount}`
-  807  |   );
-  808  | 
-  809  |   Logger.success(
-  810  |     'Billing Plan Lifecycle Action Summary Validated'
-  811  |   );
-  812  | }
-  813  | 
-  814  | async validateBillingIntervalPresentationSummary() {
-  815  | 
-  816  |   Logger.info(
-  817  |     'Validating Billing Interval Presentation Summary'
-  818  |   );
-  819  | 
-  820  |   await this.validateOverview();
-  821  | 
-  822  |   if (
-  823  |     await this.plansTab.isVisible({
-  824  |       timeout: 5000
-  825  |     }).catch(
-  826  |       () => false
-  827  |     )
-  828  |   ) {
-  829  |     await safeClick(
-  830  |       this.plansTab,
-  831  |       'Open Plans Tab'
-  832  |     );
-  833  |   }
-  834  | 
-  835  |   await this.validateBillingUrl();
-  836  | 
-  837  |   const pageText =
-  838  |     await this.page
-  839  |       .locator(
-  840  |         'body'
-  841  |       )
-  842  |       .innerText();
-  843  | 
-  844  |   expect(
-  845  |     pageText
-  846  |   ).toMatch(
-  847  |     /monthly|annual|month|year|\/mo|\/yr|\/year|per month|per year|billing period|no plan changes|paid plan|current plan/i
-  848  |   );
-  849  | 
-  850  |   const monthlyMarkerCount =
-  851  |     (
-  852  |       pageText.match(
-  853  |         /monthly|per month|\/mo|month/gi
-  854  |       ) ?? []
-  855  |     ).length;
-  856  | 
-  857  |   const annualMarkerCount =
-  858  |     (
-  859  |       pageText.match(
-  860  |         /annual|per year|\/yr|\/year|year/gi
-  861  |       ) ?? []
-  862  |     ).length;
-  863  | 
-  864  |   console.log(
-  865  |     `Billing interval markers: monthly=${monthlyMarkerCount}, annual=${annualMarkerCount}`
-  866  |   );
-  867  | 
-  868  |   Logger.success(
-  869  |     'Billing Interval Presentation Summary Validated'
-  870  |   );
-  871  | }
-  872  | 
-  873  | private async closeCancelDialogIfOpen() {
-  874  |   const dialog =
-  875  |     this.page.locator(
-  876  |       '[role="dialog"], [role="alertdialog"]'
-  877  |     ).filter({
-  878  |       hasText: /cancel subscription/i
-  879  |     });
-  880  | 
-  881  |   const open =
-  882  |     await dialog.isVisible({
-  883  |       timeout: 1000
-  884  |     }).catch(
-  885  |       () => false
-  886  |     );
-  887  | 
-  888  |   if (!open) {
-  889  |     return;
-  890  |   }
-  891  | 
-  892  |   const keepPlan =
-  893  |     dialog.getByRole(
-  894  |       'button',
-  895  |       {
-  896  |         name: /keep my plan/i
-  897  |       }
-  898  |     );
-  899  | 
-  900  |   if (
-  901  |     await keepPlan.isVisible().catch(
-  902  |       () => false
-  903  |     )
-  904  |   ) {
-> 905  |     await keepPlan.click();
-       |                    ^ TimeoutError: locator.click: Timeout 30000ms exceeded.
-  906  |   } else {
-  907  |     await this.page.keyboard.press(
-  908  |       'Escape'
-  909  |     );
-  910  |   }
-  911  | 
-  912  |   await expect(
-  913  |     dialog
-  914  |   ).toBeHidden({
-  915  |     timeout: 10000
-  916  |   });
-  917  | }
-  918  | 
-  919  | private async cardShowsCurrentPlan(
-  920  |   planName: string
-  921  | ) {
-  922  |   return this.page.evaluate(
-  923  |     (targetPlan) => {
-  924  |       const plans = [
-  925  |         {
-  926  |           name: 'Income Builder',
-  927  |           needles: ['income builder', 'income']
-  928  |         },
-  929  |         {
-  930  |           name: 'Overlay Strategists',
-  931  |           needles: ['overlay strategists', 'overlay']
-  932  |         },
-  933  |         {
-  934  |           name: 'Portfolio Hedger',
-  935  |           needles: ['portfolio hedger', 'portfolio hedge']
-  936  |         },
-  937  |         {
-  938  |           name: 'Curious Explorer',
-  939  |           needles: ['curious explorer', 'curious']
-  940  |         }
-  941  |       ];
-  942  | 
-  943  |       const matchedPlans = (text: string) =>
-  944  |         plans.filter(
-  945  |           (plan) =>
-  946  |             plan.needles.some(
-  947  |               (needle) =>
-  948  |                 text.includes(needle)
-  949  |             )
-  950  |         );
-  951  | 
-  952  |       const buttons =
-  953  |         Array.from(
-  954  |           document.querySelectorAll(
-  955  |             'button, a'
-  956  |           )
-  957  |         );
-  958  | 
-  959  |       for (const element of buttons) {
-  960  |         if (
-  961  |           !/current plan/i.test(
-  962  |             element.textContent ?? ''
-  963  |           )
-  964  |         ) {
-  965  |           continue;
-  966  |         }
-  967  | 
-  968  |         let current =
-  969  |           element.parentElement;
-  970  | 
-  971  |         for (
-  972  |           let depth = 0;
-  973  |           current && depth < 12;
-  974  |           depth += 1
-  975  |         ) {
-  976  |           const matches =
-  977  |             matchedPlans(
-  978  |               (
-  979  |                 current.textContent ?? ''
-  980  |               ).toLowerCase()
-  981  |             );
-  982  | 
-  983  |           if (matches.length === 1) {
-  984  |             return matches[0].name === targetPlan;
-  985  |           }
-  986  | 
-  987  |           current =
-  988  |             current.parentElement;
-  989  |         }
-  990  |       }
-  991  | 
-  992  |       return false;
-  993  |     },
-  994  |     planName
-  995  |   );
-  996  | }
-  997  | 
-  998  | private async openPlansView() {
-  999  | 
-  1000 |   await this.dismissMarketingOverlays();
-  1001 | 
-  1002 |   await this.closeCancelDialogIfOpen();
-  1003 | 
-  1004 |   await this.validateOverview();
-  1005 | 
+  3478 | ) {
+  3479 |   Logger.info(
+  3480 |     'Submitting monthly cancel at period end'
+  3481 |   );
+  3482 | 
+  3483 |   const host =
+  3484 |     await this.openCancelSubscriptionHost();
+  3485 | 
+  3486 |   try {
+  3487 |     const text =
+  3488 |       await this.hostBodyText(
+  3489 |         host.page
+  3490 |       );
+  3491 | 
+  3492 |     expect(
+  3493 |       text
+  3494 |     ).toMatch(
+  3495 |       /keep access to .{0,80} until \w+ \d{1,2},? \d{4}|end of (this|the) (current )?billing period|refunds apply to annual plans only/i
+  3496 |     );
+  3497 | 
+  3498 |     expect(
+  3499 |       text
+  3500 |     ).not.toMatch(
+  3501 |       /cancel and refund|cancel at expiry/i
+  3502 |     );
+  3503 | 
+  3504 |     await this.fillCancelReasonIfPresent(
+  3505 |       host.page,
+  3506 |       'Automation period-end cancel for disposable monthly user.'
+  3507 |     );
+  3508 | 
+  3509 |     const periodEndOption =
+  3510 |       this.cancelOptionControl(
+  3511 |         host.page,
+  3512 |         /cancel at (the )?(end|expiry|period)|end of (this|the) billing period|keep access/i
+  3513 |       );
+  3514 | 
+  3515 |     if (
+  3516 |       await periodEndOption.isVisible({
+  3517 |         timeout: 3000
+  3518 |       }).catch(
+  3519 |         () => false
+  3520 |       )
+  3521 |     ) {
+  3522 |       await safeClick(
+  3523 |         periodEndOption,
+  3524 |         'Choose cancel at period end'
+  3525 |       );
+  3526 |     }
+  3527 | 
+  3528 |     await this.confirmCancelAction(
+  3529 |       host.page,
+  3530 |       'Submit monthly cancel at period end',
+  3531 |       /yes,?\s*cancel|cancel (subscription|plan)|confirm|continue|cancel at period end/i
+  3532 |     );
+  3533 | 
+  3534 |     await expect(
+  3535 |       host.page
+  3536 |         .getByText(
+  3537 |           /scheduled to cancel|cancellation scheduled|cancelling|cancels on|service will end|cancel at period end|access until|keep access to|moved to the free plan|you('ll| will) have access until/i
+  3538 |         )
+  3539 |         .first()
+  3540 |     ).toBeVisible({
+  3541 |       timeout: 30000
+  3542 |     });
+  3543 | 
+  3544 |     Logger.success(
+  3545 |       'Monthly cancel at period end submitted'
+  3546 |     );
+  3547 |   } finally {
+  3548 |     if (
+  3549 |       options?.keepScheduled
+  3550 |     ) {
+  3551 |       await host.page.keyboard.press(
+  3552 |         'Escape'
+  3553 |       );
+  3554 |     } else {
+  3555 |       await host.close();
+  3556 |     }
+  3557 |   }
+  3558 | }
+  3559 | 
+  3560 | async expectPaidAccessWhileCancellationScheduled(
+  3561 |   planName: string
+  3562 | ) {
+  3563 |   await this.openPlansView();
+  3564 | 
+  3565 |   const stillOnPlan =
+  3566 |     await this.cardShowsCurrentPlan(
+  3567 |       planName
+  3568 |     );
+  3569 | 
+  3570 |   if (
+  3571 |     !stillOnPlan
+  3572 |   ) {
+  3573 |     await expect(
+  3574 |       this.page.locator(
+  3575 |         'main'
+  3576 |       )
+  3577 |     ).toContainText(
+> 3578 |       new RegExp(
+       |       ^ Error: expect(locator).toContainText(expected) failed
+  3579 |         planName,
+  3580 |         'i'
+  3581 |       )
+  3582 |     );
+  3583 |   }
+  3584 | 
+  3585 |   await expect(
+  3586 |     this.page.locator(
+  3587 |       'main'
+  3588 |     )
+  3589 |   ).toContainText(
+  3590 |     /scheduled to cancel|cancellation scheduled|cancels on|access until|keep access to|moved to the free plan|service will end|end of (this|the) (current )?billing period/i
+  3591 |   );
+  3592 | 
+  3593 |   await expect(
+  3594 |     this.page.locator(
+  3595 |       'main'
+  3596 |     )
+  3597 |   ).not.toContainText(
+  3598 |     /refund (issued|processed|completed)|moved to free|subscription cancelled/i
+  3599 |   );
+  3600 | }
+  3601 | 
+  3602 | async resumeScheduledCancellation(
+  3603 |   planName: string
+  3604 | ) {
+  3605 |   Logger.info(
+  3606 |     `Resuming scheduled cancellation for ${planName}`
+  3607 |   );
+  3608 | 
+  3609 |   await this.closeCancelDialogIfOpen();
+  3610 | 
+  3611 |   const resume =
+  3612 |     this.page.getByRole(
+  3613 |       'button',
+  3614 |       {
+  3615 |         name: /don'?t cancel|resume subscription|reactivate/i
+  3616 |       }
+  3617 |     ).first();
+  3618 | 
+  3619 |   const enabledKeepPlan =
+  3620 |     this.page.getByRole(
+  3621 |       'button',
+  3622 |       {
+  3623 |         name: /keep my plan/i
+  3624 |       }
+  3625 |     ).first();
+  3626 | 
+  3627 |   if (
+  3628 |     await resume.isVisible({
+  3629 |       timeout: 5000
+  3630 |     }).catch(
+  3631 |       () => false
+  3632 |     ) &&
+  3633 |     await resume.isEnabled().catch(
+  3634 |       () => false
+  3635 |     )
+  3636 |   ) {
+  3637 |     await safeClick(
+  3638 |       resume,
+  3639 |       'Resume scheduled cancellation'
+  3640 |     );
+  3641 |   } else if (
+  3642 |     await enabledKeepPlan.isVisible({
+  3643 |       timeout: 2000
+  3644 |     }).catch(
+  3645 |       () => false
+  3646 |     ) &&
+  3647 |     await enabledKeepPlan.isEnabled().catch(
+  3648 |       () => false
+  3649 |     )
+  3650 |   ) {
+  3651 |     await enabledKeepPlan.click({
+  3652 |       timeout: 8000
+  3653 |     });
+  3654 |   } else {
+  3655 |     const host =
+  3656 |       await this.openCancelSubscriptionHost();
+  3657 | 
+  3658 |     await host.close();
+  3659 |   }
+  3660 | 
+  3661 |   await this.validateActivePlan(
+  3662 |     planName
+  3663 |   );
+  3664 | 
+  3665 |   await expect(
+  3666 |     this.page.locator(
+  3667 |       'main'
+  3668 |     )
+  3669 |   ).not.toContainText(
+  3670 |     /scheduled to cancel|cancellation scheduled/i
+  3671 |   );
+  3672 | 
+  3673 |   Logger.success(
+  3674 |     `${planName} stayed active after cancellation was resumed`
+  3675 |   );
+  3676 | }
+  3677 | 
+  3678 | async showRefundAmountWithoutConfirming(
 ```

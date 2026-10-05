@@ -12,9 +12,17 @@ import { Logger } from '../utils/logger';
 function shownPricePattern(
   amount: number
 ) {
+  const grouped = amount.toLocaleString(
+    'en-US',
+    {
+      maximumFractionDigits: 2
+    }
+  );
+
   const amounts = [
     amount.toFixed(2),
-    String(amount)
+    String(amount),
+    grouped
   ].filter(
     (
       value,

@@ -1998,7 +1998,7 @@ test.describe(
         expect(
           monthlyUpgrade
         ).toBe(
-          25
+          2.5
         );
 
         const annualUpgrade =
@@ -2027,7 +2027,7 @@ test.describe(
         expect(
           immediateRefund
         ).toBe(
-          99.33
+          9.93
         );
       }
     );

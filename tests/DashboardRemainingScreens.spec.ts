@@ -482,10 +482,17 @@ test.describe(
           timeout: 10000
         });
 
-        const file =
+        const fileInDialog =
           upload.locator(
             'input[type="file"]'
           );
+
+        const file =
+          await fileInDialog.count()
+            ? fileInDialog
+            : page.locator(
+              'input[type="file"]'
+            ).first();
 
         await file.setInputFiles({
           name: 'not-a-sheet.txt',
