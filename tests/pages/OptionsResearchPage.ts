@@ -719,7 +719,7 @@ export class OptionsResearchPage
     await this.ensureSymbolResult();
 
     for (const label of [
-      /expiration date/i,
+      /expir(?:ation|y)(?:\s+date)?/i,
       /^show$/i,
       /strike count/i
     ]) {

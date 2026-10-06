@@ -129,12 +129,35 @@ export async function waitForManualEmailVerification(
         'Opened verification link from Gmail inbox'
       );
 
-      await page.goto(
-        verificationLink,
-        {
-          waitUntil: 'domcontentloaded'
+      let lastNavigationError: unknown;
+
+      for (let attempt = 1; attempt <= 3; attempt += 1) {
+        try {
+          await page.goto(
+            verificationLink,
+            {
+              waitUntil: 'domcontentloaded',
+              timeout: 45000
+            }
+          );
+
+          lastNavigationError =
+            undefined;
+
+          break;
+        } catch (navigationError) {
+          lastNavigationError =
+            navigationError;
+
+          console.log(
+            `Verification link attempt ${attempt} did not load.`
+          );
         }
-      );
+      }
+
+      if (lastNavigationError) {
+        throw lastNavigationError;
+      }
 
       await openFreshLoginPage(
         page

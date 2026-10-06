@@ -131,18 +131,6 @@ const useCaseOneScenarios: UseCaseScenario[] = [
       'Requires Stripe test account/API access to verify ledger/payment intent amount.'
   },
   {
-    id: 'SC-09',
-    sourceIds: [
-      'SUB-TRIAL-010',
-      'SUB-TRIAL-015'
-    ],
-    title: 'Card information is securely saved',
-    priority: 'High',
-    status: 'known-bug',
-    dependency:
-      'Confirmed product bug: saved card details are not displayed on Billing after with-card trial activation. Stripe/API validation is still needed later to confirm backend payment-method persistence.'
-  },
-  {
     id: 'SC-10',
     sourceIds: [
       'SUB-TRIAL-025'

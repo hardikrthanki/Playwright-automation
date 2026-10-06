@@ -68,85 +68,6 @@ test.describe(
     });
 
     test(
-      'Glossary search narrows the term list and clears',
-      async ({ page }) => {
-        await openPath(
-          page,
-          '/dashboard'
-        );
-
-        await new DashboardPage(
-          page
-        ).validateLoaded();
-
-        await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /^academy$/i
-            }
-          ).first(),
-          'Academy'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'link',
-            {
-              name: /^glossary$/i
-            }
-          ).first(),
-          'Glossary'
-        );
-
-        await expect(
-          page
-        ).toHaveURL(
-          /\/academy\/glossary/
-        );
-
-        const search =
-          page.getByRole(
-            'textbox',
-            {
-              name: /search/i
-            }
-          ).or(
-            page.getByPlaceholder(
-              /search/i
-            )
-          ).first();
-
-        await search.fill(
-          'delta'
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /delta/i,
-          {
-            timeout: 10000
-          }
-        );
-
-        await search.fill(
-          ''
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /assignment|bid\s*\/\s*ask|breakeven/i
-        );
-      }
-    );
-
-    test(
       'Equity research shows a second symbol',
       async ({ page }) => {
         await openPath(
@@ -441,7 +362,7 @@ test.describe(
     );
 
     test(
-      'Glossary keeps terms when the search does not match',
+      'Glossary search shows only matching terms',
       async ({ page }) => {
         await openPath(
           page,
@@ -449,29 +370,70 @@ test.describe(
         );
 
         const search =
-          page.getByRole(
+          page.locator(
+            'main'
+          ).getByRole(
             'textbox',
             {
               name: /search/i
             }
           ).or(
-            page.getByPlaceholder(
+            page.locator(
+              'main'
+            ).getByPlaceholder(
               /search/i
             )
           ).first();
+
+        const assignment =
+          page.locator(
+            'main'
+          ).getByRole(
+            'heading',
+            {
+              name: /^assignment$/i
+            }
+          );
+
+        const vega =
+          page.locator(
+            'main'
+          ).getByRole(
+            'heading',
+            {
+              name: /^vega$/i
+            }
+          );
+
+        await expect(
+          assignment
+        ).toBeVisible();
+
+        await search.fill(
+          'vega'
+        );
+
+        await expect(
+          vega
+        ).toBeVisible();
+
+        await expect(
+          assignment
+        ).toBeHidden({
+          timeout: 15000
+        });
 
         await search.fill(
           'ZZZNOTATERM'
         );
 
         await expect(
-          page.getByRole(
-            'heading',
-            {
-              name: /^assignment$/i
-            }
-          )
-        ).toBeVisible();
+          assignment
+        ).toBeHidden();
+
+        await expect(
+          vega
+        ).toBeHidden();
 
         await expect(
           page
@@ -484,12 +446,12 @@ test.describe(
         );
 
         await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /assignment/i
-        );
+          assignment
+        ).toBeVisible();
+
+        await expect(
+          vega
+        ).toBeVisible();
       }
     );
 
@@ -623,118 +585,6 @@ test.describe(
           )
         ).toContainText(
           /search for a symbol/i
-        );
-      }
-    );
-
-    test(
-      'Glossary opens Theta and clears the search',
-      async ({ page }) => {
-        await openPath(
-          page,
-          '/academy/glossary'
-        );
-
-        const search =
-          page.getByRole(
-            'textbox',
-            {
-              name: /search/i
-            }
-          ).or(
-            page.getByPlaceholder(
-              /search/i
-            )
-          ).first();
-
-        await search.fill(
-          'theta'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'heading',
-            {
-              name: /^theta$/i
-            }
-          ),
-          'Open Theta'
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /theta|time decay|passage of time/i
-        );
-
-        await search.fill(
-          ''
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /assignment/i
-        );
-      }
-    );
-
-    test(
-      'Glossary opens Vega and clears the search',
-      async ({ page }) => {
-        await openPath(
-          page,
-          '/academy/glossary'
-        );
-
-        const search =
-          page.getByRole(
-            'textbox',
-            {
-              name: /search/i
-            }
-          ).or(
-            page.getByPlaceholder(
-              /search/i
-            )
-          ).first();
-
-        await search.fill(
-          'vega'
-        );
-
-        await safeClick(
-          page.getByRole(
-            'heading',
-            {
-              name: /^vega$/i
-            }
-          ),
-          'Open Vega'
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /vega|volatility/i
-        );
-
-        await search.fill(
-          ''
-        );
-
-        await expect(
-          page.locator(
-            'main'
-          )
-        ).toContainText(
-          /assignment/i
         );
       }
     );

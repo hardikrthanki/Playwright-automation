@@ -272,10 +272,19 @@ test.describe(
             section.url
           );
 
-          await expect(
+          const content =
             page.locator(
-              'main'
-            )
+              'main, [role="main"]'
+            ).first();
+
+          await expect(
+            content
+          ).toBeVisible({
+            timeout: 15000
+          });
+
+          await expect(
+            content
           ).toContainText(
             section.content,
             {
@@ -825,9 +834,15 @@ test.describe(
         );
 
         await expect(
+          page
+        ).toHaveURL(
+          /\/academy\/lessons\/.+/
+        );
+
+        await expect(
           page.locator(
-            'main'
-          )
+            'main, [role="main"]'
+          ).first()
         ).toContainText(
           /options chain|bid|ask|strike|expiration/i,
           {
@@ -836,7 +851,9 @@ test.describe(
         );
 
         await expect(
-          page.getByRole(
+          page.locator(
+            'main, [role="main"]'
+          ).getByRole(
             'button',
             {
               name: /mark as complete|marked complete|undo/i

@@ -380,8 +380,14 @@ private async billingContentIsVisible() {
         name: /manage subscription|manage billing|billing portal|customer portal|subscription settings|manage plan|manage payment methods|payment methods|payment settings|invoices/i,
       }
     ).first(),
+    this.page.getByRole(
+      'heading',
+      {
+        name: /billing\s*(?:&|and)\s*subscription/i
+      }
+    ).first(),
     this.page.getByText(
-      /current plan|current subscription|income builder|transactions|invoice history|billing overview/i
+      /current plan|current subscription|income builder|free plan|change plan|transactions|invoice history|billing overview/i
     ).first(),
   ];
 
@@ -1288,6 +1294,62 @@ private planActionButtonPattern(
   return /^(?:switch)$|switch to (annual|monthly|yearly)|change to (annual|monthly)|to annual|to monthly|billing interval|switch billing/i;
 }
 
+private async closeAnyPlanChangeDialog() {
+  const dialog =
+    this.page.getByRole(
+      'dialog'
+    ).or(
+      this.page.getByRole(
+        'alertdialog'
+      )
+    ).first();
+
+  if (
+    !await dialog.isVisible({
+      timeout: 1000
+    }).catch(
+      () => false
+    )
+  ) {
+    return;
+  }
+
+  const cancelButton =
+    dialog.getByRole(
+      'button',
+      {
+        name: /^(cancel|close)$/i
+      }
+    ).first();
+
+  if (
+    await cancelButton.isVisible({
+      timeout: 1000
+    }).catch(
+      () => false
+    )
+  ) {
+    await cancelButton.click({
+      timeout: 5000
+    }).catch(
+      () => undefined
+    );
+  } else {
+    await this.page.keyboard.press(
+      'Escape'
+    ).catch(
+      () => undefined
+    );
+  }
+
+  await dialog.waitFor({
+    state: 'hidden',
+    timeout: 5000
+  }).catch(
+    () => undefined
+  );
+}
+
 private async findPlanActionButton(
   planName: string,
   action: 'upgrade' | 'downgrade' | 'interval'
@@ -1307,6 +1369,11 @@ private async findPlanActionButton(
   const buttonCount =
     await actionButtons.count();
 
+  const titlePattern =
+    this.planNamePattern(
+      planName
+    );
+
   for (let index = 0; index < buttonCount; index += 1) {
     const button =
       actionButtons.nth(
@@ -1317,54 +1384,94 @@ private async findPlanActionButton(
       await button.evaluate(
         (
           element,
-          targetPlan
+          pattern
         ) => {
-          const plans = [
-            {
-              name: 'Curious Explorer',
-              needles: ['curious explorer', 'curious']
-            },
-            {
-              name: 'Income Builder',
-              needles: ['income builder', 'income']
-            },
-            {
-              name: 'Overlay Strategists',
-              needles: ['overlay strategists', 'overlay']
-            },
-            {
-              name: 'Portfolio Hedger',
-              needles: ['portfolio hedger', 'portfolio hedge']
-            }
-          ];
+          const title =
+            new RegExp(
+              `^(?:${pattern.titlePattern})$`,
+              'i'
+            );
 
-          const matchedPlans = (text: string) =>
-            plans.filter(
-              (plan: { name: string; needles: string[] }) =>
-                plan.needles.some(
-                  (needle: string) =>
-                    text.includes(
-                      needle
-                    )
+          const actionText =
+            new RegExp(
+              pattern.actionSource,
+              'i'
+            );
+
+          const clean =
+            (node: Element) =>
+              (
+                node.textContent ?? ''
+              ).replace(
+                /\s+/g,
+                ' '
+              ).trim();
+
+          const anyPlan =
+            /^(?:Curious(?: Explorer)?|Free|Income(?: Builder)?|Overlay(?: Strategists)?|Portfolio Hedge(?:r)?|3-Advanced)$/i;
+
+          const isLeafTitle = (
+            node: Element,
+            pattern: RegExp
+          ) => {
+            const text =
+              clean(
+                node
+              );
+
+            if (!pattern.test(text)) {
+              return false;
+            }
+
+            return ![...node.children].some(
+              (child) =>
+                pattern.test(
+                  clean(
+                    child
+                  )
                 )
             );
+          };
 
           let current =
             element.parentElement;
 
-          for (let depth = 0; current && depth < 12; depth += 1) {
-            const currentText =
-              (
-                current.textContent ?? ''
-              ).toLowerCase();
-            const matches =
-              matchedPlans(
-                currentText
+          for (let depth = 0; current && depth < 8; depth += 1) {
+            const planTitles =
+              [...current.querySelectorAll(
+                'p, h2, h3, h4'
+              )].filter(
+                (node) =>
+                  isLeafTitle(
+                    node,
+                    anyPlan
+                  )
+              );
+
+            const actions =
+              [...current.querySelectorAll(
+                'button'
+              )].filter(
+                (node) =>
+                  actionText.test(
+                    clean(
+                      node
+                    )
+                  )
+              );
+
+            const onlyThisPlan =
+              planTitles.length === 1 &&
+              title.test(
+                clean(
+                  planTitles[0]
+                )
               );
 
             if (
-              matches.length === 1 &&
-              matches[0].name === targetPlan
+              onlyThisPlan &&
+              actions.length === 1 &&
+              actions[0] === element
             ) {
               return true;
             }
@@ -1375,13 +1482,24 @@ private async findPlanActionButton(
 
           return false;
         },
-        planName
+        {
+          titlePattern,
+          actionSource: this.planActionButtonPattern(
+            action
+          ).source
+        }
       )
         .catch(
           () => false
         );
 
-    if (belongsToPlan) {
+    const visible =
+      belongsToPlan &&
+      await button.isVisible().catch(
+        () => false
+      );
+
+    if (visible) {
       return button;
     }
   }
@@ -1573,6 +1691,8 @@ async openPlanChangeCalculationPreview(
 
   await this.openPlansView();
 
+  await this.closeAnyPlanChangeDialog();
+
   await this.selectBillingIntervalIfAvailable(
     options.interval
   );
@@ -1644,6 +1764,33 @@ async openPlanChangeCalculationPreview(
     this.planChangeDialog(
       options
     );
+
+  const openedTarget =
+    await dialog.isVisible({
+      timeout: 8000
+    }).catch(
+      () => false
+    );
+
+  if (!openedTarget) {
+    await this.closeAnyPlanChangeDialog();
+
+    const scopedButton =
+      await this.findPlanActionButton(
+        options.targetPlan,
+        options.action
+      );
+
+    await scopedButton.scrollIntoViewIfNeeded().catch(
+      () => undefined
+    );
+
+    await scopedButton.evaluate(
+      (element) => {
+        (element as HTMLButtonElement).click();
+      }
+    );
+  }
 
   await expect(
     dialog

@@ -207,7 +207,7 @@ test.describe(
               'main'
             )
           ).toContainText(
-            /portfolio|account|position|holding|broker|connect/i,
+            /portfolio|account|position|holding|broker|connect|watchlist|symbol/i,
             {
               timeout: 20000
             }

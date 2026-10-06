@@ -4280,7 +4280,16 @@ function createAnnotatedFailurePreview(test, screenshot, index = 0) {
   ${captionSvg}
 </svg>`;
 
-  fs.writeFileSync(filePath, svg, 'utf8');
+  try {
+    fs.writeFileSync(filePath, svg, 'utf8');
+  } catch (error) {
+    if (!fs.existsSync(filePath)) {
+      return {
+        available: false,
+        reason: 'Annotated picture could not be saved.',
+      };
+    }
+  }
 
   return {
     available: true,
@@ -7242,121 +7251,28 @@ const executiveEvidenceHighlights =
         <strong>No screenshots in this run.</strong>
         <span>Passed checks do not keep images unless recording is turned on. The run record stays in the test log.</span>
       </div>`;
-const readerAttentionNames = journeysNeedingReview.map(journey => journey.name);
-const readerGuideSteps = [
-  {
-    question: 'Can we release?',
-    count: executiveData.releaseDecision,
-    answer: `Confidence ${executiveConfidence}%. Risk ${estimatedReleaseRisk}.`,
-    href: '#executive',
-    open: 'Open why',
-    tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
-  },
-  {
-    question: 'Did anything fail?',
-    count: String(executiveData.failed),
-    answer: executiveData.failed > 0
-      ? `${failureGroups.length} ${failureGroups.length === 1 ? 'story' : 'stories'} to open`
-      : `No. ${executiveData.executed ?? executiveData.passed} checks ran and passed.`,
-    href: '#failures',
-    open: 'Open failures',
-    tone: executiveData.failed > 0 ? 'bad' : 'good',
-  },
-  {
-    question: 'What needs a look?',
-    count: String(readerAttentionNames.length),
-    answer: readerAttentionNames.length
-      ? readerAttentionNames.join(', ')
-      : `${healthyModuleCount} of ${displayModules.length} areas are healthy`,
-    href: '#journey',
-    open: 'Open paths',
-    tone: readerAttentionNames.length ? 'warn' : 'good',
-  },
-  {
-    question: 'What proof is there?',
-    count: String(openableFailurePictures),
-    answer: openableFailurePictures > 0
-      ? `${openableFailurePictures} picture${openableFailurePictures === 1 ? '' : 's'} you can open`
-      : blankFailurePictures > 0
-        ? 'Saved pictures are blank. Page text is shown instead.'
-        : 'Pictures from this run were cleared.',
-    href: '#evidence',
-    open: 'Open proof',
-    tone: openableFailurePictures > 0 ? 'good' : 'warn',
-  },
-  {
-    question: 'What should we do?',
-    count: String(failureGroups.length),
-    answer: failureGroups.length
-      ? `${failureGroups.length} next step${failureGroups.length === 1 ? '' : 's'} before the next run`
-      : releaseRecommendedAction,
-    href: '#insight',
-    open: 'Open next step',
-    tone: executiveData.releaseDecision === 'GO' ? 'good' : executiveData.releaseDecision === 'NO GO' ? 'bad' : 'warn',
-  },
-];
-const scanNowHtml = failureGroups.length === 0
-  ? `<p class="scan-now good">Nothing failed in the checks that ran.</p>`
-  : `<p class="scan-now"><a href="#failures"><b>${executiveData.failed} failed</b><span>${failureGroups.length} ${failureGroups.length === 1 ? 'story' : 'stories'} on What failed</span></a></p>`;
 const statusBoardHtml = `
   <div class="status-board" aria-label="This run at a glance">
-    <a class="status-card ${releaseClass}" href="#executive"><b>${escapeHtml(executiveData.releaseDecision)}</b><span>Release</span></a>
-    <a class="status-card ${executiveData.failed > 0 ? 'bad' : 'good'}" href="#failures"><b>${executiveData.failed}</b><span>Failed</span></a>
-    <a class="status-card good" href="#validation-summary"><b>${executiveData.passed}</b><span>Passed</span></a>
-    <a class="status-card warn" href="#coverage-gaps"><b>${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))}</b><span>Not run</span></a>
-    <a class="status-card good" href="#health"><b>${executiveData.qualityScore}%</b><span>Of what ran</span></a>
+    <a class="status-card ${executiveData.failed > 0 ? 'bad' : 'good'}" href="#failures"><b>${executiveData.failed}</b><span>Failed</span><small>Open what failed</small></a>
+    <a class="status-card good" href="#validation-summary"><b>${executiveData.passed}</b><span>Passed</span><small>Open what passed</small></a>
+    <a class="status-card warn" href="#coverage-gaps"><b>${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))}</b><span>Not run</span><small>Open what was skipped</small></a>
+    <a class="status-card" href="#health"><b>${executiveData.qualityScore}%</b><span>Of what ran</span><small>Open product health</small></a>
   </div>`;
-const readerGuideHtml = `
-  <section class="reader-guide" aria-label="Five answers">
-    <h2>Five answers</h2>
-    <div class="reader-guide-list">
-      ${readerGuideSteps.map((step) => `
-        <a class="reader-step ${step.tone}" href="${step.href}">
-          <b>${escapeHtml(step.count)}</b>
-          <span>${escapeHtml(step.question)}</span>
-          <strong>${escapeHtml(step.answer)}</strong>
-          <em>${escapeHtml(step.open)}</em>
-        </a>`).join('')}
-    </div>
-  </section>`;
 const executiveModeShellHtml = `
-  <div class="executive-mode-header">
-    <div>
+  <div class="brief">
+    <p class="air-oneliner">AIR shows whether this run is ready to ship, and what still needs a fix.</p>
+    <div class="brief-decision">
       <div class="eyebrow">${escapeHtml(projectName)} · ${escapeHtml(environment)}</div>
-      <h1>This run</h1>
-      <p>Use the menu on the left, or the page names at the top, to open any part of this report.</p>
+      <h1>Can we ship?</h1>
+      ${releaseStatusBadge}
+      <p class="brief-line">${executiveData.failed > 0 ? `No. ${executiveData.failed} checks failed. Fix those before this goes out.` : `Yes. The checks that ran passed.`}</p>
+      <p class="brief-when">Last run ${escapeHtml(generatedAt)}</p>
     </div>
-    <div class="executive-toolbar">
-      <span>${escapeHtml(generatedAt)}</span>
-      <a class="btn ghost" href="#failures">Open the failures</a>
-    </div>
+    ${statusBoardHtml}
   </div>
-  ${statusBoardHtml}
-  ${scanNowHtml}
-  <div class="executive-mode-grid">
-    <div class="release-cockpit ${releaseClass} interactive-card" data-open-release role="button" tabindex="0" aria-label="Open release decision explanation">
-      <div class="release-orb">
-        <span>${executiveData.releaseDecision === 'NO GO' ? '!' : 'OK'}</span>
-      </div>
-      <div class="release-cockpit-content">
-        <span class="cockpit-label">Decision</span>
-        ${releaseStatusBadge}
-        <p class="brief-count">${executiveData.passed} passed and ${executiveData.failed} failed, out of ${executiveData.executed ?? executiveData.passed} checks that ran. ${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))} were not run. Quality of the checks that ran is ${executiveData.qualityScore}%.</p>
-        <div class="cockpit-mini-grid">
-          <div><span>Quality</span><strong>${executiveData.qualityScore}%</strong></div>
-          <div><span>Risk</span><strong class="${estimatedReleaseRiskTone}">${escapeHtml(estimatedReleaseRisk)}</strong></div>
-          <div><span>Paths</span><strong class="${journeysNeedingReview.length ? 'amber' : ''}">${liveBusinessJourneys.length - journeysNeedingReview.length}/${liveBusinessJourneys.length}</strong></div>
-        </div>
-        <div class="release-meter" style="--score:${Math.max(0, Math.min(100, executiveConfidence))}%"><span></span></div>
-      </div>
-    </div>
-    <div class="executive-kpi-stack">
-      <div class="executive-kpi mark-good"><span>Passed</span><strong>${executiveData.passed}</strong><small>Of the checks that ran</small></div>
-      <div class="executive-kpi ${executiveData.failed > 0 ? 'mark-bad danger' : 'mark-good success'}"><span>Failed</span><strong>${executiveData.failed}</strong><small>${executiveData.failed === 0 ? 'None' : 'Need a fix before release'}</small></div>
-      <div class="executive-kpi mark-good"><span>Ran</span><strong>${executiveData.executed ?? executiveData.passed}</strong><small>of ${executiveData.total} planned</small></div>
-      <div class="executive-kpi mark-warn"><span>Not run</span><strong>${Math.max(0, executiveData.total - (executiveData.executed ?? executiveData.passed))}</strong><small>Planned, but not in this run</small></div>
-    </div>
-  </div>
+  <details class="fold brief-more">
+    <summary><b>More about this run</b><span>Why some checks did not run</span></summary>
+    <div class="brief-more-body">
   <section class="coverage-board" aria-label="Plan coverage">
     <h2>Plan coverage</h2>
     <div class="coverage-meter-track" aria-hidden="true"><span class="coverage-meter-ran" style="width:${executiveData.total ? Math.round(((executiveData.executed ?? executiveData.passed) / executiveData.total) * 100) : 0}%"></span></div>
@@ -7369,7 +7285,8 @@ const executiveModeShellHtml = `
       <a class="passed-card" href="#plan-cat-skipped"><div class="passed-card-top"><span class="module-icon">LK</span><strong>Need a look</strong></div><div class="passed-card-count"><b>${coverageGapSummary.skipped ?? 0}</b><span>checks</span></div><p>Skipped without a clear reason.</p><span class="module-button">Open</span></a>
     </div>
   </section>
-  ${readerGuideHtml}`;
+    </div>
+  </details>`;
 
 const aiDecisionSummary =
   executiveData.releaseDecision === 'GO'
@@ -7819,10 +7736,13 @@ function renderFailureCardNav() {
 
 function renderInnerNav(kind, options = {}) {
   const selection = options.requireSelection ? ' data-step-require-selection' : '';
-  return `<nav class="step-nav" aria-label="Move between ${escapeHtml(kind)}s"${selection} hidden>
-    <button type="button" data-step-prev><small>Previous</small><strong data-step-prev-name></strong></button>
-    <span class="step-nav-here"><span data-step-count></span><strong data-step-label></strong></span>
-    <button type="button" data-step-next><small>Next</small><strong data-step-next-name></strong></button>
+  const label = kind === 'story' ? 'stories' : `${kind}s`;
+  return `<nav class="page-pager step-nav" aria-label="Move between ${escapeHtml(label)}"${selection} hidden>
+    <div class="page-pager-row">
+      <button type="button" class="page-pager-prev" data-step-prev><small>Previous</small><strong data-step-prev-name></strong></button>
+      <span class="page-pager-count step-nav-here"><small data-step-count></small><strong data-step-label></strong></span>
+      <button type="button" class="page-pager-next" data-step-next><small>Next</small><strong data-step-next-name></strong></button>
+    </div>
   </nav>`;
 }
 
@@ -11495,6 +11415,127 @@ const airGoldenDashboardHtml = `<!doctype html>
     #health .module-card-stats small,#health .module-title strong,#coverage-gaps .plan-nav strong,#validation-summary .passed-card-top strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
     @media(max-width:1100px){#failures .failure-command-center{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
     @media(max-width:700px){#failures .failure-command-center{grid-template-columns:1fr!important}}
+    #cover .brief{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:28px;align-items:center;margin:4px 0 8px}
+    #cover .brief-decision{display:flex;flex-direction:column;align-items:flex-start;gap:14px;min-width:0}
+    #cover .brief-decision h1{margin:0;color:#f8fafc;font-size:clamp(40px,4.2vw,58px);font-weight:700;letter-spacing:-.045em;line-height:.95}
+    #cover .brief-line{margin:0;max-width:28ch;color:#e8eef5;font-size:18px;line-height:1.45}
+    #cover .brief-when{margin:0;color:#8fa2ba;font-size:13px}
+    #cover .brief-decision .release-status-badge{font-size:clamp(18px,1.6vw,26px);padding:10px 16px}
+    #cover .brief-decision .scan-now{margin:0}
+    #cover .brief-decision .scan-now a{width:auto;border-radius:999px;padding:11px 16px}
+    #cover .status-board{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0}
+    #cover .status-card{min-height:118px;padding:18px 18px 16px;border-radius:18px;gap:6px}
+    #cover .status-card b{font-size:40px;letter-spacing:-.04em}
+    #cover .status-card span{color:#d5e0ec;font-size:14px;font-weight:650}
+    #cover .status-card small{color:#9fb0c5;font-size:12px;font-weight:600}
+    #cover .status-card:not(.bad):not(.warn):not(.good){background:#101826;border-color:rgba(148,163,184,.22)}
+    #cover .status-card:not(.bad):not(.warn):not(.good) b{color:#f8fafc}
+    #cover .brief-more{margin-top:22px}
+    #cover .brief-more-body{display:grid;gap:18px;padding:16px}
+    #cover .brief-more .executive-mode-grid{display:none!important}
+    #cover .coverage-board{margin-top:0}
+    .sidebar .nav a.active{box-shadow:inset 3px 0 0 #7ee787}
+    .sidebar .nav a[href="#failures"].active{box-shadow:inset 3px 0 0 #ff7b72}
+    .page>.topbar h1,.page .topbar h1{font-size:clamp(28px,2.2vw,36px)}
+    @media(max-width:900px){#cover .brief{grid-template-columns:1fr}#cover .status-board{grid-template-columns:1fr 1fr}}
+    .module-jump{display:none!important}
+    .page-pager,.page-pager.inner,.page-pager.top,.page-pager.bottom,.step-nav,.failure-card-nav,.shot-pager-bar{
+      display:flex!important;
+      flex-direction:column!important;
+      align-items:stretch!important;
+      gap:0!important;
+      margin:0 0 16px!important;
+      padding:8px 12px!important;
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:12px!important;
+      box-shadow:none!important;
+    }
+    .page-pager.bottom,.inner-board>.page-pager.inner:last-child{margin:16px 0 0!important}
+    .page-pager-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important;width:100%!important}
+    .page-pager a,.page-pager button,.step-nav button,.page-pager-end{
+      display:flex!important;
+      flex-direction:column!important;
+      justify-content:center!important;
+      gap:1px!important;
+      flex:1 1 0!important;
+      min-width:0!important;
+      margin:0!important;
+      padding:4px 2px!important;
+      background:transparent!important;
+      border:0!important;
+      border-radius:0!important;
+      box-shadow:none!important;
+      color:#f8fafc!important;
+      font:inherit!important;
+      text-align:left!important;
+      text-decoration:none!important;
+      cursor:pointer!important;
+    }
+    .page-pager-next,.step-nav [data-step-next]{align-items:flex-end!important;text-align:right!important}
+    .page-pager-count,.step-nav-here{
+      flex:0 0 auto!important;
+      display:flex!important;
+      flex-direction:column!important;
+      align-items:center!important;
+      gap:1px!important;
+      padding:0 8px!important;
+      background:transparent!important;
+      border:0!important;
+      color:#9fb0c5!important;
+      text-align:center!important;
+    }
+    .page-pager small,.step-nav small{color:#9fb0c5!important;font-size:11px!important;font-weight:650!important;letter-spacing:.04em!important;text-transform:uppercase!important}
+    .page-pager strong,.step-nav strong,.step-nav-here strong{color:#f8fafc!important;font-size:14px!important;font-weight:650!important;line-height:1.3!important;letter-spacing:0!important}
+    .page-pager button:disabled,.step-nav button:disabled,.page-pager a.is-pager-empty{visibility:hidden!important}
+    .step-nav[hidden],.page-pager[hidden],.shot-pager-bar[hidden],[hidden].page-pager{display:none!important}
+    .page-pager-end{visibility:hidden!important}
+    .passed-card,.failure-shot-card,.failure-summary-card,.module-health-card,.module-dashboard-card,.module-selector-card,.status-card,.reader-step,.next-step-card,.recommendation-card,.role-recommendation-card,.roadmap-card,.compare-card,.evidence-card,.health-stat,.journey-node{
+      background:#101826!important;
+      border:1px solid rgba(148,163,184,.22)!important;
+      border-radius:16px!important;
+      box-shadow:none!important;
+      color:#f8fafc!important;
+    }
+    .passed-card,.module-health-card.green,.status-card.good,.reader-step.good,.next-step-card,.health-stat.good{border-left:4px solid #7ee787!important}
+    .failure-shot-card,.failure-summary-card,.module-health-card.red,.status-card.bad,.reader-step.bad,.health-stat.bad{border-left:4px solid #ff7b72!important}
+    .module-health-card.amber,.status-card.warn,.reader-step.warn,.health-stat.warn,#known-defects .passed-card{border-left:4px solid #f5c542!important}
+    .passed-card-count b,.status-card.good b,.module-health-card.green .module-score,.health-stat.good strong{color:#7ee787!important}
+    .status-card.bad b,.failure-summary-card.primary strong,.module-health-card.red .module-score,.health-stat.bad strong{color:#ff8b82!important}
+    .status-card.warn b,.module-health-card.amber .module-score,.health-stat.warn strong,#known-defects .passed-card-count b{color:#f5c542!important}
+    .passed-card:hover,.failure-shot-card:hover,.module-health-card:hover,.status-card:hover,.reader-step:hover,.next-step-card:hover{transform:none!important;filter:brightness(1.06)}
+    #cover .status-card.bad{background:#2a1518!important;border-color:rgba(255,123,114,.45)!important}
+    #cover .status-card.good{background:#122218!important;border-color:rgba(126,231,135,.4)!important}
+    #cover .status-card.warn{background:#2a2210!important;border-color:rgba(245,197,66,.45)!important}
+    body,.page,.panel,.card,p,li,td,th,strong,span,a,h1,h2,h3,h4,button,label,small,.page-pager,.page-pager strong,.next-step-card,.recommendation-card,.role-recommendation-card,.ai-command-hero,.failure-shot-card,.passed-card,.module-health-card,.module-dashboard-card,.status-card,.reader-step{
+      overflow-wrap:normal!important;
+      word-break:normal!important;
+      hyphens:manual!important;
+    }
+    p,li,.next-step-card p,.next-step-card strong,.recommendation-card p,.recommendation-card strong,.role-recommendation-card p,.role-recommendation-card strong,.ai-command-hero p,.ai-reasons li,.decision-reasons li,.executive-decision-bullets li,.failure-check-list li,.passed-check p,.passed-check strong,.summary-lead,.brief-line,.brief-count{
+      white-space:normal!important;
+      line-height:1.5!important;
+    }
+    .page-pager a,.page-pager button{min-width:28%!important}
+    .page-pager .page-pager-prev,.step-nav .page-pager-prev,.page-pager a.page-pager-prev{align-items:flex-start!important;text-align:left!important;margin-right:auto}
+    .page-pager .page-pager-next,.step-nav .page-pager-next,.page-pager a.page-pager-next,.page-pager button.page-pager-next,#coverage-gaps [data-plan-next]{align-items:flex-end!important;text-align:right!important;margin-left:auto}
+    .page-pager-next small,.page-pager-next strong,#coverage-gaps [data-plan-next] small,#coverage-gaps [data-plan-next] strong{text-align:right!important;margin-left:auto}
+    .page-pager strong,.step-nav strong{
+      display:block!important;
+      max-width:100%;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      line-height:1.35!important;
+      overflow-wrap:normal!important;
+      word-break:normal!important;
+      letter-spacing:0!important;
+    }
+    .page-pager-count strong,.page-pager-count small{white-space:nowrap!important}
+    .ai-command-hero strong,.topbar h1,.brief-decision h1{line-height:1.15!important;letter-spacing:-.03em!important}
+    #insight .role-recommendation-grid,#insight .recommendation-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important}
+    #insight .ai-signal-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important}
+    #cover .air-oneliner{grid-column:1 / -1;margin:0;color:#f8fafc;font-size:18px;font-weight:650;line-height:1.35;letter-spacing:0;overflow-wrap:normal;word-break:normal}
   </style>
   <aside class="sidebar">
     <div class="brand-lockup">
@@ -11520,19 +11561,8 @@ const airGoldenDashboardHtml = `<!doctype html>
     </nav>
     <div class="report-search">
       <label for="airSearch">Search Report</label>
-      <input id="airSearch" type="search" placeholder="Search areas, checks, proof..." autocomplete="off">
+      <input id="airSearch" type="search" placeholder="Search the report" autocomplete="off">
       <div id="airSearchResults" class="search-results"></div>
-    </div>
-    <div class="report-meta">
-      <div>Project<br><strong>${escapeHtml(projectName)}</strong></div><br>
-      <div>Environment<br><strong>${escapeHtml(environment)}</strong></div><br>
-      <div>Build<br><strong>${escapeHtml(buildVersion)}</strong></div><br>
-      <div>Generated<br><strong>${escapeHtml(generatedAt)}</strong></div>
-    </div>
-    <div class="release-mini">
-      <span>Can we ship?</span>
-      ${releaseStatusCompact}
-      <small>${demoMode ? 'Demo data shown' : 'Based on last execution'}</small>
     </div>
   </aside>
   <main>
@@ -11703,7 +11733,6 @@ const airGoldenDashboardHtml = `<!doctype html>
         <h2>Choose an area</h2>
         <p>Stay on this page. Pick an area below.</p>
       </div>
-      ${renderModuleJump('module-dashboard-')}
       ${renderInnerNav('area', { requireSelection: true })}
       ${renderInnerBoard('Modules', moduleDashboardCards, displayModules.length, 'module-dashboard-grid')}
       ${renderPageFooter('module-dashboard')}
@@ -11781,12 +11810,21 @@ const airGoldenDashboardHtml = `<!doctype html>
         <h2>Screenshots</h2>
         <p class="evidence-path-note">A red frame means that check failed. The line under the picture says what stopped.</p>
         <div class="shot-pager" data-shot-pager data-shot-page-size="4">
+          <nav class="page-pager inner shot-pager-bar" aria-label="Pictures">
+            <div class="page-pager-row">
+              <button type="button" class="page-pager-prev" data-shot-prev><small>Previous</small><strong>← Pictures</strong></button>
+              <span class="page-pager-count"><small data-shot-count></small><strong>Pictures</strong></span>
+              <button type="button" class="page-pager-next" data-shot-next><small>Next</small><strong>Pictures →</strong></button>
+            </div>
+          </nav>
           <div class="thumb-grid">${evidenceThumbnails}</div>
-          <div class="shot-pager-bar">
-            <button type="button" data-shot-prev>Previous</button>
-            <span data-shot-count></span>
-            <button type="button" data-shot-next>Next</button>
-          </div>
+          <nav class="page-pager inner shot-pager-bar" aria-label="Pictures">
+            <div class="page-pager-row">
+              <button type="button" class="page-pager-prev" data-shot-prev><small>Previous</small><strong>← Pictures</strong></button>
+              <span class="page-pager-count"><small data-shot-count></small><strong>Pictures</strong></span>
+              <button type="button" class="page-pager-next" data-shot-next><small>Next</small><strong>Pictures →</strong></button>
+            </div>
+          </nav>
         </div>
       </div>` : ''}
       <div class="panel">
@@ -12361,6 +12399,21 @@ const airGoldenDashboardHtml = `<!doctype html>
   </section>
 </div>
 <script>
+  function shortPagerLabel(text) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (clean.length <= 32) return clean;
+    const slice = clean.slice(0, 32);
+    const space = slice.lastIndexOf(' ');
+    const cut = space > 16 ? slice.slice(0, space) : slice;
+    return cut.replace(/[.,:;–—-]+$/, '') + '…';
+  }
+  function writePagerName(node, text) {
+    if (!node) return;
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    node.textContent = clean ? shortPagerLabel(clean) : '';
+    if (clean) node.title = clean;
+    else node.removeAttribute('title');
+  }
   const reportPageIds = ${JSON.stringify(reportPages.map(([pageId]) => pageId))};
   function pageForTarget(id) {
     const target = id ? document.getElementById(id) : null;
@@ -12451,13 +12504,13 @@ const airGoldenDashboardHtml = `<!doctype html>
         prevLink.classList.toggle('is-pager-empty', !previous);
         if (previous) prevLink.setAttribute('href', '#' + previous.id);
         const name = prevLink.querySelector('strong');
-        if (name) name.textContent = previous ? '← ' + previous.label : '';
+        if (name) writePagerName(name, previous ? '← ' + previous.label : '');
       }
       if (nextLink) {
         nextLink.classList.toggle('is-pager-empty', !next);
         if (next) nextLink.setAttribute('href', '#' + next.id);
         const name = nextLink.querySelector('strong');
-        if (name) name.textContent = next ? next.label + ' →' : '';
+        if (name) writePagerName(name, next ? next.label + ' →' : '');
       }
       if (count) count.textContent = here ? (index + 1) + ' of ' + steps.length : steps.length + ' cards';
       if (label) label.textContent = here ? here.label : 'Choose a card';
@@ -12522,10 +12575,10 @@ const airGoldenDashboardHtml = `<!doctype html>
       const count = nav.querySelector('[data-step-count]');
       const prevName = nav.querySelector('[data-step-prev-name]');
       const nextName = nav.querySelector('[data-step-next-name]');
-      if (label) label.textContent = current?.getAttribute('data-step-label') || '';
+      if (label) label.textContent = shortPagerLabel(current?.getAttribute('data-step-label') || '');
       if (count) count.textContent = (index + 1) + ' of ' + items.length;
-      if (prevName) prevName.textContent = previous ? '← ' + previous.getAttribute('data-step-label') : '';
-      if (nextName) nextName.textContent = next ? next.getAttribute('data-step-label') + ' →' : '';
+      if (prevName) writePagerName(prevName, previous ? '← ' + (previous.getAttribute('data-step-label') || '') : '');
+      if (nextName) writePagerName(nextName, next ? (next.getAttribute('data-step-label') || '') + ' →' : '');
       const prevButton = nav.querySelector('[data-step-prev]');
       const nextButton = nav.querySelector('[data-step-next]');
       if (prevButton) prevButton.disabled = !previous;
@@ -13252,8 +13305,8 @@ const airGoldenDashboardHtml = `<!doctype html>
       next.disabled = !following;
       next.dataset.planTarget = following?.id || '';
     }
-    if (prevName) prevName.textContent = previous ? '← ' + previous.getAttribute('data-step-label') : '';
-    if (nextName) nextName.textContent = following ? following.getAttribute('data-step-label') + ' →' : '';
+    if (prevName) writePagerName(prevName, previous ? '← ' + (previous.getAttribute('data-step-label') || '') : '');
+    if (nextName) writePagerName(nextName, following ? (following.getAttribute('data-step-label') || '') + ' →' : '');
     if (pos) pos.textContent = opened ? (siblingIndex + 1) + ' of ' + siblings.length : '';
 
     if (reasons) reasons.hidden = filtering || Boolean(opened);
@@ -13439,30 +13492,32 @@ const airGoldenDashboardHtml = `<!doctype html>
     const items = Array.from(pager.querySelectorAll('.thumb'));
     const size = Number(pager.getAttribute('data-shot-page-size')) || 4;
     const pages = Math.max(1, Math.ceil(items.length / size));
-    const prev = pager.querySelector('[data-shot-prev]');
-    const next = pager.querySelector('[data-shot-next]');
-    const count = pager.querySelector('[data-shot-count]');
-    const bar = pager.querySelector('.shot-pager-bar');
+    const prevButtons = pager.querySelectorAll('[data-shot-prev]');
+    const nextButtons = pager.querySelectorAll('[data-shot-next]');
+    const counts = pager.querySelectorAll('[data-shot-count]');
+    const bars = pager.querySelectorAll('.shot-pager-bar');
     let page = 0;
 
     const showShotPage = () => {
       items.forEach((item, index) => {
         item.hidden = index < page * size || index >= (page + 1) * size;
       });
-      if (count) count.textContent = (page + 1) + ' of ' + pages;
-      if (prev) prev.disabled = page === 0;
-      if (next) next.disabled = page >= pages - 1;
-      if (bar) bar.hidden = pages <= 1;
+      counts.forEach((count) => {
+        count.textContent = (page + 1) + ' of ' + pages;
+      });
+      prevButtons.forEach((prev) => { prev.disabled = page === 0; });
+      nextButtons.forEach((next) => { next.disabled = page >= pages - 1; });
+      bars.forEach((bar) => { bar.hidden = pages <= 1; });
     };
 
-    if (prev) prev.addEventListener('click', () => {
+    prevButtons.forEach((prev) => prev.addEventListener('click', () => {
       page = Math.max(0, page - 1);
       showShotPage();
-    });
-    if (next) next.addEventListener('click', () => {
+    }));
+    nextButtons.forEach((next) => next.addEventListener('click', () => {
       page = Math.min(pages - 1, page + 1);
       showShotPage();
-    });
+    }));
     showShotPage();
   });
 
@@ -13500,11 +13555,18 @@ const airGoldenDashboardHtml = `<!doctype html>
       pager.querySelectorAll('[data-inner-next]').forEach((button) => {
         button.disabled = pageIndex >= pageCount - 1;
       });
+      const itemLabel = (item) => (
+        item?.getAttribute('data-step-label')
+        || item?.querySelector('strong')?.textContent
+        || ''
+      ).replace(/\s+/g, ' ').trim();
+      const previousItem = pool[(pageIndex - 1) * size];
+      const nextItem = pool[(pageIndex + 1) * size];
       pager.querySelectorAll('[data-inner-prev-name]').forEach((name) => {
-        name.textContent = pageIndex === 0 ? '' : '← ' + label;
+        writePagerName(name, previousItem ? '← ' + (itemLabel(previousItem) || label) : '');
       });
       pager.querySelectorAll('[data-inner-next-name]').forEach((name) => {
-        name.textContent = pageIndex >= pageCount - 1 ? '' : label + ' →';
+        writePagerName(name, nextItem ? (itemLabel(nextItem) || label) + ' →' : '');
       });
       pager.querySelectorAll('.page-pager.inner').forEach((bar) => {
         bar.hidden = pageCount < 2;
@@ -13910,7 +13972,7 @@ try {
 }
 
 if (!reportWritten) {
-  const spareNames = ['index-nav.html', 'index-spare.html', 'index-current.html'];
+  const spareNames = ['index-nav.html', 'index-spare.html', 'index-current.html', 'index-latest.html'];
   for (const name of spareNames) {
     const sparePath = path.join(outputDir, name);
     try {

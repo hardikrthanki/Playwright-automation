@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-05T17:49:43.693Z",
+  "generatedAt": "2026-10-06T11:32:25.752Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-10-05T17:49:43.440Z",
+    "generatedAt": "2026-10-06T11:32:25.345Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 17,
+    "perTestEvidence": 18,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 19,
+    "totalWithRawReports": 20,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -79,20 +79,20 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
-        "testName": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+        "testId": "chromium > DashboardAccountSurfaces.spec.ts > Signed-in account surfaces > Glossary search shows only matching terms",
+        "testName": "Signed-in account surfaces > Glossary search shows only matching terms",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > User D monthly retention offer decline then schedule downgrade",
-        "testName": "Subscription Lifecycle Execution > User D monthly retention offer decline then schedule downgrade",
-        "evidenceCount": 1,
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
+        "testName": "Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
+        "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardMenus.spec.ts > Dashboard menus > Portfolio menu opens each holdings destination",
-        "testName": "Dashboard menus > Portfolio menu opens each holdings destination",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy opens the next lesson without marking it complete",
+        "testName": "Academy depth > Academy opens the next lesson without marking it complete",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -115,6 +115,12 @@
         "status": "Evidence Available"
       },
       {
+        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
         "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-007 - With-card trial displays active trial and saved payment method in Billing",
         "testName": "Subscription Lifecycle E2E Matrix > LC-007 - With-card trial displays active trial and saved payment method in Billing",
         "evidenceCount": 1,
@@ -123,12 +129,6 @@
       {
         "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
         "testName": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -163,16 +163,6 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer decline then schedule downgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Dashboard menus > Portfolio menu opens each holdings destination",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
@@ -183,12 +173,12 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
+            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -207,18 +197,8 @@
             "detail": "Critical journey status is Critical."
           },
           {
-            "type": "Business Journey",
-            "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
-          },
-          {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
             "detail": "Critical module risk is High."
           },
           {
@@ -249,16 +229,6 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer decline then schedule downgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Dashboard menus > Portfolio menu opens each holdings destination",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
@@ -269,12 +239,12 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
+            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -293,18 +263,8 @@
             "detail": "Critical journey status is Critical."
           },
           {
-            "type": "Business Journey",
-            "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
-          },
-          {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
             "detail": "Critical module risk is High."
           },
           {
@@ -335,16 +295,6 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle Execution > User D monthly retention offer decline then schedule downgrade",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Dashboard menus > Portfolio menu opens each holdings destination",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
@@ -355,12 +305,12 @@
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-024 - Upgrade to higher plan starts immediate Stripe proration checkout",
+            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -379,18 +329,8 @@
             "detail": "Critical journey status is Critical."
           },
           {
-            "type": "Business Journey",
-            "name": "Dashboard",
-            "detail": "Critical journey status is Critical."
-          },
-          {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Dashboard",
             "detail": "Critical module risk is High."
           },
           {
@@ -401,7 +341,7 @@
         ]
       }
     ],
-    "warnings": 7,
-    "blockers": 16
+    "warnings": 10,
+    "blockers": 12
   }
 }

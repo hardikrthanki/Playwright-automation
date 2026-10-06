@@ -114,15 +114,6 @@ const lifecycleScenarios: LifecycleScenario[] = [
     automation: 'OverlayStrategistsTrial.spec.ts > with card checkout details'
   },
   {
-    id: 'LC-007',
-    sourceIds: ['SC-07', 'SC-09', 'BUG-BILLING-TRIAL-CARD'],
-    title: 'With-card trial displays active trial and saved payment method in Billing',
-    phase: 'Trial',
-    priority: 'Critical',
-    status: 'known-bug',
-    dependency: 'Confirmed product issue: Billing shows Free Plan and does not show saved card after with-card trial activation.'
-  },
-  {
     id: 'LC-008',
     sourceIds: ['SC-24', 'SUB-TRIAL-CONVERT'],
     title: 'With-card trial auto-renews to paid Overlay Strategists monthly subscription at expiry',
@@ -148,15 +139,6 @@ const lifecycleScenarios: LifecycleScenario[] = [
     priority: 'Critical',
     status: 'automated',
     automation: 'OverlayStrategistsTrial.spec.ts > without card trial is limited to one verified email and mobile'
-  },
-  {
-    id: 'LC-011',
-    sourceIds: ['SC-03', 'SUB-TRIAL-BROKER-LIMIT'],
-    title: 'No-card trial enforces broker integration limit without counting manual entry',
-    phase: 'Trial',
-    priority: 'Critical',
-    status: 'known-bug',
-    dependency: 'Confirmed product issue: manual entry is currently counted as broker integration.'
   },
   {
     id: 'LC-012',

@@ -114,6 +114,216 @@ function pick(names) {
   return playwrightTestMatch.filter((file) => wanted.has(file));
 }
 
+const scheduleGroups = [
+  {
+    id: 'daily',
+    priority: 1,
+    cadence: 'every day',
+    reason: 'Login, signup rules, session, and the main dashboard. Safe to repeat on the shared account.',
+    groups: [
+      {
+        name: 'Signup and password',
+        files: pick([
+          'SignupNegative.spec.ts',
+          'PasswordPolicy.spec.ts'
+        ])
+      },
+      {
+        name: 'Login and access',
+        files: pick([
+          'AuthUiValidation.spec.ts',
+          'AuthNegative.spec.ts',
+          'PublicRouteGuard.spec.ts',
+          'AccessibilityBrowser.spec.ts'
+        ])
+      },
+      {
+        name: 'Dashboard entry',
+        files: pick([
+          'DashboardNavigation.spec.ts',
+          'DashboardWidgets.spec.ts'
+        ])
+      },
+      {
+        name: 'Account session',
+        files: pick([
+          'Subscriber.spec.ts',
+          'SessionSecurity.spec.ts'
+        ])
+      }
+    ]
+  },
+  {
+    id: 'every2days',
+    priority: 2,
+    cadence: 'every 2 days',
+    reason: 'Registration, signed-in screens, profile, and billing pages. These do not buy, upgrade, or cancel a plan.',
+    groups: [
+      {
+        name: 'Registration and plans',
+        files: pick([
+          'onboarding.spec.ts',
+          'OnboardingFieldValidation.spec.ts',
+          'PlanSelectionValidation.spec.ts'
+        ])
+      },
+      {
+        name: 'Dashboard screens',
+        files: pick([
+          'EventCalendarFundamentals.spec.ts',
+          'DashboardResearchPortfolio.spec.ts',
+          'Opportunities.spec.ts',
+          'DashboardMoreScreens.spec.ts',
+          'DashboardMenus.spec.ts',
+          'DashboardPortfolioViews.spec.ts',
+          'DashboardOptions.spec.ts',
+          'DashboardRemainingScreens.spec.ts',
+          'DashboardPositionActions.spec.ts',
+          'DashboardScreenDepth.spec.ts',
+          'DashboardCoverageDepth.spec.ts',
+          'DashboardScenarioSweep.spec.ts',
+          'DashboardMenuWalk.spec.ts',
+          'DashboardDataChanges.spec.ts',
+          'DashboardAccountSurfaces.spec.ts',
+          'AcademyDepth.spec.ts'
+        ])
+      },
+      {
+        name: 'Profile',
+        files: pick([
+          'AddManualPosition.spec.ts',
+          'ProfileNegative.spec.ts',
+          'ProfileSecurityDisplay.spec.ts',
+          'ProfileMobileValidation.spec.ts',
+          'ProfilePasswordMismatch.spec.ts',
+          'RiskComplianceUpdate.spec.ts'
+        ])
+      },
+      {
+        name: 'Billing pages',
+        files: pick([
+          'BillingEdgeValidation.spec.ts',
+          'BillingSubscriptionManagement.spec.ts',
+          'ResetPasswordNegative.spec.ts'
+        ])
+      }
+    ]
+  },
+  {
+    id: 'weekly',
+    priority: 3,
+    cadence: 'every week',
+    reason: 'Stripe checkout, disposable plan changes, Gmail reset, and the full matrices.',
+    groups: [
+      {
+        name: 'Stripe checkout',
+        files: pick([
+          'OverlayStrategistsTrial.spec.ts',
+          'DirectSubscriptionPurchase.spec.ts',
+          'PaymentNegative.spec.ts',
+          'BlockedScenarioExecution.spec.ts',
+          'SubscriptionLifecycleExecution.spec.ts'
+        ])
+      },
+      {
+        name: 'Account recovery',
+        files: pick([
+          'forgotpassword.spec.ts',
+          'ResetPassword.spec.ts',
+          'UnlockAccount.spec.ts',
+          'AuthConfigurationLimits.spec.ts',
+          'MfaUserFlow.spec.ts',
+          'PermissionAccess.spec.ts'
+        ])
+      },
+      {
+        name: 'Coverage matrices',
+        files: pick([
+          'OverlayStrategistsTrialMatrix.spec.ts',
+          'NewSubscriptionPurchaseMatrix.spec.ts',
+          'UpgradeSubscriptionMatrix.spec.ts',
+          'DowngradeSubscriptionMatrix.spec.ts',
+          'MonthlyAnnualBillingChangeMatrix.spec.ts',
+          'AnnualMonthlyBillingChangeMatrix.spec.ts',
+          'SubscriptionCancellationMatrix.spec.ts',
+          'FailedPaymentDunningMatrix.spec.ts',
+          'SubscriptionLifecycleE2EMatrix.spec.ts',
+          'UserJourneyCoverageMatrix.spec.ts'
+        ])
+      }
+    ]
+  }
+].map((band) => ({
+  ...band,
+  files: band.groups.flatMap((group) => group.files)
+}));
+
+function filesThroughPriority(priority) {
+  return scheduleGroups
+    .filter((band) => band.priority <= priority)
+    .flatMap((band) => band.files);
+}
+
+function assertScheduleCoversEverySpec() {
+  const assigned = scheduleGroups.flatMap((group) => group.files);
+  const counts = new Map();
+
+  for (const file of assigned) {
+    counts.set(file, (counts.get(file) ?? 0) + 1);
+  }
+
+  const missing = playwrightTestMatch.filter((file) => !counts.has(file));
+  const duplicates = [...counts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([file]) => file);
+
+  if (missing.length || duplicates.length) {
+    const details = [
+      missing.length
+        ? `not assigned to a cron group: ${missing.join(', ')}`
+        : '',
+      duplicates.length
+        ? `assigned to more than one cron group: ${duplicates.join(', ')}`
+        : ''
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    throw new Error(`Test schedule is out of date.\n${details}`);
+  }
+}
+
+function printSchedule() {
+  const total = playwrightTestMatch.length;
+
+  console.log(`All ${total} specs are grouped. A higher cron includes the earlier priorities.`);
+  console.log('');
+
+  for (const band of scheduleGroups) {
+    const included = filesThroughPriority(band.priority).length;
+
+    console.log(
+      `Priority ${band.priority} — ${band.cadence} — ${band.files.length} specs in this priority, ${included} specs when the cron runs`
+    );
+    console.log(band.reason);
+
+    for (const group of band.groups) {
+      console.log(`  ${group.name}`);
+
+      group.files.forEach((file) => {
+        console.log(`    ${file}`);
+      });
+    }
+
+    console.log('');
+  }
+
+  console.log('Point the cron job at one command:');
+  console.log('  every day      npm run daily:report');
+  console.log('  every 2 days   npm run every-2-days:report');
+  console.log('  every week     npm run weekly:report');
+}
+
 const suites = {
   all: playwrightTestMatch,
   executable: executableJourneyOrder,
@@ -243,6 +453,10 @@ const suites = {
   ])
 };
 
+for (const band of scheduleGroups) {
+  suites[band.id] = filesThroughPriority(band.priority);
+}
+
 suites.stable = suites.regression;
 suites.execution = suites.regression;
 
@@ -358,6 +572,8 @@ function assertAllSpecsAreListed() {
   const missing = onDisk.filter((file) => !listed.includes(file));
   const extra = listed.filter((file) => !onDisk.includes(file));
 
+  assertScheduleCoversEverySpec();
+
   if (missing.length || extra.length) {
     const details = [
       missing.length
@@ -397,6 +613,9 @@ module.exports = {
   matrixOrder,
   playwrightTestMatch,
   suites,
+  scheduleGroups,
+  filesThroughPriority,
+  printSchedule,
   executableBatches,
   allBatches,
   testPaths,

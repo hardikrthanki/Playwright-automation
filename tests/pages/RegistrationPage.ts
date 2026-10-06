@@ -691,7 +691,7 @@ extends BasePage {
         'REGISTRATION_OTP_MANUAL_FALLBACK'
       );
 
-    let waitedForRateLimit = false;
+    let rateLimitWaits = 0;
 
     for (
       let attempt = 1;
@@ -730,9 +730,9 @@ extends BasePage {
       if (
         this.lastSendOtpStatus === 429 &&
         waitSeconds > 0 &&
-        !waitedForRateLimit
+        rateLimitWaits < 3
       ) {
-        waitedForRateLimit = true;
+        rateLimitWaits += 1;
 
         const pauseMs =
           Math.min(
@@ -740,13 +740,22 @@ extends BasePage {
             90
           ) * 1000;
 
+        const replacement =
+          generateMobileNumber();
+
         Logger.info(
-          `OTP rate limit. Waiting ${Math.round(pauseMs / 1000)}s, then sending once more on the same mobile.`
+          `OTP rate limit. Waiting ${Math.round(pauseMs / 1000)}s, then sending on ${replacement}.`
         );
 
         await this.page.waitForTimeout(
           pauseMs
         );
+
+        await this.fillMobileNumber(
+          replacement
+        );
+
+        await this.waitForSendCodeEnabled();
 
         await this.clickSendCode(
           attempt + 1
@@ -767,11 +776,7 @@ extends BasePage {
           return;
         }
 
-        if (
-          attempt < 4
-        ) {
-          continue;
-        }
+        continue;
       }
 
       const sendRejected =
@@ -825,6 +830,10 @@ extends BasePage {
         attempt + 1
       );
     }
+
+    throw new Error(
+      `Registration OTP input did not appear after requesting SMS code. Send status ${this.lastSendOtpStatus}. ${this.lastSendOtpBody.slice(0, 180)}`
+    );
   }
 
 
