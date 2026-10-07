@@ -130,16 +130,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-012'],
     title: 'Dedicated fixture can be cancelled successfully',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires disposable paid subscription that may be safely cancelled.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:cancellation-confirmed'
   },
   {
     id: 'SC-253',
     sourceIds: ['SUB-CAN-013'],
     title: 'Cancellation confirmation message is displayed',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires safe final cancellation execution.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:cancellation-confirmed'
   },
   {
     id: 'SC-254',
@@ -154,8 +154,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-015'],
     title: 'Paid access remains available until current billing period ends',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires time-controlled or backend subscription period fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:paid-access-until-period-end'
   },
   {
     id: 'SC-256',
@@ -170,8 +170,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-017'],
     title: 'Scheduled cancellation state persists after refresh',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires stable scheduled-cancel fixture that can be reused without mutation.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:scheduled-state-persists-after-refresh'
   },
   {
     id: 'SC-258',
@@ -186,8 +186,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-019'],
     title: 'Resume or reactivate action is visible when subscription is scheduled to cancel',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires product-supported resume cancellation control or Stripe portal fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:resume-action-visible'
   },
   {
     id: 'SC-260',
@@ -210,8 +210,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-022'],
     title: 'Cancellation confirmation email is sent',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires mailbox access and safe final cancellation fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:confirmation-email'
   },
   {
     id: 'SC-263',
@@ -266,8 +266,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-029'],
     title: 'Paid feature entitlement remains during cancellation grace period',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires entitlement API or seeded billing period fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:paid-access-until-period-end'
   },
   {
     id: 'SC-270',
@@ -298,8 +298,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-033'],
     title: 'Double-clicking final cancellation is idempotent',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires backend idempotency verification for final cancellation.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_DOUBLE_CLICK_INCOME_MONTHLY:single-cancellation-request'
   },
   {
     id: 'SC-274',
@@ -482,8 +482,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-056'],
     title: 'Duplicate cancellation request does not duplicate subscription state',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires backend idempotency validation.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_DOUBLE_CLICK_INCOME_MONTHLY:cancellation-recorded-once'
   },
   {
     id: 'SC-297',
@@ -514,8 +514,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-060'],
     title: 'Final cancellation scenario uses disposable fixture only',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires dedicated disposable paid account and reset process.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:disposable-fixture-only'
   }
 ];
 

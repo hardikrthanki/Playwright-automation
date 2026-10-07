@@ -1,0 +1,2271 @@
+import fs from 'fs';
+import path from 'path';
+
+import {
+  expect,
+  Page,
+  Request
+} from '@playwright/test';
+
+import {
+  BASE_URL,
+  PLAN_PRICES,
+  TEST_USERS
+} from '../config/testData';
+import {
+  SCENARIO_USERS,
+  ScenarioUserName
+} from '../config/subscriptionScenarioUsers';
+import {
+  BillingPage
+} from '../pages/BillingPage';
+import {
+  DashboardPage
+} from '../pages/DashboardPage';
+import {
+  PlanSelectionPage
+} from '../pages/PlanSelectionPage';
+import {
+  StripePaymentPage
+} from '../pages/StripePaymentPage';
+import {
+  GmailMessage,
+  isGmailAutomationEnabled,
+  waitForGmailMessageMatching
+} from './gmailImap';
+import {
+  registerAndReachPlanSelection
+} from './stripeMatrixExecution';
+
+/* =============================================================================
+HELPER: Subscription scenario packs
+
+PURPOSE
+-------
+Each pack = ONE new disposable user + one lifecycle action (purchase, upgrade,
+downgrade, interval change, cancel). After the action the pack runs many small
+checks ("steps"). A matrix row points at one step with
+
+  automation: 'scenario:<SCENARIO_NAME>:<step>'
+
+so many matrix rows share one user and still get their own pass/fail/skip.
+Step names and scenario names are listed in config/subscriptionScenarioUsers.ts.
+
+Nothing here touches the shared subscriber account. Final cancellation only
+runs on the disposable user created by the pack itself.
+============================================================================= */
+
+export type ScenarioOutcome =
+  | { status: 'passed' }
+  | { status: 'skipped'; reason: string }
+  | { status: 'failed'; error: unknown };
+
+class ScenarioSkip extends Error {
+  readonly reason: string;
+
+  constructor(reason: string) {
+    super(reason);
+    this.name = 'ScenarioSkip';
+    this.reason = reason;
+  }
+}
+
+type PaidPlan =
+  | 'Income Builder'
+  | 'Overlay Strategists'
+  | 'Portfolio Hedger';
+
+type Interval =
+  | 'monthly'
+  | 'annual';
+
+type RequestRecord = {
+  method: string;
+  url: string;
+  resourceType: string;
+};
+
+type PackContext = {
+  scenario: ScenarioUserName;
+  page: Page;
+  email: string;
+  billing: BillingPage;
+  seenMessageIds: Set<string>;
+  requests: RequestRecord[];
+  state: {
+    checkoutUrl?: string;
+    sawCheckoutDuringChange?: boolean;
+    paidBeforeChange?: number;
+    paidAfterChange?: number;
+    changeDialogText?: string;
+    confirmationEmailFailed?: boolean;
+  };
+};
+
+type PackDefinition = {
+  setup: (ctx: PackContext) => Promise<void>;
+  steps: Record<
+    string,
+    (ctx: PackContext) => Promise<void>
+  >;
+};
+
+const NOISE_URL =
+  /analytics|google|gtag|segment|sentry|datadog|hotjar|clarity|mixpanel|posthog|intercom|hcaptcha|recaptcha|\/log|\/track|\/metrics|\/collect|\/rum|r\.stripe\.com|m\.stripe\.(com|network)|stripe\.com\/b\/|js\.stripe\.com/i;
+
+const ACTION_URL =
+  /checkout|session|subscri|upgrade|downgrade|plan-?change|change-?plan|interval|switch|cancel|billing/i;
+
+/* ----------------------------------------------------------------------------
+Generic helpers
+---------------------------------------------------------------------------- */
+
+function errorText(
+  error: unknown
+) {
+  return error instanceof Error
+    ? error.message
+    : String(error);
+}
+
+function escapeRegExp(
+  value: string
+) {
+  return value.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    '\\$&'
+  );
+}
+
+function moneyPattern(
+  amount: number
+) {
+  const trimmed =
+    amount
+      .toFixed(2)
+      .replace(/\.00$/, '')
+      .replace(/(\.\d)0$/, '$1');
+
+  return new RegExp(
+    `\\$\\s?${escapeRegExp(trimmed)}(?:\\.0+)?(?!\\d)`
+  );
+}
+
+function recordScenarioUser(
+  scenario: string,
+  email: string
+) {
+  try {
+    const file = path.join(
+      process.cwd(),
+      'test-results',
+      'scenario-users.json'
+    );
+
+    let saved: Array<Record<string, string>> = [];
+
+    try {
+      saved = JSON.parse(
+        fs.readFileSync(file, 'utf8')
+      );
+    } catch {
+      saved = [];
+    }
+
+    saved.push({
+      scenario,
+      email,
+      createdAt:
+        new Date().toISOString(),
+      password:
+        'TEST_USERS.onboarding.password',
+      baseUrl:
+        BASE_URL
+    });
+
+    fs.mkdirSync(
+      path.dirname(file),
+      { recursive: true }
+    );
+
+    fs.writeFileSync(
+      file,
+      JSON.stringify(saved, null, 2)
+    );
+  } catch {
+    // Logging the user is best effort only.
+  }
+}
+
+function startRequestRecorder(
+  ctx: PackContext
+) {
+  ctx.page.on(
+    'request',
+    (request: Request) => {
+      ctx.requests.push({
+        method:
+          request.method(),
+        url:
+          request.url(),
+        resourceType:
+          request.resourceType()
+      });
+    }
+  );
+}
+
+function stripQuery(
+  url: string
+) {
+  return url.split('?')[0];
+}
+
+/** POST requests that look like "do the thing" calls, grouped by endpoint. */
+function actionPostCounts(
+  records: RequestRecord[]
+) {
+  const counts = new Map<string, number>();
+
+  for (const record of records) {
+    if (
+      record.method !== 'POST' ||
+      NOISE_URL.test(record.url) ||
+      !ACTION_URL.test(record.url)
+    ) {
+      continue;
+    }
+
+    const key =
+      stripQuery(record.url);
+
+    counts.set(
+      key,
+      (counts.get(key) ?? 0) + 1
+    );
+  }
+
+  return counts;
+}
+
+function expectNoDuplicateActionRequests(
+  records: RequestRecord[],
+  label: string
+) {
+  const counts =
+    actionPostCounts(records);
+
+  console.log(
+    `${label}: action POST requests`,
+    JSON.stringify(
+      [...counts.entries()]
+    )
+  );
+
+  const duplicated =
+    [...counts.entries()].filter(
+      ([, count]) => count > 1
+    );
+
+  expect(
+    duplicated,
+    `${label}: the same action endpoint was called more than once: ${JSON.stringify(duplicated)}`
+  ).toEqual([]);
+}
+
+function requireGmail() {
+  if (!isGmailAutomationEnabled()) {
+    throw new ScenarioSkip(
+      'Set GMAIL_USER and GMAIL_APP_PASSWORD so the suite can read the disposable user inbox.'
+    );
+  }
+}
+
+async function waitForEmail(
+  ctx: PackContext,
+  label: string,
+  match: (message: GmailMessage) => boolean,
+  timeoutMs = 120000
+) {
+  requireGmail();
+
+  const message =
+    await waitForGmailMessageMatching(
+      ctx.email,
+      {
+        label,
+        match,
+        ignoreMessageIds:
+          ctx.seenMessageIds,
+        timeoutMs
+      }
+    );
+
+  ctx.seenMessageIds.add(
+    message.messageId
+  );
+
+  return message;
+}
+
+const NOT_ACCOUNT_MAIL =
+  /verify|verification|confirm your email|reset|password|one[- ]time|otp|login code|sign[- ]in/i;
+
+function subjectMatches(
+  message: GmailMessage,
+  pattern: RegExp
+) {
+  return (
+    !NOT_ACCOUNT_MAIL.test(
+      message.subject
+    ) &&
+    pattern.test(
+      message.subject
+    )
+  );
+}
+
+async function openTransactions(
+  ctx: PackContext
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.historyTab.click();
+
+  await ctx.billing.transactionsTab.click();
+}
+
+async function countPaidTransactions(
+  ctx: PackContext
+) {
+  await openTransactions(ctx);
+
+  await ctx.page.waitForTimeout(1500);
+
+  return ctx.page
+    .getByText(/\bpaid\b/i)
+    .count();
+}
+
+async function openPlansTab(
+  ctx: PackContext
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.plansTab.click();
+
+  await ctx.page.waitForTimeout(800);
+}
+
+async function mainText(
+  ctx: PackContext
+) {
+  return ctx.page
+    .locator('main')
+    .innerText({
+      timeout: 15000
+    });
+}
+
+/* ----------------------------------------------------------------------------
+Purchase helpers
+---------------------------------------------------------------------------- */
+
+async function registerUser(
+  ctx: PackContext
+) {
+  const { email } =
+    await registerAndReachPlanSelection(
+      ctx.page,
+      SCENARIO_USERS[
+        ctx.scenario
+      ].tag
+    );
+
+  ctx.email = email;
+
+  recordScenarioUser(
+    ctx.scenario,
+    email
+  );
+
+  console.log(
+    `[${ctx.scenario}] disposable user: ${email}`
+  );
+}
+
+async function buyPlan(
+  ctx: PackContext,
+  planName: PaidPlan,
+  interval: Interval
+) {
+  await registerUser(ctx);
+
+  const planPage =
+    new PlanSelectionPage(
+      ctx.page
+    );
+
+  if (interval === 'annual') {
+    await planPage.selectAnnualBilling();
+  } else {
+    await planPage.selectMonthlyBilling();
+  }
+
+  await planPage.selectPlan(
+    planName
+  );
+
+  await expect(
+    ctx.page
+  ).toHaveURL(
+    /checkout\.stripe\.com/,
+    {
+      timeout: 60000
+    }
+  );
+
+  ctx.state.checkoutUrl =
+    ctx.page.url();
+
+  await new StripePaymentPage(
+    ctx.page
+  ).completePayment();
+
+  await new DashboardPage(
+    ctx.page
+  ).validateLoaded();
+
+  await ctx.billing.validateActivePlan(
+    planName
+  );
+}
+
+type PlanChange = {
+  targetPlan: PaidPlan;
+  action: 'upgrade' | 'downgrade' | 'interval';
+  interval: Interval;
+  doubleClick?: boolean;
+};
+
+async function confirmWithDoubleClick(
+  ctx: PackContext
+) {
+  const dialog =
+    ctx.page
+      .locator(
+        '[role="dialog"], [role="alertdialog"]'
+      )
+      .first();
+
+  await expect(dialog).toBeVisible({
+    timeout: 15000
+  });
+
+  const terms =
+    dialog
+      .locator(
+        '[role="checkbox"], input[type="checkbox"]'
+      )
+      .first();
+
+  let confirm;
+
+  if (
+    await terms
+      .isVisible({ timeout: 3000 })
+      .catch(() => false)
+  ) {
+    await terms.click();
+
+    confirm =
+      dialog
+        .getByRole('button', {
+          name: /confirm\s*&\s*pay|confirm.*pay|pay/i
+        })
+        .first();
+  } else {
+    confirm =
+      dialog
+        .getByRole('button', {
+          name: /schedule (downgrade|change|switch)|switch to (monthly|annual)|^confirm$|confirm (change|switch)|yes,?\s*(switch|change|confirm)/i
+        })
+        .first();
+  }
+
+  await expect(confirm).toBeEnabled({
+    timeout: 15000
+  });
+
+  await confirm.dblclick({
+    delay: 20
+  });
+
+  await expect(dialog).toBeHidden({
+    timeout: 60000
+  });
+}
+
+async function changePlan(
+  ctx: PackContext,
+  change: PlanChange
+) {
+  const { billing, page } = ctx;
+
+  try {
+    await billing.openPlanChangeCalculationPreview({
+      targetPlan:
+        change.targetPlan,
+      action:
+        change.action,
+      interval:
+        change.interval
+    });
+  } catch (error) {
+    if (
+      /Could not find (upgrade|downgrade|interval) control|No (monthly|annual) upgrade or interval/i.test(
+        errorText(error)
+      )
+    ) {
+      throw new ScenarioSkip(
+        `The Plans screen offers no ${change.action} control for ${change.targetPlan} ${change.interval}, so this flow cannot be executed through the UI. ${errorText(error).split('\n')[0]}`
+      );
+    }
+
+    throw error;
+  }
+
+  if (
+    change.action !== 'downgrade'
+  ) {
+    await billing.validatePlanChangeDueAmountAndRenewal({
+      targetPlan:
+        change.targetPlan,
+      action:
+        change.action,
+      interval:
+        change.interval,
+      expectedPlanCharge:
+        PLAN_PRICES[
+          change.targetPlan
+        ][change.interval],
+      expectedRecurringAmount:
+        PLAN_PRICES[
+          change.targetPlan
+        ][change.interval]
+    });
+  }
+
+  ctx.state.changeDialogText =
+    await page
+      .locator(
+        '[role="dialog"], [role="alertdialog"]'
+      )
+      .first()
+      .innerText()
+      .catch(() => '');
+
+  if (change.doubleClick) {
+    await confirmWithDoubleClick(
+      ctx
+    );
+  } else {
+    await billing.submitPlanChangeCalculationPreview({
+      targetPlan:
+        change.targetPlan,
+      action:
+        change.action
+    });
+  }
+
+  if (
+    /checkout\.stripe\.com/i.test(
+      page.url()
+    )
+  ) {
+    ctx.state.sawCheckoutDuringChange =
+      true;
+
+    await new StripePaymentPage(
+      page
+    ).completePayment();
+  } else {
+    ctx.state.sawCheckoutDuringChange =
+      false;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+Shared steps
+---------------------------------------------------------------------------- */
+
+async function stepSavedCardPreserved(
+  ctx: PackContext
+) {
+  const portal =
+    await ctx.billing.openSubscriptionPortal();
+
+  try {
+    const text =
+      await portal
+        .locator('body')
+        .innerText();
+
+    expect(
+      text,
+      'Stripe portal should still list the card used at purchase (Visa ending 4242).'
+    ).toMatch(/4242|visa/i);
+  } finally {
+    await ctx.billing
+      .leaveStripePortal()
+      .catch(() => undefined);
+  }
+}
+
+async function stepNoCheckoutReprompt(
+  ctx: PackContext
+) {
+  expect(
+    ctx.state.sawCheckoutDuringChange,
+    'Plan change should reuse the saved payment method and not send the user to Stripe checkout again.'
+  ).toBe(false);
+}
+
+async function stepExactlyOneCurrentPlan(
+  ctx: PackContext
+) {
+  await openPlansTab(ctx);
+
+  const currentMarkers =
+    await ctx.page
+      .getByText(
+        /^\s*current( plan)?\s*$/i
+      )
+      .count();
+
+  console.log(
+    `[${ctx.scenario}] current-plan markers on Plans tab: ${currentMarkers}`
+  );
+
+  expect(
+    currentMarkers,
+    'Exactly one plan should be marked as the current plan (no duplicate active subscriptions).'
+  ).toBe(1);
+}
+
+async function stepActivePlan(
+  ctx: PackContext,
+  plan: PaidPlan
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.validateActivePlan(
+    plan
+  );
+}
+
+async function stepUserDataPreserved(
+  ctx: PackContext
+) {
+  await ctx.page.goto(
+    `${BASE_URL}/dashboard`,
+    {
+      waitUntil:
+        'domcontentloaded'
+    }
+  );
+
+  await new DashboardPage(
+    ctx.page
+  ).validateLoaded();
+
+  await new DashboardPage(
+    ctx.page
+  ).validateNoLoadError();
+
+  await ctx.page.goto(
+    `${BASE_URL}/dashboard/profile`,
+    {
+      waitUntil:
+        'domcontentloaded'
+    }
+  ).catch(() => undefined);
+
+  await ctx.page.waitForTimeout(2000);
+
+  const inputValues =
+    await ctx.page
+      .$$eval(
+        'input',
+        (inputs) =>
+          inputs.map(
+            (input) =>
+              (input as HTMLInputElement).value
+          )
+      )
+      .catch(() => [] as string[]);
+
+  const body =
+    (
+      await ctx.page
+        .locator('body')
+        .innerText()
+    ) +
+    ' ' +
+    inputValues.join(' ');
+
+  const localPart =
+    ctx.email.split('@')[0];
+
+  expect(
+    body.toLowerCase(),
+    'Profile should still show the same disposable account after the plan change.'
+  ).toContain(
+    localPart.toLowerCase()
+  );
+}
+
+async function stepTransactionPaidCount(
+  ctx: PackContext,
+  expectedAdditional: number
+) {
+  expect(
+    ctx.state.paidBeforeChange,
+    'Paid transaction count before the change was not recorded.'
+  ).toBeDefined();
+
+  expect(
+    (ctx.state.paidAfterChange ?? 0) -
+      (ctx.state.paidBeforeChange ?? 0),
+    `Transactions should gain exactly ${expectedAdditional} paid entr${expectedAdditional === 1 ? 'y' : 'ies'} after the change.`
+  ).toBe(expectedAdditional);
+}
+
+async function stepTransactionAmount(
+  ctx: PackContext,
+  amount: number
+) {
+  await openTransactions(ctx);
+
+  await expect(
+    ctx.page.locator('main')
+  ).toContainText(
+    moneyPattern(amount),
+    {
+      timeout: 15000
+    }
+  );
+}
+
+async function stepHistoryShows(
+  ctx: PackContext,
+  plan: PaidPlan
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.validateHistoryShowsPlan(
+    plan
+  );
+}
+
+async function readDowngradeDialog(
+  ctx: PackContext,
+  targetPlan: PaidPlan
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.openMonthlyDowngradeOrRetention({
+    targetPlan
+  });
+
+  const dialog =
+    ctx.page
+      .locator(
+        '[role="dialog"], [role="alertdialog"]'
+      )
+      .first();
+
+  await expect(dialog).toBeVisible({
+    timeout: 15000
+  });
+
+  let text =
+    await dialog.innerText();
+
+  if (
+    !/feature|limit|broker|position|lose|restrict|reduced/i.test(
+      text
+    )
+  ) {
+    const decline =
+      dialog
+        .getByRole('button', {
+          name: /decline|no,? thanks|continue|downgrade anyway|skip|not now/i
+        })
+        .first();
+
+    if (
+      await decline
+        .isVisible({ timeout: 2000 })
+        .catch(() => false)
+    ) {
+      await decline.click();
+
+      text =
+        await dialog.innerText();
+    }
+  }
+
+  await ctx.page.keyboard.press(
+    'Escape'
+  );
+
+  return text;
+}
+
+async function findCancelScheduledControl(
+  ctx: PackContext,
+  pattern: RegExp
+) {
+  await openPlansTab(ctx);
+
+  const control =
+    ctx.page
+      .getByRole('button', {
+        name: pattern
+      })
+      .or(
+        ctx.page.getByRole(
+          'link',
+          {
+            name: pattern
+          }
+        )
+      )
+      .first();
+
+  if (
+    !await control
+      .isVisible({ timeout: 4000 })
+      .catch(() => false)
+  ) {
+    throw new ScenarioSkip(
+      'The Plans tab shows no control to cancel the scheduled change (looked for: ' +
+        pattern.source +
+        '). Add the control or tell us its label.'
+    );
+  }
+
+  return control;
+}
+
+/* ----------------------------------------------------------------------------
+Pack factories
+---------------------------------------------------------------------------- */
+
+function upgradePack(
+  options: {
+    from: Interval;
+    to: Interval;
+    amountInTransactions: number;
+    extras: boolean;
+  }
+): PackDefinition {
+  const target: PaidPlan =
+    'Overlay Strategists';
+
+  const steps: PackDefinition['steps'] = {
+    'target-plan-active':
+      async (ctx) => {
+        await stepActivePlan(
+          ctx,
+          target
+        );
+      },
+
+    'history-entry':
+      async (ctx) => {
+        await stepHistoryShows(
+          ctx,
+          target
+        );
+      },
+
+    'invoice-amount':
+      async (ctx) => {
+        await stepTransactionAmount(
+          ctx,
+          options.amountInTransactions
+        );
+      }
+  };
+
+  if (options.extras) {
+    steps['user-data-preserved'] =
+      stepUserDataPreserved;
+
+    steps['transaction-paid-entry'] =
+      async (ctx) => {
+        await stepTransactionPaidCount(
+          ctx,
+          1
+        );
+      };
+
+    steps['confirmation-email'] =
+      async (ctx) => {
+        const message =
+          await waitForEmail(
+            ctx,
+            'upgrade confirmation',
+            (mail) =>
+              subjectMatches(
+                mail,
+                /upgrad|plan change|plan (has )?(changed|updated)|subscription (updated|changed)|overlay/i
+              )
+          );
+
+        expect(
+          message.subject +
+            ' ' +
+            message.text
+        ).toMatch(
+          /overlay|upgrad/i
+        );
+      };
+
+    steps['saved-card-preserved'] =
+      stepSavedCardPreserved;
+
+    steps['no-checkout-reprompt'] =
+      stepNoCheckoutReprompt;
+
+    steps['single-active-plan'] =
+      stepExactlyOneCurrentPlan;
+  }
+
+  return {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        options.from
+      );
+
+      ctx.state.paidBeforeChange =
+        await countPaidTransactions(
+          ctx
+        );
+
+      await ctx.billing.validateOverview();
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan: target,
+          action: 'upgrade',
+          interval: options.to
+        }
+      );
+
+      await ctx.billing.validateActivePlan(
+        target
+      );
+
+      ctx.state.paidAfterChange =
+        await countPaidTransactions(
+          ctx
+        );
+    },
+    steps
+  };
+}
+
+/* ----------------------------------------------------------------------------
+Pack registry
+---------------------------------------------------------------------------- */
+
+const PACKS: Record<
+  ScenarioUserName,
+  PackDefinition
+> = {
+  PURCHASE_INCOME_MONTHLY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+    },
+    steps: {
+      'confirmation-email':
+        async (ctx) => {
+          try {
+            await waitForEmail(
+              ctx,
+              'subscription confirmation',
+              (mail) =>
+                subjectMatches(
+                  mail,
+                  /subscription|plan (is )?(active|confirmed|started)|purchase|order|income builder|thank you|you'?re (all )?set|welcome to income/i
+                )
+            );
+          } catch (error) {
+            ctx.state.confirmationEmailFailed =
+              true;
+
+            throw error;
+          }
+        },
+
+      // SC-75H accepts "receipt OR subscription confirmation", so the
+      // confirmation mail already counted by the previous step is valid here.
+      'receipt-email':
+        async (ctx) => {
+          requireGmail();
+
+          await waitForGmailMessageMatching(
+            ctx.email,
+            {
+              label:
+                'payment receipt or subscription confirmation',
+              match: (mail) =>
+                !NOT_ACCOUNT_MAIL.test(
+                  mail.subject
+                ) &&
+                (
+                  /receipt|invoice|payment|subscription/i.test(
+                    mail.subject
+                  ) ||
+                  /receipt|invoice|amount paid|payment (received|successful|confirmed)/i.test(
+                    mail.text
+                  )
+                ),
+              timeoutMs:
+                ctx.state
+                  .confirmationEmailFailed
+                  ? 20000
+                  : 90000
+            }
+          );
+        },
+
+      'finished-checkout-not-reusable':
+        async (ctx) => {
+          expect(
+            ctx.state.checkoutUrl,
+            'Checkout URL was not captured before payment.'
+          ).toBeTruthy();
+
+          await ctx.page.goto(
+            ctx.state.checkoutUrl!,
+            {
+              waitUntil:
+                'domcontentloaded'
+            }
+          ).catch(() => undefined);
+
+          await ctx.page.waitForTimeout(
+            3000
+          );
+
+          await expect(
+            ctx.page.locator(
+              '#cardNumber'
+            ),
+            'A completed Stripe checkout session must not show the card form again.'
+          ).toBeHidden({
+            timeout: 15000
+          });
+        },
+
+      'single-active-plan':
+        stepExactlyOneCurrentPlan
+    }
+  },
+
+  PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY: {
+    setup: async (ctx) => {
+      await registerUser(ctx);
+
+      startRequestRecorder(ctx);
+
+      const planPage =
+        new PlanSelectionPage(
+          ctx.page
+        );
+
+      await planPage.selectMonthlyBilling();
+
+      await planPage.selectPlanAndDoubleClickCompleteSetup(
+        'Income Builder'
+      );
+
+      await expect(
+        ctx.page
+      ).toHaveURL(
+        /checkout\.stripe\.com/,
+        {
+          timeout: 60000
+        }
+      );
+
+      // Give a second (duplicate) session time to appear.
+      await ctx.page.waitForTimeout(
+        6000
+      );
+    },
+    steps: {
+      'single-checkout-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click purchase'
+          );
+        },
+
+      'single-checkout-page':
+        async (ctx) => {
+          const checkoutDocuments =
+            ctx.requests.filter(
+              (record) =>
+                record.resourceType ===
+                  'document' &&
+                /checkout\.stripe\.com\/c\/pay/i.test(
+                  record.url
+                )
+            );
+
+          const openCheckoutTabs =
+            ctx.page
+              .context()
+              .pages()
+              .filter((page) =>
+                /checkout\.stripe\.com/i.test(
+                  page.url()
+                )
+              );
+
+          console.log(
+            `Double-click purchase: checkout documents=${checkoutDocuments.length}, open checkout tabs=${openCheckoutTabs.length}`
+          );
+
+          expect(
+            checkoutDocuments.length,
+            'Double-click should load Stripe checkout once.'
+          ).toBeLessThanOrEqual(1);
+
+          expect(
+            openCheckoutTabs.length,
+            'Double-click should leave a single Stripe checkout tab open.'
+          ).toBe(1);
+        }
+    }
+  },
+
+  UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:
+    upgradePack({
+      from: 'monthly',
+      to: 'monthly',
+      amountInTransactions:
+        PLAN_PRICES[
+          'Overlay Strategists'
+        ].monthly,
+      extras: true
+    }),
+
+  UPGRADE_INCOME_ANNUAL_TO_OVERLAY_ANNUAL:
+    upgradePack({
+      from: 'annual',
+      to: 'annual',
+      amountInTransactions:
+        PLAN_PRICES[
+          'Overlay Strategists'
+        ].annual,
+      extras: false
+    }),
+
+  UPGRADE_INCOME_MONTHLY_TO_OVERLAY_ANNUAL:
+    upgradePack({
+      from: 'monthly',
+      to: 'annual',
+      amountInTransactions:
+        PLAN_PRICES[
+          'Overlay Strategists'
+        ].annual,
+      extras: false
+    }),
+
+  UPGRADE_DOUBLE_CLICK_INCOME_TO_OVERLAY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+
+      ctx.state.paidBeforeChange =
+        await countPaidTransactions(
+          ctx
+        );
+
+      await ctx.billing.validateOverview();
+
+      startRequestRecorder(ctx);
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan:
+            'Overlay Strategists',
+          action: 'upgrade',
+          interval: 'monthly',
+          doubleClick: true
+        }
+      );
+
+      await ctx.billing.validateActivePlan(
+        'Overlay Strategists'
+      );
+
+      ctx.state.paidAfterChange =
+        await countPaidTransactions(
+          ctx
+        );
+    },
+    steps: {
+      'single-upgrade-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click upgrade'
+          );
+        },
+
+      'single-charge':
+        async (ctx) => {
+          await stepTransactionPaidCount(
+            ctx,
+            1
+          );
+        },
+
+      'target-plan-active':
+        async (ctx) => {
+          await stepActivePlan(
+            ctx,
+            'Overlay Strategists'
+          );
+        }
+    }
+  },
+
+  DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Overlay Strategists',
+        'monthly'
+      );
+    },
+    steps: {
+      'impact-warning':
+        async (ctx) => {
+          const text =
+            await readDowngradeDialog(
+              ctx,
+              'Income Builder'
+            );
+
+          expect(
+            text,
+            'Downgrade confirmation should warn about features that will be lost or restricted.'
+          ).toMatch(
+            /feature|lose|restrict|reduced|no longer/i
+          );
+        },
+
+      'account-limits-shown':
+        async (ctx) => {
+          const text =
+            await readDowngradeDialog(
+              ctx,
+              'Income Builder'
+            );
+
+          expect(
+            text,
+            'Downgrade confirmation should show the limits of the lower plan (brokers, accounts, positions).'
+          ).toMatch(
+            /limit|up to|\d+\s*(broker|account|position)|broker|position/i
+          );
+        },
+
+      'schedule-at-renewal':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          await ctx.billing.declineRetentionAndPreviewOrScheduleDowngrade({
+            currentPlan:
+              'Overlay Strategists',
+            targetPlan:
+              'Income Builder',
+            schedule: true
+          });
+        },
+
+      'access-kept-until-effective-date':
+        async (ctx) => {
+          await stepActivePlan(
+            ctx,
+            'Overlay Strategists'
+          );
+
+          await openPlansTab(ctx);
+
+          await expect(
+            ctx.page.locator('main')
+          ).not.toContainText(
+            /downgrade (is )?complete|you are now on income builder/i
+          );
+        },
+
+      'scheduled-downgrade-in-overview':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          const text =
+            await mainText(ctx);
+
+          expect(
+            text,
+            'Billing overview should show the scheduled downgrade to Income Builder.'
+          ).toMatch(
+            /(scheduled|pending|upcoming|downgrad)[\s\S]{0,240}income builder|income builder[\s\S]{0,240}(scheduled|pending|upcoming|renewal|takes effect)/i
+          );
+        },
+
+      'scheduled-downgrade-in-history':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          await ctx.billing.historyTab.click();
+
+          await expect(
+            ctx.page.locator('main'),
+            'Subscription history should list the scheduled downgrade.'
+          ).toContainText(
+            /downgrad|scheduled|income builder/i,
+            {
+              timeout: 15000
+            }
+          );
+        },
+
+      'confirmation-email':
+        async (ctx) => {
+          await waitForEmail(
+            ctx,
+            'downgrade confirmation',
+            (mail) =>
+              subjectMatches(
+                mail,
+                /downgrad|plan change|plan (has )?(changed|updated)|subscription (updated|changed)|scheduled/i
+              )
+          );
+        },
+
+      'saved-card-preserved':
+        stepSavedCardPreserved,
+
+      'single-active-plan':
+        stepExactlyOneCurrentPlan,
+
+      'user-data-preserved':
+        stepUserDataPreserved,
+
+      'cancel-scheduled-downgrade':
+        async (ctx) => {
+          const control =
+            await findCancelScheduledControl(
+              ctx,
+              /cancel (the )?(scheduled )?(downgrade|change)|keep (my )?(current )?plan|undo (the )?(downgrade|change)|don'?t downgrade|stay on overlay/i
+            );
+
+          await control.click();
+
+          const confirm =
+            ctx.page
+              .getByRole('dialog')
+              .getByRole('button', {
+                name: /^(yes|confirm|keep|cancel downgrade)/i
+              })
+              .first();
+
+          if (
+            await confirm
+              .isVisible({
+                timeout: 3000
+              })
+              .catch(() => false)
+          ) {
+            await confirm.click();
+          }
+
+          await stepActivePlan(
+            ctx,
+            'Overlay Strategists'
+          );
+        }
+    }
+  },
+
+  DOWNGRADE_DOUBLE_CLICK_OVERLAY_TO_INCOME: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Overlay Strategists',
+        'monthly'
+      );
+
+      startRequestRecorder(ctx);
+
+      await ctx.billing.validateOverview();
+
+      await ctx.billing.openMonthlyDowngradeOrRetention({
+        targetPlan:
+          'Income Builder'
+      });
+
+      const decline =
+        ctx.page
+          .getByRole('dialog')
+          .getByRole('button', {
+            name: /decline|no,? thanks|continue|downgrade anyway|skip|not now/i
+          })
+          .first();
+
+      if (
+        await decline
+          .isVisible({ timeout: 3000 })
+          .catch(() => false)
+      ) {
+        await decline.click();
+      }
+
+      await confirmWithDoubleClick(
+        ctx
+      );
+    },
+    steps: {
+      'single-downgrade-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click downgrade'
+          );
+        },
+
+      'access-kept-until-effective-date':
+        async (ctx) => {
+          await stepActivePlan(
+            ctx,
+            'Overlay Strategists'
+          );
+        }
+    }
+  },
+
+  INTERVAL_INCOME_MONTHLY_TO_ANNUAL: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+
+      ctx.state.paidBeforeChange =
+        await countPaidTransactions(
+          ctx
+        );
+
+      await ctx.billing.validateOverview();
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan:
+            'Income Builder',
+          action: 'interval',
+          interval: 'annual'
+        }
+      );
+
+      await ctx.billing.validateActivePlan(
+        'Income Builder'
+      );
+
+      ctx.state.paidAfterChange =
+        await countPaidTransactions(
+          ctx
+        );
+    },
+    steps: {
+      'entitlements-preserved':
+        async (ctx) => {
+          await stepActivePlan(
+            ctx,
+            'Income Builder'
+          );
+        },
+
+      'transaction-history':
+        async (ctx) => {
+          await stepTransactionPaidCount(
+            ctx,
+            1
+          );
+        },
+
+      'annual-amount':
+        async (ctx) => {
+          await stepTransactionAmount(
+            ctx,
+            PLAN_PRICES[
+              'Income Builder'
+            ].annual
+          );
+        },
+
+      'confirmation-email':
+        async (ctx) => {
+          await waitForEmail(
+            ctx,
+            'billing interval confirmation',
+            (mail) =>
+              subjectMatches(
+                mail,
+                /annual|yearly|billing (interval|cycle|period)|plan (has )?(changed|updated)|subscription (updated|changed)|switch/i
+              )
+          );
+        },
+
+      'saved-card-preserved':
+        stepSavedCardPreserved,
+
+      'no-checkout-reprompt':
+        stepNoCheckoutReprompt,
+
+      'single-active-plan':
+        stepExactlyOneCurrentPlan
+    }
+  },
+
+  INTERVAL_INCOME_ANNUAL_TO_MONTHLY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'annual'
+      );
+
+      await ctx.billing.validateOverview();
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan:
+            'Income Builder',
+          action: 'interval',
+          interval: 'monthly'
+        }
+      );
+
+      await ctx.billing.validateActivePlan(
+        'Income Builder'
+      );
+    },
+    steps: {
+      'confirmation-shows-scheduled':
+        async (ctx) => {
+          expect(
+            ctx.state.changeDialogText,
+            'Annual-to-monthly confirmation should say whether the change is immediate or scheduled.'
+          ).toMatch(
+            /next renewal|scheduled|takes effect|end of|effective/i
+          );
+        },
+
+      'annual-access-until-effective-date':
+        async (ctx) => {
+          await openPlansTab(ctx);
+
+          await expect(
+            ctx.page.locator('main')
+          ).toContainText(
+            /annual|year|income builder/i
+          );
+
+          await stepActivePlan(
+            ctx,
+            'Income Builder'
+          );
+        },
+
+      'confirmation-email':
+        async (ctx) => {
+          await waitForEmail(
+            ctx,
+            'billing interval confirmation',
+            (mail) =>
+              subjectMatches(
+                mail,
+                /monthly|billing (interval|cycle|period)|plan (has )?(changed|updated)|subscription (updated|changed)|switch|scheduled/i
+              )
+          );
+        },
+
+      'saved-card-preserved':
+        stepSavedCardPreserved,
+
+      'no-checkout-reprompt':
+        stepNoCheckoutReprompt,
+
+      'single-active-plan':
+        stepExactlyOneCurrentPlan,
+
+      'cancel-scheduled-change':
+        async (ctx) => {
+          const control =
+            await findCancelScheduledControl(
+              ctx,
+              /cancel (the )?(scheduled )?(change|switch|downgrade)|keep (my )?(annual|current)|undo (the )?(change|switch)|stay (on )?annual/i
+            );
+
+          await control.click();
+
+          const confirm =
+            ctx.page
+              .getByRole('dialog')
+              .getByRole('button', {
+                name: /^(yes|confirm|keep|cancel)/i
+              })
+              .first();
+
+          if (
+            await confirm
+              .isVisible({
+                timeout: 3000
+              })
+              .catch(() => false)
+          ) {
+            await confirm.click();
+          }
+
+          await stepActivePlan(
+            ctx,
+            'Income Builder'
+          );
+        }
+    }
+  },
+
+  INTERVAL_DOUBLE_CLICK_MONTHLY_TO_ANNUAL: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+
+      ctx.state.paidBeforeChange =
+        await countPaidTransactions(
+          ctx
+        );
+
+      await ctx.billing.validateOverview();
+
+      startRequestRecorder(ctx);
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan:
+            'Income Builder',
+          action: 'interval',
+          interval: 'annual',
+          doubleClick: true
+        }
+      );
+
+      ctx.state.paidAfterChange =
+        await countPaidTransactions(
+          ctx
+        );
+    },
+    steps: {
+      'single-switch-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click annual switch'
+          );
+        },
+
+      'single-charge':
+        async (ctx) => {
+          await stepTransactionPaidCount(
+            ctx,
+            1
+          );
+        }
+    }
+  },
+
+  INTERVAL_DOUBLE_CLICK_ANNUAL_TO_MONTHLY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'annual'
+      );
+
+      await ctx.billing.validateOverview();
+
+      startRequestRecorder(ctx);
+
+      await changePlan(
+        ctx,
+        {
+          targetPlan:
+            'Income Builder',
+          action: 'interval',
+          interval: 'monthly',
+          doubleClick: true
+        }
+      );
+    },
+    steps: {
+      'single-switch-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click monthly switch'
+          );
+        },
+
+      'annual-access-until-effective-date':
+        async (ctx) => {
+          await stepActivePlan(
+            ctx,
+            'Income Builder'
+          );
+        }
+    }
+  },
+
+  CANCEL_INCOME_MONTHLY_AT_PERIOD_END: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+
+      // Safety: final cancellation only ever runs on the user created above.
+      expect(
+        ctx.email.toLowerCase()
+      ).not.toBe(
+        TEST_USERS.subscriber.email.toLowerCase()
+      );
+
+      await ctx.billing.submitMonthlyCancelAtPeriodEnd({
+        keepScheduled: true
+      });
+    },
+    steps: {
+      'disposable-fixture-only':
+        async (ctx) => {
+          expect(
+            ctx.email.toLowerCase()
+          ).not.toBe(
+            TEST_USERS.subscriber.email.toLowerCase()
+          );
+
+          expect(
+            ctx.email
+          ).toContain('+');
+        },
+
+      'cancellation-confirmed':
+        async (ctx) => {
+          await ctx.billing.expectPaidAccessWhileCancellationScheduled(
+            'Income Builder'
+          );
+        },
+
+      'paid-access-until-period-end':
+        async (ctx) => {
+          await ctx.billing.expectPaidAccessWhileCancellationScheduled(
+            'Income Builder'
+          );
+        },
+
+      'scheduled-state-persists-after-refresh':
+        async (ctx) => {
+          await ctx.page.reload({
+            waitUntil:
+              'domcontentloaded'
+          });
+
+          await ctx.billing.expectPaidAccessWhileCancellationScheduled(
+            'Income Builder'
+          );
+        },
+
+      'resume-action-visible':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          await expect(
+            ctx.page
+              .getByRole('button', {
+                name: /don'?t cancel|resume subscription|reactivate|keep my plan/i
+              })
+              .first()
+          ).toBeVisible({
+            timeout: 15000
+          });
+        },
+
+      'confirmation-email':
+        async (ctx) => {
+          await waitForEmail(
+            ctx,
+            'cancellation confirmation',
+            (mail) =>
+              subjectMatches(
+                mail,
+                /cancel/i
+              )
+          );
+        },
+
+    }
+  },
+
+  CANCEL_DOUBLE_CLICK_INCOME_MONTHLY: {
+    setup: async (ctx) => {
+      await buyPlan(
+        ctx,
+        'Income Builder',
+        'monthly'
+      );
+
+      startRequestRecorder(ctx);
+
+      const host =
+        await ctx.billing.openCancelSubscriptionHost();
+
+      try {
+        const confirm =
+          host.page
+            .getByRole('button', {
+              name: /yes,?\s*cancel|confirm cancellation|cancel (subscription|plan)/i
+            })
+            .filter({
+              hasNotText:
+                /don'?t cancel|keep|go back|resume/i
+            })
+            .last();
+
+        await expect(confirm).toBeVisible({
+          timeout: 15000
+        });
+
+        await confirm.dblclick({
+          delay: 20
+        });
+
+        await host.page.waitForTimeout(
+          5000
+        );
+      } finally {
+        await host.close();
+      }
+    },
+    steps: {
+      'single-cancellation-request':
+        async (ctx) => {
+          expectNoDuplicateActionRequests(
+            ctx.requests,
+            'Double-click final cancellation'
+          );
+        },
+
+      'cancellation-recorded-once':
+        async (ctx) => {
+          await ctx.billing.expectPaidAccessWhileCancellationScheduled(
+            'Income Builder'
+          );
+
+          await ctx.billing.validateOverview();
+
+          await ctx.billing.historyTab.click();
+
+          const cancelRows =
+            await ctx.page
+              .locator('main')
+              .getByText(
+                /cancel/i
+              )
+              .count();
+
+          console.log(
+            `[CANCEL_DOUBLE_CLICK] history cancel mentions: ${cancelRows}`
+          );
+
+          expect(
+            cancelRows
+          ).toBeLessThanOrEqual(
+            2
+          );
+        }
+    }
+  }
+};
+
+/* ----------------------------------------------------------------------------
+Runner
+---------------------------------------------------------------------------- */
+
+const packRuns = new Map<
+  string,
+  Promise<Map<string, ScenarioOutcome>>
+>();
+
+async function executePack(
+  scenario: ScenarioUserName,
+  page: Page
+) {
+  const pack =
+    PACKS[scenario];
+
+  const outcomes =
+    new Map<string, ScenarioOutcome>();
+
+  const ctx: PackContext = {
+    scenario,
+    page,
+    email: '',
+    billing:
+      new BillingPage(page),
+    seenMessageIds:
+      new Set(),
+    requests: [],
+    state: {}
+  };
+
+  console.log(
+    `[scenario] ${scenario}: ${SCENARIO_USERS[scenario].description}`
+  );
+
+  try {
+    await pack.setup(ctx);
+  } catch (error) {
+    for (const stepName of Object.keys(
+      pack.steps
+    )) {
+      outcomes.set(
+        stepName,
+        error instanceof ScenarioSkip
+          ? {
+              status: 'skipped',
+              reason:
+                `${error.reason} (user ${ctx.email || 'not created'})`
+            }
+          : {
+              status: 'failed',
+              error: new Error(
+                `Scenario ${scenario} could not finish its setup flow (user ${ctx.email || 'not created'}): ${errorText(error)}`
+              )
+            }
+      );
+    }
+
+    saveCachedPack(
+      scenario,
+      outcomes
+    );
+
+    return outcomes;
+  }
+
+  for (const [
+    stepName,
+    run
+  ] of Object.entries(pack.steps)) {
+    try {
+      await run(ctx);
+
+      outcomes.set(
+        stepName,
+        { status: 'passed' }
+      );
+    } catch (error) {
+      if (
+        error instanceof ScenarioSkip
+      ) {
+        outcomes.set(
+          stepName,
+          {
+            status: 'skipped',
+            reason:
+              error.reason
+          }
+        );
+      } else {
+        console.log(
+          `[scenario] ${scenario}:${stepName} FAILED: ${errorText(error).replace(/\u001b\[[0-9;]*m/g, '').replace(/\s+/g, ' ').slice(0, 600)}`
+        );
+
+        const pageText =
+          await ctx.page
+            .locator('main')
+            .innerText({
+              timeout: 3000
+            })
+            .then((text) =>
+              text
+                .replace(/\s+/g, ' ')
+                .slice(0, 900)
+            )
+            .catch(() => '');
+
+        if (pageText) {
+          console.log(
+            `[scenario] ${scenario}:${stepName} page text: ${pageText}`
+          );
+        }
+
+        outcomes.set(
+          stepName,
+          {
+            status: 'failed',
+            error
+          }
+        );
+      }
+
+      await ctx.page.keyboard
+        .press('Escape')
+        .catch(() => undefined);
+    }
+  }
+
+  saveCachedPack(
+    scenario,
+    outcomes
+  );
+
+  return outcomes;
+}
+
+/* Playwright restarts the worker after any failed test, which would lose the
+   in-memory results and make the next row create a second disposable user.
+   Results are therefore also stored per Playwright run (parent pid). */
+
+const CACHE_MAX_AGE_MS =
+  4 * 60 * 60 * 1000;
+
+function cacheFile(
+  scenario: string
+) {
+  return path.join(
+    process.cwd(),
+    'test-results',
+    'scenario-cache',
+    process.env.SCENARIO_RUN_ID ??
+      String(process.ppid),
+    `${scenario}.json`
+  );
+}
+
+function saveCachedPack(
+  scenario: string,
+  outcomes: Map<string, ScenarioOutcome>
+) {
+  try {
+    const file =
+      cacheFile(scenario);
+
+    fs.mkdirSync(
+      path.dirname(file),
+      { recursive: true }
+    );
+
+    fs.writeFileSync(
+      file,
+      JSON.stringify(
+        [...outcomes.entries()].map(
+          ([step, outcome]) => ({
+            step,
+            status:
+              outcome.status,
+            reason:
+              outcome.status ===
+              'skipped'
+                ? outcome.reason
+                : undefined,
+            message:
+              outcome.status ===
+              'failed'
+                ? errorText(
+                    outcome.error
+                  )
+                : undefined
+          })
+        )
+      )
+    );
+  } catch {
+    // Cache is an optimisation only.
+  }
+}
+
+function loadCachedPack(
+  scenario: string
+) {
+  try {
+    const file =
+      cacheFile(scenario);
+
+    const stat =
+      fs.statSync(file);
+
+    if (
+      Date.now() - stat.mtimeMs >
+      CACHE_MAX_AGE_MS
+    ) {
+      return undefined;
+    }
+
+    const rows = JSON.parse(
+      fs.readFileSync(
+        file,
+        'utf8'
+      )
+    ) as Array<{
+      step: string;
+      status: ScenarioOutcome['status'];
+      reason?: string;
+      message?: string;
+    }>;
+
+    const outcomes =
+      new Map<string, ScenarioOutcome>();
+
+    for (const row of rows) {
+      outcomes.set(
+        row.step,
+        row.status === 'passed'
+          ? { status: 'passed' }
+          : row.status === 'skipped'
+            ? {
+                status: 'skipped',
+                reason:
+                  row.reason ?? ''
+              }
+            : {
+                status: 'failed',
+                error: new Error(
+                  row.message ??
+                    'Scenario step failed earlier in this run.'
+                )
+              }
+      );
+    }
+
+    return outcomes;
+  } catch {
+    return undefined;
+  }
+}
+
+export function isScenarioCoverageKey(
+  key: string
+) {
+  return key.startsWith(
+    'scenario:'
+  );
+}
+
+export async function runScenarioStep(
+  key: string,
+  page: Page
+): Promise<ScenarioOutcome> {
+  const [
+    ,
+    scenarioName,
+    stepName
+  ] = key.split(':');
+
+  const scenario =
+    scenarioName as ScenarioUserName;
+
+  if (!PACKS[scenario]) {
+    return {
+      status: 'failed',
+      error: new Error(
+        `Unknown scenario "${scenarioName}" in ${key}.`
+      )
+    };
+  }
+
+  let run =
+    packRuns.get(scenario);
+
+  if (!run) {
+    const cached =
+      loadCachedPack(
+        scenario
+      );
+
+    run = cached
+      ? Promise.resolve(
+          cached
+        )
+      : executePack(
+          scenario,
+          page
+        );
+
+    packRuns.set(
+      scenario,
+      run
+    );
+  }
+
+  const outcomes =
+    await run;
+
+  return (
+    outcomes.get(stepName) ?? {
+      status: 'failed',
+      error: new Error(
+        `Scenario ${scenario} has no step "${stepName}".`
+      )
+    }
+  );
+}
+
+export function listScenarioSteps() {
+  return Object.fromEntries(
+    Object.entries(PACKS).map(
+      ([name, pack]) => [
+        name,
+        Object.keys(pack.steps)
+      ]
+    )
+  );
+}

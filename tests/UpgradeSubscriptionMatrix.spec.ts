@@ -138,16 +138,16 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-014'],
     title: 'Successful upgrade unlocks target-plan entitlements',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires entitlement selectors and post-upgrade account fixture.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:target-plan-active'
   },
   {
     id: 'SC-90',
     sourceIds: ['SUB-UPG-015'],
     title: 'Successful upgrade keeps existing user data and portfolio data',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires portfolio/broker seed data and post-upgrade data integrity validation.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:user-data-preserved'
   },
   {
     id: 'SC-91',
@@ -162,16 +162,16 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-017'],
     title: 'Successful upgrade records transaction history entry',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe invoice/payment record visibility after upgrade.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:transaction-paid-entry'
   },
   {
     id: 'SC-93',
     sourceIds: ['SUB-UPG-018'],
     title: 'Successful upgrade creates invoice with correct prorated amount',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: prorated charge is required on upgrade. Requires Stripe invoice API/admin access and deterministic proration.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:invoice-amount'
   },
   {
     id: 'SC-94',
@@ -186,8 +186,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-020'],
     title: 'Upgrade confirmation email is sent',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture service.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:confirmation-email'
   },
   {
     id: 'SC-96',
@@ -226,48 +226,48 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-025'],
     title: 'Upgrade from monthly lower plan to monthly higher plan is handled correctly',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires lower monthly plan account and Stripe proration validation.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:target-plan-active'
   },
   {
     id: 'SC-101',
     sourceIds: ['SUB-UPG-026'],
     title: 'Upgrade from annual lower plan to annual higher plan is handled correctly',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: upgrade is allowed and starts a new billing cycle with prorated charge. Requires annual lower-plan account and Stripe proration validation.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_ANNUAL_TO_OVERLAY_ANNUAL:target-plan-active'
   },
   {
     id: 'SC-102',
     sourceIds: ['SUB-UPG-027'],
     title: 'Upgrade from monthly lower plan to annual higher plan is handled correctly',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: upgrade across billing interval is allowed and starts a new billing cycle with prorated charge. Requires Stripe proration visibility.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_ANNUAL:target-plan-active'
   },
   {
     id: 'SC-103',
     sourceIds: ['SUB-UPG-028'],
     title: 'Upgrade preserves billing customer and payment method',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe customer/payment-method API or admin visibility.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:saved-card-preserved'
   },
   {
     id: 'SC-104',
     sourceIds: ['SUB-UPG-029'],
     title: 'Upgrade does not create duplicate active subscriptions',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/Stripe subscription count visibility.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:single-active-plan'
   },
   {
     id: 'SC-105',
     sourceIds: ['SUB-UPG-030'],
     title: 'Double-clicking upgrade action is idempotent',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into idempotency or duplicate checkout prevention.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_DOUBLE_CLICK_INCOME_TO_OVERLAY:single-upgrade-request'
   },
   {
     id: 'SC-106',

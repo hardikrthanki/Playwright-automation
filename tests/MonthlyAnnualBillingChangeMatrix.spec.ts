@@ -138,8 +138,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-013'],
     title: 'Successful monthly-to-annual change preserves entitlements',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires entitlement selectors and post-change account fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:entitlements-preserved'
   },
   {
     id: 'SC-178',
@@ -154,16 +154,16 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-015'],
     title: 'Successful monthly-to-annual change records transaction history when charge exists',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe invoice/payment visibility for interval change.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:transaction-history'
   },
   {
     id: 'SC-180',
     sourceIds: ['SUB-M2A-016'],
     title: 'Invoice or receipt shows correct annual amount after interval change',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe invoice/API and deterministic amount validation.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:annual-amount'
   },
   {
     id: 'SC-181',
@@ -178,8 +178,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-018'],
     title: 'Confirmation email is sent after monthly-to-annual change',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:confirmation-email'
   },
   {
     id: 'SC-183',
@@ -210,8 +210,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-022'],
     title: 'Double-clicking annual switch confirmation is idempotent',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into duplicate interval-change prevention.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_DOUBLE_CLICK_MONTHLY_TO_ANNUAL:single-switch-request'
   },
   {
     id: 'SC-187',
@@ -250,16 +250,16 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-027'],
     title: 'Monthly-to-annual change preserves Stripe customer and payment method',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe customer/payment-method API visibility.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:saved-card-preserved'
   },
   {
     id: 'SC-192',
     sourceIds: ['SUB-M2A-028'],
     title: 'Monthly-to-annual change does not create duplicate active subscriptions',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/Stripe subscription count visibility.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:single-active-plan'
   },
   {
     id: 'SC-193',

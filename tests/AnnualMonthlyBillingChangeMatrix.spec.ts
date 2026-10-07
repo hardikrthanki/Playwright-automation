@@ -98,8 +98,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-008'],
     title: 'Annual-to-monthly confirmation displays whether change is immediate or scheduled',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires confirmed business rule and Stripe subscription schedule visibility.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:confirmation-shows-scheduled'
   },
   {
     id: 'SC-209',
@@ -138,8 +138,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-013'],
     title: 'Successful annual-to-monthly change preserves entitlements until effective date',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires entitlement selectors and scheduled interval-change fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:annual-access-until-effective-date'
   },
   {
     id: 'SC-214',
@@ -178,8 +178,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-018'],
     title: 'Confirmation email is sent after annual-to-monthly change',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:confirmation-email'
   },
   {
     id: 'SC-219',
@@ -210,8 +210,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-022'],
     title: 'Double-clicking monthly switch confirmation is idempotent',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into duplicate interval-change prevention.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_DOUBLE_CLICK_ANNUAL_TO_MONTHLY:single-switch-request'
   },
   {
     id: 'SC-223',
@@ -250,16 +250,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-027'],
     title: 'Annual-to-monthly change preserves Stripe customer and payment method',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe customer/payment-method API visibility.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:saved-card-preserved'
   },
   {
     id: 'SC-228',
     sourceIds: ['SUB-A2M-028'],
     title: 'Annual-to-monthly change does not create duplicate active subscriptions',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/Stripe subscription count visibility.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:single-active-plan'
   },
   {
     id: 'SC-229',
@@ -322,16 +322,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-036'],
     title: 'Annual-to-monthly scheduled change can be cancelled before effective date',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires scheduled interval-change fixture and confirmed cancellation rule.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:cancel-scheduled-change'
   },
   {
     id: 'SC-237',
     sourceIds: ['SUB-A2M-037'],
     title: 'Cancelling annual-to-monthly scheduled change keeps annual billing active',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires Stripe schedule cancellation validation.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:cancel-scheduled-change'
   },
   {
     id: 'SC-238',

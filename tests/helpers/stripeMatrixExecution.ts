@@ -42,6 +42,10 @@ import { RegistrationPage }
 import { StripePaymentPage }
   from '../pages/StripePaymentPage';
 import {
+  isScenarioCoverageKey,
+  runScenarioStep
+} from './subscriptionScenarioPacks';
+import {
   validateNoCardTrialFollowThrough
 } from './noCardTrialChecks';
 import {
@@ -102,7 +106,13 @@ export type StripeMatrixCoverageKey =
   | 'downgrade-targets'
   | 'current-plan-before-upgrade'
   | 'air-traceability'
-  | 'blocked-scenario';
+  | 'blocked-scenario'
+  | `scenario:${string}:${string}`;
+
+type StaticCoverageKey = Exclude<
+  StripeMatrixCoverageKey,
+  `scenario:${string}:${string}`
+>;
 
 type CoverageOutcome =
   | {
@@ -239,6 +249,17 @@ export function inferStripeMatrixCoverageKey(
       ''
     ).trim()
       .toLowerCase();
+
+  const scenarioMatch =
+    (automation ?? '')
+      .trim()
+      .match(
+        /^scenario:([A-Z0-9_]+):([a-z0-9-]+)$/
+      );
+
+  if (scenarioMatch) {
+    return `scenario:${scenarioMatch[1]}:${scenarioMatch[2]}`;
+  }
 
   if (
     automationOnly.includes(
@@ -599,7 +620,7 @@ async function catalogHeadingVisible(
     );
 }
 
-async function registerAndReachPlanSelection(
+export async function registerAndReachPlanSelection(
   page: Page,
   scenario: string
 ) {
@@ -1993,8 +2014,35 @@ async function executeDowngradeTargets(
   ).assertDowngradeTargetsAreLowerTier();
 }
 
+async function executeScenarioStep(
+  key: string,
+  page: Page
+) {
+  const outcome =
+    await runScenarioStep(
+      key,
+      page
+    );
+
+  if (
+    outcome.status ===
+    'skipped'
+  ) {
+    throw new CoverageSkip(
+      outcome.reason
+    );
+  }
+
+  if (
+    outcome.status ===
+    'failed'
+  ) {
+    throw outcome.error;
+  }
+}
+
 const coverageExecutors: Record<
-  StripeMatrixCoverageKey,
+  StaticCoverageKey,
   (page: Page) => Promise<void>
 > = {
   'billing-inapp':
@@ -2096,7 +2144,15 @@ async function runCoverageKey(
 
   try {
     const executor =
-      coverageExecutors[key];
+      isScenarioCoverageKey(key)
+        ? (scenarioPage: Page) =>
+            executeScenarioStep(
+              key,
+              scenarioPage
+            )
+        : coverageExecutors[
+            key as StaticCoverageKey
+          ];
 
     if (
       coverageNeedsPage(

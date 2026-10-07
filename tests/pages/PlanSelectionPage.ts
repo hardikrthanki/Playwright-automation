@@ -1587,6 +1587,56 @@ export class PlanSelectionPage extends BasePage {
 
 
 
+  /**
+   * Selects a plan, then double-clicks Complete Setup so tests can verify
+   * that two rapid clicks never open two Stripe checkout sessions.
+   */
+  async selectPlanAndDoubleClickCompleteSetup(
+    planName: string
+  ) {
+    Logger.info(
+      `Selecting ${planName} Plan and double-clicking Complete Setup`
+    );
+
+    await this.validatePlanVisible(
+      planName
+    );
+
+    const plan =
+      this.planByName(
+        planName
+      );
+
+    await this.scrollCatalogToggleIntoView(
+      plan
+    );
+
+    await safeClick(
+      plan,
+      `${planName} Plan`
+    );
+
+    await expect(
+      this.completeSetupButton
+    ).toBeVisible({
+      timeout: 30000
+    });
+
+    await this.scrollCatalogToggleIntoView(
+      this.completeSetupButton
+    );
+
+    await expect(
+      this.completeSetupButton
+    ).toBeEnabled({
+      timeout: 30000
+    });
+
+    await this.completeSetupButton.dblclick({
+      delay: 20
+    });
+  }
+
   async selectIncomeBuilderPlan() {
     await this.selectPlan(
       'Income Builder'

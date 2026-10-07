@@ -268,8 +268,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-030'],
     title: 'Successful subscription confirmation email is sent',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:confirmation-email'
   },
   {
     id: 'SC-66',
@@ -332,8 +332,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-038'],
     title: 'Duplicate checkout session cannot create duplicate paid subscriptions',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into checkout session idempotency and subscription count.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:finished-checkout-not-reusable'
   },
   {
     id: 'SC-74',
@@ -364,8 +364,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-042'],
     title: 'Double-clicking purchase does not create duplicate checkout sessions',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into checkout session creation and idempotency keys.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:single-checkout-request'
   },
   {
     id: 'SC-75C',
@@ -412,8 +412,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-048'],
     title: 'Payment receipt or subscription confirmation email is received after purchase',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture service.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:receipt-email'
   },
   {
     id: 'SC-75I',

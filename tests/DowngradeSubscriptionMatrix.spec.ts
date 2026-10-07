@@ -98,16 +98,16 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-009'],
     title: 'Downgrade confirmation displays lost feature warning',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'SubscriptionLifecycleExecution.spec.ts looks for lost-feature/limit copy when present. Dedicated comparison warning copy is still not a guaranteed selector, so this FRD row stays blocked until product shows stable lost-feature text.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:impact-warning'
   },
   {
     id: 'SC-122',
     sourceIds: ['SUB-DOWN-010'],
     title: 'Downgrade confirmation displays account limits after downgrade',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires plan limit metadata and downgrade confirmation screen.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:account-limits-shown'
   },
   {
     id: 'SC-123',
@@ -130,24 +130,24 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-013'],
     title: 'Downgrade is scheduled for end of current billing cycle when applicable',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires Stripe subscription schedule/API visibility and deterministic cycle date.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:schedule-at-renewal'
   },
   {
     id: 'SC-126',
     sourceIds: ['SUB-DOWN-014'],
     title: 'Immediate downgrade is blocked or allowed according to business rules',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires confirmed downgrade timing rule and Stripe/API validation.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:access-kept-until-effective-date'
   },
   {
     id: 'SC-127',
     sourceIds: ['SUB-DOWN-015'],
     title: 'Downgrade keeps current higher-tier access until effective date',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires scheduled downgrade fixture and entitlement validation before effective date.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:access-kept-until-effective-date'
   },
   {
     id: 'SC-128',
@@ -162,8 +162,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-017'],
     title: 'Downgrade does not delete user account data immediately',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires seeded portfolio/broker/account data and post-downgrade data integrity validation.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:user-data-preserved'
   },
   {
     id: 'SC-130',
@@ -194,8 +194,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-021'],
     title: 'Downgrade warning clearly explains restricted features',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires downgrade warning UI/copy fixture.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:impact-warning'
   },
   {
     id: 'SC-134',
@@ -210,8 +210,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-023'],
     title: 'Downgrade from monthly higher plan to monthly lower plan is handled correctly',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires monthly higher-plan fixture and Stripe subscription update validation.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:schedule-at-renewal'
   },
   {
     id: 'SC-136',
@@ -258,24 +258,24 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-029'],
     title: 'Scheduled downgrade appears in billing overview',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires scheduled downgrade fixture.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:scheduled-downgrade-in-overview'
   },
   {
     id: 'SC-142',
     sourceIds: ['SUB-DOWN-030'],
     title: 'Scheduled downgrade appears in subscription history',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires scheduled downgrade fixture and history UI state.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:scheduled-downgrade-in-history'
   },
   {
     id: 'SC-143',
     sourceIds: ['SUB-DOWN-031'],
     title: 'Downgrade confirmation email is sent',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires email inbox/API access or notification capture service.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:confirmation-email'
   },
   {
     id: 'SC-144',
@@ -290,24 +290,24 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-033'],
     title: 'User can resume or cancel scheduled downgrade before effective date when allowed',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires scheduled downgrade fixture and confirmed resume/cancel rule.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:cancel-scheduled-downgrade'
   },
   {
     id: 'SC-146',
     sourceIds: ['SUB-DOWN-034'],
     title: 'Cancelling scheduled downgrade keeps current plan active',
     priority: 'High',
-    status: 'blocked',
-    dependency: 'Requires scheduled downgrade fixture and Stripe schedule cancellation validation.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:cancel-scheduled-downgrade'
   },
   {
     id: 'SC-147',
     sourceIds: ['SUB-DOWN-035'],
     title: 'Double-clicking downgrade confirmation is idempotent',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/API visibility into duplicate downgrade prevention.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_DOUBLE_CLICK_OVERLAY_TO_INCOME:single-downgrade-request'
   },
   {
     id: 'SC-148',
@@ -346,16 +346,16 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-040'],
     title: 'Downgrade preserves billing customer and saved payment method',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Requires Stripe customer/payment-method API visibility.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:saved-card-preserved'
   },
   {
     id: 'SC-153',
     sourceIds: ['SUB-DOWN-041'],
     title: 'Downgrade does not create duplicate subscription records',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/Stripe subscription count visibility.'
+    status: 'automated',
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:single-active-plan'
   },
   {
     id: 'SC-154',

@@ -498,3 +498,160 @@ export async function waitForGmailPasswordResetLink(
     `Timed out waiting for the password reset mail to ${email}`
   );
 }
+
+/* =============================================================================
+Generic Gmail message matcher (subscription lifecycle emails)
+============================================================================= */
+
+export type GmailMessage = {
+  mailbox: string;
+  uid: string;
+  messageId: string;
+  subject: string;
+  text: string;
+};
+
+function headerValue(raw: string, name: string) {
+  const headerEnd = raw.search(/\r?\n\r?\n/);
+  const headers = headerEnd > 0
+    ? raw.slice(0, headerEnd)
+    : raw.slice(0, 6000);
+
+  const match = headers.match(
+    new RegExp(
+      `^${name}:[ \\t]*([^\\r\\n]*(?:\\r?\\n[ \\t][^\\r\\n]*)*)`,
+      'im'
+    )
+  );
+
+  return (match?.[1] ?? '')
+    .replace(/\r?\n[ \t]+/g, ' ')
+    .trim();
+}
+
+function decodeMimeWords(value: string) {
+  return value.replace(
+    /=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g,
+    (_match, _charset: string, encoding: string, payload: string) => {
+      if (encoding.toLowerCase() === 'b') {
+        return decodeBase64(payload);
+      }
+
+      return decodeQuotedPrintable(
+        payload.replace(/_/g, ' ')
+      );
+    }
+  );
+}
+
+function plainText(raw: string) {
+  return decodeMime(raw)
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export async function listGmailMessages(
+  email: string,
+  perMailboxLimit = 12
+): Promise<GmailMessage[]> {
+  return imapSession(async (send) => {
+    const found = new Map<string, GmailMessage>();
+
+    for (const mailbox of MAILBOXES) {
+      const uids = (
+        await searchMailbox(send, mailbox, email)
+      ).slice(0, perMailboxLimit);
+
+      for (const uid of uids) {
+        try {
+          const raw = await send(
+            `UID FETCH ${uid} BODY.PEEK[]`
+          );
+
+          const messageId =
+            headerValue(raw, 'Message-ID') ||
+            `${mailbox}:${uid}`;
+
+          if (found.has(messageId)) {
+            continue;
+          }
+
+          found.set(messageId, {
+            mailbox,
+            uid,
+            messageId,
+            subject: decodeMimeWords(
+              headerValue(raw, 'Subject')
+            ),
+            text: plainText(raw)
+          });
+        } catch {
+          // Skip unreadable messages.
+        }
+      }
+    }
+
+    return [...found.values()];
+  });
+}
+
+export async function waitForGmailMessageMatching(
+  email: string,
+  options: {
+    label: string;
+    match: (message: GmailMessage) => boolean;
+    ignoreMessageIds?: Set<string>;
+    timeoutMs?: number;
+  }
+): Promise<GmailMessage> {
+  const timeoutMs = options.timeoutMs ?? 90000;
+  const startedAt = Date.now();
+  let lastSubjects: string[] = [];
+  let lastError = '';
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      const messages = await listGmailMessages(email);
+
+      lastSubjects = messages.map(
+        (message) => message.subject
+      );
+
+      const hit = messages.find(
+        (message) =>
+          !options.ignoreMessageIds?.has(
+            message.messageId
+          ) &&
+          options.match(message)
+      );
+
+      if (hit) {
+        console.log(
+          `Gmail "${options.label}" found for ${email}: ${hit.subject}`
+        );
+
+        return hit;
+      }
+    } catch (error) {
+      lastError = error instanceof Error
+        ? error.message.split('\n')[0]
+        : String(error);
+    }
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, 4000)
+    );
+  }
+
+  throw new Error(
+    `No Gmail message for "${options.label}" arrived for ${email} within ${Math.round(timeoutMs / 1000)}s. Subjects seen: ${
+      lastSubjects.length
+        ? JSON.stringify(lastSubjects)
+        : 'none'
+    }${lastError ? `. Last IMAP error: ${lastError}` : ''}`
+  );
+}
