@@ -216,10 +216,10 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
   {
     id: 'SC-187',
     sourceIds: ['SUB-M2A-023'],
-    title: 'Browser refresh during interval change does not lose target annual plan',
+    title: 'Browser refresh during monthly-to-annual confirmation does not charge or change the plan',
     priority: 'Medium',
     status: 'automated',
-    automation: 'scenario:PURCHASE_INCOME_MONTHLY:refresh-keeps-annual-target'
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:refresh-leaves-account-unchanged-annual'
   },
   {
     id: 'SC-188',

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-07T09:44:45.635Z",
+  "generatedAt": "2026-10-07T13:20:30.131Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-10-07T09:44:45.277Z",
+    "generatedAt": "2026-10-07T13:20:29.831Z",
     "restoredFromHistory": false,
     "warning": ""
   },
@@ -13,23 +13,23 @@
     "total": 720,
     "rawTestCount": 720,
     "attempts": 720,
-    "passed": 483,
-    "failed": 23,
-    "skipped": 214,
+    "passed": 518,
+    "failed": 20,
+    "skipped": 182,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 483,
-      "unexpected": 23,
-      "skipped": 214
+      "expected": 518,
+      "skipped": 182,
+      "unexpected": 20
     }
   },
   "airExecution": {
     "total": 720,
     "attempts": 720,
-    "passed": 483,
-    "failed": 23,
-    "skipped": 214,
+    "passed": 518,
+    "failed": 20,
+    "skipped": 182,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 33,
+    "perTestEvidence": 27,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 35,
+    "totalWithRawReports": 29,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -61,62 +61,44 @@
   "evidenceTraceability": {
     "failedTests": [
       {
-        "testId": "chromium > SignupNegative.spec.ts > Signup Negative Scenarios > Signup OTP input limits entry to six digits",
-        "testName": "Signup Negative Scenarios > Signup OTP input limits entry to six digits",
+        "testId": "chromium > Opportunities.spec.ts > Opportunities > About CTA data freshness opens and closes",
+        "testName": "Opportunities > About CTA data freshness opens and closes",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SignupNegative.spec.ts > Signup Negative Scenarios > Signup OTP input trims pasted value to six digits",
-        "testName": "Signup Negative Scenarios > Signup OTP input trims pasted value to six digits",
+        "testId": "chromium > DashboardMoreScreens.spec.ts > More dashboard screens > Option chain strike count keeps calls and puts",
+        "testName": "More dashboard screens > Option chain strike count keeps calls and puts",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SignupNegative.spec.ts > Signup Negative Scenarios > Signup OTP verify button is enabled only for six digits",
-        "testName": "Signup Negative Scenarios > Signup OTP verify button is enabled only for six digits",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
+        "testName": "Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
-        "testName": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Beginners lessons overview categories and a strategy detail open",
+        "testName": "Academy depth > Beginners lessons overview categories and a strategy detail open",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardResearchPortfolio.spec.ts > Options Research and Portfolio Accounts > Manage accounts opens positions and every holdings tab",
-        "testName": "Options Research and Portfolio Accounts > Manage accounts opens positions and every holdings tab",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy opens the next lesson without marking it complete",
+        "testName": "Academy depth > Academy opens the next lesson without marking it complete",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardPositionActions.spec.ts > Account and position prompts > Delete and disconnect confirmations can be cancelled",
-        "testName": "Account and position prompts > Delete and disconnect confirmations can be cancelled",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Strategy library opens Protective Put and returns",
+        "testName": "Academy depth > Strategy library opens Protective Put and returns",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DashboardPositionActions.spec.ts > Account and position prompts > Edit and delete position prompts can be cancelled",
-        "testName": "Account and position prompts > Edit and delete position prompts can be cancelled",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DashboardDataChanges.spec.ts > Saved dashboard data > A position quantity can be saved and restored",
-        "testName": "Saved dashboard data > A position quantity can be saved and restored",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > DashboardAccountSurfaces.spec.ts > Signed-in account surfaces > Glossary search shows only matching terms",
-        "testName": "Signed-in account surfaces > Glossary search shows only matching terms",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > forgotpassword.spec.ts > Disposable user resets password from the email link and signs in with the new password",
-        "testName": "Disposable user resets password from the email link and signs in with the new password",
+        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Lessons navigation returns without marking the lesson complete",
+        "testName": "Academy depth > Lessons navigation returns without marking the lesson complete",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -127,32 +109,14 @@
         "status": "Evidence Available"
       },
       {
+        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-04 - No-card trial linked-account limit matches the plan card",
+        "testName": "Overlay Strategists Trial FRD Matrix > SC-04 - No-card trial linked-account limit matches the plan card",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
         "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-07 - Start trial with valid card",
         "testName": "Overlay Strategists Trial FRD Matrix > SC-07 - Start trial with valid card",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
-        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
@@ -163,20 +127,8 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-103 - Upgrade preserves billing customer and payment method",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-103 - Upgrade preserves billing customer and payment method",
-        "evidenceCount": 1,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
-        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-141 - Scheduled downgrade appears in billing overview",
+        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-141 - Scheduled downgrade appears in billing overview",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
@@ -187,14 +139,44 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-147 - Double-clicking downgrade confirmation is idempotent",
-        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-147 - Double-clicking downgrade confirmation is idempotent",
+        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-182 - Confirmation email is sent after monthly-to-annual change",
+        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-182 - Confirmation email is sent after monthly-to-annual change",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-187 - Browser refresh during interval change does not lose target annual plan",
+        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-187 - Browser refresh during interval change does not lose target annual plan",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > MonthlyAnnualBillingChangeMatrix.spec.ts > Monthly To Annual Billing Change Use Case 5 Matrix > SC-196 - Annual savings messaging is displayed accurately",
+        "testName": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-196 - Annual savings messaging is displayed accurately",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-214 - Annual-to-monthly change records subscription history",
+        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-214 - Annual-to-monthly change records subscription history",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > AnnualMonthlyBillingChangeMatrix.spec.ts > Annual To Monthly Billing Change Use Case 6 Matrix > SC-223 - Browser refresh during annual-to-monthly flow does not lose selected target monthly plan",
+        "testName": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-223 - Browser refresh during annual-to-monthly flow does not lose selected target monthly plan",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
         "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
         "testName": "Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -214,52 +196,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input limits entry to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input trims pasted value to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP verify button is enabled only for six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Disposable user resets password from the email link and signs in with the new password",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-04 - No-card trial linked-account limit matches the plan card",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -269,12 +211,17 @@
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-182 - Confirmation email is sent after monthly-to-annual change",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-196 - Annual savings messaging is displayed accurately",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-214 - Annual-to-monthly change records subscription history",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -283,14 +230,9 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
@@ -305,16 +247,6 @@
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
             "detail": "Critical module risk is High."
           }
         ]
@@ -325,52 +257,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input limits entry to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input trims pasted value to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP verify button is enabled only for six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Disposable user resets password from the email link and signs in with the new password",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-04 - No-card trial linked-account limit matches the plan card",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -380,12 +272,17 @@
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-182 - Confirmation email is sent after monthly-to-annual change",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-196 - Annual savings messaging is displayed accurately",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-214 - Annual-to-monthly change records subscription history",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -394,14 +291,9 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
@@ -416,16 +308,6 @@
           {
             "type": "Module",
             "name": "Billing",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
             "detail": "Critical module risk is High."
           }
         ]
@@ -436,52 +318,12 @@
         "references": [
           {
             "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input limits entry to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP input trims pasted value to six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Signup Negative Scenarios > Signup OTP verify button is enabled only for six digits",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Disposable user resets password from the email link and signs in with the new password",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
-            "detail": "Critical failure severity matched release rules."
-          },
-          {
-            "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "name": "Overlay Strategists Trial FRD Matrix > SC-04 - No-card trial linked-account limit matches the plan card",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -491,12 +333,17 @@
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-182 - Confirmation email is sent after monthly-to-annual change",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "name": "Monthly To Annual Billing Change Use Case 5 Matrix > SC-196 - Annual savings messaging is displayed accurately",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Annual To Monthly Billing Change Use Case 6 Matrix > SC-214 - Annual-to-monthly change records subscription history",
             "detail": "Critical failure severity matched release rules."
           },
           {
@@ -505,14 +352,9 @@
             "detail": "Critical failure severity matched release rules."
           },
           {
-            "type": "Business Journey",
-            "name": "Registration",
-            "detail": "Critical journey status is Critical."
-          },
-          {
-            "type": "Business Journey",
-            "name": "Authentication",
-            "detail": "Critical journey status is Critical."
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
@@ -528,21 +370,11 @@
             "type": "Module",
             "name": "Billing",
             "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Password",
-            "detail": "Critical module risk is High."
-          },
-          {
-            "type": "Module",
-            "name": "Signup",
-            "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 16,
-    "blockers": 21
+    "warnings": 20,
+    "blockers": 11
   }
 }

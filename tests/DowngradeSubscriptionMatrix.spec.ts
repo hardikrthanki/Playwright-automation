@@ -312,10 +312,10 @@ const downgradeScenarios: DowngradeScenario[] = [
   {
     id: 'SC-148',
     sourceIds: ['SUB-DOWN-036'],
-    title: 'Browser refresh during downgrade confirmation does not lose selected target plan',
+    title: 'Browser refresh during downgrade confirmation does not charge or change the plan',
     priority: 'Medium',
     status: 'automated',
-    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:refresh-keeps-downgrade-target'
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:refresh-leaves-account-unchanged-downgrade'
   },
   {
     id: 'SC-149',

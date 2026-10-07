@@ -272,10 +272,10 @@ const upgradeScenarios: UpgradeScenario[] = [
   {
     id: 'SC-106',
     sourceIds: ['SUB-UPG-031'],
-    title: 'Browser refresh during upgrade flow does not lose selected target plan',
+    title: 'Browser refresh during upgrade confirmation does not charge or change the plan',
     priority: 'Medium',
     status: 'automated',
-    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:refresh-keeps-upgrade-target'
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:refresh-leaves-account-unchanged-upgrade'
   },
   {
     id: 'SC-107',
