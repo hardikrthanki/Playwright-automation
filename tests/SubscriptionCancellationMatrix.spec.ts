@@ -90,8 +90,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-007'],
     title: 'Cancellation reason is required before final cancellation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires a dedicated safe cancellation fixture to validate final-submit guardrails.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:reason-required'
   },
   {
     id: 'SC-248',
@@ -114,8 +114,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-010'],
     title: 'Continue to cancellation shows final confirmation before destructive action',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires fixture where final confirmation can be opened without impacting shared accounts.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:final-confirmation-before-cancel'
   },
   {
     id: 'SC-251',
@@ -299,7 +299,7 @@ const cancellationScenarios: CancellationScenario[] = [
     title: 'Double-clicking final cancellation is idempotent',
     priority: 'High',
     status: 'automated',
-    automation: 'scenario:CANCEL_DOUBLE_CLICK_INCOME_MONTHLY:single-cancellation-request'
+    automation: 'scenario:CANCEL_DOUBLE_CLICK_INCOME_MONTHLY:idempotent-final-state'
   },
   {
     id: 'SC-274',
@@ -362,16 +362,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-041'],
     title: 'Upgrade is blocked or clearly handled after subscription is scheduled to cancel',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Safe cancellation lifecycle state is readable in the Stripe portal; exact upgrade behavior after scheduled cancellation still requires a scheduled-cancel fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:upgrade-after-scheduled-cancel'
   },
   {
     id: 'SC-282',
     sourceIds: ['SUB-CAN-042'],
     title: 'Payment method update behavior is clear after cancellation is scheduled',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires scheduled-cancel fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:payment-method-after-cancel'
   },
   {
     id: 'SC-283',
@@ -418,16 +418,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-048'],
     title: 'Subscription cancellation history entry is displayed',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires historical cancelled subscription fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:history-entry'
   },
   {
     id: 'SC-289',
     sourceIds: ['SUB-CAN-049'],
     title: 'Transaction history does not create an unexpected extra charge on cancellation',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires final cancellation fixture with billing history verification.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:no-extra-charge'
   },
   {
     id: 'SC-290',
@@ -450,32 +450,32 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-052'],
     title: 'Missing cancellation reason blocks final cancellation when required',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires final cancellation form validation fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:reason-required'
   },
   {
     id: 'SC-293',
     sourceIds: ['SUB-CAN-053'],
     title: 'Cancellation feedback max length is handled safely',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires final cancellation form validation fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:feedback-max-length'
   },
   {
     id: 'SC-294',
     sourceIds: ['SUB-CAN-054'],
     title: 'Cancellation terms or policy link opens correctly',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires stable Stripe portal policy link selector.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:policy-link'
   },
   {
     id: 'SC-295',
     sourceIds: ['SUB-CAN-055'],
     title: 'Support contact is available during cancellation flow',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires support link/copy confirmation in portal.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:support-contact'
   },
   {
     id: 'SC-296',
@@ -490,16 +490,16 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-057'],
     title: 'Cancellation state is represented in AIR historical intelligence',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires multiple historical AIR executions with cancellation state.'
+    status: 'automated',
+    automation: 'air:cancellation-history'
   },
   {
     id: 'SC-298',
     sourceIds: ['SUB-CAN-058'],
     title: 'Cancellation state is searchable in AIR',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires cancellation state in normalized AIR data.'
+    status: 'automated',
+    automation: 'air:cancellation-searchable'
   },
   {
     id: 'SC-299',

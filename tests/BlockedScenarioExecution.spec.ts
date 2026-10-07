@@ -12,6 +12,9 @@ import {
   STRIPE_DECLINED_CARD,
   STRIPE_EXPIRY
 } from './config/testData';
+import {
+  runScenarioStep
+} from './helpers/subscriptionScenarioPacks';
 
 /* =============================================================================
 TEST SUITE: Blocked Scenario Execution
@@ -133,34 +136,37 @@ async function submitCheckout(
 
 test.describe('Blocked Scenario Execution', () => {
 
-  test.beforeEach(() => {
+  test.beforeEach(({}, testInfo) => {
+    // SC-48 and SC-61 run on a scenario user; the rest still need a link.
+    if (/SC-48|SC-61/.test(testInfo.title)) {
+      return;
+    }
+
     requiresCheckout();
   });
 
+  // SC-48 and SC-61 are answered by the PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY
+  // scenario user, who is left unpaid on Stripe checkout. They need no env
+  // flags or hosted checkout link.
   test('SC-48: Stripe checkout displays renewal or auto-renewal copy before payment', async ({ page }) => {
     test.info().annotations.push({
       type: 'matrix-id',
       description: 'SC-48'
     });
 
-    await openCheckout(page);
+    const outcome = await runScenarioStep(
+      'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:renewal-copy-shown',
+      page
+    );
 
-    const bodyText = (
-      await page.locator('body').innerText()
-    ).toLowerCase();
+    if (outcome.status === 'failed') {
+      throw outcome.error;
+    }
 
-    const renewalCopyVisible =
-      bodyText.includes('renew') ||
-      bodyText.includes('recurring') ||
-      bodyText.includes('auto-charge') ||
-      bodyText.includes('automatically charged');
-
-    expect(
-      renewalCopyVisible,
-      'Expected checkout to expose renewal / recurring billing copy before payment.'
-    ).toBe(true);
-
-    expect(page.url()).toContain('/checkout/');
+    test.skip(
+      outcome.status === 'skipped',
+      outcome.status === 'skipped' ? outcome.reason : ''
+    );
   });
 
   test('SC-61: Missing cardholder name is blocked before subscription activation', async ({ page }) => {
@@ -169,42 +175,19 @@ test.describe('Blocked Scenario Execution', () => {
       description: 'SC-61'
     });
 
-    await openCheckout(page);
-    await fillCardOnly(page, STRIPE_CARD);
+    const outcome = await runScenarioStep(
+      'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:missing-cardholder-name-blocked',
+      page
+    );
 
-    const nameInput = page.locator(
-      'input[name="billingName"], #billingName, input[name="name"]'
-    ).first();
-
-    if (await nameInput.isVisible().catch(() => false)) {
-      await nameInput.fill('');
+    if (outcome.status === 'failed') {
+      throw outcome.error;
     }
 
-    await submitCheckout(page);
-
-    await expect
-      .poll(
-        async () => {
-          const bodyText = (
-            await page.locator('body').innerText()
-          ).toLowerCase();
-
-          return (
-            bodyText.includes('incomplete') ||
-            bodyText.includes('required') ||
-            bodyText.includes('invalid') ||
-            bodyText.includes('your card number is') ||
-            page.url().includes('/checkout/')
-          );
-        },
-        {
-          timeout: 30000,
-          message: 'Expected checkout to remain blocked without cardholder name.'
-        }
-      )
-      .toBe(true);
-
-    expect(page.url()).toContain('/checkout/');
+    test.skip(
+      outcome.status === 'skipped',
+      outcome.status === 'skipped' ? outcome.reason : ''
+    );
   });
 
   test('SC-62: Failed checkout keeps user without active paid subscription', async ({ page }) => {

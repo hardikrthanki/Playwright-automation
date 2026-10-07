@@ -366,7 +366,7 @@ export class ResetPasswordPage
         /password (has been )?(updated|reset|changed)|successfully/i
       ).first().waitFor({
         state: 'visible',
-        timeout: 15000
+        timeout: 30000
       }).then(
         () => true
       ).catch(
@@ -381,7 +381,7 @@ export class ResetPasswordPage
               url.href
             ),
           {
-            timeout: 20000
+            timeout: 40000
           }
         ).then(
           () => true

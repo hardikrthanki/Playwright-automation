@@ -1721,6 +1721,7 @@ async openPlanChangeCalculationPreview(
   }
 
   let actionButton;
+  let lookupAction: 'upgrade' | 'downgrade' | 'interval' = options.action;
 
   try {
     actionButton =
@@ -1750,6 +1751,22 @@ async openPlanChangeCalculationPreview(
     ) {
       actionButton =
         intervalSwitch;
+    } else if (
+      options.interval === 'annual'
+    ) {
+      // With the Annual toggle on, the app shows an "Upgrade" button on the
+      // user's own plan card; that is how a monthly plan is switched to
+      // annual ("switching to annual takes effect immediately").
+      try {
+        actionButton =
+          await this.findPlanActionButton(
+            options.targetPlan,
+            'upgrade'
+          );
+        lookupAction = 'upgrade';
+      } catch {
+        throw error;
+      }
     } else {
       throw error;
     }
@@ -1778,7 +1795,7 @@ async openPlanChangeCalculationPreview(
     const scopedButton =
       await this.findPlanActionButton(
         options.targetPlan,
-        options.action
+        lookupAction
       );
 
     await scopedButton.scrollIntoViewIfNeeded().catch(
@@ -1900,10 +1917,14 @@ async validatePlanChangeCalculationPreview(
     return;
   }
 
+  // The proration quote loads after the dialog title appears; give it time.
   await expect(
     dialog
   ).toContainText(
-    /prorat|charged|card on file|billing cycle|renews|new price|amount due/i
+    /prorat|charged|card on file|billing cycle|renews|new price|amount due/i,
+    {
+      timeout: 25000
+    }
   );
 
   await expect(

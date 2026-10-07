@@ -146,8 +146,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-014'],
     title: 'Successful monthly-to-annual change records subscription history',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires completed interval-change fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:subscription-history'
   },
   {
     id: 'SC-179',
@@ -170,8 +170,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-017'],
     title: 'Invoice PDF opens after monthly-to-annual change',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires completed interval-change invoice fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:invoice-pdf-opens'
   },
   {
     id: 'SC-182',
@@ -218,8 +218,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-023'],
     title: 'Browser refresh during interval change does not lose target annual plan',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable interval-change flow and refresh behavior.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:refresh-keeps-annual-target'
   },
   {
     id: 'SC-188',
@@ -290,8 +290,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-032'],
     title: 'Annual savings messaging is displayed accurately',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires final pricing/savings copy expectations.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:annual-savings-message'
   },
   {
     id: 'SC-197',
@@ -314,8 +314,8 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-M2A-035'],
     title: 'Monthly-to-annual change can be represented in AIR history',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires completed interval-change execution and AIR historical comparison run.'
+    status: 'automated',
+    automation: 'air:monthly-to-annual-history'
   },
   {
     id: 'SC-200',

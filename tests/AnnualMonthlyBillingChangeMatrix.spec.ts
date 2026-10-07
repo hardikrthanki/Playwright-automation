@@ -146,8 +146,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-014'],
     title: 'Annual-to-monthly change records subscription history',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires completed interval-change fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:subscription-history'
   },
   {
     id: 'SC-215',
@@ -170,8 +170,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-017'],
     title: 'Invoice or credit note PDF opens after annual-to-monthly change',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires completed interval-change invoice or credit-note fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:invoice-pdf-opens'
   },
   {
     id: 'SC-218',
@@ -218,8 +218,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-023'],
     title: 'Browser refresh during annual-to-monthly flow does not lose selected target monthly plan',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable interval-change flow and refresh behavior.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:refresh-keeps-monthly-target'
   },
   {
     id: 'SC-224',
@@ -290,8 +290,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-032'],
     title: 'Loss of annual savings message is displayed accurately',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires final pricing/savings copy expectations.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:loss-of-savings-message'
   },
   {
     id: 'SC-233',
@@ -314,8 +314,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-035'],
     title: 'Annual-to-monthly change is represented correctly in billing overview',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires completed interval-change fixture.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:overview-shows-scheduled-monthly'
   },
   {
     id: 'SC-236',
@@ -338,8 +338,8 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-038'],
     title: 'Annual-to-monthly change can be reported correctly in AIR history',
     priority: 'Low',
-    status: 'future',
-    dependency: 'Requires completed interval-change execution and AIR historical comparison run.'
+    status: 'automated',
+    automation: 'air:annual-to-monthly-history'
   },
   {
     id: 'SC-239',

@@ -1,44 +1,44 @@
 {
-  "generatedAt": "2026-10-06T11:32:25.752Z",
+  "generatedAt": "2026-10-07T09:44:45.635Z",
   "provenance": {
     "mode": "CURRENT_EXECUTION",
     "sourceArtifact": "test-results/results.json",
     "sourceFramework": "Playwright",
-    "generatedAt": "2026-10-06T11:32:25.345Z",
+    "generatedAt": "2026-10-07T09:44:45.277Z",
     "restoredFromHistory": false,
     "warning": ""
   },
   "sourceExecution": {
     "source": "json-reporter",
-    "total": 726,
-    "rawTestCount": 726,
-    "attempts": 726,
-    "passed": 451,
-    "failed": 12,
-    "skipped": 263,
+    "total": 720,
+    "rawTestCount": 720,
+    "attempts": 720,
+    "passed": 483,
+    "failed": 23,
+    "skipped": 214,
     "flaky": 0,
     "interrupted": 0,
     "statuses": {
-      "expected": 451,
-      "unexpected": 12,
-      "skipped": 263
+      "expected": 483,
+      "unexpected": 23,
+      "skipped": 214
     }
   },
   "airExecution": {
-    "total": 726,
-    "attempts": 726,
-    "passed": 451,
-    "failed": 12,
-    "skipped": 263,
+    "total": 720,
+    "attempts": 720,
+    "passed": 483,
+    "failed": 23,
+    "skipped": 214,
     "flaky": 0,
     "interrupted": 0,
     "retryCount": 0
   },
   "reconciliation": {
     "status": "PASS",
-    "sourceTotal": 726,
-    "expectedAirTotal": 726,
-    "airTotal": 726,
+    "sourceTotal": 720,
+    "expectedAirTotal": 720,
+    "airTotal": 720,
     "difference": 0
   },
   "duplicates": {
@@ -49,10 +49,10 @@
   },
   "orphanEvidence": [],
   "evidenceClassification": {
-    "perTestEvidence": 18,
+    "perTestEvidence": 33,
     "executionArtifacts": 2,
     "rawReports": 2,
-    "totalWithRawReports": 20,
+    "totalWithRawReports": 35,
     "rawReportsCountAsFailureEvidence": false
   },
   "invalidModuleReferences": [],
@@ -79,20 +79,44 @@
         "status": "Evidence Available"
       },
       {
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+        "testName": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardResearchPortfolio.spec.ts > Options Research and Portfolio Accounts > Manage accounts opens positions and every holdings tab",
+        "testName": "Options Research and Portfolio Accounts > Manage accounts opens positions and every holdings tab",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardPositionActions.spec.ts > Account and position prompts > Delete and disconnect confirmations can be cancelled",
+        "testName": "Account and position prompts > Delete and disconnect confirmations can be cancelled",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardPositionActions.spec.ts > Account and position prompts > Edit and delete position prompts can be cancelled",
+        "testName": "Account and position prompts > Edit and delete position prompts can be cancelled",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardDataChanges.spec.ts > Saved dashboard data > A position quantity can be saved and restored",
+        "testName": "Saved dashboard data > A position quantity can be saved and restored",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
         "testId": "chromium > DashboardAccountSurfaces.spec.ts > Signed-in account surfaces > Glossary search shows only matching terms",
         "testName": "Signed-in account surfaces > Glossary search shows only matching terms",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
-        "testName": "Academy depth > Academy tabs lesson completion progress strategy filters and glossary",
-        "evidenceCount": 2,
-        "status": "Evidence Available"
-      },
-      {
-        "testId": "chromium > AcademyDepth.spec.ts > Academy depth > Academy opens the next lesson without marking it complete",
-        "testName": "Academy depth > Academy opens the next lesson without marking it complete",
+        "testId": "chromium > forgotpassword.spec.ts > Disposable user resets password from the email link and signs in with the new password",
+        "testName": "Disposable user resets password from the email link and signs in with the new password",
         "evidenceCount": 2,
         "status": "Evidence Available"
       },
@@ -109,26 +133,68 @@
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > OverlayStrategistsTrialMatrix.spec.ts > Overlay Strategists Trial FRD Matrix > SC-09 - Card information is securely saved",
-        "testName": "Overlay Strategists Trial FRD Matrix > SC-09 - Card information is securely saved",
+        "testId": "chromium > NewSubscriptionPurchaseMatrix.spec.ts > New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
+        "testName": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
-        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-007 - With-card trial displays active trial and saved payment method in Billing",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-007 - With-card trial displays active trial and saved payment method in Billing",
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
         "evidenceCount": 1,
         "status": "Evidence Available"
       },
       {
-        "testId": "chromium > SubscriptionLifecycleE2EMatrix.spec.ts > Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
-        "testName": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-95 - Upgrade confirmation email is sent",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-95 - Upgrade confirmation email is sent",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-103 - Upgrade preserves billing customer and payment method",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-103 - Upgrade preserves billing customer and payment method",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > UpgradeSubscriptionMatrix.spec.ts > Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+        "testName": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-142 - Scheduled downgrade appears in subscription history",
+        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-142 - Scheduled downgrade appears in subscription history",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-147 - Double-clicking downgrade confirmation is idempotent",
+        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-147 - Double-clicking downgrade confirmation is idempotent",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SubscriptionCancellationMatrix.spec.ts > Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
+        "testName": "Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
         "evidenceCount": 1,
         "status": "Evidence Available"
       }
@@ -163,27 +229,67 @@
           },
           {
             "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Disposable user resets password from the email link and signs in with the new password",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-09 - Card information is securely saved",
+            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-95 - Upgrade confirmation email is sent",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Registration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -199,6 +305,11 @@
           {
             "type": "Module",
             "name": "Billing",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
             "detail": "Critical module risk is High."
           },
           {
@@ -229,27 +340,67 @@
           },
           {
             "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Disposable user resets password from the email link and signs in with the new password",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-09 - Card information is securely saved",
+            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-95 - Upgrade confirmation email is sent",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Registration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -265,6 +416,11 @@
           {
             "type": "Module",
             "name": "Billing",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Password",
             "detail": "Critical module risk is High."
           },
           {
@@ -295,27 +451,67 @@
           },
           {
             "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Prepared paid user can preview monthly and annual upgrade calculations",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Disposable user resets password from the email link and signs in with the new password",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
             "name": "Overlay Strategists Trial FRD Matrix > SC-03 - Broker account limit is one",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Overlay Strategists Trial FRD Matrix > SC-09 - Card information is securely saved",
+            "name": "New Subscription Purchase Use Case 2 Matrix > SC-75H - Payment receipt or subscription confirmation email is received after purchase",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Cancellation Use Case 7 Matrix > SC-275 - Card-backed trial can be cancelled before auto-renewal",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-90 - Successful upgrade keeps existing user data and portfolio data",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Failure",
-            "name": "Subscription Lifecycle E2E Matrix > LC-011 - No-card trial enforces broker integration limit without counting manual entry",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-92 - Successful upgrade records transaction history entry",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-93 - Successful upgrade creates invoice with correct prorated amount",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-95 - Upgrade confirmation email is sent",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-100 - Upgrade from monthly lower plan to monthly higher plan is handled correctly",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Upgrade Subscription Use Case 3 Matrix > SC-104 - Upgrade does not create duplicate active subscriptions",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Subscription Cancellation Use Case 7 Matrix > SC-262 - Cancellation confirmation email is sent",
             "detail": "Critical failure severity matched release rules."
           },
           {
             "type": "Business Journey",
             "name": "Registration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Authentication",
             "detail": "Critical journey status is Critical."
           },
           {
@@ -335,13 +531,18 @@
           },
           {
             "type": "Module",
+            "name": "Password",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
             "name": "Signup",
             "detail": "Critical module risk is High."
           }
         ]
       }
     ],
-    "warnings": 10,
-    "blockers": 12
+    "warnings": 16,
+    "blockers": 21
   }
 }

@@ -1,0 +1,51 @@
+Overlay Strategists with-card trial opens Stripe checkout with trial details
+Overlay Strategists with-card trial blocks missing Stripe card details
+Overlay Strategists with-card trial rejects declined Stripe card
+Stripe checkout displays renewal or auto-renewal copy before payment
+Missing cardholder name is blocked before subscription activation
+Successful monthly-to-annual change updates billing interval
+Successful monthly-to-annual change preserves same plan tier
+Successful monthly-to-annual change preserves entitlements
+Successful monthly-to-annual change records transaction history when charge exists
+Invoice or receipt shows correct annual amount after interval change
+Confirmation email is sent after monthly-to-annual change
+Double-clicking annual switch confirmation is idempotent
+Upgrade invoice PDF opens and matches plan change details
+Declined card during upgrade shows payment failure message
+Incomplete payment details during upgrade are blocked
+Upgrade retry after failed payment starts clean retry flow
+Downgrade with currency conversion displays correct amount and currency
+Downgrade can be reported correctly in AIR evidence and history
+Successful monthly-to-annual change records subscription history
+Invoice PDF opens after monthly-to-annual change
+Declined card during interval change shows payment failure
+Incomplete payment details during interval change are blocked
+Annual savings messaging is displayed accurately
+Monthly-to-annual change can be represented in AIR history
+Annual-to-monthly change records subscription history
+Invoice or credit note PDF opens after annual-to-monthly change
+Declined card during annual-to-monthly change shows payment failure
+Incomplete payment details during annual-to-monthly change are blocked
+Loss of annual savings message is displayed accurately
+Annual-to-monthly change is represented correctly in billing overview
+Annual-to-monthly change can be reported correctly in AIR history
+Cancellation reason is required before final cancellation
+Continue to cancellation shows final confirmation before destructive action
+Upgrade is blocked or clearly handled after subscription is scheduled to cancel
+Payment method update behavior is clear after cancellation is scheduled
+Subscription cancellation history entry is displayed
+Transaction history does not create an unexpected extra charge on cancellation
+Missing cancellation reason blocks final cancellation when required
+Cancellation feedback max length is handled safely
+Cancellation terms or policy link opens correctly
+Support contact is available during cancellation flow
+Cancellation state is represented in AIR historical intelligence
+Cancellation state is searchable in AIR
+No-card trial expiry downgrades user to free plan
+AIR records failed payment evidence when available
+AIR history highlights failed payment trend
+Refund failure or partial refund shows clear user/admin state
+Monthly-to-annual change preserves Stripe customer and payment method
+Monthly-to-annual change does not create duplicate active subscriptions
+No-card trial can be cancelled without payment method
+Monthly-to-annual billing change is immediate and uses prorated amount

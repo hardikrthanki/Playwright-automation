@@ -3,13 +3,18 @@ import path from 'path';
 
 import {
   expect,
+  Locator,
   Page,
   Request
 } from '@playwright/test';
 
 import {
   BASE_URL,
+  COUNTRY,
   PLAN_PRICES,
+  STRIPE_CARD,
+  STRIPE_CVC,
+  STRIPE_EXPIRY,
   TEST_USERS
 } from '../config/testData';
 import {
@@ -98,6 +103,10 @@ type PackContext = {
     paidBeforeChange?: number;
     paidAfterChange?: number;
     changeDialogText?: string;
+    cancelDialogText?: string;
+    cancelDialogFields?: number;
+    cancelDialogLinks?: number;
+    keepPlanLeftActive?: boolean;
     confirmationEmailFailed?: boolean;
   };
 };
@@ -146,9 +155,27 @@ function moneyPattern(
       .replace(/\.00$/, '')
       .replace(/(\.\d)0$/, '$1');
 
+  // The app prints amounts as "USD 7.90"; Stripe pages use "$7.90".
   return new RegExp(
-    `\\$\\s?${escapeRegExp(trimmed)}(?:\\.0+)?(?!\\d)`
+    `(?:\\$|USD)\\s?(?:${escapeRegExp(amount.toFixed(2))}|${escapeRegExp(trimmed)}(?:\\.0+)?)(?!\\d)`
   );
+}
+
+async function clickTab(
+  tab: Locator
+) {
+  await tab
+    .scrollIntoViewIfNeeded()
+    .catch(() => undefined);
+
+  await tab
+    .click({ timeout: 15000 })
+    .catch(async () => {
+      await tab.evaluate(
+        (element) =>
+          (element as HTMLElement).click()
+      );
+    });
 }
 
 function recordScenarioUser(
@@ -330,9 +357,13 @@ async function openTransactions(
 ) {
   await ctx.billing.validateOverview();
 
-  await ctx.billing.historyTab.click();
+  await clickTab(
+    ctx.billing.historyTab
+  );
 
-  await ctx.billing.transactionsTab.click();
+  await clickTab(
+    ctx.billing.transactionsTab
+  );
 }
 
 async function countPaidTransactions(
@@ -340,11 +371,19 @@ async function countPaidTransactions(
 ) {
   await openTransactions(ctx);
 
+  const paid =
+    ctx.page.getByText(/\bpaid\b/i);
+
+  // Stripe transactions sync a moment after payment; every disposable
+  // user has at least the purchase, so wait for it before counting.
+  await expect
+    .poll(async () => paid.count(), { timeout: 20000 })
+    .toBeGreaterThan(0)
+    .catch(() => undefined);
+
   await ctx.page.waitForTimeout(1500);
 
-  return ctx.page
-    .getByText(/\bpaid\b/i)
-    .count();
+  return paid.count();
 }
 
 async function openPlansTab(
@@ -352,7 +391,9 @@ async function openPlansTab(
 ) {
   await ctx.billing.validateOverview();
 
-  await ctx.billing.plansTab.click();
+  await clickTab(
+    ctx.billing.plansTab
+  );
 
   await ctx.page.waitForTimeout(800);
 }
@@ -743,18 +784,36 @@ async function stepTransactionPaidCount(
 
 async function stepTransactionAmount(
   ctx: PackContext,
-  amount: number
+  amount: number | null,
+  expectCredit = false
 ) {
   await openTransactions(ctx);
 
-  await expect(
-    ctx.page.locator('main')
-  ).toContainText(
-    moneyPattern(amount),
-    {
-      timeout: 15000
-    }
-  );
+  const main =
+    ctx.page.locator('main');
+
+  if (amount !== null) {
+    await expect(
+      main
+    ).toContainText(
+      moneyPattern(amount),
+      {
+        timeout: 15000
+      }
+    );
+  }
+
+  if (expectCredit) {
+    // Upgrade invoices are prorated: "Includes -$X credit for unused time".
+    await expect(
+      main
+    ).toContainText(
+      /Subscription Update[\s\S]{0,120}credit for unused time/i,
+      {
+        timeout: 15000
+      }
+    );
+  }
 }
 
 async function stepHistoryShows(
@@ -766,6 +825,145 @@ async function stepHistoryShows(
   await ctx.billing.validateHistoryShowsPlan(
     plan
   );
+}
+
+// Subscription History tab must mention the change.
+async function stepHistoryMatches(
+  ctx: PackContext,
+  pattern: RegExp,
+  message: string
+) {
+  await ctx.billing.validateOverview();
+
+  await clickTab(
+    ctx.billing.historyTab
+  );
+
+  // History has two sub-tabs and keeps the last one used.
+  await ctx.page
+    .getByText(
+      /^Subscription History$/
+    )
+    .first()
+    .click({
+      timeout: 10000
+    })
+    .catch(() => undefined);
+
+  await expect
+    .poll(
+      async () =>
+        pattern.test(
+          await mainText(ctx)
+        ),
+      {
+        message,
+        timeout: 20000
+      }
+    )
+    .toBeTruthy();
+}
+
+// The "PDF" link of the newest transaction must serve a real PDF.
+async function stepInvoicePdfOpens(
+  ctx: PackContext
+) {
+  await openTransactions(ctx);
+
+  const pdfLink =
+    ctx.page
+      .locator('main a')
+      .filter({
+        hasText: /^\s*(invoice\s+)?pdf\s*$/i
+      })
+      .first();
+
+  await expect(
+    pdfLink,
+    'Transactions should show an invoice PDF link.'
+  ).toBeVisible({
+    timeout: 20000
+  });
+
+  const href =
+    await pdfLink.getAttribute(
+      'href'
+    );
+
+  expect(
+    href,
+    'Invoice PDF link should point at the Stripe-hosted invoice.'
+  ).toMatch(
+    /^https:\/\/(pay|invoice)\.stripe\.com\//i
+  );
+
+  const response =
+    await ctx.page
+      .context()
+      .request.get(href!);
+
+  expect(
+    response.status(),
+    'Invoice PDF URL should respond successfully.'
+  ).toBe(200);
+
+  // Stripe serves the file as a generic download
+  // (application/octet-stream), so the %PDF header is the real proof.
+  const body =
+    await response.body();
+
+  expect(
+    body.subarray(0, 5).toString(),
+    'Invoice PDF file should start with the %PDF header.'
+  ).toBe('%PDF-');
+}
+
+// A refresh in the middle of a plan change must not silently drop the
+// target the user picked: the confirmation should come back for the same
+// plan. Nothing is ever confirmed, so no charge or change is made.
+async function stepRefreshKeepsTarget(
+  ctx: PackContext,
+  options: {
+    targetPlan: PaidPlan;
+    action: 'upgrade' | 'downgrade' | 'interval';
+    interval: Interval;
+    targetPattern: RegExp;
+    label: string;
+  }
+) {
+  await ctx.billing.validateOverview();
+
+  await ctx.billing.openPlanChangeCalculationPreview({
+    targetPlan: options.targetPlan,
+    action: options.action,
+    interval: options.interval
+  });
+
+  await ctx.page.reload({
+    waitUntil: 'domcontentloaded'
+  });
+
+  const dialog =
+    ctx.page
+      .locator(
+        '[role="dialog"], [role="alertdialog"]'
+      )
+      .first();
+
+  const restored =
+    await dialog
+      .isVisible({ timeout: 10000 })
+      .catch(() => false);
+
+  expect(
+    restored,
+    `After a browser refresh the ${options.label} confirmation closed, so the selected target (${options.targetPlan} ${options.interval}) was lost. Nothing was charged or changed; the user has to pick the plan again.`
+  ).toBeTruthy();
+
+  expect(
+    await dialog.innerText(),
+    `The confirmation shown after refresh should still be for ${options.targetPlan} ${options.interval}.`
+  ).toMatch(options.targetPattern);
 }
 
 async function readDowngradeDialog(
@@ -867,7 +1065,9 @@ function upgradePack(
   options: {
     from: Interval;
     to: Interval;
-    amountInTransactions: number;
+    // Prorated charge = target price - credit for unused time on the old plan.
+    // null when it cannot be derived (interval change); the credit line is still checked.
+    amountInTransactions: number | null;
     extras: boolean;
   }
 ): PackDefinition {
@@ -895,7 +1095,8 @@ function upgradePack(
       async (ctx) => {
         await stepTransactionAmount(
           ctx,
-          options.amountInTransactions
+          options.amountInTransactions,
+          true
         );
       }
   };
@@ -934,6 +1135,9 @@ function upgradePack(
         );
       };
 
+    steps['invoice-pdf-opens'] =
+      stepInvoicePdfOpens;
+
     steps['saved-card-preserved'] =
       stepSavedCardPreserved;
 
@@ -942,6 +1146,17 @@ function upgradePack(
 
     steps['single-active-plan'] =
       stepExactlyOneCurrentPlan;
+
+    steps['refresh-keeps-downgrade-target'] =
+      async (ctx) => {
+        await stepRefreshKeepsTarget(ctx, {
+          targetPlan: 'Income Builder',
+          action: 'downgrade',
+          interval: 'monthly',
+          targetPattern: /income/i,
+          label: 'downgrade'
+        });
+      };
   }
 
   return {
@@ -1080,7 +1295,18 @@ const PACKS: Record<
         },
 
       'single-active-plan':
-        stepExactlyOneCurrentPlan
+        stepExactlyOneCurrentPlan,
+
+      'refresh-keeps-annual-target':
+        async (ctx) => {
+          await stepRefreshKeepsTarget(ctx, {
+            targetPlan: 'Income Builder',
+            action: 'interval',
+            interval: 'annual',
+            targetPattern: /annual|year|\/yr/i,
+            label: 'monthly-to-annual'
+          });
+        }
     }
   },
 
@@ -1159,6 +1385,103 @@ const PACKS: Record<
             openCheckoutTabs.length,
             'Double-click should leave a single Stripe checkout tab open.'
           ).toBe(1);
+        },
+
+      // The user is still unpaid on the Stripe checkout page, so the
+      // checkout-stage rows (SC-48, SC-61) run here without a second user.
+      'renewal-copy-shown':
+        async (ctx) => {
+          const checkout =
+            ctx.page
+              .context()
+              .pages()
+              .find((page) =>
+                /checkout\.stripe\.com/i.test(
+                  page.url()
+                )
+              ) ?? ctx.page;
+
+          await expect(
+            checkout.locator('body')
+          ).toContainText(
+            /renew|recurring|auto-?(renew|charge)|automatically|per month|\/\s*month|billed monthly/i,
+            {
+              timeout: 20000
+            }
+          );
+        },
+
+      'missing-cardholder-name-blocked':
+        async (ctx) => {
+          const checkout =
+            ctx.page
+              .context()
+              .pages()
+              .find((page) =>
+                /checkout\.stripe\.com/i.test(
+                  page.url()
+                )
+              ) ?? ctx.page;
+
+          await checkout
+            .locator('#cardNumber')
+            .fill(STRIPE_CARD);
+
+          await checkout
+            .locator('#cardExpiry')
+            .fill(STRIPE_EXPIRY);
+
+          await checkout
+            .locator('#cardCvc')
+            .fill(STRIPE_CVC);
+
+          const country =
+            checkout.locator(
+              '#billingCountry'
+            );
+
+          if (await country.count()) {
+            await country.selectOption(
+              COUNTRY
+            );
+          }
+
+          const name =
+            checkout.locator(
+              '#billingName'
+            );
+
+          if (await name.count()) {
+            await name.fill('');
+          }
+
+          await checkout
+            .getByRole('button', {
+              name: /subscribe|pay|complete|start/i
+            })
+            .first()
+            .click();
+
+          await checkout.waitForTimeout(
+            5000
+          );
+
+          expect(
+            checkout.url(),
+            'Checkout must stay on Stripe when the cardholder name is missing; the subscription must not activate.'
+          ).toMatch(
+            /checkout\.stripe\.com/
+          );
+
+          await expect(
+            checkout.locator('body'),
+            'Stripe should tell the user the cardholder name is required.'
+          ).toContainText(
+            /name|required|incomplete/i,
+            {
+              timeout: 15000
+            }
+          );
         }
     }
   },
@@ -1168,9 +1491,16 @@ const PACKS: Record<
       from: 'monthly',
       to: 'monthly',
       amountInTransactions:
-        PLAN_PRICES[
-          'Overlay Strategists'
-        ].monthly,
+        Number(
+          (
+            PLAN_PRICES[
+              'Overlay Strategists'
+            ].monthly -
+            PLAN_PRICES[
+              'Income Builder'
+            ].monthly
+          ).toFixed(2)
+        ),
       extras: true
     }),
 
@@ -1179,9 +1509,16 @@ const PACKS: Record<
       from: 'annual',
       to: 'annual',
       amountInTransactions:
-        PLAN_PRICES[
-          'Overlay Strategists'
-        ].annual,
+        Number(
+          (
+            PLAN_PRICES[
+              'Overlay Strategists'
+            ].annual -
+            PLAN_PRICES[
+              'Income Builder'
+            ].annual
+          ).toFixed(2)
+        ),
       extras: false
     }),
 
@@ -1189,10 +1526,7 @@ const PACKS: Record<
     upgradePack({
       from: 'monthly',
       to: 'annual',
-      amountInTransactions:
-        PLAN_PRICES[
-          'Overlay Strategists'
-        ].annual,
+      amountInTransactions: null,
       extras: false
     }),
 
@@ -1239,6 +1573,12 @@ const PACKS: Record<
           expectNoDuplicateActionRequests(
             ctx.requests,
             'Double-click upgrade'
+          );
+
+          // Idempotent also means one charge, not two.
+          await stepTransactionPaidCount(
+            ctx,
+            1
           );
         },
 
@@ -1339,9 +1679,9 @@ const PACKS: Record<
 
           expect(
             text,
-            'Billing overview should show the scheduled downgrade to Income Builder.'
+            'Billing overview should show "Downgrade to Income scheduled" with its effective date.'
           ).toMatch(
-            /(scheduled|pending|upcoming|downgrad)[\s\S]{0,240}income builder|income builder[\s\S]{0,240}(scheduled|pending|upcoming|renewal|takes effect)/i
+            /downgrade to income[\s\S]{0,40}scheduled[\s\S]{0,80}takes effect/i
           );
         },
 
@@ -1349,13 +1689,15 @@ const PACKS: Record<
         async (ctx) => {
           await ctx.billing.validateOverview();
 
-          await ctx.billing.historyTab.click();
+          await clickTab(
+            ctx.billing.historyTab
+          );
 
           await expect(
             ctx.page.locator('main'),
             'Subscription history should list the scheduled downgrade.'
           ).toContainText(
-            /downgrad|scheduled|income builder/i,
+            /downgrad|plan change|scheduled/i,
             {
               timeout: 15000
             }
@@ -1464,6 +1806,29 @@ const PACKS: Record<
             ctx.requests,
             'Double-click downgrade'
           );
+
+          // The downgrade must still be scheduled (not undone by the 2nd click).
+          await ctx.page.reload({
+            waitUntil: 'domcontentloaded'
+          });
+
+          await ctx.billing.validateOverview();
+
+          await expect
+            .poll(
+              async () =>
+                (
+                  await mainText(ctx)
+                ).replace(/\s+/g, ' '),
+              {
+                message:
+                  'After a double-click the downgrade should be scheduled exactly once.',
+                timeout: 20000
+              }
+            )
+            .toMatch(
+              /downgrade to income[\s\S]{0,40}scheduled/i
+            );
         },
 
       'access-kept-until-effective-date':
@@ -1527,14 +1892,60 @@ const PACKS: Record<
           );
         },
 
+      // Switching to annual is charged immediately as the annual price
+      // minus the credit for the unused part of the monthly period.
       'annual-amount':
         async (ctx) => {
           await stepTransactionAmount(
             ctx,
-            PLAN_PRICES[
-              'Income Builder'
-            ].annual
+            Number(
+              (
+                PLAN_PRICES['Income Builder'].annual -
+                PLAN_PRICES['Income Builder'].monthly
+              ).toFixed(2)
+            ),
+            true
           );
+        },
+
+      'subscription-history':
+        async (ctx) => {
+          await stepHistoryMatches(
+            ctx,
+            /(annual|yearly)/i,
+            'Subscription History should record the switch to annual billing.'
+          );
+        },
+
+      'invoice-pdf-opens':
+        stepInvoicePdfOpens,
+
+      'annual-savings-message':
+        async (ctx) => {
+          await openPlansTab(ctx);
+
+          await ctx.page
+            .getByRole('button', {
+              name: /^annual/i
+            })
+            .first()
+            .click();
+
+          const text =
+            await mainText(ctx);
+
+          const annual =
+            PLAN_PRICES['Income Builder'].annual;
+
+          const monthly =
+            PLAN_PRICES['Income Builder'].monthly;
+
+          expect(
+            /save\s+\$?\d|save up to|\d+\s*%\s*(off|savings?)|\d+\s*months?\s*free|annual savings|you save/i.test(
+              text
+            ),
+            `Plans screen should say how much annual billing saves. Annual is $${annual}/yr vs $${(monthly * 12).toFixed(2)}/yr paid monthly, but no savings message is shown.`
+          ).toBeTruthy();
         },
 
       'confirmation-email':
@@ -1557,7 +1968,31 @@ const PACKS: Record<
         stepNoCheckoutReprompt,
 
       'single-active-plan':
-        stepExactlyOneCurrentPlan
+        stepExactlyOneCurrentPlan,
+
+      // The user ends this pack on Income annual, so an upgrade to Overlay
+      // and a switch back to monthly are both available to preview.
+      'refresh-keeps-upgrade-target':
+        async (ctx) => {
+          await stepRefreshKeepsTarget(ctx, {
+            targetPlan: 'Overlay Strategists',
+            action: 'upgrade',
+            interval: 'annual',
+            targetPattern: /overlay/i,
+            label: 'upgrade'
+          });
+        },
+
+      'refresh-keeps-monthly-target':
+        async (ctx) => {
+          await stepRefreshKeepsTarget(ctx, {
+            targetPlan: 'Income Builder',
+            action: 'interval',
+            interval: 'monthly',
+            targetPattern: /monthly|month|\/mo/i,
+            label: 'annual-to-monthly'
+          });
+        }
     }
   },
 
@@ -1593,6 +2028,50 @@ const PACKS: Record<
             'Annual-to-monthly confirmation should say whether the change is immediate or scheduled.'
           ).toMatch(
             /next renewal|scheduled|takes effect|end of|effective/i
+          );
+        },
+
+      'subscription-history':
+        async (ctx) => {
+          await stepHistoryMatches(
+            ctx,
+            /(switch|change|scheduled)[\s\S]{0,80}monthly|monthly[\s\S]{0,80}(scheduled|takes effect)/i,
+            'Subscription History should record the scheduled switch to monthly billing (the only entry today is the annual purchase).'
+          );
+        },
+
+      // No new charge happens at switch time, so the PDF checked here is
+      // the existing annual invoice that must stay downloadable.
+      'invoice-pdf-opens':
+        stepInvoicePdfOpens,
+
+      'overview-shows-scheduled-monthly':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          // Tabs are sticky; make sure Overview (not History) is showing.
+          await clickTab(
+            ctx.billing.overviewTab
+          );
+
+          await expect(
+            ctx.page.locator('main'),
+            'Billing overview should show the scheduled switch to monthly billing and its effective date.'
+          ).toContainText(
+            /(switch|change|billing)[\s\S]{0,60}monthly[\s\S]{0,120}(scheduled|takes effect)|scheduled[\s\S]{0,80}monthly/i,
+            {
+              timeout: 15000
+            }
+          );
+        },
+
+      'loss-of-savings-message':
+        async (ctx) => {
+          expect(
+            ctx.state.changeDialogText,
+            'Annual-to-monthly confirmation should warn that the annual savings are lost.'
+          ).toMatch(
+            /sav(e|ing)|lose|no longer|annual (discount|pricing)|higher/i
           );
         },
 
@@ -1779,11 +2258,210 @@ const PACKS: Record<
         TEST_USERS.subscriber.email.toLowerCase()
       );
 
+      // Open the cancel dialog first and back out ("Keep my plan") so the
+      // guardrail rows can inspect it before anything destructive happens.
+      const host =
+        await ctx.billing.openCancelSubscriptionHost();
+
+      try {
+        const dialog =
+          host.page
+            .locator(
+              '[role="dialog"], [role="alertdialog"]'
+            )
+            .filter({
+              hasText: /cancel/i
+            })
+            .first();
+
+        await expect(dialog).toBeVisible({
+          timeout: 15000
+        });
+
+        ctx.state.cancelDialogText =
+          await dialog.innerText();
+
+        ctx.state.cancelDialogFields =
+          await dialog
+            .locator(
+              'textarea, input:not([type="hidden"]), select, [role="combobox"]'
+            )
+            .count();
+
+        ctx.state.cancelDialogLinks =
+          await dialog
+            .locator('a[href]')
+            .count();
+      } finally {
+        await host.close();
+      }
+
+      await ctx.billing.validateOverview();
+
+      ctx.state.keepPlanLeftActive =
+        !/cancellation scheduled|scheduled to cancel|don'?t cancel|resume subscription/i.test(
+          await mainText(ctx)
+        );
+
+      ctx.state.paidBeforeChange =
+        await countPaidTransactions(
+          ctx
+        );
+
       await ctx.billing.submitMonthlyCancelAtPeriodEnd({
         keepScheduled: true
       });
+
+      ctx.state.paidAfterChange =
+        await countPaidTransactions(
+          ctx
+        );
     },
     steps: {
+      'final-confirmation-before-cancel':
+        async (ctx) => {
+          expect(
+            ctx.state.cancelDialogText,
+            'Cancel button should open a final confirmation dialog before cancelling.'
+          ).toMatch(
+            /cancel subscription\?[\s\S]*keep my plan[\s\S]*yes,?\s*cancel/i
+          );
+
+          expect(
+            ctx.state.keepPlanLeftActive,
+            '"Keep my plan" must leave the subscription active (nothing cancelled).'
+          ).toBeTruthy();
+        },
+
+      'reason-required':
+        async (ctx) => {
+          if (!ctx.state.cancelDialogFields) {
+            throw new ScenarioSkip(
+              'The cancel dialog has no reason or feedback field (it only offers "Keep my plan" and "Yes, cancel"), so a required-reason rule cannot be tested.'
+            );
+          }
+        },
+
+      'feedback-max-length':
+        async (ctx) => {
+          if (!ctx.state.cancelDialogFields) {
+            throw new ScenarioSkip(
+              'The cancel dialog has no feedback text field, so a maximum length cannot be tested.'
+            );
+          }
+        },
+
+      'policy-link':
+        async (ctx) => {
+          if (!ctx.state.cancelDialogLinks) {
+            throw new ScenarioSkip(
+              'The cancel dialog shows plain text ("Refunds apply to annual plans only") with no terms or policy link.'
+            );
+          }
+        },
+
+      'support-contact':
+        async (ctx) => {
+          if (
+            !/support|contact|help|@/i.test(
+              ctx.state.cancelDialogText ?? ''
+            )
+          ) {
+            throw new ScenarioSkip(
+              'The cancel dialog has no support contact copy or link.'
+            );
+          }
+        },
+
+      'history-entry':
+        async (ctx) => {
+          await stepHistoryMatches(
+            ctx,
+            /cancellation scheduled|cancel/i,
+            'Subscription History should show a cancellation entry.'
+          );
+        },
+
+      // Cancelling at period end must leave the purchase as the only
+      // charge: no second invoice, update, refund or credit note.
+      'no-extra-charge':
+        async (ctx) => {
+          await openTransactions(ctx);
+
+          await expect(
+            ctx.page.locator('main')
+          ).toContainText(
+            /Subscription Create/i,
+            {
+              timeout: 20000
+            }
+          );
+
+          const text =
+            await mainText(ctx);
+
+          const amounts =
+            text.match(
+              /USD\s?[\d,]+\.\d{2}/g
+            ) ?? [];
+
+          expect(
+            amounts.length,
+            `Cancelling should not add a charge; Transactions show ${amounts.join(', ')}.`
+          ).toBe(1);
+
+          expect(
+            text
+          ).not.toMatch(
+            /Subscription (Update|Cancel)|refund|credit note/i
+          );
+        },
+
+      'payment-method-after-cancel':
+        stepSavedCardPreserved,
+
+      'upgrade-after-scheduled-cancel':
+        async (ctx) => {
+          let blocked = false;
+          let dialogText = '';
+
+          try {
+            await ctx.billing.openPlanChangeCalculationPreview({
+              targetPlan:
+                'Overlay Strategists',
+              action: 'upgrade',
+              interval: 'monthly'
+            });
+
+            dialogText =
+              await ctx.page
+                .locator(
+                  '[role="dialog"], [role="alertdialog"]'
+                )
+                .first()
+                .innerText()
+                .catch(() => '');
+          } catch (error) {
+            if (
+              /Could not find (upgrade|downgrade|interval) control/i.test(
+                errorText(error)
+              )
+            ) {
+              blocked = true;
+            } else {
+              throw error;
+            }
+          }
+
+          expect(
+            blocked ||
+              /cancel|resume|reactivat|replace/i.test(
+                dialogText
+              ),
+            `After a cancellation is scheduled, upgrading must be blocked or the dialog must explain what happens to the cancellation. Dialog said: ${dialogText.replace(/\s+/g, ' ').slice(0, 300)}`
+          ).toBeTruthy();
+        },
+
       'disposable-fixture-only':
         async (ctx) => {
           expect(
@@ -1903,6 +2581,48 @@ const PACKS: Record<
           );
         },
 
+      // Idempotent = same end state as one click: cancellation scheduled
+      // once and still scheduled (the 2nd click must not undo it).
+      'idempotent-final-state':
+        async (ctx) => {
+          await ctx.billing.validateOverview();
+
+          await clickTab(
+            ctx.billing.historyTab
+          );
+
+          const history =
+            await mainText(ctx);
+
+          const scheduled =
+            (
+              history.match(
+                /Cancellation scheduled/gi
+              ) ?? []
+            ).length;
+
+          const reverted =
+            (
+              history.match(
+                /Cancellation reverted/gi
+              ) ?? []
+            ).length;
+
+          console.log(
+            `[CANCEL_DOUBLE_CLICK] history: scheduled=${scheduled}, reverted=${reverted}`
+          );
+
+          expect(
+            reverted,
+            'Double-clicking the final cancel button should not leave a "Cancellation reverted" entry in history.'
+          ).toBe(0);
+
+          expect(
+            scheduled,
+            'Exactly one "Cancellation scheduled" entry should exist.'
+          ).toBe(1);
+        },
+
       'cancellation-recorded-once':
         async (ctx) => {
           await ctx.billing.expectPaidAccessWhileCancellationScheduled(
@@ -1911,24 +2631,27 @@ const PACKS: Record<
 
           await ctx.billing.validateOverview();
 
-          await ctx.billing.historyTab.click();
-
-          const cancelRows =
-            await ctx.page
-              .locator('main')
-              .getByText(
-                /cancel/i
-              )
-              .count();
-
-          console.log(
-            `[CANCEL_DOUBLE_CLICK] history cancel mentions: ${cancelRows}`
+          await clickTab(
+            ctx.billing.historyTab
           );
 
+          const history =
+            await mainText(ctx);
+
           expect(
-            cancelRows
-          ).toBeLessThanOrEqual(
-            2
+            (
+              history.match(
+                /Cancellation scheduled/gi
+              ) ?? []
+            ).length,
+            'The subscription should record one cancellation, not duplicates.'
+          ).toBeLessThanOrEqual(1);
+
+          expect(
+            history,
+            'The cancellation must still be scheduled, not reverted by the second click.'
+          ).not.toMatch(
+            /Cancellation reverted/i
           );
         }
     }

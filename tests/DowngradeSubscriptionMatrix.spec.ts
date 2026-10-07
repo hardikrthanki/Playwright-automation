@@ -314,8 +314,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-036'],
     title: 'Browser refresh during downgrade confirmation does not lose selected target plan',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable downgrade flow and refresh behavior.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:refresh-keeps-downgrade-target'
   },
   {
     id: 'SC-149',
@@ -442,8 +442,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-052'],
     title: 'Downgrade can be reported correctly in AIR evidence and history',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires completed downgrade execution fixture and AIR historical comparison run.'
+    status: 'automated',
+    automation: 'air:downgrade-history'
   }
 ];
 

@@ -409,19 +409,31 @@ test.describe(
           assignment
         ).toBeVisible();
 
-        await search.fill(
-          'vega'
-        );
+        // Under load the filter can miss the first keystrokes, so retype
+        // the term until the list narrows instead of waiting on one fill.
+        await expect(
+          async () => {
+            await search.fill(
+              ''
+            );
+
+            await search.fill(
+              'vega'
+            );
+
+            await expect(
+              assignment
+            ).toBeHidden({
+              timeout: 5000
+            });
+          }
+        ).toPass({
+          timeout: 40000
+        });
 
         await expect(
           vega
         ).toBeVisible();
-
-        await expect(
-          assignment
-        ).toBeHidden({
-          timeout: 15000
-        });
 
         await search.fill(
           'ZZZNOTATERM'

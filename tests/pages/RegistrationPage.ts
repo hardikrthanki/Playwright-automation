@@ -296,7 +296,7 @@ extends BasePage {
         'input[placeholder*="one-time" i]',
         'input[placeholder*="verification" i]',
         'input[placeholder*="code" i]:not([type="tel"])',
-        'input[maxlength="6"]',
+        'input[maxlength="6"], input[maxlength="8"]',
         'input[inputmode="numeric"]:not([type="tel"]):not([autocomplete="tel"]):not([autocomplete="tel-national"]):not([name*="mobile" i]):not([name*="phone" i])'
       ].join(', ')
     ).or(
@@ -735,9 +735,11 @@ extends BasePage {
         rateLimitWaits += 1;
 
         const pauseMs =
+          // The server says how long to wait ("Try again in 438s"). Honour it
+          // (up to 8 min) instead of retrying early and failing again.
           Math.min(
             waitSeconds + 5,
-            90
+            480
           ) * 1000;
 
         const replacement =

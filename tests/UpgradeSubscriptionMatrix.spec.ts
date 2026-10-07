@@ -178,8 +178,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-019'],
     title: 'Upgrade invoice PDF opens and matches plan change details',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires post-upgrade invoice PDF fixture and PDF content validation.'
+    status: 'automated',
+    automation: 'scenario:UPGRADE_INCOME_MONTHLY_TO_OVERLAY_MONTHLY:invoice-pdf-opens'
   },
   {
     id: 'SC-95',
@@ -274,8 +274,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-031'],
     title: 'Browser refresh during upgrade flow does not lose selected target plan',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires stable upgrade flow session and refresh behavior.'
+    status: 'automated',
+    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:refresh-keeps-upgrade-target'
   },
   {
     id: 'SC-107',

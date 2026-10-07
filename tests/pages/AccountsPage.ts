@@ -88,11 +88,19 @@ export class AccountsPage
       /invested/i,
       /current value/i,
       /unrealized/i,
-      /cash balance/i
+      // The column header is "Cash" (it used to read "Cash balance").
+      /^cash( balance)?$/i
     ]) {
       await expect(
-        this.page.getByText(
-          label
+        this.page.getByRole(
+          'columnheader',
+          {
+            name: label
+          }
+        ).or(
+          this.page.getByText(
+            label
+          )
         ).first()
       ).toBeVisible();
     }

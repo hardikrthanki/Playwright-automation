@@ -46,6 +46,9 @@ import {
   runScenarioStep
 } from './subscriptionScenarioPacks';
 import {
+  runAirCheck
+} from './airChecks';
+import {
   validateNoCardTrialFollowThrough
 } from './noCardTrialChecks';
 import {
@@ -107,11 +110,13 @@ export type StripeMatrixCoverageKey =
   | 'current-plan-before-upgrade'
   | 'air-traceability'
   | 'blocked-scenario'
+  | `air:${string}`
   | `scenario:${string}:${string}`;
 
 type StaticCoverageKey = Exclude<
   StripeMatrixCoverageKey,
-  `scenario:${string}:${string}`
+  | `scenario:${string}:${string}`
+  | `air:${string}`
 >;
 
 type CoverageOutcome =
@@ -259,6 +264,17 @@ export function inferStripeMatrixCoverageKey(
 
   if (scenarioMatch) {
     return `scenario:${scenarioMatch[1]}:${scenarioMatch[2]}`;
+  }
+
+  const airMatch =
+    (automation ?? '')
+      .trim()
+      .match(
+        /^air:([a-z0-9-]+)$/
+      );
+
+  if (airMatch) {
+    return `air:${airMatch[1]}`;
   }
 
   if (
@@ -2119,7 +2135,8 @@ function coverageNeedsPage(
   return key !==
     'air-traceability' &&
     key !==
-    'blocked-scenario';
+    'blocked-scenario' &&
+    !key.startsWith('air:');
 }
 
 async function runCoverageKey(
@@ -2144,7 +2161,12 @@ async function runCoverageKey(
 
   try {
     const executor =
-      isScenarioCoverageKey(key)
+      key.startsWith('air:')
+        ? async () =>
+            runAirCheck(
+              key.slice(4)
+            )
+        : isScenarioCoverageKey(key)
         ? (scenarioPage: Page) =>
             executeScenarioStep(
               key,

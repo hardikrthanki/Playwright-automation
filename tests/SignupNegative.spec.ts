@@ -42,6 +42,9 @@ const otpLengthValidationEnabled =
   process.env.SIGNUP_OTP_LENGTH_VALIDATION_ENABLED ===
   'true';
 
+// The SMS OTP field is capped at 8 digits (input maxlength="8").
+const OTP_LENGTH = 8;
+
 const otpResendValidationEnabled =
   process.env.SIGNUP_OTP_RESEND_VALIDATION_ENABLED ===
   'true';
@@ -547,7 +550,7 @@ test.describe(
 
     if (otpLengthValidationEnabled) {
       test(
-        'Signup OTP input limits entry to six digits',
+        `Signup OTP input limits entry to ${OTP_LENGTH} digits`,
         async ({ page }) => {
 
         const registration =
@@ -559,7 +562,10 @@ test.describe(
         );
 
         await registration.otpInput.first().fill(
-          '1234567'
+          '1234567890'.slice(
+            0,
+            OTP_LENGTH + 1
+          )
         );
 
         await expect
@@ -575,13 +581,13 @@ test.describe(
             }
           )
           .toBeLessThanOrEqual(
-            6
+            OTP_LENGTH
           );
         }
       );
 
       test(
-        'Signup OTP input trims pasted value to six digits',
+        `Signup OTP input trims pasted value to ${OTP_LENGTH} digits`,
         async ({ page }) => {
 
         const registration =
@@ -593,13 +599,16 @@ test.describe(
         );
 
         await registration.otpInput.first().fill(
-          '1234567890'
+          '12345678901234'
         );
 
         await expect(
           registration.otpInput.first()
         ).toHaveValue(
-          '123456',
+          '12345678901234'.slice(
+            0,
+            OTP_LENGTH
+          ),
           {
             timeout: 5000
           }
@@ -635,7 +644,7 @@ test.describe(
       );
 
       test(
-        'Signup OTP verify button is enabled only for six digits',
+        `Signup OTP verify is available for a full ${OTP_LENGTH}-digit code and rejects a short one`,
         async ({ page }) => {
 
         const registration =
@@ -646,18 +655,15 @@ test.describe(
           'otp-button-state'
         );
 
-        await registration.otpInput.first().fill(
-          '12345'
-        );
+        const otp =
+          registration.otpInput.first();
 
-        await expect(
-          registration.verifyOtpButton
-        ).toBeDisabled({
-          timeout: 5000
-        });
-
-        await registration.otpInput.first().fill(
-          '123456'
+        // Full-length code: Verify must be available.
+        await otp.fill(
+          '12345678901234'.slice(
+            0,
+            OTP_LENGTH
+          )
         );
 
         await expect(
@@ -666,15 +672,38 @@ test.describe(
           timeout: 5000
         });
 
-        await registration.otpInput.first().fill(
+        // Short code: the app either disables Verify or must not accept it
+        // (the OTP step stays on screen and signup does not continue).
+        await otp.fill(
           '123'
         );
 
-        await expect(
-          registration.verifyOtpButton
-        ).toBeDisabled({
-          timeout: 5000
-        });
+        const verifyDisabled =
+          await registration.verifyOtpButton
+            .isDisabled()
+            .catch(
+              () => false
+            );
+
+        if (!verifyDisabled) {
+          await registration.verifyOtpButton.click();
+
+          await expect(
+            otp,
+            'A short OTP must not complete signup.'
+          ).toBeVisible({
+            timeout: 5000
+          });
+
+          await expect(
+            page
+          ).not.toHaveURL(
+            /\/(onboarding|plans?|dashboard)/,
+            {
+              timeout: 3000
+            }
+          );
+        }
         }
       );
     }

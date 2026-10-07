@@ -427,16 +427,16 @@ const dunningScenarios: DunningScenario[] = [
     sourceIds: ['SUB-DUN-049'],
     title: 'AIR records failed payment evidence when available',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires failed payment execution artifacts in AIR.'
+    status: 'automated',
+    automation: 'air:failed-payment-evidence'
   },
   {
     id: 'SC-350',
     sourceIds: ['SUB-DUN-050'],
     title: 'AIR history highlights failed payment trend',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires historical failed payment executions.'
+    status: 'automated',
+    automation: 'air:failed-payment-trend'
   },
   {
     id: 'SC-351',
