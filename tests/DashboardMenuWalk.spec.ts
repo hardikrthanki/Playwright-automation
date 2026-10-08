@@ -344,49 +344,57 @@ test.describe(
         await openMenuItem(
           page,
           /^portfolio$/i,
-          /^portfolio$/i,
-          'Portfolio'
+          // The Portfolio menu now lists "Positions" where it used to list
+          // "Portfolio"; accept either so the walk follows the live label.
+          /^(?:portfolio|positions)$/i,
+          'Positions'
         );
 
-        const show =
+        // The Positions page is now a grid (no Show button, Manual tab, or
+        // page numbers). Sort every column from its header and switch between
+        // the saved views, then return to the default view.
+        await expect(
           page.getByRole(
-            'button',
+            'heading',
             {
-              name: /^show$/i
+              name: /^positions$/i
             }
+          )
+        ).toBeVisible({
+          timeout: 20000
+        });
+
+        const grid =
+          page.getByRole(
+            'grid'
           );
 
-        if (
-          await show.waitFor({
-            state: 'visible',
-            timeout: 5000
-          }).then(
-            () => true
-          ).catch(
-            () => false
+        await expect(
+          grid.getByRole(
+            'row'
+          ).nth(
+            1
           )
-        ) {
-          await safeClick(
-            show,
-            'Show positions'
-          );
-        }
+        ).toBeVisible({
+          timeout: 20000
+        });
 
         for (const column of [
+          'Symbol',
+          'Broker',
           'Account',
-          'Position',
-          'Type',
+          'Asset',
           'Qty',
-          'Avg. Price',
+          'Avg Price',
           'Last Price',
-          'Market value',
-          'Unrealized P/L'
+          'Market Value',
+          'Unrealized P&L',
+          'Expiry',
+          'DTE'
         ]) {
           await safeClick(
-            page.locator(
-              'main'
-            ).getByRole(
-              'button',
+            grid.getByRole(
+              'columnheader',
               {
                 name: new RegExp(
                   `^${column.replace(
@@ -396,64 +404,57 @@ test.describe(
                   'i'
                 )
               }
-            ).first(),
+            ).getByText(
+              column,
+              {
+                exact: true
+              }
+            ),
             `Sort ${column}`
           );
 
           await expect(
-            page.locator(
-              'main tbody tr'
-            ).first()
+            grid.getByRole(
+              'row'
+            ).nth(
+              1
+            )
           ).toBeVisible();
         }
 
-        const nextPage =
-          page.locator(
-            'main'
-          ).getByRole(
-            'button',
+        const savedViews =
+          page.getByRole(
+            'combobox',
             {
-              name: /^2$/
+              name: /^saved views$/i
             }
-          ).last();
-
-        if (
-          await nextPage.waitFor({
-            state: 'visible',
-            timeout: 3000
-          }).then(
-            () => true
-          ).catch(
-            () => false
-          )
-        ) {
-          await safeClick(
-            nextPage,
-            'Portfolio page 2'
           );
 
-          await safeClick(
+        for (const view of [
+          'By Broker',
+          'By Asset',
+          'By Symbol',
+          'Options',
+          'Expiring Soon',
+          'Losing Positions',
+          'Uncovered Positions',
+          'Opportunities Available',
+          'All Positions'
+        ]) {
+          await savedViews.selectOption(
+            {
+              label: view
+            }
+          );
+
+          await expect(
             page.locator(
               'main'
-            ).getByRole(
-              'button',
-              {
-                name: /^1$/
-              }
-            ).last(),
-            'Portfolio page 1'
+            )
+          ).toContainText(
+            /positions|no positions|no results/i
           );
         }
-
-        await safeClick(
-          page.getByRole(
-            'tab',
-            {
-              name: /^manual\b/i
-            }
-          ),
-          'Manual holdings'
-        );
 
         await expect(
           page.locator(

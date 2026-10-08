@@ -284,7 +284,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Failed payment after upgrade keeps previous plan active',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires upgrade payment failure fixture.'
+    dependency: 'Needs a way to make the subscription card fail when charged (see SC-96). Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-332',
@@ -292,7 +292,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Failed payment after interval change keeps previous billing interval',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires billing interval payment failure fixture.'
+    dependency: 'Needs a way to make the subscription card fail when charged (see SC-183). Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-333',
@@ -452,7 +452,7 @@ const dunningScenarios: DunningScenario[] = [
     title: 'Failed payment and dunning matrix coverage is visible in AIR blocked coverage',
     priority: 'Medium',
     status: 'automated',
-    automation: 'CoverageGapEngine > skipped matrix ingestion'
+    automation: 'air:failed-payment-gap-coverage'
   }
 ];
 

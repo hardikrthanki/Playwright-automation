@@ -10,6 +10,9 @@ import {
 import { DashboardPage }
   from './pages/DashboardPage';
 
+import { AddPositionPage }
+  from './pages/AddPositionPage';
+
 import { test }
   from './fixtures/subscriberAuth';
 
@@ -248,27 +251,18 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.locator(
-            'header button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
-          ).first(),
-          'Open plus menu'
-        );
+        // The + icon opens the "Connect a broker" popup, which has Bulk
+        // Upload and Enter Manually buttons. Bulk Upload then opens the
+        // "Upload Positions" dialog (a second dialog sits behind it).
+        const addPosition =
+          new AddPositionPage(
+            page
+          );
 
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /bulk upload/i
-            }
-          ),
-          'Bulk Upload'
-        );
+        await addPosition.openBulkUpload();
 
         const upload =
-          page.getByRole(
-            'dialog'
-          );
+          addPosition.uploadPositionsDialog();
 
         await expect(
           upload
@@ -446,27 +440,18 @@ test.describe(
           page
         );
 
-        await safeClick(
-          page.locator(
-            'header button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
-          ).first(),
-          'Open plus menu'
-        );
+        // The + icon opens the "Connect a broker" popup, which has Bulk
+        // Upload and Enter Manually buttons. Bulk Upload then opens the
+        // "Upload Positions" dialog (a second dialog sits behind it).
+        const addPosition =
+          new AddPositionPage(
+            page
+          );
 
-        await safeClick(
-          page.getByRole(
-            'menuitem',
-            {
-              name: /bulk upload/i
-            }
-          ),
-          'Bulk Upload'
-        );
+        await addPosition.openBulkUpload();
 
         const upload =
-          page.getByRole(
-            'dialog'
-          );
+          addPosition.uploadPositionsDialog();
 
         await expect(
           upload
@@ -503,9 +488,13 @@ test.describe(
           ).first();
 
         const rejected =
+          // The dialog always says "Supports .csv, .xlsx, .xls", so that hint
+          // must not count as a rejection message.
           await upload.getByText(
             /csv|xlsx|spreadsheet|invalid|unsupported|not allowed/i
-          ).first().waitFor({
+          ).filter({
+            hasNotText: /supports \.csv/i
+          }).first().waitFor({
             state: 'visible',
             timeout: 5000
           }).then(

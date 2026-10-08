@@ -235,9 +235,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-026'],
     title: 'Missing cardholder name is blocked before subscription activation',
     priority: 'Medium',
-    status: 'controlled',
-    automation: 'BlockedScenarioExecution.spec.ts > SC-61: Missing cardholder name is blocked before subscription activation',
-    dependency: 'Requires BLOCKED_SCENARIO_EXECUTION_ENABLED=true and STRIPE_CHECKOUT_URL; validation asserted flexibly (blocked-state OR error copy).'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:missing-cardholder-name-blocked'
   },
   {
     id: 'SC-62',
@@ -245,7 +244,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Failed checkout keeps user without active paid subscription',
     priority: 'Critical',
     status: 'automated',
-    automation: 'PaymentNegative.spec.ts > declined card does not activate subscription'
+    automation: 'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:declined-card-keeps-user-unpaid'
   },
   {
     id: 'SC-63',
@@ -253,7 +252,7 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     title: 'Closing Stripe checkout returns user safely without activating subscription',
     priority: 'High',
     status: 'automated',
-    automation: 'DirectSubscriptionPurchase.spec.ts > return from checkout before payment'
+    automation: 'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:closing-checkout-returns-safely'
   },
   {
     id: 'SC-64',
@@ -348,8 +347,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-040'],
     title: 'Retry after failed payment starts a clean checkout session',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires failed-payment fixture plus clean retry/session validation.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:retry-starts-clean-checkout'
   },
   {
     id: 'SC-75A',
@@ -420,8 +419,8 @@ const useCaseTwoScenarios: SubscriptionScenario[] = [
     sourceIds: ['SUB-NEW-049'],
     title: 'Invoice PDF amount, currency, and plan match the purchased subscription',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires deterministic plan amount fixture and PDF content parsing/validation.'
+    status: 'automated',
+    automation: 'scenario:PURCHASE_INCOME_MONTHLY:invoice-matches-purchase'
   },
   {
     id: 'SC-75J',

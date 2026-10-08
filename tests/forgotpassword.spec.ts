@@ -378,19 +378,30 @@ test(
             freshPage
           );
 
-          await emailInput.fill(
-            email
-          );
-
-          await passwordInput.fill(
-            originalPassword
-          );
-
+          // The login page can finish loading just after the first fill and
+          // clear the field, so fill again until the value sticks.
           await expect(
-            emailInput
-          ).toHaveValue(
-            email
-          );
+            async () => {
+              await emailInput.fill(
+                email
+              );
+
+              await passwordInput.fill(
+                originalPassword
+              );
+
+              await expect(
+                emailInput
+              ).toHaveValue(
+                email,
+                {
+                  timeout: 1500
+                }
+              );
+            }
+          ).toPass({
+            timeout: 20000
+          });
 
           const loginResponse =
             freshPage.waitForResponse(

@@ -195,31 +195,31 @@ const upgradeScenarios: UpgradeScenario[] = [
     title: 'Failed upgrade payment does not change current plan',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires failed-payment upgrade fixture and post-failure billing state validation.'
+    dependency: 'Needs a way to make the subscription card fail when charged. Tried through the browser: adding Stripe test card 4000000000000341 in the billing portal makes it the customer default, but the subscription keeps charging the card used at checkout, so the upgrade still succeeds. Requires Stripe API access (set the subscription default payment method) or an app-side test hook.'
   },
   {
     id: 'SC-97',
     sourceIds: ['SUB-UPG-022'],
     title: 'Declined card during upgrade shows payment failure message',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires upgrade checkout fixture with Stripe declined-card path.'
+    status: 'blocked',
+    dependency: 'An upgrade charges the saved card from a confirmation dialog (no Stripe card form), and a charge-failing card cannot be attached to the subscription through the browser (see SC-96). Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-98',
     sourceIds: ['SUB-UPG-023'],
     title: 'Incomplete payment details during upgrade are blocked',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires upgrade checkout fixture and Stripe validation selectors.'
+    status: 'blocked',
+    dependency: 'Not testable as written: the upgrade confirmation has no card fields (it charges the saved card), so there are no payment details to leave incomplete. Needs product confirmation of the intended behaviour; the terms-required check is covered separately.'
   },
   {
     id: 'SC-99',
     sourceIds: ['SUB-UPG-024'],
     title: 'Upgrade retry after failed payment starts clean retry flow',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires failed upgrade payment fixture and retry behavior confirmation.'
+    status: 'blocked',
+    dependency: 'Needs a failed upgrade payment first (see SC-96) and confirmation of the intended retry behaviour.'
   },
   {
     id: 'SC-100',
@@ -298,8 +298,8 @@ const upgradeScenarios: UpgradeScenario[] = [
     sourceIds: ['SUB-UPG-034'],
     title: 'Upgrade is available for subscription scheduled to cancel before end date when allowed',
     priority: 'Medium',
-    status: 'blocked',
-    dependency: 'Business rule confirmed: users can upgrade any time while access is active. Requires scheduled-cancellation fixture to verify behavior before access end date.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:upgrade-allowed-before-end-date'
   },
   {
     id: 'SC-110',

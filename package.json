@@ -7,7 +7,7 @@
     "execution": "npm run test:execution && npm run report:execution",
     "execution:headed": "npm run test:stable -- --headed && npm run report:execution",
     "executable:headed": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1 -Headed",
-    "executable:headless": "powershell -ExecutionPolicy Bypass -File scripts/run-all-executable-tests.ps1",
+    "executable:headless": "powershell -ExecutionPolicy Bypass -File scripts/run-executable-headless.ps1",
     "test:executable": "node scripts/run-ordered-tests.js executable",
     "controlled": "npm run test:controlled && npm run report:execution",
     "test": "playwright test",
@@ -18,6 +18,15 @@
     "daily:report": "npm run test:daily && npm run report:execution",
     "every-2-days:report": "npm run test:every-2-days && npm run report:execution",
     "weekly:report": "npm run test:weekly && npm run report:execution",
+    "test:groups": "node scripts/run-ordered-tests.js groups",
+    "test:group": "node scripts/run-ordered-tests.js group",
+    "scheduled:daily": "node scripts/run-scheduled.js daily",
+    "scheduled:every-2-days": "node scripts/run-scheduled.js every2days",
+    "scheduled:weekly": "node scripts/run-scheduled.js weekly",
+    "scheduled:group": "node scripts/run-scheduled.js group",
+    "report:email": "node scripts/send-report-email.js",
+    "report:email:test": "node scripts/send-report-email.js --dry-run",
+    "schedule:register": "powershell -ExecutionPolicy Bypass -File scripts/register-schedules.ps1",
     "test:smoke": "node scripts/run-ordered-tests.js smoke",
     "test:sanity": "node scripts/run-ordered-tests.js sanity",
     "test:regression": "node scripts/run-ordered-tests.js regression",
@@ -72,7 +81,6 @@
     "complete:headed": "powershell -ExecutionPolicy Bypass -File scripts/run-complete-headed-air.ps1",
     "complete:fast": "powershell -ExecutionPolicy Bypass -File scripts/run-complete-headed-air.ps1",
     "complete:watch": "powershell -ExecutionPolicy Bypass -File scripts/run-complete-watch.ps1",
-    "executable:headless": "powershell -ExecutionPolicy Bypass -File scripts/run-executable-headless.ps1",
     "air:parse": "node scripts/generate-air-results.js",
     "report:inventory": "node scripts/generate-inventory-report.js",
     "report:inventory:open": "node scripts/generate-inventory-report.js && start inventory-report/index.html",
@@ -88,6 +96,8 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
+    "nodemailer": "^10.0.16",
+    "pdf-parse": "^2.4.5",
     "typescript": "^6.0.3"
   }
 }

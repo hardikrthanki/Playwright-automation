@@ -424,7 +424,16 @@ test.describe(
             {
               name: /enter manually/i
             }
-          ),
+          ).or(
+            // The Add button can open the "Connect a broker" popup, where
+            // Enter Manually is a button instead of a menu item.
+            page.getByRole(
+              'button',
+              {
+                name: /^enter manually$/i
+              }
+            )
+          ).first(),
           'Enter Manually'
         );
 

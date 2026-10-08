@@ -144,10 +144,10 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
   {
     id: 'SC-214',
     sourceIds: ['SUB-A2M-014'],
-    title: 'Annual-to-monthly change records subscription history',
+    title: 'Scheduled annual-to-monthly change appears in billing overview and on the Plans screen',
     priority: 'High',
     status: 'automated',
-    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:subscription-history'
+    automation: 'scenario:INTERVAL_INCOME_ANNUAL_TO_MONTHLY:scheduled-switch-in-overview-and-plans'
   },
   {
     id: 'SC-215',
@@ -194,16 +194,16 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     sourceIds: ['SUB-A2M-020'],
     title: 'Declined card during annual-to-monthly change shows payment failure',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires billing-change checkout with declined-card fixture.'
+    status: 'blocked',
+    dependency: 'A declined card needs a charge-failing card on the subscription, which cannot be set through the browser (see SC-183). Annual-to-monthly is also scheduled for the next renewal, so no payment is taken at the time of the change. Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-221',
     sourceIds: ['SUB-A2M-021'],
     title: 'Incomplete payment details during annual-to-monthly change are blocked',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires billing-change checkout fixture and Stripe validation selectors.'
+    status: 'blocked',
+    dependency: 'Not testable as written: the annual-to-monthly change has no card fields, so there are no payment details to leave incomplete. Needs product confirmation of the intended behaviour.'
   },
   {
     id: 'SC-222',
@@ -347,7 +347,7 @@ const annualToMonthlyScenarios: BillingChangeScenario[] = [
     title: 'Annual-to-monthly matrix coverage is visible in AIR blocked/skipped coverage',
     priority: 'Low',
     status: 'automated',
-    automation: 'AnnualMonthlyBillingChangeMatrix.spec.ts'
+    automation: 'air:annual-monthly-gap-coverage'
   },
   {
     id: 'SC-240',

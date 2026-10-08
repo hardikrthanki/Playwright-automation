@@ -39,8 +39,11 @@ test.describe(
   'More dashboard screens',
   () => {
 
+    // Read-only UI checks: one retry absorbs a briefly slow UAT page and a
+    // retried pass is reported as flaky rather than hidden.
     test.describe.configure({
-      timeout: 180000
+      timeout: 180000,
+      retries: 1
     });
 
     test.beforeEach(

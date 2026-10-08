@@ -264,10 +264,10 @@ const downgradeScenarios: DowngradeScenario[] = [
   {
     id: 'SC-142',
     sourceIds: ['SUB-DOWN-030'],
-    title: 'Scheduled downgrade appears in subscription history',
+    title: 'Scheduled downgrade appears on the Plans screen',
     priority: 'High',
     status: 'automated',
-    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:scheduled-downgrade-in-history'
+    automation: 'scenario:DOWNGRADE_OVERLAY_TO_INCOME_MONTHLY:scheduled-downgrade-on-plans-screen'
   },
   {
     id: 'SC-143',
@@ -426,8 +426,8 @@ const downgradeScenarios: DowngradeScenario[] = [
     sourceIds: ['SUB-DOWN-050'],
     title: 'Downgrade with currency conversion displays correct amount and currency',
     priority: 'Medium',
-    status: 'future',
-    dependency: 'Requires deterministic currency fixture and Stripe copy expectations.'
+    status: 'blocked',
+    dependency: 'A downgrade is scheduled and collects no payment, so there is no amount to convert unless the product shows one. Needs product confirmation of what amount and currency a downgrade should display.'
   },
   {
     id: 'SC-163',

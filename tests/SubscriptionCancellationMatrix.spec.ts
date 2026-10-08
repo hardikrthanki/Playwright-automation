@@ -122,8 +122,8 @@ const cancellationScenarios: CancellationScenario[] = [
     sourceIds: ['SUB-CAN-011'],
     title: 'Final cancellation requires explicit confirmation',
     priority: 'Critical',
-    status: 'blocked',
-    dependency: 'Requires backend/admin reset support for disposable paid subscription fixture.'
+    status: 'automated',
+    automation: 'scenario:CANCEL_INCOME_MONTHLY_AT_PERIOD_END:explicit-confirmation-required'
   },
   {
     id: 'SC-252',
@@ -507,7 +507,7 @@ const cancellationScenarios: CancellationScenario[] = [
     title: 'Cancellation matrix coverage appears in AIR blocked and skipped coverage',
     priority: 'Medium',
     status: 'automated',
-    automation: 'CoverageGapEngine > skipped matrix ingestion'
+    automation: 'air:cancellation-gap-coverage'
   },
   {
     id: 'SC-300',

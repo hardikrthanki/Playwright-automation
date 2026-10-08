@@ -618,6 +618,20 @@ export class StripePaymentPage
   async completeTrialPayment() {
     await this.submitUniqueTrialCard();
 
+    // Stripe keeps the form disabled and the page open while it confirms
+    // the card, so give the redirect time before deciding the card failed.
+    await this.page.waitForURL(
+      (url) =>
+        !/checkout\.stripe\.com/i.test(
+          url.toString()
+        ),
+      {
+        timeout: 45000
+      }
+    ).catch(
+      () => undefined
+    );
+
     if (
       this.onStripeCheckout()
     ) {

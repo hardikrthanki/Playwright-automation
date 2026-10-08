@@ -10,6 +10,9 @@ import {
 import { DashboardPage }
   from './pages/DashboardPage';
 
+import { AddPositionPage }
+  from './pages/AddPositionPage';
+
 import { test }
   from './fixtures/subscriberAuth';
 
@@ -153,53 +156,43 @@ test.describe(
     test(
       'Plus menu opens every add option',
       async ({ page }) => {
+        // The + icon now opens a "Connect a broker" popup (broker list plus
+        // Bulk Upload and Enter Manually) instead of a menu of items, so each
+        // add option is opened from that popup. Dialogs are closed unsaved.
+        const addPosition =
+          new AddPositionPage(
+            page
+          );
+
         await openDashboard(
           page
         );
 
-        await safeClick(
-          page.locator(
-            'header button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
-          ).first(),
-          'Open plus menu'
+        await addPosition.openPlusPopup();
+
+        await addPosition.expectPlusPopupOptions();
+
+        await addPosition.closeDialogs();
+
+        await openDashboard(
+          page
         );
 
-        const names =
-          await optionNames(
-            page
-          );
+        await addPosition.openBulkUpload();
 
-        expect(
-          names.length
-        ).toBeGreaterThan(
-          0
+        await addPosition.expectBulkUploadDialog();
+
+        await addPosition.closeDialogs();
+
+        await openDashboard(
+          page
         );
 
-        for (const name of names) {
-          if (
-            skipOption(
-              name
-            )
-          ) {
-            continue;
-          }
+        await addPosition.openManualEntry();
 
-          await openDashboard(
-            page
-          );
+        await addPosition.expectManualEntryDialog();
 
-          await safeClick(
-            page.locator(
-              'header button:has(svg.lucide-plus), button:has(svg.lucide-plus)'
-            ).first(),
-            'Open plus menu'
-          );
-
-          await openOption(
-            page,
-            name
-          );
-        }
+        await addPosition.closeDialogs();
       }
     );
 

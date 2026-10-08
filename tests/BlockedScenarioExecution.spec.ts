@@ -136,9 +136,18 @@ async function submitCheckout(
 
 test.describe('Blocked Scenario Execution', () => {
 
+  // SC-48 and SC-61 create a real scenario user first (sign-up, email check,
+  // plan checkout). That takes minutes, and a sign-up can also wait out the
+  // server's "too many OTP requests" pause, so the default 90s limit makes
+  // them fail in a full run even though they pass on their own. Other rows in
+  // this file share that user's outcome, so a timeout here cascades.
+  test.describe.configure({
+    timeout: 20 * 60 * 1000
+  });
+
   test.beforeEach(({}, testInfo) => {
     // SC-48 and SC-61 run on a scenario user; the rest still need a link.
-    if (/SC-48|SC-61/.test(testInfo.title)) {
+    if (/SC-48|SC-61|SC-62|SC-63/.test(testInfo.title)) {
       return;
     }
 
@@ -190,89 +199,39 @@ test.describe('Blocked Scenario Execution', () => {
     );
   });
 
-  test('SC-62: Failed checkout keeps user without active paid subscription', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'matrix-id',
-      description: 'SC-62'
+  // SC-62 and SC-63 run on the same unpaid checkout user as SC-48/SC-61.
+  for (const [id, title, step] of [
+    [
+      'SC-62',
+      'SC-62: Failed checkout keeps user without active paid subscription',
+      'declined-card-keeps-user-unpaid'
+    ],
+    [
+      'SC-63',
+      'SC-63: Closing Stripe checkout returns user safely without activating subscription',
+      'closing-checkout-returns-safely'
+    ]
+  ]) {
+    test(title, async ({ page }) => {
+      test.info().annotations.push({
+        type: 'matrix-id',
+        description: id
+      });
+
+      const outcome = await runScenarioStep(
+        `scenario:PURCHASE_DOUBLE_CLICK_INCOME_MONTHLY:${step}`,
+        page
+      );
+
+      if (outcome.status === 'failed') {
+        throw outcome.error;
+      }
+
+      test.skip(
+        outcome.status === 'skipped',
+        outcome.status === 'skipped' ? outcome.reason : ''
+      );
     });
-
-    await openCheckout(page);
-    await fillCardOnly(page, STRIPE_DECLINED_CARD);
-    await submitCheckout(page);
-
-    await expect
-      .poll(
-        async () => page.url().includes('/checkout/'),
-        {
-          timeout: 30000,
-          message: 'Expected declined payment to keep the user on checkout.'
-        }
-      )
-      .toBe(true);
-
-    await page.goto(BASE_URL, {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000
-    });
-
-    const bodyText = (
-      await page.locator('body').innerText()
-    ).toLowerCase();
-
-    const noSuccessSignals =
-      !bodyText.includes('payment successful') &&
-      !bodyText.includes('subscription activated') &&
-      !bodyText.includes('thank you for your purchase');
-
-    expect(
-      noSuccessSignals,
-      'Abandoned/failed checkout must not leave success or activation copy in the app.'
-    ).toBe(true);
-  });
-
-  test('SC-63: Closing Stripe checkout returns user safely without activating subscription', async ({ page }) => {
-    test.info().annotations.push({
-      type: 'matrix-id',
-      description: 'SC-63'
-    });
-
-    await openCheckout(page);
-
-    const cancelControl = page.locator(
-      'a:has-text(/cancel|return/i), button:has-text(/cancel|return/i)'
-    ).first();
-
-    const cancelAvailable = await cancelControl
-      .isVisible()
-      .catch(() => false);
-
-    test.skip(
-      !cancelAvailable,
-      'Checkout link does not expose a cancel/return control.'
-    );
-
-    await cancelControl.click();
-
-    await expect
-      .poll(
-        async () =>
-          page.url().startsWith(BASE_URL) ||
-          !page.url().includes('/checkout/'),
-        {
-          timeout: 30000,
-          message: 'Expected cancel/return to leave Stripe checkout.'
-        }
-      )
-      .toBe(true);
-
-    const bodyText = (
-      await page.locator('body').innerText()
-    ).toLowerCase();
-
-    expect(
-      !bodyText.includes('payment successful'),
-      'Returning from checkout must not activate the subscription.'
-    ).toBe(true);
-  });
+  }
 
 });

@@ -187,23 +187,23 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     title: 'Failed payment during monthly-to-annual change keeps monthly billing active',
     priority: 'Critical',
     status: 'blocked',
-    dependency: 'Requires failed-payment fixture and post-failure billing state validation.'
+    dependency: 'Needs a way to make the subscription card fail when charged. Adding a charge-failing test card in the billing portal does not change the card the subscription charges, so the interval change still succeeds. Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-184',
     sourceIds: ['SUB-M2A-020'],
     title: 'Declined card during interval change shows payment failure',
     priority: 'Critical',
-    status: 'future',
-    dependency: 'Requires billing-change checkout with declined-card fixture.'
+    status: 'blocked',
+    dependency: 'An interval change charges the saved card from a confirmation dialog (no Stripe card form), and a charge-failing card cannot be attached to the subscription through the browser (see SC-183). Requires Stripe API access or an app-side test hook.'
   },
   {
     id: 'SC-185',
     sourceIds: ['SUB-M2A-021'],
     title: 'Incomplete payment details during interval change are blocked',
     priority: 'High',
-    status: 'future',
-    dependency: 'Requires billing-change checkout fixture and Stripe validation selectors.'
+    status: 'blocked',
+    dependency: 'Not testable as written: the interval-change confirmation has no card fields (it charges the saved card), so there are no payment details to leave incomplete. Needs product confirmation of the intended behaviour.'
   },
   {
     id: 'SC-186',
@@ -286,14 +286,6 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     dependency: 'Requires failed webhook fixture and billing state validation.'
   },
   {
-    id: 'SC-196',
-    sourceIds: ['SUB-M2A-032'],
-    title: 'Annual savings messaging is displayed accurately',
-    priority: 'Medium',
-    status: 'automated',
-    automation: 'scenario:INTERVAL_INCOME_MONTHLY_TO_ANNUAL:annual-savings-message'
-  },
-  {
     id: 'SC-197',
     sourceIds: ['SUB-M2A-033'],
     title: 'Monthly-to-annual change respects tax and currency configuration',
@@ -323,7 +315,7 @@ const monthlyToAnnualScenarios: BillingChangeScenario[] = [
     title: 'Monthly-to-annual matrix coverage is visible in AIR blocked/skipped coverage',
     priority: 'Low',
     status: 'automated',
-    automation: 'MonthlyAnnualBillingChangeMatrix.spec.ts'
+    automation: 'air:monthly-annual-gap-coverage'
   }
 ];
 

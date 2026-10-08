@@ -444,7 +444,7 @@ const lifecycleScenarios: LifecycleScenario[] = [
     phase: 'Audit And Reporting',
     priority: 'High',
     status: 'automated',
-    automation: 'CoverageGapEngine > skipped matrix ingestion and AIR blocked/skipped coverage'
+    automation: 'air:lifecycle-gap-coverage'
   }
 ];
 

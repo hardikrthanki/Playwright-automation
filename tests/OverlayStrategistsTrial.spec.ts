@@ -18,6 +18,10 @@ import {
   completeRiskAndComplianceUnlessPlanReady
 } from './helpers/onboardingContinuation';
 import {
+  expectCoveredBy,
+  recordCoverage
+} from './helpers/coverageReuse';
+import {
   continueAfterWithCardTrialCheckout,
   submitAnotherWithCardTrialAttempt
 } from './helpers/withCardTrial';
@@ -157,12 +161,20 @@ if (
     test(
       'New user can reach Overlay Strategists trial option',
       async ({ page }) => {
-        test.skip(
+        // The plan catalog test already checks the same screen. When it runs,
+        // reuse its recorded result instead of registering another user.
+        if (
           envEnabled(
             'PLAN_SELECTION_VALIDATION_ENABLED'
-          ),
-          'Plan catalog validation already covers Overlay Strategists trial options.'
-        );
+          )
+        ) {
+          expectCoveredBy(
+            'overlay-trial-options-offered',
+            'Plan catalog pricing overlay trial and complete-setup in one session'
+          );
+
+          return;
+        }
 
         const email =
           generateEmail(
@@ -298,12 +310,20 @@ if (
               email
             );
 
+            recordCoverage(
+              'overlay-with-card-checkout-details'
+            );
+
             if (
               envEnabled(
                 'OVERLAY_STRATEGISTS_STRIPE_NEGATIVE_ENABLED'
               )
             ) {
               await stripe.validateMissingCardDetailsBlocked();
+
+              recordCoverage(
+                'overlay-with-card-missing-card'
+              );
             }
 
             if (
@@ -312,6 +332,10 @@ if (
               )
             ) {
               await stripe.validateDeclinedCardRejected();
+
+              recordCoverage(
+                'overlay-with-card-declined-card'
+              );
             }
 
             await stripe.completeTrialPayment();
@@ -398,12 +422,20 @@ if (
       test(
         'Overlay Strategists with-card trial opens Stripe checkout with trial details',
         async ({ page }) => {
-        test.skip(
+        // The with-card trial user already walks this checkout, so confirm
+        // that checkpoint instead of paying for another sign-up.
+        if (
           envEnabled(
             'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
-          ),
-          'Checkout details are validated on the with-card trial user.'
-        );
+          )
+        ) {
+          expectCoveredBy(
+            'overlay-with-card-checkout-details',
+            'New user can start Overlay Strategists trial with card'
+          );
+
+          return;
+        }
 
         const email =
           generateEmail(
@@ -512,12 +544,18 @@ if (
       test(
         'Overlay Strategists with-card trial blocks missing Stripe card details',
         async ({ page }) => {
-        test.skip(
+        if (
           envEnabled(
             'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
-          ),
-          'Missing card validation is folded into the with-card trial user.'
-        );
+          )
+        ) {
+          expectCoveredBy(
+            'overlay-with-card-missing-card',
+            'New user can start Overlay Strategists trial with card'
+          );
+
+          return;
+        }
 
         const email =
           generateEmail(
@@ -624,12 +662,18 @@ if (
       test(
         'Overlay Strategists with-card trial rejects declined Stripe card',
         async ({ page }) => {
-        test.skip(
+        if (
           envEnabled(
             'OVERLAY_STRATEGISTS_WITH_CARD_ENABLED'
-          ),
-          'Declined card validation is folded into the with-card trial user.'
-        );
+          )
+        ) {
+          expectCoveredBy(
+            'overlay-with-card-declined-card',
+            'New user can start Overlay Strategists trial with card'
+          );
+
+          return;
+        }
 
         const email =
           generateEmail(

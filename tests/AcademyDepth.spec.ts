@@ -216,8 +216,12 @@ test.describe(
   'Academy depth',
   () => {
 
+    // These are read-only UI checks. When the UAT app is briefly slow the
+    // whole page can come back empty, so one retry avoids a false failure
+    // (a retried pass is reported as flaky, not hidden).
     test.describe.configure({
-      timeout: 240000
+      timeout: 240000,
+      retries: 1
     });
 
     test(

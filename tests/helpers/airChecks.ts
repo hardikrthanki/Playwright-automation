@@ -156,10 +156,147 @@ function expectSearchable(
   ).toBeGreaterThan(0);
 }
 
+type CoverageGapItem = {
+  title?: string;
+  file?: string;
+  status?: string;
+  category?: string;
+  reason?: string;
+  nextAction?: string;
+};
+
+// A matrix file's skipped rows (blocked, controlled, future) must be listed in
+// AIR's coverage gaps with a reason and a next action, so nothing skipped is
+// silently hidden. The AIR data is read only; nothing is written.
+function matrixGapItems(
+  area: string,
+  filePattern: RegExp
+) {
+  const { latest } = loadAir();
+
+  const items = (
+    (latest as {
+      coverageGaps?: {
+        items?: CoverageGapItem[];
+      };
+    }).coverageGaps?.items ?? []
+  ).filter(
+    (item) =>
+      filePattern.test(item.file ?? '')
+  );
+
+  expect(
+    items.length,
+    `AIR coverage gaps should list the ${area} matrix rows that are blocked or skipped.`
+  ).toBeGreaterThan(0);
+
+  for (const item of items) {
+    expect(
+      (item.reason ?? '').trim().length,
+      `AIR gap "${item.title}" has no reason.`
+    ).toBeGreaterThan(0);
+
+    expect(
+      (item.nextAction ?? '').trim().length,
+      `AIR gap "${item.title}" has no next action.`
+    ).toBeGreaterThan(0);
+  }
+
+  return items;
+}
+
+function expectMatrixCoverageInAir(
+  area: string,
+  filePattern: RegExp,
+  categories: string[]
+) {
+  const items = matrixGapItems(
+    area,
+    filePattern
+  );
+
+  const present = new Set(
+    items.map(
+      (item) => item.category ?? ''
+    )
+  );
+
+  for (const category of categories) {
+    expect(
+      present.has(category),
+      `AIR should list ${area} ${category} coverage gaps; found categories: ${[...present].join(', ')}.`
+    ).toBeTruthy();
+  }
+}
+
 export function runAirCheck(
   check: string
 ) {
   switch (check) {
+    case 'monthly-annual-gap-coverage':
+      expectMatrixCoverageInAir(
+        'monthly-to-annual',
+        /MonthlyAnnualBillingChangeMatrix/,
+        ['Blocked']
+      );
+      return;
+
+    case 'annual-monthly-gap-coverage':
+      expectMatrixCoverageInAir(
+        'annual-to-monthly',
+        /AnnualMonthlyBillingChangeMatrix/,
+        ['Blocked']
+      );
+      return;
+
+    case 'cancellation-gap-coverage':
+      expectMatrixCoverageInAir(
+        'cancellation',
+        /SubscriptionCancellationMatrix/,
+        ['Blocked', 'Controlled']
+      );
+      return;
+
+    case 'failed-payment-gap-coverage':
+      expectMatrixCoverageInAir(
+        'failed-payment and dunning',
+        /FailedPaymentDunningMatrix/,
+        ['Blocked']
+      );
+      return;
+
+    case 'lifecycle-gap-coverage': {
+      expectMatrixCoverageInAir(
+        'subscription lifecycle',
+        /SubscriptionLifecycleE2EMatrix/,
+        ['Blocked']
+      );
+
+      const { latest } = loadAir();
+
+      const executed = executedRows(
+        latest.tests,
+        /SubscriptionLifecycleE2EMatrix/
+      );
+
+      expect(
+        executed.length,
+        'AIR should show executed lifecycle rows (executable coverage status).'
+      ).toBeGreaterThan(0);
+
+      // Known bugs surface as failed rows; each must carry its error text.
+      for (const row of executed.filter(
+        (item) => item.status !== 'passed'
+      )) {
+        expect(
+          (row.error ?? '').trim().length,
+          `AIR failed lifecycle row "${row.title}" (known bug) has no error text.`
+        ).toBeGreaterThan(0);
+      }
+
+      return;
+    }
+
     case 'downgrade-history':
       expectAreaInAirHistory(
         'downgrade',

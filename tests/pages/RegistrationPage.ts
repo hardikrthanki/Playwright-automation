@@ -840,6 +840,52 @@ extends BasePage {
 
 
 
+  private registrationExpectedToFail = false;
+
+  private static registeredMobileByEmail =
+    new Map<string, string>();
+
+  /**
+   * The mobile number that was really verified when this email registered.
+   * Falls back to the number the test asked for when none was recorded.
+   */
+  static registeredMobileFor(
+    email: string,
+    requested: string
+  ) {
+    return (
+      RegistrationPage.registeredMobileByEmail.get(
+        email.toLowerCase()
+      ) ?? requested
+    );
+  }
+
+  private async rememberRegisteredMobile(
+    email: string
+  ) {
+    const digits =
+      (
+        await this.mobileInput.inputValue().catch(
+          () => ''
+        )
+      ).replace(
+        /\D/g,
+        ''
+      ).slice(-10);
+
+    // A sign-up that is meant to be refused (same email again) must not
+    // replace the number of the account that really exists.
+    if (
+      digits.length === 10 &&
+      !this.registrationExpectedToFail
+    ) {
+      RegistrationPage.registeredMobileByEmail.set(
+        email.toLowerCase(),
+        digits
+      );
+    }
+  }
+
   private async fillMobileNumber(
     mobileNumber: string
   ) {
@@ -1216,6 +1262,13 @@ extends BasePage {
 
 
 
+    // The OTP step can swap in a different number (rate limit, number already
+    // registered). Remember the number that was actually verified so later
+    // "same mobile" checks use it, not the number the test first asked for.
+    await this.rememberRegisteredMobile(
+      email
+    );
+
     await this.fillPasswordFields();
 
     await this.acceptVisibleRegistrationConsents();
@@ -1250,16 +1303,63 @@ extends BasePage {
       'Submit Registration'
     );
 
-    await expect
-      .poll(
-        async () =>
-          this.registrationLooksAccepted(),
-        {
-          timeout: 20000,
-          message: 'Waiting for registration success or email-verification screen'
-        }
+    // A full run is slower than a single test (busy server, long idle wait
+    // after an OTP rate limit), so give the first submit longer, then submit
+    // once more if the form is still showing.
+    let accepted =
+      await this.waitForRegistrationAccepted(
+        this.registrationExpectedToFail
+          ? 20000
+          : 40000
+      );
+
+    if (
+      !accepted &&
+      !this.registrationExpectedToFail &&
+      await this.submitButton.isEnabled().catch(
+        () => false
       )
-      .toBeTruthy();
+    ) {
+      Logger.info(
+        'Registration was not accepted yet. Submitting once more.'
+      );
+
+      await safeClick(
+        this.submitButton,
+        'Submit Registration (retry)'
+      );
+
+      accepted =
+        await this.waitForRegistrationAccepted(
+          40000
+        );
+    }
+
+    if (!accepted) {
+      const visible =
+        (
+          await this.page
+            .locator(
+              'body'
+            )
+            .innerText()
+            .catch(
+              () => ''
+            )
+        )
+          .replace(
+            /\s+/g,
+            ' '
+          )
+          .slice(
+            0,
+            300
+          );
+
+      throw new Error(
+        `Waiting for registration success or email-verification screen. URL ${this.page.url()}. Visible: ${visible}`
+      );
+    }
 
 
 
@@ -1279,12 +1379,20 @@ extends BasePage {
     );
 
     await this.open();
-    await this.register(
-      email,
-      mobileNumber
-    ).catch(
-      () => undefined
-    );
+
+    // This sign-up is meant to be refused, so do not retry the submit.
+    this.registrationExpectedToFail = true;
+
+    try {
+      await this.register(
+        email,
+        mobileNumber
+      ).catch(
+        () => undefined
+      );
+    } finally {
+      this.registrationExpectedToFail = false;
+    }
 
     await expect(
       this.page.getByText(
@@ -1345,12 +1453,24 @@ extends BasePage {
       await this.clickVerifyWhenReady();
     }
 
+    // The 409 can arrive a moment after the click, so poll for it instead of
+    // reading the flag once.
     const rejected =
       rejectedOnSend ||
-      this.mobileNumberTaken ||
-      await this.page.getByText(
-        /already registered/i
-      ).first().isVisible().catch(
+      await expect.poll(
+        async () =>
+          this.mobileNumberTaken ||
+          await this.page.getByText(
+            /already registered|use a different number/i
+          ).first().isVisible().catch(
+            () => false
+          ),
+        {
+          timeout: 15000
+        }
+      ).toBeTruthy().then(
+        () => true
+      ).catch(
         () => false
       );
 

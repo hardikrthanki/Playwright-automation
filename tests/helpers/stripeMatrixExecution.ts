@@ -52,7 +52,8 @@ import {
   validateNoCardTrialFollowThrough
 } from './noCardTrialChecks';
 import {
-  continueAfterWithCardTrialCheckout
+  continueAfterWithCardTrialCheckout,
+  submitAnotherWithCardTrialAttempt
 } from './withCardTrial';
 
 /* =============================================================================
@@ -1806,17 +1807,37 @@ async function executeCardTrialCancel(
     page
   ).completeTrialPayment();
 
-  const reached =
+  let reached =
     await continueAfterWithCardTrialCheckout(
       page,
       user.mobileNumber
     );
 
+  // A Stripe test card can only start a trial once, so a card used in an
+  // earlier run sends the user back to Plan Selection. Try other cards, as
+  // the Overlay trial test does, instead of failing on the first one.
+  for (
+    let retry = 1;
+    !reached &&
+      retry <= 3;
+    retry++
+  ) {
+    console.log(
+      `Retrying card-backed trial with a different Stripe test card (${retry}/3)`
+    );
+
+    reached =
+      await submitAnotherWithCardTrialAttempt(
+        page,
+        user.mobileNumber
+      );
+  }
+
   if (
     !reached
   ) {
     throw new Error(
-      'Card-backed trial did not leave Stripe checkout.'
+      'Card-backed trial bounced back to Plan Selection after 3 retries with different Stripe test cards.'
     );
   }
 

@@ -67,6 +67,16 @@ export async function validateNoCardTrialFollowThrough(
   const fresh =
     await context.newPage();
 
+  const verifiedMobile =
+    RegistrationPage.registeredMobileFor(
+      email,
+      mobileNumber
+    );
+
+  console.log(
+    `[same-mobile] requested ${mobileNumber}, verified at sign-up ${verifiedMobile}`
+  );
+
   try {
     await new RegistrationPage(
       fresh
@@ -81,7 +91,9 @@ export async function validateNoCardTrialFollowThrough(
       generateEmail(
         'same-mobile'
       ),
-      mobileNumber
+      // Registration may have swapped the number (OTP rate limit), so use the
+      // one that was really verified for this account.
+      verifiedMobile
     );
   } finally {
     await context.close();

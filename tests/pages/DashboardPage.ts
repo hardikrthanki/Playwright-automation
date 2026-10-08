@@ -908,6 +908,284 @@ export class DashboardPage
     );
   }
 
+  private profileMenuToggle(
+    pattern: RegExp
+  ) {
+    const menu =
+      this.page.locator(
+        '[role="menu"], [data-radix-menu-content], [data-radix-dropdown-menu-content], [data-radix-popper-content-wrapper]'
+      );
+
+    return menu.getByRole(
+      'menuitem',
+      {
+        name: pattern
+      }
+    ).or(
+      menu.getByRole(
+        'button',
+        {
+          name: pattern
+        }
+      )
+    ).or(
+      menu.getByText(
+        pattern
+      )
+    ).first();
+  }
+
+  private async reopenProfileMenu() {
+    // Some menu items close the menu, others leave it open.
+    if (
+      await this.profileMenuItem(
+        'Billing'
+      ).isVisible().catch(
+        () => false
+      )
+    ) {
+      await this.page.keyboard.press(
+        'Escape'
+      );
+
+      await this.page.waitForTimeout(
+        400
+      );
+    }
+
+    await this.openProfileMenu();
+  }
+
+  private async readThemeSignature() {
+    return this.page.evaluate(
+      () => {
+        const html =
+          document.documentElement;
+
+        return JSON.stringify({
+          htmlClass:
+            html.className,
+          dataTheme:
+            html.getAttribute(
+              'data-theme'
+            ),
+          colorScheme:
+            html.style.colorScheme,
+          background:
+            getComputedStyle(
+              document.body
+            ).backgroundColor
+        });
+      }
+    );
+  }
+
+  async validateProfileMenuThemeToggle() {
+    Logger.info(
+      'Validating profile-menu dark/light theme switch'
+    );
+
+    await this.openProfileMenu();
+
+    const lightItem =
+      this.profileMenuToggle(
+        /^light theme$/i
+      );
+
+    const darkItem =
+      this.profileMenuToggle(
+        /^dark theme$/i
+      );
+
+    const startsDark =
+      await lightItem.isVisible({
+        timeout: 3000
+      }).catch(
+        () => false
+      );
+
+    // The menu offers the theme it will switch TO.
+    const firstItem =
+      startsDark
+        ? lightItem
+        : darkItem;
+
+    const secondItem =
+      startsDark
+        ? darkItem
+        : lightItem;
+
+    await expect(
+      firstItem,
+      'The profile menu should offer a Light theme or Dark theme option.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    const before =
+      await this.readThemeSignature();
+
+    await safeClick(
+      firstItem,
+      startsDark
+        ? 'Switch to Light theme'
+        : 'Switch to Dark theme'
+    );
+
+    await expect
+      .poll(
+        async () =>
+          this.readThemeSignature(),
+        {
+          timeout: 10000,
+          message:
+            'The page appearance should change after choosing the other theme.'
+        }
+      )
+      .not.toBe(before);
+
+    await this.reopenProfileMenu();
+
+    await expect(
+      secondItem,
+      'After switching, the menu should offer the opposite theme.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      secondItem,
+      startsDark
+        ? 'Switch back to Dark theme'
+        : 'Switch back to Light theme'
+    );
+
+    await expect
+      .poll(
+        async () =>
+          this.readThemeSignature(),
+        {
+          timeout: 10000,
+          message:
+            'Switching back should restore the original appearance.'
+        }
+      )
+      .toBe(before);
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Profile-menu theme switch works in both directions'
+    );
+  }
+
+  async validateProfileMenuFullscreenToggle() {
+    Logger.info(
+      'Validating profile-menu full screen and exit full screen'
+    );
+
+    const inFullscreen = () =>
+      this.page.evaluate(
+        () =>
+          document.fullscreenElement !== null
+      );
+
+    await this.openProfileMenu();
+
+    const enterItem =
+      this.profileMenuToggle(
+        /^full screen$/i
+      );
+
+    const exitItem =
+      this.profileMenuToggle(
+        /^exit full screen$/i
+      );
+
+    // Start from a normal window.
+    if (
+      await exitItem.isVisible({
+        timeout: 2000
+      }).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        exitItem,
+        'Exit already-active Full screen'
+      );
+
+      await this.reopenProfileMenu();
+    }
+
+    await expect(
+      enterItem,
+      'The profile menu should offer a Full screen option.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      enterItem,
+      'Enter Full screen'
+    );
+
+    await expect
+      .poll(
+        inFullscreen,
+        {
+          timeout: 10000,
+          message:
+            'The page should enter full screen after choosing Full screen.'
+        }
+      )
+      .toBe(true);
+
+    await this.reopenProfileMenu();
+
+    await expect(
+      exitItem,
+      'In full screen the menu should offer Exit full screen.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      exitItem,
+      'Exit Full screen'
+    );
+
+    await expect
+      .poll(
+        inFullscreen,
+        {
+          timeout: 10000,
+          message:
+            'The page should leave full screen after choosing Exit full screen.'
+        }
+      )
+      .toBe(false);
+
+    await this.reopenProfileMenu();
+
+    await expect(
+      enterItem,
+      'After exiting, the menu should offer Full screen again.'
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+
+    await this.validateNoLoadError();
+
+    Logger.success(
+      'Profile-menu full screen and exit full screen work'
+    );
+  }
+
   async validateProfileMenuDismissal() {
 
     Logger.info(

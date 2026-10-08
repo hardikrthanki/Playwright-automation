@@ -20,6 +20,59 @@ if (suiteName === 'schedule') {
   process.exit(0);
 }
 
+// Run just one named group from the schedule, e.g.
+//   node scripts/run-ordered-tests.js group "Billing pages"
+//   node scripts/run-ordered-tests.js groups     (lists the group names)
+const allGroups = scheduleGroups.flatMap((band) =>
+  band.groups.map((group) => ({ ...group, band }))
+);
+
+if (suiteName === 'groups') {
+  for (const group of allGroups) {
+    console.log(
+      `${group.name}  (${group.band.cadence}, ${group.files.length} specs)`
+    );
+  }
+
+  process.exit(0);
+}
+
+if (suiteName === 'group') {
+  const wanted = (extra[0] ?? '').trim().toLowerCase();
+  const group = allGroups.find(
+    (item) => item.name.toLowerCase() === wanted
+  );
+
+  if (!group) {
+    console.error(`Unknown group "${extra[0] ?? ''}". Groups:`);
+    allGroups.forEach((item) => console.error(`  ${item.name}`));
+    process.exit(1);
+  }
+
+  console.log(
+    `Group "${group.name}" (${group.band.cadence}): ${group.files.length} spec file(s)`
+  );
+
+  const groupResult = spawnSync(
+    path.join(
+      __dirname,
+      '..',
+      'node_modules',
+      '.bin',
+      process.platform === 'win32' ? 'playwright.cmd' : 'playwright'
+    ),
+    ['test', ...testPaths(group.files), ...extra.slice(1)],
+    {
+      cwd: path.join(__dirname, '..'),
+      env: process.env,
+      shell: true,
+      stdio: 'inherit'
+    }
+  );
+
+  process.exit(groupResult.status ?? 1);
+}
+
 if (!suiteName || !suites[suiteName]) {
   console.error(
     'Usage: node scripts/run-ordered-tests.js <suite> [-- playwright args]'

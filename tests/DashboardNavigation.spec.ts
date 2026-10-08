@@ -516,6 +516,28 @@ test.describe(
     );
 
     test(
+      'Profile menu switches between dark and light theme',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateProfileMenuThemeToggle();
+      }
+    );
+
+    test(
+      'Profile menu enters and exits full screen',
+      async ({ page }) => {
+
+        const dashboard =
+          new DashboardPage(page);
+
+        await dashboard.validateProfileMenuFullscreenToggle();
+      }
+    );
+
+    test(
       'Profile menu closes with Escape and outside click',
       async ({ page }) => {
 

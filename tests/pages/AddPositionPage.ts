@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 import {
   expect,
   Locator
@@ -47,13 +49,67 @@ export class AddPositionPage
       .first();
   }
 
+  // The + icon now opens a "Connect a broker" popup. Below the broker list it
+  // offers "Broker not listed? Bulk Upload or Enter Manually" as two buttons.
+  // The old dropdown menu items are still accepted so either UI works.
+  private brokerPopup() {
+    return this.page
+      .getByRole(
+        'dialog'
+      )
+      .filter({
+        hasText: /connect a broker/i
+      })
+      .first();
+  }
+
+  private popupOption(
+    name: RegExp
+  ) {
+    return this.brokerPopup()
+      .getByRole(
+        'button',
+        {
+          name
+        }
+      )
+      .or(
+        this.page.getByRole(
+          'menuitem',
+          {
+            name
+          }
+        )
+      )
+      .first();
+  }
+
+  private uploadDialog() {
+    return this.page
+      .getByRole(
+        'dialog'
+      )
+      .filter({
+        hasText: /upload positions/i
+      })
+      .first();
+  }
+
   private enterManuallyItem() {
     return this.page
       .getByRole(
-        'menuitem',
+        'button',
         {
-          name: /enter manually/i
+          name: /^enter manually$/i
         }
+      )
+      .or(
+        this.page.getByRole(
+          'menuitem',
+          {
+            name: /enter manually/i
+          }
+        )
       )
       .or(
         this.page.getByRole(
@@ -366,6 +422,798 @@ export class AddPositionPage
 
     Logger.success(
       'Add Position manual entry opened'
+    );
+  }
+
+  /* ---------------------------------------------------------------------------
+  + popup: broker list, Bulk Upload and Enter Manually
+  --------------------------------------------------------------------------- */
+
+  async openPlusPopup() {
+    Logger.info(
+      'Opening the + popup'
+    );
+
+    await this.dismissMarketingOverlays();
+
+    await this.waitForSuccessToastToClear();
+
+    await expect(
+      this.plusButton()
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      await safeClick(
+        this.plusButton(),
+        `Open + popup (${attempt})`
+      );
+
+      const opened =
+        await this.popupOption(
+          /^enter manually$/i
+        )
+          .waitFor({
+            state: 'visible',
+            timeout: 5000
+          })
+          .then(
+            () => true
+          )
+          .catch(
+            () => false
+          );
+
+      if (opened) {
+        return;
+      }
+    }
+
+    await expect(
+      this.popupOption(
+        /^enter manually$/i
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
+  }
+
+  async expectPlusPopupOptions() {
+    const popup =
+      this.brokerPopup();
+
+    await expect(
+      popup
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      popup,
+      'The + popup should list the available brokers.'
+    ).toContainText(
+      /available brokers/i
+    );
+
+    await expect(
+      popup,
+      'The + popup should explain what to do when the broker is not listed.'
+    ).toContainText(
+      /broker not listed/i
+    );
+
+    await expect(
+      this.popupOption(
+        /^bulk upload$/i
+      ),
+      'The + popup should offer Bulk Upload.'
+    ).toBeVisible();
+
+    await expect(
+      this.popupOption(
+        /^enter manually$/i
+      ),
+      'The + popup should offer Enter Manually.'
+    ).toBeVisible();
+  }
+
+  async openBulkUpload() {
+    await this.openPlusPopup();
+
+    await safeClick(
+      this.popupOption(
+        /^bulk upload$/i
+      ),
+      'Bulk Upload'
+    );
+
+    await expect(
+      this.uploadDialog(),
+      'Bulk Upload should open the Upload Positions dialog.'
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    Logger.success(
+      'Bulk Upload dialog opened'
+    );
+  }
+
+  async expectBulkUploadDialog() {
+    const upload =
+      this.uploadDialog();
+
+    await expect(
+      upload
+    ).toContainText(
+      /upload a csv or xlsx file/i
+    );
+
+    await expect(
+      upload
+    ).toContainText(
+      /\.csv.*\.xlsx|\.xlsx.*\.csv/i
+    );
+
+    await expect(
+      upload.getByRole(
+        'button',
+        {
+          name: /browse files/i
+        }
+      )
+    ).toBeVisible();
+
+    await expect(
+      upload.getByRole(
+        'button',
+        {
+          name: /download template/i
+        }
+      )
+    ).toBeVisible();
+
+    await expect(
+      upload.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      )
+    ).toBeVisible();
+
+    expect(
+      await upload
+        .locator(
+          'input[type="file"]'
+        )
+        .count(),
+      'The Upload Positions dialog should have a file input.'
+    ).toBeGreaterThan(0);
+  }
+
+  async chooseBulkUploadFile(
+    file: {
+      name: string;
+      mimeType: string;
+      buffer: Buffer;
+    }
+  ) {
+    await this.uploadDialog()
+      .locator(
+        'input[type="file"]'
+      )
+      .first()
+      .setInputFiles(
+        file
+      );
+  }
+
+  uploadPositionsDialog() {
+    return this.uploadDialog();
+  }
+
+  /**
+   * Clicks Download Template in the Upload Positions dialog and returns the
+   * downloaded file name and bytes.
+   */
+  async downloadBulkTemplate(): Promise<{
+    fileName: string;
+    data: Buffer;
+  }> {
+    const [download] =
+      await Promise.all([
+        this.page.waitForEvent(
+          'download',
+          {
+            timeout: 20000
+          }
+        ),
+        safeClick(
+          this.uploadDialog().getByRole(
+            'button',
+            {
+              name: /download template/i
+            }
+          ),
+          'Download Template'
+        )
+      ]);
+
+    const filePath =
+      await download.path();
+
+    return {
+      fileName:
+        download.suggestedFilename(),
+      data:
+        fs.readFileSync(
+          filePath
+        )
+    };
+  }
+
+  /**
+   * After a file is chosen the dialog previews each row. This checks the
+   * counts and that the Upload button is enabled for the valid rows.
+   */
+  async expectBulkPreview(
+    valid: number,
+    errors = 0
+  ) {
+    const upload =
+      this.uploadDialog();
+
+    await expect(
+      upload,
+      'The upload preview should count the valid rows.'
+    ).toContainText(
+      new RegExp(
+        `\\b${valid} valid\\b`
+      ),
+      {
+        timeout: 15000
+      }
+    );
+
+    if (errors > 0) {
+      await expect(
+        upload
+      ).toContainText(
+        new RegExp(
+          `\\b${errors} errors?\\b`
+        )
+      );
+    } else {
+      await expect(
+        upload
+      ).not.toContainText(
+        /\b\d+ errors?\b/
+      );
+    }
+
+    await expect(
+      this.bulkUploadSubmit(
+        valid
+      )
+    ).toBeEnabled();
+  }
+
+  async replaceExistingIsUnchecked() {
+    const replace =
+      this.uploadDialog().getByRole(
+        'checkbox'
+      );
+
+    await expect(
+      replace,
+      'Replace all existing positions should be unchecked by default.'
+    ).toHaveCount(
+      1
+    );
+
+    await expect(
+      replace
+    ).not.toBeChecked();
+  }
+
+  private bulkUploadSubmit(
+    valid: number
+  ) {
+    return this.uploadDialog().getByRole(
+      'button',
+      {
+        name: new RegExp(
+          `^upload ${valid} valid rows?$`,
+          'i'
+        )
+      }
+    );
+  }
+
+  async submitBulkUpload(
+    valid: number
+  ) {
+    await safeClick(
+      this.bulkUploadSubmit(
+        valid
+      ),
+      `Upload ${valid} valid rows`
+    );
+  }
+
+  async expectBulkUploadResult(
+    added: number
+  ) {
+    await expect(
+      this.uploadDialog(),
+      'The upload should report the rows that were added.'
+    ).toContainText(
+      new RegExp(
+        `${added} added, 0 failed`
+      ),
+      {
+        timeout: 30000
+      }
+    );
+
+    await expect(
+      this.page.getByText(
+        /positions? added successfully/i
+      ).first(),
+      'A success message should appear after the upload.'
+    ).toBeVisible({
+      timeout: 15000
+    });
+  }
+
+  /**
+   * From the dashboard: Manage accounts, View positions, Manual tab.
+   */
+  async openManualPositionsList() {
+    await safeClick(
+      this.page.getByRole(
+        'link',
+        {
+          name: /manage accounts/i
+        }
+      ).first(),
+      'Manage accounts'
+    );
+
+    await safeClick(
+      this.page.getByRole(
+        'link',
+        {
+          name: /view positions/i
+        }
+      ).or(
+        this.page.getByRole(
+          'button',
+          {
+            name: /view positions/i
+          }
+        )
+      ).first(),
+      'View positions'
+    );
+
+    const show =
+      this.page.getByRole(
+        'button',
+        {
+          name: /^show$/i
+        }
+      );
+
+    if (
+      await show.waitFor({
+        state: 'visible',
+        timeout: 4000
+      }).then(
+        () => true
+      ).catch(
+        () => false
+      )
+    ) {
+      await safeClick(
+        show,
+        'Show positions'
+      );
+    }
+
+    await safeClick(
+      this.page.getByRole(
+        'tab',
+        {
+          name: /^manual\b/i
+        }
+      ).first(),
+      'Manual positions'
+    );
+
+    await expect(
+      this.page.locator(
+        'main tbody tr'
+      ).first()
+    ).toBeVisible({
+      timeout: 20000
+    });
+  }
+
+  private positionPageButton(
+    pageNumber: number
+  ) {
+    return this.page
+      .locator(
+        'main'
+      )
+      .getByRole(
+        'navigation',
+        {
+          name: /pagination/i
+        }
+      )
+      .getByRole(
+        'button',
+        {
+          name: new RegExp(
+            `page ${pageNumber}\\b|^${pageNumber}$`,
+            'i'
+          )
+        }
+      )
+      .first();
+  }
+
+  /** Total from the "Showing 1-10 of N" line under the table. */
+  async manualPositionCount() {
+    const text =
+      await this.page
+        .locator(
+          'main'
+        )
+        .innerText();
+
+    const match =
+      text.match(
+        /showing\s+\d+\s*[–-]\s*\d+\s+of\s+(\d+)/i
+      );
+
+    expect(
+      match,
+      'The positions table should show "Showing x-y of N".'
+    ).not.toBeNull();
+
+    return Number(
+      match![1]
+    );
+  }
+
+  /**
+   * Walks the table pages and returns every row's text, so a test can pick a
+   * symbol that is not held yet.
+   */
+  async allManualPositionRowsText() {
+    const rows: string[] = [];
+
+    for (let pageNumber = 1; pageNumber <= 20; pageNumber++) {
+      const button =
+        this.positionPageButton(
+          pageNumber
+        );
+
+      const visible =
+        await button.waitFor({
+          state: 'visible',
+          timeout: pageNumber === 1
+            ? 1500
+            : 4000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (!visible && pageNumber > 1) {
+        break;
+      }
+
+      if (visible) {
+        await button.click();
+
+        await this.page.waitForTimeout(
+          800
+        );
+      }
+
+      rows.push(
+        ...await this.page
+          .locator(
+            'main tbody tr'
+          )
+          .allInnerTexts()
+      );
+    }
+
+    return rows.join(
+      '\n'
+    );
+  }
+
+  /**
+   * Finds the manual row for a symbol on any table page. The table is left on
+   * the page that holds the row. Returns null when the symbol is not listed.
+   */
+  async findManualPosition(
+    symbol: string
+  ): Promise<Locator | null> {
+    const allRows =
+      this.page.locator(
+        'main tbody tr'
+      );
+
+    // The first word of a row (after the account name) is its symbol. The
+    // text of the cells is joined without spaces by hasText, so the symbol
+    // is read from innerText instead.
+    const symbolIndex =
+      async () => {
+        const texts =
+          await allRows.allInnerTexts();
+
+        return texts.findIndex(
+          (text) =>
+            text
+              .replace(
+                /manual portfolio\s*manual entry/i,
+                ''
+              )
+              .trim()
+              .split(
+                /\s+/
+              )[0]
+              ?.toUpperCase()
+            === symbol.toUpperCase()
+        );
+      };
+
+    const rowFor = {
+      count:
+        async () =>
+          await symbolIndex() >= 0
+            ? 1
+            : 0,
+
+      first:
+        async () =>
+          allRows.nth(
+            await symbolIndex()
+          )
+    };
+
+    for (let pageNumber = 1; pageNumber <= 20; pageNumber++) {
+      const button =
+        this.positionPageButton(
+          pageNumber
+        );
+
+      const visible =
+        await button.waitFor({
+          state: 'visible',
+          timeout: pageNumber === 1
+            ? 1500
+            : 4000
+        }).then(
+          () => true
+        ).catch(
+          () => false
+        );
+
+      if (!visible && pageNumber > 1) {
+        return null;
+      }
+
+      if (visible) {
+        await button.click();
+
+        await this.page.waitForTimeout(
+          800
+        );
+      }
+
+      if (
+        await rowFor.count() > 0
+      ) {
+        return await rowFor.first();
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Removes one manual position through its Remove prompt. Only used for the
+   * temporary position that a test added itself.
+   */
+  async removeManualPosition(
+    symbol: string
+  ) {
+    const row =
+      await this.findManualPosition(
+        symbol
+      );
+
+    expect(
+      row,
+      `${symbol} should be listed before it is removed.`
+    ).not.toBeNull();
+
+    await safeClick(
+      row!
+        .locator(
+          'td'
+        )
+        .last()
+        .getByRole(
+          'button'
+        )
+        .nth(
+          1
+        ),
+      `Remove ${symbol}`
+    );
+
+    const dialog =
+      this.page
+        .getByRole(
+          'alertdialog'
+        )
+        .or(
+          this.page.getByRole(
+            'dialog'
+          )
+        )
+        .last();
+
+    await expect(
+      dialog.getByRole(
+        'heading',
+        {
+          name: /remove position/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    await safeClick(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^remove$/i
+        }
+      ),
+      'Confirm remove'
+    );
+
+    await expect(
+      dialog
+    ).toBeHidden({
+      timeout: 15000
+    });
+  }
+
+  async expectManualEntryDialog() {
+    const dialog =
+      this.dialog();
+
+    await expect(
+      this.page.getByRole(
+        'heading',
+        {
+          name: /add position/i
+        }
+      )
+    ).toBeVisible({
+      timeout: 15000
+    });
+
+    await expect(
+      dialog
+    ).toContainText(
+      /enter position details manually/i
+    );
+
+    await expect(
+      this.positionTypeCombobox(),
+      'The Add Position dialog should start with a Type selector.'
+    ).toBeVisible();
+
+    await expect(
+      this.symbolInput()
+    ).toBeVisible();
+
+    await expect(
+      dialog.getByRole(
+        'button',
+        {
+          name: /^cancel$/i
+        }
+      )
+    ).toBeVisible();
+
+    await expect(
+      this.addPositionButton()
+    ).toBeVisible();
+  }
+
+  async expectPositionTypeChoices() {
+    await safeClick(
+      this.positionTypeCombobox(),
+      'Open position Type'
+    );
+
+    const list =
+      this.openList();
+
+    await expect(
+      list
+    ).toBeVisible({
+      timeout: 10000
+    });
+
+    for (const type of [
+      /^equity$/i,
+      /^option$/i,
+      /^cash$/i
+    ]) {
+      await expect(
+        list.getByRole(
+          'option',
+          {
+            name: type
+          }
+        ),
+        `Position Type should offer ${type}.`
+      ).toBeVisible();
+    }
+
+    await this.page.keyboard.press(
+      'Escape'
+    );
+  }
+
+  async closeDialogs() {
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (
+        await this.page
+          .getByRole(
+            'dialog'
+          )
+          .count() === 0
+      ) {
+        return;
+      }
+
+      await this.page.keyboard.press(
+        'Escape'
+      );
+
+      await this.page.waitForTimeout(
+        600
+      );
+    }
+
+    await expect(
+      this.page.getByRole(
+        'dialog'
+      )
+    ).toHaveCount(
+      0,
+      {
+        timeout: 10000
+      }
     );
   }
 

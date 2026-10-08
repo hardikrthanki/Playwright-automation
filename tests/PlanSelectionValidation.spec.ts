@@ -15,6 +15,9 @@ import {
 import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
+import {
+  recordCoverage
+} from './helpers/coverageReuse';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { DashboardPage }
@@ -304,6 +307,24 @@ if (
             'Overlay Strategists feature summary',
             async () => {
               await planPage.validateOverlayStrategistsFeatureSummary();
+            }
+          );
+
+          await test.step(
+            'Overlay Strategists trial options are offered',
+            async () => {
+              await planPage.validateOverlayStrategistsTrialOptions();
+
+              await expect(
+                page.getByText(
+                  /overlay strategists/i
+                ).first()
+              ).toBeVisible();
+
+              // Reused by the Overlay Strategists trial discovery row.
+              recordCoverage(
+                'overlay-trial-options-offered'
+              );
             }
           );
 

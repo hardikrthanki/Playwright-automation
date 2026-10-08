@@ -14,6 +14,10 @@ import {
 import {
   waitForManualEmailVerification
 } from './helpers/emailVerification';
+import {
+  expectCoveredBy,
+  recordCoverage
+} from './helpers/coverageReuse';
 import { CompliancePage }
   from './pages/CompliancePage';
 import { LoginPage }
@@ -74,6 +78,18 @@ type CheckoutSummaryScenario = {
   interval: CheckoutBillingInterval;
   expectedBillingCopy: RegExp;
 };
+
+const COVERING_TEST =
+  'Paid plan checkout summaries currency refresh and return use one user';
+
+function summaryKey(
+  scenario: Pick<
+    CheckoutSummaryScenario,
+    'planName' | 'interval'
+  >
+) {
+  return `direct-summary-${scenario.planName}-${scenario.interval}`;
+}
 
 async function openPlanSelectionForFreshUser(
   page: Page,
@@ -173,7 +189,7 @@ async function validateCheckoutSummaryAndReturn(
       `${scenario.planName} is not in the current catalog; skipping checkout summary.`
     );
 
-    return;
+    return false;
   }
 
   await test.step(
@@ -215,6 +231,13 @@ async function validateCheckoutSummaryAndReturn(
       await planPage.returnFromCheckoutBeforePayment();
     }
   );
+
+  // Recorded only after the summary and the safe return both passed.
+  recordCoverage(
+    summaryKey(scenario)
+  );
+
+  return true;
 }
 
 if (
@@ -229,38 +252,10 @@ if (
       timeout: 20 * 60 * 1000
     });
 
+    // The covering test runs first. The rows after it reuse its recorded
+    // checkpoints instead of repeating sign-up and Stripe checkout.
     test(
-      'Income Builder monthly checkout shows subscription summary before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
-
-    test(
-      'Portfolio Hedger annual checkout shows subscription summary before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
-
-    test(
-      'Income Builder annual checkout shows subscription summary before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
-
-    test(
-      'Paid plan checkout summaries currency refresh and return use one user',
+      COVERING_TEST,
       async ({ page }) => {
         const user =
           await openPlanSelectionForFreshUser(
@@ -327,6 +322,10 @@ if (
           'Validate Stripe currency and conversion copy',
           async () => {
             await stripePage.validateCurrencyAndConversionDetails();
+
+            recordCoverage(
+              'direct-currency-conversion'
+            );
           }
         );
 
@@ -352,30 +351,58 @@ if (
           'Navigate back before payment without activating checkout',
           async () => {
             await planPage.returnFromCheckoutBeforePayment();
+
+            recordCoverage(
+              'direct-refresh-and-return'
+            );
           }
         );
       }
     );
 
-    test(
-      'Income Builder checkout shows currency and conversion details before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
+    const reusedRows: Array<[string, string]> = [
+      [
+        'Income Builder monthly checkout shows subscription summary before payment',
+        summaryKey({
+          planName: 'Income Builder',
+          interval: 'monthly'
+        })
+      ],
+      [
+        'Portfolio Hedger annual checkout shows subscription summary before payment',
+        summaryKey({
+          planName: 'Portfolio Hedger',
+          interval: 'annual'
+        })
+      ],
+      [
+        'Income Builder annual checkout shows subscription summary before payment',
+        summaryKey({
+          planName: 'Income Builder',
+          interval: 'annual'
+        })
+      ],
+      [
+        'Income Builder checkout shows currency and conversion details before payment',
+        'direct-currency-conversion'
+      ],
+      [
+        'Income Builder checkout preserves context on refresh and returns safely before payment',
+        'direct-refresh-and-return'
+      ]
+    ];
 
-    test(
-      'Income Builder checkout preserves context on refresh and returns safely before payment',
-      async () => {
-        test.skip(
-          true,
-          'Covered by the one-user paid plan checkout summaries test.'
-        );
-      }
-    );
+    for (const [title, key] of reusedRows) {
+      test(
+        title,
+        async () => {
+          expectCoveredBy(
+            key,
+            COVERING_TEST
+          );
+        }
+      );
+    }
     }
   );
 }
