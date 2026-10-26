@@ -1,0 +1,317 @@
+{
+  "generatedAt": "2026-10-23T04:35:49.833Z",
+  "provenance": {
+    "mode": "CURRENT_EXECUTION",
+    "sourceArtifact": "test-results/results.json",
+    "sourceFramework": "Playwright",
+    "generatedAt": "2026-10-23T04:35:49.231Z",
+    "restoredFromHistory": false,
+    "warning": ""
+  },
+  "sourceExecution": {
+    "source": "json-reporter",
+    "total": 764,
+    "rawTestCount": 764,
+    "attempts": 764,
+    "passed": 505,
+    "failed": 7,
+    "skipped": 252,
+    "flaky": 0,
+    "interrupted": 0,
+    "statuses": {
+      "expected": 505,
+      "skipped": 252,
+      "unexpected": 7
+    }
+  },
+  "airExecution": {
+    "total": 764,
+    "attempts": 764,
+    "passed": 505,
+    "failed": 7,
+    "skipped": 252,
+    "flaky": 0,
+    "interrupted": 0,
+    "retryCount": 0
+  },
+  "reconciliation": {
+    "status": "PASS",
+    "sourceTotal": 764,
+    "expectedAirTotal": 764,
+    "airTotal": 764,
+    "difference": 0
+  },
+  "duplicates": {
+    "canonicalTestIds": [],
+    "count": 0,
+    "sourceDuplicateExtraCount": 0,
+    "pipelineDuplicateExtraCount": 0
+  },
+  "orphanEvidence": [],
+  "evidenceClassification": {
+    "perTestEvidence": 13,
+    "executionArtifacts": 2,
+    "rawReports": 2,
+    "totalWithRawReports": 15,
+    "rawReportsCountAsFailureEvidence": false
+  },
+  "invalidModuleReferences": [],
+  "invalidJourneyReferences": [],
+  "historicalContaminationDetected": false,
+  "evidenceTraceability": {
+    "failedTests": [
+      {
+        "testId": "chromium > AuthUiValidation.spec.ts > Auth UI Validation > Login password visibility control is exposed without submitting form",
+        "testName": "Auth UI Validation > Login password visibility control is exposed without submitting form",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > SubscriptionLifecycleExecution.spec.ts > Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+        "testName": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > RollConfiguration.spec.ts > Roll Configuration > Tax-Aware field-level validation blocks empty and zeroed fields",
+        "testName": "Roll Configuration > Tax-Aware field-level validation blocks empty and zeroed fields",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > RollConfiguration.spec.ts > Roll Configuration > Balanced field-level validation blocks empty and zeroed fields",
+        "testName": "Roll Configuration > Balanced field-level validation blocks empty and zeroed fields",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardRemainingScreens.spec.ts > Remaining dashboard screens > Footer legal pages open",
+        "testName": "Remaining dashboard screens > Footer legal pages open",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DashboardScenarioSweep.spec.ts > Remaining dashboard scenarios > Strategy library applies every category and filter",
+        "testName": "Remaining dashboard scenarios > Strategy library applies every category and filter",
+        "evidenceCount": 2,
+        "status": "Evidence Available"
+      },
+      {
+        "testId": "chromium > DowngradeSubscriptionMatrix.spec.ts > Downgrade Subscription Use Case 4 Matrix > SC-141 - Scheduled downgrade appears in billing overview",
+        "testName": "Downgrade Subscription Use Case 4 Matrix > SC-141 - Scheduled downgrade appears in billing overview",
+        "evidenceCount": 1,
+        "status": "Evidence Available"
+      }
+    ]
+  },
+  "releaseTraceability": {
+    "status": "PASS",
+    "reasons": [
+      "Release thresholds were not met",
+      "Failures or missing critical data require review",
+      "Resolve blockers before release approval"
+    ],
+    "reasonTraceability": [
+      {
+        "reason": "Release thresholds were not met",
+        "source": "blockers",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Tax-Aware field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Balanced field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard screens > Footer legal pages open",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard scenarios > Strategy library applies every category and filter",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Roll Configuration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Roll Configuration",
+            "detail": "Critical module risk is High."
+          }
+        ]
+      },
+      {
+        "reason": "Failures or missing critical data require review",
+        "source": "blockers",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Tax-Aware field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Balanced field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard screens > Footer legal pages open",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard scenarios > Strategy library applies every category and filter",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Roll Configuration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Roll Configuration",
+            "detail": "Critical module risk is High."
+          }
+        ]
+      },
+      {
+        "reason": "Resolve blockers before release approval",
+        "source": "blockers",
+        "references": [
+          {
+            "type": "Failure",
+            "name": "Subscription Lifecycle Execution > Disposable user climbs every monthly then yearly plan and sees yearly cancel options",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Tax-Aware field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Roll Configuration > Balanced field-level validation blocks empty and zeroed fields",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard screens > Footer legal pages open",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Failure",
+            "name": "Remaining dashboard scenarios > Strategy library applies every category and filter",
+            "detail": "Critical failure severity matched release rules."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Subscription",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Payment",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Dashboard",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Business Journey",
+            "name": "Roll Configuration",
+            "detail": "Critical journey status is Critical."
+          },
+          {
+            "type": "Module",
+            "name": "Billing",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Dashboard",
+            "detail": "Critical module risk is High."
+          },
+          {
+            "type": "Module",
+            "name": "Roll Configuration",
+            "detail": "Critical module risk is High."
+          }
+        ]
+      }
+    ],
+    "warnings": 11,
+    "blockers": 12
+  }
+}
